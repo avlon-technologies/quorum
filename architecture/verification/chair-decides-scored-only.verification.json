@@ -1,0 +1,276 @@
+{
+  "continuum-verification": "continuum-verification/0",
+  "name": "chair-decides-scored-only",
+  "verifies": [
+    "::Quorum.ResearchFunding.Adjudication.ChairDecidesScoredOnly"
+  ],
+  "expectation": "Who may approve an application: BDL rule ChairDecidesScoredOnly (r-q008) on RecordPanelDecision (ac-q019) — only a Panel Chair (ac-q019 mayPerform, closed), only for a Scored proposal (ac-q019 precondition), and only once (derived from the closed Proposal lifecycle sm-q003).",
+  "required": false,
+  "run": {
+    "module": "architecture/verifiers/chair-decides-scored-only.mjs",
+    "args": [
+      "architecture/verification/chair-decides-scored-only.verification.json",
+      "${IMPLEMENTATION}",
+      "${RESULT}",
+      "${OUT}",
+      "${COMMIT}",
+      "${TREE}",
+      "${ATTESTATION}",
+      "${CHANGE_STATE}"
+    ]
+  },
+  "attestation": {
+    "profile": "continuum-claim-spec/0",
+    "id": "chair-decides-scored-only",
+    "version": "1.1.0",
+    "claim": {
+      "language": "bdl",
+      "kind": "business-rule",
+      "element": "r-q008"
+    },
+    "model": {
+      "attestation": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59"
+    },
+    "boundary": {
+      "statement": "Application approval is the Award outcome of the decision RecordPanelDecision (Proposal Scored → Awarded, t-q016; its only trigger). In scope: every write in src/** that records a panel decision (either outcome — the rule governs the decision, not only the award), every publish of the decision fact, every write that moves a proposal to awarded or declined, and every runtime entry point into the decision writes.",
+      "excludes": [
+        {
+          "what": "the demo seed's calls of recordDecision (src/seed.ts)",
+          "why": "demo data, never run when NODE_ENV=production; no case drives it and the performer guard (the route) does not apply to it",
+          "match": [
+            {
+              "path": "src/seed.ts",
+              "form": "call"
+            }
+          ]
+        },
+        {
+          "what": "same action, other rules — NOT judged here: r-q013 AwardHeldOnLateConflict, i-q009 EnvelopeNeverExceeded, i-q014 AwardIsTheRequestedAmount, and the open question u-q001 ConflictAfterDecision",
+          "why": "each is its own compiled claim about RecordPanelDecision; an L3 on r-q008 says nothing about them, so the award is not 'fully governed' by this result"
+        },
+        {
+          "what": "ConfirmEligibility (ac-q010, ProgramOfficer)",
+          "why": "it screens a proposal in; 'approve an application' is read as the funding decision (Award). The brief does not settle which it meant — an owner question"
+        },
+        {
+          "what": "the read model ovs_proposal and notifications",
+          "why": "projections fed by the decision fact; they record a decision, they cannot make one. Their writes are still scanned as outcome writes and must lie in a handler of the fact"
+        },
+        {
+          "what": "tests/**, scripts/**",
+          "why": "not part of the deployable"
+        }
+      ]
+    },
+    "scope": {
+      "discovery": "Lex src/**: every SQL write to adj_decision, every UPDATE of adj_case to 'decided', every publish of ProposalAwarded/ProposalDeclined (a computed event type is unresolved), and every move of a proposal to awarded/declined — through the status channel transition() or its forwarder react() with a literal target, or literal SQL. Every call of a function holding a decision write is an entry point (an HTTP registration named by method, URL and declared access). Non-literal SQL must resolve, else the scope is incomplete.",
+      "businessModel": "continuum/model/quorum.bdl",
+      "action": "ac-q019",
+      "actorRoles": {
+        "PanelChair": "panelChair"
+      },
+      "outcomeStatuses": [
+        "awarded",
+        "declined"
+      ],
+      "decisionFacts": [
+        "ProposalAwarded",
+        "ProposalDeclined"
+      ],
+      "statusChannel": "transition",
+      "statusForwarders": [
+        "react",
+        "setProposal",
+        "status"
+      ],
+      "statusArgument": {
+        "transition": 3,
+        "react": 4,
+        "setProposal": 2,
+        "status": 0
+      }
+    },
+    "assumptions": [
+      {
+        "id": "C1-rule-reading",
+        "statement": "A BDL rule means condition ⇒ assertion (§5.13). Reading r-q008 as 'refuse RecordPanelDecision when the proposal is not Scored' is this model's authoring convention, so the Scored part is anchored on ac-q019's compiled precondition, which states it directly; the check verifies both are what the guards implement."
+      },
+      {
+        "id": "C2-performers",
+        "statement": "The performer part is ac-q019's mayPerform, a closed set (§9.2: any other performer violates business meaning), mapped by scope.actorRoles to the role the route checks (PanelChair → panelChair). The mapping is stated here, not inferred."
+      },
+      {
+        "id": "C3-once-derived",
+        "statement": "'Only once' is derived, not compiled as a condition: after a decision the proposal is Awarded or Declined (both terminal), and only Score enters Scored (sm-q003, closed by §5.8 R-07). The code is checked for a single decision per proposal (the decided guard, a conditional claim, adj_decision keyed by proposal)."
+      },
+      {
+        "id": "C4-case-is-scored",
+        "statement": "An adj_case row exists only for a scored proposal: it is opened only in the ProposalScored handler. The scored guard is 'refuse without a case'; the correspondence check verifies the case is opened nowhere else."
+      },
+      {
+        "id": "C5-status-channel",
+        "statement": "A proposal's status is written only through transition() (the one UPDATE of sub_proposal.status, parametric); every outcome is a call of it, or of a forwarder, with a literal target status. Any other form is unresolved."
+      },
+      {
+        "id": "C6-harness",
+        "statement": "Cases set up their world through the implementation's own test harness (tests/support/harness.ts), in-process (Fastify inject) against an isolated SQLite file with a manual clock. The act under test — the HTTP route — and the state read — adj_decision and sub_proposal.status — are the verifier's."
+      },
+      {
+        "id": "C7-shape",
+        "statement": "Guards and correspondence are recognised textually (lexed, not parsed); a refactor they do not recognise reads as 'not shown', never as 'violated'."
+      }
+    ],
+    "checks": [
+      {
+        "id": "decision-scope",
+        "kind": "scope",
+        "qualifies": [
+          "L2",
+          "L3"
+        ],
+        "statement": "The in-scope paths: decision writes, decision-fact publishes, outcome writes and their entry points; complete only when nothing is unresolved.",
+        "criterion": {
+          "scopeComplete": true
+        }
+      },
+      {
+        "id": "chair-decides-scored",
+        "kind": "case",
+        "qualifies": [],
+        "statement": "The control: a Panel Chair awards a Scored proposal through the route; the decision is recorded and the proposal becomes awarded. It qualifies for no level; it is what lets the refusal cases count.",
+        "criterion": {
+          "equals": {
+            "statusBefore": "scored",
+            "decided": true,
+            "decisionAfter": "award",
+            "proposalStatusAfter": "awarded"
+          }
+        }
+      },
+      {
+        "id": "non-chair-refused",
+        "kind": "case",
+        "qualifies": [
+          "L1",
+          "L2"
+        ],
+        "control": "chair-decides-scored",
+        "statement": "Every other role — program officer, operator, the applicant, a reviewer of it, an unverified reviewer — is refused on a Scored proposal, and nothing changes: no decision, the proposal still scored, no event.",
+        "criterion": {
+          "equals": {
+            "allRefused": true,
+            "decisionsAdded": 0,
+            "statusBefore": "scored",
+            "proposalStatusAfter": "scored",
+            "eventsAdded": 0
+          }
+        }
+      },
+      {
+        "id": "unscored-refused",
+        "kind": "case",
+        "qualifies": [
+          "L1",
+          "L2"
+        ],
+        "control": "chair-decides-scored",
+        "statement": "The chair is refused on a proposal that is not Scored (under review), for that reason (not_scored), and nothing changes.",
+        "criterion": {
+          "equals": {
+            "statusBefore": "underReview",
+            "refused": true,
+            "code": "not_scored",
+            "decisionAfter": null,
+            "proposalStatusAfter": "underReview",
+            "eventsAdded": 0
+          }
+        }
+      },
+      {
+        "id": "second-decision-refused",
+        "kind": "case",
+        "qualifies": [
+          "L1",
+          "L2"
+        ],
+        "control": "chair-decides-scored",
+        "statement": "A second decision is refused (already_decided); the first decision and the proposal's status stand, and no event is added.",
+        "criterion": {
+          "equals": {
+            "decisionBefore": "decline",
+            "refused": true,
+            "code": "already_decided",
+            "decisionAfter": "decline",
+            "proposalStatusAfter": "declined",
+            "eventsAdded": 0
+          }
+        }
+      },
+      {
+        "id": "outcome-follows-decision-fact",
+        "kind": "structural",
+        "qualifies": [
+          "L1",
+          "L2"
+        ],
+        "statement": "Each write that moves a proposal to awarded or declined lies in a handler of the decision fact (ProposalAwarded / ProposalDeclined).",
+        "criterion": {
+          "equals": {
+            "onDecisionFact": true
+          }
+        }
+      },
+      {
+        "id": "guards-dominate-decision",
+        "kind": "enforcement",
+        "qualifies": [
+          "L3"
+        ],
+        "statement": "Every in-scope path is constrained: every entry is a route with a declared access; the scored and once guards precede every decision write; the fact is published only by the guarded function; outcomes are applied only on the fact.",
+        "criterion": {
+          "appliesToScope": true,
+          "equals": {
+            "dominates": true
+          }
+        }
+      },
+      {
+        "id": "guards-implement-rule",
+        "kind": "rule-correspondence",
+        "qualifies": [
+          "L3"
+        ],
+        "statement": "The constraint implements every part of the compiled rule: the admitted roles are exactly the compiled performer set; the scored guard is the compiled precondition (and r-q008's condition); one decision per proposal.",
+        "criterion": {
+          "modelCondition": true,
+          "modelPreconditions": true,
+          "modelPerformers": true,
+          "equals": {
+            "scoredOnly": true,
+            "once": true
+          }
+        }
+      }
+    ],
+    "rubric": "continuum-claim-rubric/2",
+    "challenges": [
+      {
+        "id": "decision-admits-officer",
+        "kind": "deliberate-fault",
+        "statement": "the panel-decision route also admits a Program Officer",
+        "change": {
+          "patch": "architecture/challenges/decision-admits-officer.patch",
+          "digest": "sha256:7486d5c4c8a6ab2ad5997511625d72ce29d1b9eb8e5e1939751bbd0a52b30341",
+          "files": [
+            "src/api/routes.ts"
+          ]
+        },
+        "expect": {
+          "check": "non-chair-refused",
+          "path": "HTTP POST /api/adjudications/:id/decision",
+          "reason": "allRefused is false, expected true"
+        }
+      }
+    ]
+  }
+}

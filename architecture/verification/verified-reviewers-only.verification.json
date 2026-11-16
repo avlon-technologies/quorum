@@ -1,46 +1,189 @@
 {
   "continuum-verification": "continuum-verification/0",
   "name": "verified-reviewers-only",
-  "verifies": ["::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly"],
+  "verifies": [
+    "::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly"
+  ],
   "expectation": "BDL rule VerifiedReviewersOnly (r-q012): on AssignReviewer, when the assigned reviewer's ORCID status is not Verified, the assignment is not made.",
   "required": false,
   "run": {
     "module": "architecture/verifiers/verified-reviewers-only.mjs",
-    "args": ["architecture/verification/verified-reviewers-only.verification.json", "${IMPLEMENTATION}", "${RESULT}", "${OUT}", "${COMMIT}", "${TREE}", "${ATTESTATION}", "${CHANGE_STATE}"]
+    "args": [
+      "architecture/verification/verified-reviewers-only.verification.json",
+      "${IMPLEMENTATION}",
+      "${RESULT}",
+      "${OUT}",
+      "${COMMIT}",
+      "${TREE}",
+      "${ATTESTATION}",
+      "${CHANGE_STATE}"
+    ]
   },
   "attestation": {
     "profile": "continuum-claim-spec/0",
     "id": "verified-reviewers-only",
-    "version": "1.0.0",
-    "claim": { "language": "bdl", "kind": "business-rule", "element": "r-q012" },
-    "model": { "attestation": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59" },
+    "version": "2.0.0",
+    "claim": {
+      "language": "bdl",
+      "kind": "business-rule",
+      "element": "r-q012"
+    },
+    "model": {
+      "attestation": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59"
+    },
     "boundary": {
       "statement": "The rule's declared scope, AssignReviewer: every write in src/** that makes a reviewer hold an assignment, and every runtime entry point that reaches one. 'Held' is any status but revoked (sm-q005: assigned, accepted, overdue, completed; Revoked is terminal).",
-      "includes": ["INSERT INTO rev_assignment", "any UPDATE of rev_assignment that moves a not-held status into a held one", "every call, in src/**, of the function holding such a write"],
+      "includes": [
+        "INSERT INTO rev_assignment",
+        "any UPDATE of rev_assignment that moves a not-held status into a held one",
+        "every call, in src/**, of the function holding such a write"
+      ],
       "excludes": [
-        { "what": "the demo seed's calls of assignReviewer (src/seed.ts)", "why": "demo data, never run when NODE_ENV=production; it calls the same guarded function, so the enforcement check still covers it, but no case drives it", "match": [{ "path": "src/seed.ts", "form": "call" }] },
-        { "what": "holding after a later ORCID change (EraseAccount resets orcid_status to unverified)", "why": "r-q012 is scoped to AssignReviewer; 'holding' as a standing invariant is not what BDL declares. Observed and reported outside the boundary, against the Account lifecycle sm-q002, never counted" },
-        { "what": "tests/**, scripts/**", "why": "not part of the deployable" }
+        {
+          "what": "the demo seed's calls of assignReviewer (src/seed.ts)",
+          "why": "demo data, never run when NODE_ENV=production; it calls the same guarded function, so the enforcement check still covers it, but no case drives it",
+          "match": [
+            {
+              "path": "src/seed.ts",
+              "form": "call"
+            }
+          ]
+        },
+        {
+          "what": "holding after a later ORCID change (EraseAccount resets orcid_status to unverified)",
+          "why": "r-q012 is scoped to AssignReviewer; 'holding' as a standing invariant is not what BDL declares. Observed and reported outside the boundary, against the Account lifecycle sm-q002, never counted"
+        },
+        {
+          "what": "tests/**, scripts/**",
+          "why": "not part of the deployable"
+        }
       ]
     },
     "scope": {
       "discovery": "Lex src/**; every INSERT/REPLACE INTO rev_assignment, and every UPDATE of rev_assignment whose new status is held while its WHERE admits a not-held prior status (or does not fix it), is a write; the named function holding each write is found, and every call of it in src/** is an entry point (an HTTP registration is named by method and URL). Non-literal SQL must resolve, else the scope is incomplete.",
-      "held": ["assigned", "accepted", "overdue", "completed"],
+      "held": [
+        "assigned",
+        "accepted",
+        "overdue",
+        "completed"
+      ],
       "businessModel": "continuum/model/quorum.bdl"
     },
     "assumptions": [
-      { "id": "B1-subject", "statement": "The rule's `Account` is the account being assigned (Assignment.reviewer), not the performer of AssignReviewer (a ProgramOfficer); the correspondence check verifies the guard reads the assigned reviewer." },
-      { "id": "B2-values", "statement": "BDL OrcidStatus Verified/Unverified is idn_account.orcid_status 'verified'/'unverified'; the schema's CHECK admits exactly those two values, which the correspondence check verifies." },
-      { "id": "B3-harness", "statement": "Cases set up their world (accounts, a published call, an eligible proposal) through the implementation's own test harness (tests/support/harness.ts). The act under test — the HTTP route — and the state read — rev_assignment — are the verifier's." },
-      { "id": "B4-environment", "statement": "Cases run in-process (Fastify inject) against an isolated SQLite file with a manual clock and stub integrations; the ORCID registry is never consulted on assignment." },
-      { "id": "B5-shape", "statement": "The guard and correspondence checks recognise the code's shape textually (lexed, not parsed); a refactor they do not recognise reads as 'not shown', never as 'violated'." }
+      {
+        "id": "B1-subject",
+        "statement": "The rule's `Account` is the account being assigned (Assignment.reviewer), not the performer of AssignReviewer (a ProgramOfficer); the correspondence check verifies the guard reads the assigned reviewer."
+      },
+      {
+        "id": "B2-values",
+        "statement": "BDL OrcidStatus Verified/Unverified is idn_account.orcid_status 'verified'/'unverified'; the schema's CHECK admits exactly those two values, which the correspondence check verifies."
+      },
+      {
+        "id": "B3-harness",
+        "statement": "Cases set up their world (accounts, a published call, an eligible proposal) through the implementation's own test harness (tests/support/harness.ts). The act under test — the HTTP route — and the state read — rev_assignment — are the verifier's."
+      },
+      {
+        "id": "B4-environment",
+        "statement": "Cases run in-process (Fastify inject) against an isolated SQLite file with a manual clock and stub integrations; the ORCID registry is never consulted on assignment."
+      },
+      {
+        "id": "B5-shape",
+        "statement": "The guard and correspondence checks recognise the code's shape textually (lexed, not parsed); a refactor they do not recognise reads as 'not shown', never as 'violated'."
+      }
     ],
     "checks": [
-      { "id": "held-assignment-scope", "kind": "scope", "qualifies": ["L2", "L3"], "statement": "the writes that make an assignment held, and their entry points, are all known: at least one discovered, nothing unresolved", "criterion": { "scopeComplete": true } },
-      { "id": "unverified-reviewer-refused", "kind": "case", "qualifies": ["L1", "L2"], "statement": "the route refuses an unverified reviewer, and no held assignment results", "criterion": { "equals": { "reviewerOrcidStatus": "unverified", "refused": true, "heldAfter": false } } },
-      { "id": "verified-reviewer-assigned", "kind": "case", "qualifies": ["L2"], "statement": "control: the same route assigns a verified reviewer, so the refusal above is the condition's and not a broken route", "criterion": { "equals": { "reviewerOrcidStatus": "verified", "refused": false, "heldAfter": true } } },
-      { "id": "guard-dominates-writes", "kind": "enforcement", "qualifies": ["L3"], "statement": "every in-scope write is reached only through the eligibility guard, which throws before the write when the assignment is not valid", "criterion": { "appliesToScope": true, "equals": { "dominates": true } } },
-      { "id": "guard-implements-condition", "kind": "rule-correspondence", "qualifies": ["L3"], "statement": "the guard refuses exactly when the compiled rule's condition holds for the assigned reviewer", "criterion": { "modelCondition": true, "equals": { "conditionSubject": "reviewer", "refusesWhenConditionHolds": true } } }
+      {
+        "id": "held-assignment-scope",
+        "kind": "scope",
+        "qualifies": [
+          "L2",
+          "L3"
+        ],
+        "statement": "the writes that make an assignment held, and their entry points, are all known: at least one discovered, nothing unresolved",
+        "criterion": {
+          "scopeComplete": true
+        }
+      },
+      {
+        "id": "unverified-reviewer-refused",
+        "kind": "case",
+        "qualifies": [
+          "L1",
+          "L2"
+        ],
+        "statement": "the route refuses an unverified reviewer, and no held assignment results It counts only when its control, verified-reviewer-assigned, passed on the same route: a route that refuses everyone shows nothing. The refusal must be for the rule's reason (code orcid_unverified), not any refusal.",
+        "criterion": {
+          "equals": {
+            "reviewerOrcidStatus": "unverified",
+            "refused": true,
+            "heldAfter": false,
+            "code": "orcid_unverified"
+          }
+        },
+        "control": "verified-reviewer-assigned"
+      },
+      {
+        "id": "verified-reviewer-assigned",
+        "kind": "case",
+        "qualifies": [],
+        "statement": "control: the same route assigns a verified reviewer, so the refusal above is the condition's and not a broken route A control: it qualifies for no level itself; it is what lets the refusal case count.",
+        "criterion": {
+          "equals": {
+            "reviewerOrcidStatus": "verified",
+            "refused": false,
+            "heldAfter": true
+          }
+        }
+      },
+      {
+        "id": "guard-dominates-writes",
+        "kind": "enforcement",
+        "qualifies": [
+          "L3"
+        ],
+        "statement": "every in-scope write is reached only through the eligibility guard, which throws before the write when the assignment is not valid",
+        "criterion": {
+          "appliesToScope": true,
+          "equals": {
+            "dominates": true
+          }
+        }
+      },
+      {
+        "id": "guard-implements-condition",
+        "kind": "rule-correspondence",
+        "qualifies": [
+          "L3"
+        ],
+        "statement": "the guard refuses exactly when the compiled rule's condition holds for the assigned reviewer",
+        "criterion": {
+          "modelCondition": true,
+          "equals": {
+            "conditionSubject": "reviewer",
+            "refusesWhenConditionHolds": true
+          }
+        }
+      }
+    ],
+    "rubric": "continuum-claim-rubric/2",
+    "challenges": [
+      {
+        "id": "orcid-guard-defeated",
+        "kind": "deliberate-fault",
+        "statement": "the AssignReviewer guard no longer refuses an unverified reviewer (029 controlled mismatch M2, reused)",
+        "change": {
+          "patch": "architecture/challenges/orcid-guard-defeated.patch",
+          "digest": "sha256:1be1db18560faa382ef27948d5ab16fe7dbcdeae119ac31e9843034222e8d814",
+          "files": [
+            "src/contexts/peer-review/service.ts"
+          ]
+        },
+        "expect": {
+          "check": "unverified-reviewer-refused",
+          "path": "HTTP POST /api/proposals/:id/assignments",
+          "reason": "refused is false, expected true"
+        }
+      }
     ]
   }
 }

@@ -1,0 +1,156 @@
+{
+  "continuum-verification": "continuum-verification/0",
+  "name": "orcid-verification-lifecycle",
+  "verifies": [
+    "::Quorum.ResearchFunding.Account.OrcidVerification"
+  ],
+  "expectation": "BDL state model OrcidVerification (sm-q002) on Account.orcidStatus: the declared transitions — Verify, Unverified → Verified — are the complete set of permitted changes of the field (BDL §5.8 R-07). Verified is declared terminal.",
+  "required": false,
+  "run": {
+    "module": "architecture/verifiers/orcid-verification-lifecycle.mjs",
+    "args": [
+      "architecture/verification/orcid-verification-lifecycle.verification.json",
+      "${IMPLEMENTATION}",
+      "${RESULT}",
+      "${OUT}",
+      "${COMMIT}",
+      "${TREE}",
+      "${ATTESTATION}",
+      "${CHANGE_STATE}"
+    ]
+  },
+  "attestation": {
+    "profile": "continuum-claim-spec/0",
+    "id": "orcid-verification-lifecycle",
+    "version": "1.0.0",
+    "rubric": "continuum-claim-rubric/2",
+    "claim": {
+      "language": "bdl",
+      "kind": "state-model",
+      "element": "sm-q002"
+    },
+    "model": {
+      "attestation": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59"
+    },
+    "boundary": {
+      "statement": "Every change of Account.orcidStatus made by the runtime code of the deployable (src/**): every literal SQL write that sets idn_account.orcid_status, and every runtime entry point that reaches one.",
+      "excludes": [
+        {
+          "what": "the demo seed (src/seed.ts)",
+          "why": "demo data, never run when NODE_ENV=production; its accounts are provisioned through provisionAccount, whose calls are therefore excluded",
+          "match": [
+            {
+              "path": "src/seed.ts",
+              "form": "call"
+            }
+          ]
+        },
+        {
+          "what": "VerifiedReviewersOnly (r-q012)",
+          "why": "a separate claim, judged at AssignReviewer only; this claim is the field's lifecycle, whoever holds an assignment"
+        },
+        {
+          "what": "tests/**, scripts/**",
+          "why": "not part of the deployable; the test harness provisions verified reviewers directly"
+        }
+      ]
+    },
+    "scope": {
+      "discovery": "Lex src/**: every UPDATE of idn_account that sets orcid_status (the value it sets and the prior value its WHERE fixes, if any) and every INSERT that lists orcid_status; the named function holding each write and every call of it (routes named). A creation site reached only by excluded callers is excluded; a value computed at the call is unresolved; non-literal SQL must resolve.",
+      "table": "idn_account",
+      "column": "orcid_status",
+      "held": [
+        "assigned",
+        "accepted",
+        "overdue",
+        "completed"
+      ],
+      "valueMapping": {
+        "unverified": "Unverified",
+        "verified": "Verified"
+      }
+    },
+    "assumptions": [
+      {
+        "id": "D1-values",
+        "statement": "BDL OrcidStatus Unverified/Verified is idn_account.orcid_status 'unverified'/'verified'; the schema CHECK admits exactly those two values. The mapping is stated in scope.valueMapping; the evaluator applies it."
+      },
+      {
+        "id": "D2-closure",
+        "statement": "The claim is R-07's closure (the declared transitions are the complete set of permitted changes), not 'terminal' alone: BDL gives terminal no closure of its own."
+      },
+      {
+        "id": "D3-harness",
+        "statement": "Cases run the real routes in-process (Fastify inject) against an isolated SQLite file with a manual clock and a stub ORCID registry, set up through the implementation's own test harness."
+      },
+      {
+        "id": "D4-shape",
+        "statement": "Writes are found lexically (literal SQL); a value set from a parameter, or a channel the scanner cannot follow, is unresolved, never assumed."
+      }
+    ],
+    "checks": [
+      {
+        "id": "status-write-scope",
+        "kind": "scope",
+        "qualifies": [
+          "L2",
+          "L3"
+        ],
+        "statement": "The in-scope writes of the field and their entry points; complete only when nothing is unresolved.",
+        "criterion": {
+          "scopeComplete": true
+        }
+      },
+      {
+        "id": "write-admitted",
+        "kind": "structural",
+        "qualifies": [
+          "L1",
+          "L2"
+        ],
+        "statement": "Each write's transition, as its SQL states it (the value it sets; the prior value its WHERE fixes, or any), is a declared transition of the state model, or no change.",
+        "criterion": {
+          "admittedTransition": true
+        }
+      },
+      {
+        "id": "verified-reviewer-erased",
+        "kind": "case",
+        "qualifies": [
+          "L1",
+          "L2"
+        ],
+        "statement": "Erasing a Verified reviewer who holds an assignment, through the real route: the persisted change of orcid_status is a declared transition, or no change.",
+        "criterion": {
+          "admittedTransition": true
+        }
+      },
+      {
+        "id": "unverified-reviewer-verifies",
+        "kind": "case",
+        "qualifies": [
+          "L1",
+          "L2"
+        ],
+        "statement": "An Unverified reviewer verifies their ORCID iD through the real route: the persisted change is Verify (Unverified → Verified).",
+        "criterion": {
+          "admittedTransition": true
+        }
+      },
+      {
+        "id": "closure-constraint",
+        "kind": "enforcement",
+        "qualifies": [
+          "L3"
+        ],
+        "statement": "A constraint refuses any undeclared change of the field on every in-scope path.",
+        "criterion": {
+          "appliesToScope": true,
+          "equals": {
+            "dominates": true
+          }
+        }
+      }
+    ]
+  }
+}

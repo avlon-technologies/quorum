@@ -172,7 +172,8 @@ async function scenario(fn) {
 const held = (h, proposalId, reviewerId) => h.one(`SELECT COUNT(*) n FROM rev_assignment WHERE proposal_id = ? AND reviewer_id = ? AND status IN (${[...HELD].map(() => '?').join(',')})`, proposalId, reviewerId, ...HELD).n > 0;
 const route = entries.find((e) => e.path.startsWith('HTTP POST'))?.path ?? 'HTTP POST /api/proposals/:id/assignments';
 const caseRun = async (check, body) => {
-  try { results.push({ check, ran: 'completed', path: route, covers: discovered.filter((p) => p.includes(':') && !p.startsWith('HTTP')), inputs: treeDigest, observed: await scenario(body) }); }
+  // a case covers the entry it drove and the writes THAT entry reaches — never every discovered path (review 029)
+  try { results.push({ check, ran: 'completed', path: route, covers: [...new Set(entries.filter((e) => e.path === route).map((e) => e.reaches))].sort(), inputs: treeDigest, observed: await scenario(body) }); }
   catch (e) { results.push({ check, ran: 'error', path: route, inputs: treeDigest, detail: String(e?.message ?? e).split('\n')[0] }); }
 };
 await caseRun('unverified-reviewer-refused', async (h) => {

@@ -24,8 +24,13 @@ const decl = JSON.parse(readFileSync(declPath, 'utf8'));
 const spec = decl.attestation;
 const STORE = spec.claimName;                    // the qualified name the specification expects (the model says which writers)
 const PREFIX = spec.scope.conventionPrefix;      // the documented table prefix of the store's context (cross-check only)
-const evidence = JSON.parse(readFileSync(join(impl, 'continuum', 'evidence.json'), 'utf8'));
-const { tableStore, created } = storesOf(impl, evidence);
+// attribution is a BASELINE fact (review 029): the code under test never redefines which store a table belongs to or
+// which Service a module realises. The verifier runs from the baseline checkout (cwd); write sites are scanned at impl.
+const BASE = process.cwd();
+const evidenceText = readFileSync(join(BASE, 'continuum', 'evidence.json'), 'utf8');
+const evidence = JSON.parse(evidenceText);
+const { tableStore } = storesOf(BASE, evidence);
+const { created } = storesOf(impl, evidence);    // tables the commit creates; a new one of the prefix is unresolved
 const moduleServices = servicesOf(evidence);
 const storeTables = [...tableStore].filter(([, s]) => s === STORE).map(([t]) => t).sort();
 
@@ -71,6 +76,7 @@ const observation = {
   spec: { id: spec.id, version: spec.version },
   boundTo: { commit, tree, attestation, spec: { id: spec.id, version: spec.version } },
   environment: { node: process.version, platform: process.platform === 'win32' ? 'win32' : 'posix' },
+  attribution: { source: 'continuum/evidence.json at the baseline', digest: sha256(evidenceText) },
   results,
 };
 const established = unresolved.length === 0;

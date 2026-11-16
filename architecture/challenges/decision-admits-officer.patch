@@ -1,0 +1,13 @@
+diff --git a/src/api/routes.ts b/src/api/routes.ts
+index ccdeea4..4d8240a 100644
+--- a/src/api/routes.ts
++++ b/src/api/routes.ts
+@@ -326,7 +326,7 @@ export function registerRoutes(h: Http, deps: Deps, tokens: TokenService, ops: O
+     {
+       method: 'POST',
+       url: '/api/adjudications/:id/decision',
+-      access: ['panelChair'],
++      access: ['panelChair', 'programOfficer'],
+       realizes: `${Q}.Adjudication.PanelDecision.decide`,
+       params: uuidParam,
+       body: body(['outcome', 'rationale'], { outcome: { type: 'string', enum: ['award', 'decline'] }, rationale: str(0, 2000) }),

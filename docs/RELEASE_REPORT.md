@@ -198,3 +198,21 @@ Nothing below has been performed by an agent.
 3. **Accept the initial package**: `continuum package accept continuum --as <you> --verified-against HEAD`, then `continuum ledger record continuum --verified-against HEAD`.
 4. **Accept or reject the three diagrams**, knowing the limits in §7.
 5. **Applicant visibility during deliberation** (mean score, screener id, whether the officer agreed with the agent): decide what applicants may see (review B5).
+
+## 10. Clean-checkout verification
+
+On 2026-11-16, commit `75176ba` was cloned into an empty directory and the README was followed exactly:
+
+| Step | Result (quoted) |
+|---|---|
+| `npm ci` | "added 115 packages" |
+| `npm run typecheck` | exit 0 |
+| `npm test` | "Test Files 24 passed (24) · Tests 122 passed (122)" |
+| `npm start` (fresh data directory) | It seeded automatically: "listening on http://127.0.0.1:… (demo clock on)". `/api/health` returned 200; `officer@quorum.test` signed in with 200 |
+| `npm run test:e2e` | "[e2e] PASS", 64 screenshots |
+| `continuum package check continuum` | "every inventoried file matches its digest and a rebuild reproduces the derived files" |
+| `continuum package run continuum` | "15 passed, 0 failed, 15 executed" |
+| `continuum conformance check continuum` | "CONFORMS" |
+| `continuum evidence check continuum` | "verified 59 … touched 0 … stale 0" |
+| `continuum guard ci` (clean tree) | "guard ci: PASS": lifecycle ok, architecture ok, implementation ok; hygiene "drift" is the one carried compiler warning |
+| `NODE_ENV=production npm start` | "demo clock off". Nothing was seeded and no password was printed; `/api/health` reported `demo:false`; demo-account sign-in returned 401 |

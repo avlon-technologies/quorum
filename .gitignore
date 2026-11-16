@@ -1,0 +1,14 @@
+# >>> continuum >>>
+# Continuum — machine-local client state, written by `continuum install`.
+# The development package in continuum/ IS committed; this is not.
+.continuum/
+# <<< continuum <<<
+
+# Quorum
+node_modules/
+data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+test-results/
+.env

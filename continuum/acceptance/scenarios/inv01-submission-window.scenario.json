@@ -1,0 +1,65 @@
+{
+  "acceptance-scenario": "1",
+  "name": "inv01-submission-window",
+  "purpose": "A proposal is accepted strictly before the call deadline and refused at it (INV-1).",
+  "verifies": [
+    "::Quorum.ResearchFunding.CallAdministration.SubmissionWindow",
+    "::Quorum.ResearchFunding.Submission.ProposalService"
+  ],
+  "test": "::Quorum.Inv01SubmissionWindow",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "draft"
+      },
+      "text": "proposal p1 has reached draft"
+    }
+  ],
+  "when": [
+    {
+      "step": "proposal.submit",
+      "args": {
+        "proposal": "p1",
+        "at": "deadline"
+      },
+      "text": "the applicant submits p1 exactly at the deadline"
+    }
+  ],
+  "then": [
+    {
+      "step": "command.refused",
+      "args": {
+        "status": 409,
+        "code": "deadline_passed",
+        "rule": "INV-1"
+      },
+      "text": "the submission is refused as deadline_passed under INV-1"
+    },
+    {
+      "step": "event.count",
+      "args": {
+        "type": "ProposalSubmitted",
+        "count": 0
+      },
+      "text": "no ProposalSubmitted is published"
+    },
+    {
+      "step": "proposal.status",
+      "args": {
+        "proposal": "p1",
+        "status": "draft"
+      },
+      "text": "p1 is still a draft"
+    }
+  ],
+  "trace": {
+    "from": "::Quorum.ResearchFunding.Submission.SubmitProposal"
+  }
+}

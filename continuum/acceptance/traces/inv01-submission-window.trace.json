@@ -1,0 +1,112 @@
+{
+  "development-package-trace": "1",
+  "normative": false,
+  "note": "derived from the compiler's process graph; declared causality only — never a runtime claim",
+  "scenario": "inv01-submission-window",
+  "from": "::Quorum.ResearchFunding.Submission.SubmitProposal",
+  "ok": true,
+  "hops": [
+    {
+      "consumed": "::Quorum.ResearchFunding.Submission.SubmitProposal",
+      "participant": "::Quorum.ResearchFunding.Submission.ProposalService",
+      "consequence": "::Quorum.ResearchFunding.Submission.ProposalSubmitted",
+      "receiveKind": "handles",
+      "strength": "correlated",
+      "provenance": "authored-reaction",
+      "exclusivity": "independent",
+      "boundary": null,
+      "crossings": 0
+    },
+    {
+      "consumed": "::Quorum.ResearchFunding.Submission.ProposalSubmitted",
+      "participant": "::Quorum.ResearchFunding.Submission.ProposalService",
+      "consequence": "::Quorum.ResearchFunding.Submission.ProposalEnteredScreening",
+      "receiveKind": "subscribes",
+      "strength": "correlated",
+      "provenance": "authored-reaction",
+      "exclusivity": "independent",
+      "boundary": null,
+      "crossings": 0
+    },
+    {
+      "consumed": "::Quorum.ResearchFunding.Submission.ProposalSubmitted",
+      "participant": "::Quorum.ResearchFunding.Submission.Triage",
+      "consequence": "::Quorum.ResearchFunding.Submission.TriageProposed",
+      "receiveKind": "triggers",
+      "strength": "correlated",
+      "provenance": "workflow-derived",
+      "exclusivity": "one-of",
+      "boundary": null,
+      "crossings": 0
+    }
+  ],
+  "sinks": [
+    {
+      "participant": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "consumed": "::Quorum.ResearchFunding.Submission.ProposalEnteredScreening"
+    },
+    {
+      "participant": "::Quorum.ResearchFunding.Notification.NotificationService",
+      "consumed": "::Quorum.ResearchFunding.Submission.TriageProposed"
+    },
+    {
+      "participant": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "consumed": "::Quorum.ResearchFunding.Submission.TriageProposed"
+    },
+    {
+      "participant": "::Quorum.ResearchFunding.Notification.NotificationService",
+      "consumed": "::Quorum.ResearchFunding.Submission.ProposalSubmitted"
+    },
+    {
+      "participant": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "consumed": "::Quorum.ResearchFunding.Submission.ProposalSubmitted"
+    }
+  ],
+  "openConsumptions": [],
+  "productions": [
+    {
+      "message": "::Quorum.ResearchFunding.Submission.ProposalEnteredScreening",
+      "producer": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "readModel": "::Quorum.ResearchFunding.Oversight.Portfolio"
+    },
+    {
+      "message": "::Quorum.ResearchFunding.Submission.ProposalEnteredScreening",
+      "producer": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "readModel": "::Quorum.ResearchFunding.Oversight.AuditTrail"
+    },
+    {
+      "message": "::Quorum.ResearchFunding.Submission.TriageProposed",
+      "producer": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "readModel": "::Quorum.ResearchFunding.Oversight.AuditTrail"
+    },
+    {
+      "message": "::Quorum.ResearchFunding.Submission.ProposalSubmitted",
+      "producer": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "readModel": "::Quorum.ResearchFunding.Oversight.Portfolio"
+    },
+    {
+      "message": "::Quorum.ResearchFunding.Submission.ProposalSubmitted",
+      "producer": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "readModel": "::Quorum.ResearchFunding.Oversight.AuditTrail"
+    }
+  ],
+  "cycles": [],
+  "messagesReached": [
+    "::Quorum.ResearchFunding.Submission.ProposalEnteredScreening",
+    "::Quorum.ResearchFunding.Submission.SubmitProposal",
+    "::Quorum.ResearchFunding.Submission.TriageProposed",
+    "::Quorum.ResearchFunding.Submission.ProposalSubmitted"
+  ],
+  "participantsReached": [
+    "::Quorum.ResearchFunding.Submission.ProposalService",
+    "::Quorum.ResearchFunding.Submission.Triage",
+    "::Quorum.ResearchFunding.Notification.NotificationService",
+    "::Quorum.ResearchFunding.Oversight.PortfolioProjector"
+  ],
+  "weakestStrength": "correlated",
+  "declaredCausalClosure": {
+    "closed": true,
+    "meaning": "every consumption reached along declared hops carries a declaration (sinks included); NOT runtime completion, success, or that any Event occurs"
+  },
+  "expected": null
+}

@@ -1,0 +1,47 @@
+{
+  "acceptance-scenario": "1",
+  "name": "inv04-no-self-review",
+  "purpose": "An applicant who is also a reviewer cannot review their own proposal (INV-4).",
+  "verifies": [
+    "::Quorum.ResearchFunding.ReviewerAssignment.NoSelfReview",
+    "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+  ],
+  "test": "::Quorum.Inv04NoSelfReview",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "eligible",
+        "applicant": "sam"
+      },
+      "text": "proposal p1 has reached eligible"
+    }
+  ],
+  "when": [
+    {
+      "step": "reviewer.assign",
+      "args": {
+        "proposal": "p1",
+        "reviewer": "sam"
+      },
+      "text": "the officer assigns the applicant (a verified reviewer) to their own proposal"
+    }
+  ],
+  "then": [
+    {
+      "step": "command.refused",
+      "args": {
+        "status": 409,
+        "code": "self_review",
+        "rule": "INV-4"
+      },
+      "text": "the assignment is refused under INV-4"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "acceptance-scenario": "1",
+  "name": "inv12-verified-reviewers-only",
+  "purpose": "A reviewer without a verified ORCID iD cannot be assigned (INV-12).",
+  "verifies": [
+    "::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly",
+    "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+    "::Quorum.ResearchFunding.Identity.AccountService"
+  ],
+  "test": "::Quorum.Inv12VerifiedReviewers",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "eligible"
+      },
+      "text": "proposal p1 has reached eligible"
+    }
+  ],
+  "when": [
+    {
+      "step": "reviewer.assign",
+      "args": {
+        "proposal": "p1",
+        "reviewer": "unverified"
+      },
+      "text": "the officer assigns the unverified reviewer"
+    }
+  ],
+  "then": [
+    {
+      "step": "command.refused",
+      "args": {
+        "status": 409,
+        "code": "orcid_unverified",
+        "rule": "INV-12"
+      },
+      "text": "the assignment is refused under INV-12"
+    }
+  ]
+}

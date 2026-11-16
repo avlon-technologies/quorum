@@ -1,0 +1,55 @@
+{
+  "acceptance-scenario": "1",
+  "name": "inv08-chair-decides-scored-only",
+  "purpose": "A panel decision on an unscored proposal is refused, and a program officer cannot decide (INV-8).",
+  "verifies": [
+    "::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly",
+    "::Quorum.ResearchFunding.Adjudication.PanelDecision"
+  ],
+  "test": "::Quorum.Inv08ChairOnly",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "underReview"
+      },
+      "text": "proposal p1 has reached underReview"
+    }
+  ],
+  "when": [
+    {
+      "step": "decision.record",
+      "args": {
+        "proposal": "p1",
+        "as": "chair",
+        "outcome": "award"
+      },
+      "text": "the chair records an award on unscored p1"
+    }
+  ],
+  "then": [
+    {
+      "step": "command.refused",
+      "args": {
+        "status": 409,
+        "code": "not_scored",
+        "rule": "INV-8"
+      },
+      "text": "the decision is refused under INV-8"
+    },
+    {
+      "step": "event.count",
+      "args": {
+        "type": "ProposalAwarded",
+        "count": 0
+      },
+      "text": "no ProposalAwarded is published"
+    }
+  ]
+}

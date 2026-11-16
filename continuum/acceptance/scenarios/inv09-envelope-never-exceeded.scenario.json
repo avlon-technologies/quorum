@@ -1,0 +1,80 @@
+{
+  "acceptance-scenario": "1",
+  "name": "inv09-envelope-never-exceeded",
+  "purpose": "An award that would exceed the call envelope is refused, nothing is committed, and only a decline remains (INV-9).",
+  "verifies": [
+    "::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded",
+    "::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+    "::Quorum.ResearchFunding.Adjudication.PanelDecision"
+  ],
+  "test": "::Quorum.Inv09Envelope",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "args": {
+        "envelope": 200000,
+        "maxRequest": 150000
+      },
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposals.scored",
+      "args": {
+        "proposals": [
+          "p1",
+          "p2"
+        ],
+        "requested": 150000
+      },
+      "text": "p1 and p2 are scored, each requesting 150000"
+    },
+    {
+      "step": "decision.recorded",
+      "args": {
+        "proposal": "p1",
+        "outcome": "award"
+      },
+      "text": "the chair has awarded p1"
+    }
+  ],
+  "when": [
+    {
+      "step": "decision.record",
+      "args": {
+        "proposal": "p2",
+        "as": "chair",
+        "outcome": "award"
+      },
+      "text": "the chair tries to award p2"
+    }
+  ],
+  "then": [
+    {
+      "step": "command.refused",
+      "args": {
+        "status": 409,
+        "code": "envelope_exceeded",
+        "rule": "INV-9"
+      },
+      "text": "the award is refused under INV-9"
+    },
+    {
+      "step": "budget.committed",
+      "args": {
+        "committed": 150000,
+        "envelope": 200000
+      },
+      "text": "only 150000 is committed against the 200000 envelope"
+    },
+    {
+      "step": "decision.record.outcome",
+      "args": {
+        "proposal": "p2",
+        "award": 409,
+        "decline": 200
+      },
+      "text": "a second award attempt on p2 is refused, a decline is accepted"
+    }
+  ]
+}

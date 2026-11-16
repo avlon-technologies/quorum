@@ -1,0 +1,55 @@
+{
+  "acceptance-scenario": "1",
+  "name": "inv06-complete-scoring",
+  "purpose": "A review missing a criterion score is refused (INV-6).",
+  "verifies": [
+    "::Quorum.ResearchFunding.BlindPeerReview.CompleteScoring",
+    "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+  ],
+  "test": "::Quorum.Inv06CompleteScoring",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "underReview"
+      },
+      "text": "proposal p1 has reached underReview"
+    }
+  ],
+  "when": [
+    {
+      "step": "review.submit",
+      "args": {
+        "proposal": "p1",
+        "reviewer": 0,
+        "scores": "missing-one"
+      },
+      "text": "reviewer 0 submits a review that omits one criterion"
+    }
+  ],
+  "then": [
+    {
+      "step": "command.refused",
+      "args": {
+        "status": 422,
+        "code": "incomplete_review",
+        "rule": "INV-6"
+      },
+      "text": "the review is refused under INV-6"
+    },
+    {
+      "step": "event.count",
+      "args": {
+        "type": "ReviewSubmitted",
+        "count": 0
+      },
+      "text": "no ReviewSubmitted is published"
+    }
+  ]
+}

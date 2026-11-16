@@ -1,0 +1,67 @@
+{
+  "acceptance-scenario": "1",
+  "name": "overdue-review-escalated",
+  "purpose": "An assignment whose 21-day period elapses is marked overdue exactly once; a late review is still accepted (J6).",
+  "verifies": [
+    "::Quorum.ResearchFunding.ReviewCompletionTracking.OverdueReviewsEscalated",
+    "::Quorum.ResearchFunding.PeerReview.ReviewDeadline"
+  ],
+  "test": "::Quorum.OverdueEscalation",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "underReview"
+      },
+      "text": "proposal p1 has reached underReview"
+    }
+  ],
+  "when": [
+    {
+      "step": "clock.advanced",
+      "args": {
+        "days": 21
+      },
+      "text": "21 days pass"
+    }
+  ],
+  "then": [
+    {
+      "step": "event.count",
+      "args": {
+        "type": "ReviewOverdue",
+        "count": 3
+      },
+      "text": "three ReviewOverdue events are published"
+    },
+    {
+      "step": "clock.advanced",
+      "args": {
+        "days": 1
+      },
+      "text": "another day passes"
+    },
+    {
+      "step": "event.count",
+      "args": {
+        "type": "ReviewOverdue",
+        "count": 3
+      },
+      "text": "still three ReviewOverdue events"
+    },
+    {
+      "step": "review.submit.accepted",
+      "args": {
+        "proposal": "p1",
+        "reviewer": 0
+      },
+      "text": "reviewer 0 submits late and is accepted"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "acceptance-scenario": "1",
+  "name": "delivery-survives-interruption",
+  "purpose": "An event whose delivery is interrupted is delivered after restart, applied once per consumer; the projection replays identically (NFR-5).",
+  "verifies": [
+    "::Quorum.ResearchFunding.ParticipantNotification.NotificationsDurable",
+    "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+    "::Quorum.ResearchFunding.Notification.NotificationService"
+  ],
+  "test": "::Quorum.DeliveryAndReplay",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "draft"
+      },
+      "text": "proposal p1 has reached draft"
+    }
+  ],
+  "when": [
+    {
+      "step": "delivery.interrupted",
+      "args": {
+        "proposal": "p1",
+        "consumer": "notification.notification-service"
+      },
+      "text": "p1 is submitted and the notification delivery fails before it is marked, then Quorum restarts"
+    }
+  ],
+  "then": [
+    {
+      "step": "consumers.applied.once",
+      "args": {
+        "type": "ProposalSubmitted"
+      },
+      "text": "each consumer applied ProposalSubmitted exactly once"
+    },
+    {
+      "step": "projection.replays.identically",
+      "text": "replaying the portfolio projection from the event log reproduces it exactly"
+    }
+  ]
+}

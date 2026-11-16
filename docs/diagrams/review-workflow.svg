@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+<title>Quorum: from submitted proposal to funding decision</title>
+<desc>Human eligibility and funding decisions, advisory triage, three-review completion, and budget-constrained award branching. Solid, dashed and dotted connectors distinguish stated, inferred and proposed routes.</desc>
+<defs>
+<marker id="arrow" orient="auto" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="9" refY="5"><path d="M 0 1 L 9 5 L 0 9" fill="#26364F"/></marker>
+<marker id="weak" orient="auto" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" refX="8" refY="4"><path d="M 0 1 L 8 4 L 0 7" fill="#8398B2"/></marker>
+</defs>
+<rect x="0" y="0" width="1536" height="1024" fill="#FFFFFF"/>
+<text x="24" y="43" font-size="35" font-weight="750" fill="#0C1428">Quorum: from submitted proposal to funding decision</text>
+<text x="24" y="76" font-size="21" fill="#4B5B76">Human decisions, three completed reviews, and an award constrained by the budget envelope</text>
+
+<g class="legend" data-label="Arrows" fill="#15223B" font-size="11">
+<text x="1208" y="29" font-size="15" font-weight="700">Arrows</text>
+<path d="M 1208 47 L 1264 47" stroke="#26364F" stroke-width="2" marker-end="url(#arrow)"/><text x="1275" y="51">Solid: stated in the model</text>
+<path d="M 1208 68 L 1264 68" stroke="#62748D" stroke-width="1.6" stroke-dasharray="6 5" marker-end="url(#arrow)"/><text x="1275" y="72" font-size="10">Dashed: follows from the model, not stated in it</text>
+<path d="M 1208 89 L 1264 89" stroke="#8398B2" stroke-width="1.4" stroke-dasharray="2 4" marker-end="url(#weak)"/><text x="1275" y="93">Dotted: proposed, not in the model</text>
+</g>
+
+<g class="domain" data-label="Triage" data-grade="declared">
+<rect x="550" y="115" width="600" height="190" rx="9" fill="#F2EDFF" stroke="#9562E9" stroke-width="1.5"/>
+<text x="566" y="140" font-size="22" font-weight="700" fill="#492071">Triage</text>
+<text x="566" y="162" font-size="14" fill="#26364F">Advisory and non-blocking; if assessment fails, the officer screens without it</text>
+<g class="service" data-label="assess · EligibilityTriage" data-grade="declared">
+<rect x="580" y="180" width="260" height="110" rx="7" fill="#E0D3FA" stroke="#8B55DF" stroke-width="1.5"/>
+<text x="594" y="202" font-size="16" font-weight="700" fill="#27134F">assess · EligibilityTriage</text>
+<text x="594" y="223" font-size="14" fill="#26364F"><tspan x="594">Proposes eligible / ineligible /</tspan><tspan x="594" dy="18">unclear, with rationale</tspan></text>
+<text x="594" y="266" font-size="12" fill="#492071"><tspan x="594">Advice only — never decides eligibility</tspan></text>
+</g>
+<g class="service" data-label="record · RecordTriageProposal" data-grade="declared">
+<rect x="900" y="192" width="230" height="84" rx="7" fill="#DCEAFE" stroke="#5289D9" stroke-width="1.5"/>
+<text x="913" y="216" font-size="14" font-weight="700" fill="#142D56">record · RecordTriageProposal</text>
+<text x="913" y="239" font-size="14" fill="#26364F"><tspan x="913">Records the assessment,</tspan><tspan x="913" dy="18">or its absence</tspan></text>
+</g>
+</g>
+
+<g class="service" data-label="ProposalSubmitted" data-grade="declared">
+<rect x="24" y="190" width="180" height="80" rx="7" fill="#D5E6FD" stroke="#4B87DD" stroke-width="1.5"/>
+<text x="38" y="215" font-size="16" font-weight="700" fill="#142D56">ProposalSubmitted</text>
+<text x="38" y="237" font-size="14" fill="#26364F"><tspan x="38">Starts screening and</tspan><tspan x="38" dy="18">advisory triage</tspan></text>
+</g>
+<g class="service" data-label="ProposalEnteredScreening" data-grade="declared">
+<rect x="300" y="190" width="220" height="80" rx="7" fill="#DCEAFE" stroke="#5289D9" stroke-width="1.5"/>
+<text x="313" y="215" font-size="15" font-weight="700" fill="#142D56">ProposalEnteredScreening</text>
+<text x="313" y="238" font-size="14" fill="#26364F"><tspan x="313">Published by ProposalService</tspan></text>
+</g>
+<g class="service" data-label="ConfirmEligibility · ProgramOfficer" data-grade="declared">
+<rect x="110" y="365" width="235" height="100" rx="7" fill="#CEECEC" stroke="#079B9D" stroke-width="1.5"/>
+<text x="124" y="390" font-size="17" font-weight="700" fill="#064C5B"><tspan x="124">ConfirmEligibility ·</tspan><tspan x="124" dy="21">ProgramOfficer</tspan></text>
+<text x="124" y="438" font-size="14" fill="#26364F">Makes the eligibility decision</text>
+</g>
+<g class="service" data-label="ProposalEligible" data-grade="declared">
+<rect x="465" y="350" width="175" height="64" rx="7" fill="#DCEAFE" stroke="#5289D9" stroke-width="1.5"/>
+<text x="478" y="375" font-size="16" font-weight="700" fill="#142D56">ProposalEligible</text><text x="478" y="397" font-size="14" fill="#26364F">Eligible outcome</text>
+</g>
+<g class="service" data-label="ProposalIneligible" data-grade="declared">
+<rect x="465" y="440" width="175" height="64" rx="7" fill="#FFF0BC" stroke="#C99A22" stroke-width="1.5"/>
+<text x="478" y="465" font-size="16" font-weight="700" fill="#5B4311">ProposalIneligible</text><text x="478" y="487" font-size="14" fill="#26364F">Screened out</text>
+</g>
+<g class="service" data-label="AssignReviewer ×3 · ProgramOfficer" data-grade="declared">
+<rect x="685" y="335" width="215" height="160" rx="7" fill="#CEECEC" stroke="#079B9D" stroke-width="1.5"/>
+<text x="699" y="359" font-size="16" font-weight="700" fill="#064C5B"><tspan x="699">AssignReviewer ×3 ·</tspan><tspan x="699" dy="20">ProgramOfficer</tspan></text>
+<text x="699" y="404" font-size="14" fill="#26364F"><tspan x="699">Builds the three active</tspan><tspan x="699" dy="18">assignments</tspan></text>
+<text x="699" y="447" font-size="12" fill="#26364F"><tspan x="699">No conflicted reviewer, applicant,</tspan><tspan x="699" dy="16">unverified ORCID or fourth</tspan><tspan x="699" dy="16">active assignment</tspan></text>
+</g>
+<g class="service" data-label="ReviewersAssigned" data-grade="declared">
+<rect x="940" y="365" width="160" height="80" rx="7" fill="#DCEAFE" stroke="#5289D9" stroke-width="1.5"/>
+<text x="953" y="389" font-size="14" font-weight="700" fill="#142D56">ReviewersAssigned</text>
+<text x="953" y="412" font-size="13" fill="#26364F"><tspan x="953">Emitted on the third</tspan><tspan x="953" dy="17">active assignment</tspan></text>
+</g>
+<g class="service" data-label="ProposalUnderReview" data-grade="declared">
+<rect x="1140" y="365" width="175" height="80" rx="7" fill="#DCEAFE" stroke="#5289D9" stroke-width="1.5"/>
+<text x="1153" y="389" font-size="14" font-weight="700" fill="#142D56">ProposalUnderReview</text>
+<text x="1153" y="412" font-size="13" fill="#26364F"><tspan x="1153">Published by</tspan><tspan x="1153" dy="17">ProposalService</tspan></text>
+</g>
+<g class="service" data-label="SubmitReview · each reviewer" data-grade="declared">
+<rect x="1350" y="335" width="165" height="180" rx="7" fill="#CEECEC" stroke="#079B9D" stroke-width="1.5"/>
+<text x="1363" y="359" font-size="16" font-weight="700" fill="#064C5B"><tspan x="1363">SubmitReview ·</tspan><tspan x="1363" dy="20">each reviewer</tspan></text>
+<text x="1363" y="403" font-size="13" fill="#26364F"><tspan x="1363">Own accepted or</tspan><tspan x="1363" dy="17">overdue assignment;</tspan><tspan x="1363" dy="17">every criterion scored 1–5</tspan></text>
+<text x="1363" y="462" font-size="12" fill="#26364F"><tspan x="1363">Peers' scores and</tspan><tspan x="1363" dy="15">comments stay hidden until</tspan><tspan x="1363" dy="15">own review is submitted</tspan></text>
+</g>
+
+<g class="service" data-label="ReviewSubmitted" data-grade="declared">
+<rect x="160" y="565" width="180" height="76" rx="7" fill="#DCEAFE" stroke="#5289D9" stroke-width="1.5"/>
+<text x="174" y="590" font-size="16" font-weight="700" fill="#142D56">ReviewSubmitted</text><text x="174" y="612" font-size="14" fill="#26364F"><tspan x="174">One event per</tspan><tspan x="174" dy="17">submitted review</tspan></text>
+</g>
+<g class="service" data-label="ReviewCompletion" data-grade="declared">
+<rect x="455" y="565" width="220" height="76" rx="7" fill="#D5E6FD" stroke="#5289D9" stroke-width="1.5"/>
+<text x="469" y="590" font-size="17" font-weight="700" fill="#142D56">ReviewCompletion</text><text x="469" y="612" font-size="14" fill="#26364F"><tspan x="469">Counts submitted reviews on</tspan><tspan x="469" dy="17">non-revoked assignments</tspan></text>
+</g>
+<g class="service" data-label="ProposalFullyReviewed" data-grade="declared">
+<rect x="780" y="565" width="220" height="76" rx="7" fill="#DCEAFE" stroke="#5289D9" stroke-width="1.5"/>
+<text x="794" y="590" font-size="16" font-weight="700" fill="#142D56">ProposalFullyReviewed</text><text x="794" y="614" font-size="14" fill="#26364F">Published exactly once, at three</text>
+</g>
+<g class="service" data-label="ProposalScored" data-grade="declared">
+<rect x="1120" y="565" width="190" height="76" rx="7" fill="#D5E6FD" stroke="#5289D9" stroke-width="1.5"/>
+<text x="1134" y="590" font-size="17" font-weight="700" fill="#142D56">ProposalScored</text><text x="1134" y="613" font-size="13" fill="#26364F">Published by ProposalService</text>
+</g>
+
+<g class="domain" data-label="PanelDecision" data-grade="declared">
+<rect x="24" y="690" width="1488" height="305" rx="9" fill="#F3EEFC" stroke="#9562E9" stroke-width="1.5"/>
+<text x="40" y="718" font-size="23" font-weight="700" fill="#492071">PanelDecision</text>
+<text x="40" y="741" font-size="14" fill="#26364F">Chair decision followed by the budget check; no award retry loop</text>
+<g class="service" data-label="decide · PanelChair" data-grade="declared">
+<rect x="40" y="765" width="225" height="145" rx="7" fill="#CEECEC" stroke="#079B9D" stroke-width="1.5"/>
+<text x="54" y="791" font-size="17" font-weight="700" fill="#064C5B">decide · PanelChair</text><text x="54" y="815" font-size="14" fill="#26364F">Human task: award or decline</text>
+<text x="54" y="844" font-size="12" fill="#26364F"><tspan x="54">After 14 days: notify ProgramOfficer;</tspan><tspan x="54" dy="17">task stays open; no timeout decision</tspan></text>
+</g>
+<g class="service" data-label="Award?" data-grade="declared">
+<rect x="305" y="780" width="150" height="90" rx="20" fill="#E0D3FA" stroke="#8B55DF" stroke-width="1.5"/>
+<text x="350" y="809" font-size="18" font-weight="700" fill="#492071">Award?</text><text x="319" y="832" font-size="13" fill="#26364F"><tspan x="319">Routes the chair's</tspan><tspan x="319" dy="17">verdict</tspan></text>
+</g>
+<g class="service" data-label="commit · CommitAward" data-grade="declared">
+<rect x="510" y="770" width="215" height="85" rx="7" fill="#DCEAFE" stroke="#5289D9" stroke-width="1.5"/>
+<text x="524" y="794" font-size="16" font-weight="700" fill="#142D56">commit · CommitAward</text><text x="524" y="817" font-size="14" fill="#26364F"><tspan x="524">Attempts the award against</tspan><tspan x="524" dy="18">the budget envelope</tspan></text>
+</g>
+<g class="service" data-label="Within envelope?" data-grade="declared">
+<rect x="770" y="770" width="185" height="85" rx="20" fill="#E0D3FA" stroke="#8B55DF" stroke-width="1.5"/>
+<text x="784" y="800" font-size="17" font-weight="700" fill="#492071">Within envelope?</text><text x="784" y="826" font-size="13" fill="#26364F">Checks the commit result</text>
+</g>
+<g class="service" data-label="Publish ProposalAwarded" data-grade="declared">
+<rect x="1030" y="765" width="225" height="65" rx="7" fill="#D9EDCF" stroke="#4A8D37" stroke-width="1.5"/>
+<text x="1044" y="791" font-size="16" font-weight="700" fill="#285523">Publish ProposalAwarded</text><text x="1044" y="814" font-size="14" fill="#26364F">Award outcome</text>
+</g>
+<g class="service" data-label="decline · RecordDecline" data-grade="declared">
+<rect x="305" y="925" width="235" height="55" rx="7" fill="#DCEAFE" stroke="#5289D9" stroke-width="1.5"/>
+<text x="319" y="948" font-size="16" font-weight="700" fill="#142D56">decline · RecordDecline</text><text x="319" y="968" font-size="14" fill="#26364F">Records the initial decline</text>
+</g>
+<g class="service" data-label="reconsider · PanelChair" data-grade="declared">
+<rect x="840" y="895" width="230" height="85" rx="7" fill="#CEECEC" stroke="#079B9D" stroke-width="1.5"/>
+<text x="854" y="916" font-size="16" font-weight="700" fill="#064C5B">reconsider · PanelChair</text>
+<text x="854" y="936" font-size="13" fill="#26364F"><tspan x="854">Only an acknowledged decline is admitted</tspan></text>
+<text x="854" y="953" font-size="11" fill="#26364F"><tspan x="854">Case stays open and escalates until</tspan><tspan x="854" dy="15">the chair records the decline</tspan></text>
+</g>
+<g class="service" data-label="declineRefused · RecordDecline" data-grade="declared">
+<rect x="1100" y="895" width="215" height="85" rx="7" fill="#DCEAFE" stroke="#5289D9" stroke-width="1.5"/>
+<text x="1113" y="919" font-size="13" font-weight="700" fill="#142D56">declineRefused · RecordDecline</text><text x="1113" y="943" font-size="14" fill="#26364F"><tspan x="1113">Records the acknowledged</tspan><tspan x="1113" dy="18">decline</tspan></text>
+</g>
+<g class="service" data-label="Publish ProposalDeclined" data-grade="declared">
+<rect x="1340" y="895" width="155" height="85" rx="7" fill="#FFF0BC" stroke="#C99A22" stroke-width="1.5"/>
+<text x="1353" y="916" font-size="14" font-weight="700" fill="#5B4311"><tspan x="1353">Publish</tspan><tspan x="1353" dy="17">ProposalDeclined</tspan></text><text x="1353" y="953" font-size="13" fill="#26364F"><tspan x="1353">Budget-refusal</tspan><tspan x="1353" dy="17">decline outcome</tspan></text>
+</g>
+</g>
+
+<g fill="none" stroke="#26364F" stroke-width="1.8" stroke-linejoin="round">
+<g class="edge" data-from="ProposalSubmitted" data-to="Triage"><path d="M 114 190 L 114 150 L 530 150 Q 540 150 540 160 L 540 220 L 550 220" marker-end="url(#arrow)"/><text x="350" y="143" fill="#26364F" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="12">triggers</text></g>
+<g class="edge" data-from="assess · EligibilityTriage" data-to="record · RecordTriageProposal"><path d="M 840 234 L 900 234" marker-end="url(#arrow)"/></g>
+<g class="edge" data-from="ReviewSubmitted" data-to="ReviewCompletion"><path d="M 340 603 L 455 603" marker-end="url(#arrow)"/><text x="365" y="589" fill="#26364F" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="12">received by</text></g>
+<g class="edge" data-from="ReviewCompletion" data-to="ProposalFullyReviewed"><path d="M 675 603 L 780 603" marker-end="url(#arrow)"/><text x="700" y="589" fill="#26364F" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="12">publishes</text></g>
+<g class="edge" data-from="ProposalScored" data-to="PanelDecision"><path d="M 1215 641 L 1215 690" marker-end="url(#arrow)"/><text x="1227" y="674" fill="#26364F" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="12">triggers</text></g>
+<g class="edge" data-from="decide · PanelChair" data-to="Award?"><path d="M 265 825 L 305 825" marker-end="url(#arrow)"/></g>
+<g class="edge" data-from="Award?" data-to="commit · CommitAward"><path d="M 455 813 L 510 813" marker-end="url(#arrow)"/><text x="463" y="795" fill="#26364F" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="12">if result</text></g>
+<g class="edge" data-from="Award?" data-to="decline · RecordDecline"><path d="M 380 870 L 380 925" marker-end="url(#arrow)"/><text x="391" y="899" fill="#26364F" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="12">default</text></g>
+<g class="edge" data-from="commit · CommitAward" data-to="Within envelope?"><path d="M 725 813 L 770 813" marker-end="url(#arrow)"/></g>
+<g class="edge" data-from="Within envelope?" data-to="Publish ProposalAwarded"><path d="M 955 798 L 1030 798" marker-end="url(#arrow)"/><text x="967" y="781" fill="#26364F" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="12">if result</text></g>
+<g class="edge" data-from="Within envelope?" data-to="reconsider · PanelChair"><path d="M 862 855 L 862 895" marker-end="url(#arrow)"/><text x="875" y="880" fill="#26364F" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="12">default</text></g>
+<g class="edge" data-from="reconsider · PanelChair" data-to="declineRefused · RecordDecline"><path d="M 1070 938 L 1100 938" marker-end="url(#arrow)"/></g>
+<g class="edge" data-from="declineRefused · RecordDecline" data-to="Publish ProposalDeclined"><path d="M 1315 938 L 1340 938" marker-end="url(#arrow)"/></g>
+</g>
+
+<g fill="none" stroke="#8398B2" stroke-width="1.4" stroke-linejoin="round">
+<g class="edge" data-kind="derived" data-from="ProposalSubmitted" data-to="ProposalEnteredScreening"><path d="M 204 230 L 300 230" stroke-dasharray="2 4" marker-end="url(#weak)"/><text x="211" y="216" fill="#536B88" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="11">ProposalService</text></g>
+<g class="edge" data-kind="derived" data-from="ProposalEnteredScreening" data-to="ConfirmEligibility · ProgramOfficer"><path d="M 410 270 L 410 320 L 228 320 L 228 365" stroke="#62748D" stroke-width="1.6" stroke-dasharray="6 5" marker-end="url(#arrow)"/></g>
+<g class="edge" data-kind="derived" data-from="ConfirmEligibility · ProgramOfficer" data-to="ProposalEligible"><path d="M 345 390 L 465 390" stroke-dasharray="2 4" marker-end="url(#weak)"/><text x="348" y="375" fill="#536B88" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="10">eligible · ProposalService</text></g>
+<g class="edge" data-kind="derived" data-from="ConfirmEligibility · ProgramOfficer" data-to="ProposalIneligible"><path d="M 345 450 L 405 450 L 405 472 L 465 472" stroke-dasharray="2 4" marker-end="url(#weak)"/><text x="346" y="490" fill="#536B88" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="10">ineligible · ProposalService</text></g>
+<g class="edge" data-kind="derived" data-from="ProposalEligible" data-to="AssignReviewer ×3 · ProgramOfficer"><path d="M 640 382 L 685 382" stroke="#62748D" stroke-width="1.6" stroke-dasharray="6 5" marker-end="url(#arrow)"/></g>
+<g class="edge" data-kind="derived" data-from="AssignReviewer ×3 · ProgramOfficer" data-to="ReviewersAssigned"><path d="M 900 405 L 940 405" stroke-dasharray="2 4" marker-end="url(#weak)"/><text x="904" y="350" fill="#536B88" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="10">AssignmentService</text></g>
+<g class="edge" data-kind="derived" data-from="ReviewersAssigned" data-to="ProposalUnderReview"><path d="M 1100 405 L 1140 405" stroke-dasharray="2 4" marker-end="url(#weak)"/><text x="1103" y="350" fill="#536B88" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="10">ProposalService</text></g>
+<g class="edge" data-kind="derived" data-from="ProposalUnderReview" data-to="SubmitReview · each reviewer"><path d="M 1315 405 L 1350 405" stroke="#62748D" stroke-width="1.6" stroke-dasharray="6 5" marker-end="url(#arrow)"/></g>
+<g class="edge" data-kind="derived" data-from="SubmitReview · each reviewer" data-to="ReviewSubmitted"><path d="M 1432 515 L 1432 534 Q 1432 540 1426 540 L 130 540 Q 120 540 120 550 L 120 603 L 160 603" stroke-dasharray="2 4" marker-end="url(#weak)"/><text x="175" y="533" fill="#536B88" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="12">AssignmentService</text></g>
+<g class="edge" data-kind="derived" data-from="ProposalFullyReviewed" data-to="ProposalScored"><path d="M 1000 603 L 1120 603" stroke-dasharray="2 4" marker-end="url(#weak)"/><text x="1013" y="589" fill="#536B88" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="12">ProposalService</text></g>
+</g>
+</svg>

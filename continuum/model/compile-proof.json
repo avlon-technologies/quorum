@@ -1,0 +1,92 @@
+{
+  "development-package-proof": "1",
+  "normative": false,
+  "note": "the compiler's result relayed by tools/development-package.mjs — diagnostics and the ledger have no ratified wire form; the attestation and changeState are the engines' own digests",
+  "package": {
+    "name": "avlon.quorum",
+    "version": "package-1",
+    "core": "adl/1.7",
+    "documents": [
+      "quorum.adl"
+    ]
+  },
+  "ok": true,
+  "attestation": "sha256:f75646711920628a45e67531ba5fdee8eb85c2efeeea8068ecf268664cee4c12",
+  "changeState": "sha256:e9c76035f0e316fe41e96df7578d2a5043f82e38f99907545af21c2ec0ec1d68",
+  "ledger": {
+    "passed": 78,
+    "failed": 0,
+    "notEvaluated": 0,
+    "byReason": {}
+  },
+  "notEvaluated": [],
+  "inputs": {
+    "manifest": {
+      "name": "avlon.quorum",
+      "version": "package-1",
+      "core": "adl/1.7",
+      "imports": [],
+      "extensions": [],
+      "digest": "sha256:3f2a36aa8e8d55725592b8c9ddcfd4bfcdf1728a41e92ea271f9fff3b8016711"
+    },
+    "documents": [
+      {
+        "path": "quorum.adl",
+        "digest": "sha256:98b7dee3b5b20dc1e1a818d416044d1b870932af00ae7937470d81f22530cbfe",
+        "bytes": 66419
+      }
+    ],
+    "inputSet": "sha256:0ffb8373db576277e5ab42b439cab3b301a4d3bc8de930876c06f57f69dbe1d3",
+    "note": "digests over the AUTHORED input bytes, distinct from the attestation (the engine's digest over canonical content)."
+  },
+  "verifier": {
+    "recordedBeside": "compile-proof.verifier.json",
+    "note": "the verifier that decided this judgment is NOT in this proof: it is acquired by the client and recorded beside it (continuum-verifier-record/1). When that record is absent the judgment is UNIDENTIFIED — a historical record, not attributable, not replayable, never a current claim."
+  },
+  "warnings": [
+    {
+      "severity": "warning",
+      "id": "adl/execution/unset-field-read",
+      "subject": "841dc984-8d3b-4ca0-bab1-f321772185b9",
+      "level": "element",
+      "member": null,
+      "detail": {
+        "form": "witness",
+        "property": "unset-field-read",
+        "witnessKind": "pair",
+        "witness": {
+          "a": "45c44402-a44f-4ed7-8362-fad866e5266c",
+          "b": "841dc984-8d3b-4ca0-bab1-f321772185b9"
+        },
+        "shared": "verdict"
+      },
+      "subjectName": "::Quorum.ResearchFunding.Submission.Triage.record"
+    }
+  ],
+  "errors": [],
+  "derivedFrom": null,
+  "binding": {
+    "environments": [
+      {
+        "name": "LocalDevelopment",
+        "id": "ea2208e8-034a-4de7-9068-731ab6b7af9e",
+        "document": "model/local-development.adl-binding.json",
+        "completeness": "passed",
+        "bindingDigest": "sha256:0a1a92c1647024f56962e6d2f61b4c0b577285d1ec0865678b84887e59997de3",
+        "notEvaluated": []
+      }
+    ],
+    "claims": [
+      {
+        "vocabulary": "avlon.quorum.bindings.localdevelopment package-1",
+        "digest": "sha256:f1b4ba477c3778eb0c37f0816830f4e4b2f710ee062708bfff593f79c31f89e4"
+      }
+    ],
+    "secretMaterial": {
+      "status": "not-evaluated",
+      "reason": "unresolved-normative-dependency",
+      "detail": "R12-1"
+    },
+    "unboundEnvironments": []
+  }
+}

@@ -1,0 +1,601 @@
+model {
+  bdl         1.0
+  types       adl-type/1.0
+  expressions adl-expr/1.0
+  definition  "quorum.2026-11-16.1"
+}
+
+business Quorum #b-q001 {
+  description "A research funding body's authority to award money against a fixed envelope, on the evidence of independent, blind peer review."
+  purpose {
+    "award research funding only on complete, independent and conflict-free evidence"
+    "never commit money the envelope does not hold"
+    "keep every decision about a proposal with an accountable human"
+    "answer where any proposal stands without asking anyone"
+  }
+  modality { epistemic stated }
+  provenance { source requirement, sourceReference "product/PRODUCT_REQUIREMENTS.md (MVP brief, 2026-10-12)", assertedBy "Quorum product owner", assertedOn 2026-11-16 }
+
+  domain ResearchFunding #d-q001 {
+    description "Calls for proposals, eligibility, peer review and panel adjudication."
+    purpose {
+      "turn a published call into funded research through an auditable process"
+    }
+
+    capability CallAdministration #c-q001 { purpose { "publish a call with a deadline, a budget envelope and scoring criteria, and close it" } }
+    capability ProposalSubmission #c-q002 { purpose { "let a principal investigator submit one proposal per draft, on time" } }
+    capability EligibilityScreening #c-q003 { purpose { "establish, by a human, whether a submission is within the call" } }
+    capability ReviewerAssignment #c-q004 { purpose { "put three accountable, unconflicted experts on every eligible proposal" } }
+    capability BlindPeerReview #c-q005 { purpose { "obtain three independent scorings of every criterion" } }
+    capability PanelAdjudication #c-q006 { purpose { "award or decline a fully reviewed proposal within the envelope" } }
+    capability PortfolioReporting #c-q007 { purpose { "show where every proposal is, what it scored and what the envelope still holds" } }
+
+    value Money #v-q001 {
+      amount: decimal(14,2)
+      currency: text
+    }
+
+    // ------------------------------------------------------------- entities and lifecycles
+    entity Call #en-q001 {
+      description "A call for proposals. Its envelope and criteria are fixed from the moment it opens."
+      identity callId
+      callId: text
+      title: text
+      deadline: datetime
+      envelope: Money
+      maxRequest: Money
+      status: CallStatus
+
+      state-model CallLifecycle for status #sm-q001 {
+        initial Open
+        terminal Closed
+        transition Close #t-q001 {
+          from Open
+          to Closed
+          triggeredBy CloseCall
+          produces CallClosed
+        }
+      }
+    }
+
+    entity Account #en-q002 {
+      description "A person who signs in. Roles are granted; a reviewer's ORCID identity moves only from unverified to verified."
+      identity accountId
+      accountId: text
+      institution: text
+      orcidStatus: OrcidStatus
+
+      state-model OrcidVerification for orcidStatus #sm-q002 {
+        initial Unverified
+        terminal Verified
+        transition Verify #t-q002 {
+          from Unverified
+          to Verified
+          triggeredBy VerifyOrcid
+          produces OrcidVerified
+        }
+      }
+    }
+
+    entity Proposal #en-q003 {
+      description "A request for funding against one call. Eligible and Ineligible are additions to the brief's lifecycle: an officer's screening outcome is not a panel decision, so it may not reuse Declined (decision D4)."
+      identity proposalId
+      proposalId: text
+      call: Call
+      applicant: Account
+      requested: Money
+      status: ProposalStatus
+
+      state-model ProposalLifecycle for status #sm-q003 {
+        initial Draft
+        terminal Awarded Declined Withdrawn Ineligible
+
+        transition Submit #t-q010 {
+          from Draft
+          to Submitted
+          triggeredBy SubmitProposal
+          produces ProposalSubmitted
+        }
+        transition EnterScreening #t-q011 {
+          description "Automatic, and independent of the triage agent: a failed agent never strands a proposal (D11)."
+          from Submitted
+          to Screening
+          triggeredBy OpenScreening
+          produces ProposalEnteredScreening
+        }
+        transition ScreenIn #t-q012 {
+          from Screening
+          to Eligible
+          triggeredBy ConfirmEligibility
+          produces ProposalEligible
+        }
+        transition ScreenOut #t-q013 {
+          from Screening
+          to Ineligible
+          triggeredBy ConfirmEligibility
+          produces ProposalIneligible
+        }
+        transition BeginReview #t-q014 {
+          from Eligible
+          to UnderReview
+          triggeredBy RecordPanelComplete
+          produces ProposalUnderReview
+          requires ReviewersAssigned
+        }
+        transition Score #t-q015 {
+          from UnderReview
+          to Scored
+          triggeredBy RecordReviewCompletion
+          produces ProposalScored
+          requires ProposalFullyReviewed
+        }
+        transition Award #t-q016 {
+          from Scored
+          to Awarded
+          triggeredBy RecordPanelDecision
+          produces ProposalAwarded
+        }
+        transition Decline #t-q017 {
+          from Scored
+          to Declined
+          triggeredBy RecordPanelDecision
+          produces ProposalDeclined
+        }
+        transition WithdrawDraft #t-q018 { from Draft to Withdrawn triggeredBy WithdrawProposal produces ProposalWithdrawn }
+        transition WithdrawSubmitted #t-q019 { from Submitted to Withdrawn triggeredBy WithdrawProposal produces ProposalWithdrawn }
+        transition WithdrawInScreening #t-q020 { from Screening to Withdrawn triggeredBy WithdrawProposal produces ProposalWithdrawn }
+        transition WithdrawEligible #t-q021 { from Eligible to Withdrawn triggeredBy WithdrawProposal produces ProposalWithdrawn }
+        transition WithdrawUnderReview #t-q022 { from UnderReview to Withdrawn triggeredBy WithdrawProposal produces ProposalWithdrawn }
+      }
+    }
+
+    entity ConflictDeclaration #en-q004 {
+      description "Permanent. Identified by the pair (reviewer, proposal)."
+      identity conflictKey
+      conflictKey: text
+      reviewer: Account
+      proposal: Proposal
+      reason: text
+    }
+
+    entity Assignment #en-q005 {
+      identity assignmentId
+      assignmentId: text
+      reviewer: Account
+      proposal: Proposal
+      dueOn: datetime
+      status: AssignmentStatus
+
+      state-model AssignmentLifecycle for status #sm-q005 {
+        initial Assigned
+        terminal Revoked
+        transition Accept #t-q030 { from Assigned to Accepted triggeredBy AcceptAssignment }
+        transition CompleteOnTime #t-q031 { from Accepted to Completed triggeredBy SubmitReview produces ReviewSubmitted }
+        transition FallOverdueAssigned #t-q032 { from Assigned to Overdue triggeredBy MarkOverdue produces ReviewOverdue }
+        transition FallOverdueAccepted #t-q033 { from Accepted to Overdue triggeredBy MarkOverdue produces ReviewOverdue }
+        transition CompleteLate #t-q034 {
+          description "A late review is accepted (D9)."
+          from Overdue
+          to Completed
+          triggeredBy SubmitReview
+          produces ReviewSubmitted
+        }
+        transition RevokeAssigned #t-q035 { from Assigned to Revoked triggeredBy RevokeAssignment }
+        transition RevokeAccepted #t-q036 { from Accepted to Revoked triggeredBy RevokeAssignment }
+        transition RevokeOverdue #t-q037 { from Overdue to Revoked triggeredBy RevokeAssignment }
+        transition RevokeOnConflict #t-q038 {
+          from Accepted
+          to Revoked
+          triggeredBy DeclareConflict
+        }
+        transition RevokeAssignedOnConflict #t-q039 {
+          from Assigned
+          to Revoked
+          triggeredBy DeclareConflict
+        }
+        transition RevokeOverdueOnConflict #t-q060 {
+          from Overdue
+          to Revoked
+          triggeredBy DeclareConflict
+        }
+        transition RevokeCompletedOnConflict #t-q061 {
+          description "D5: a conflict declared after the review was submitted but before the proposal is Scored voids the review and revokes the assignment; the officer assigns a replacement."
+          from Completed
+          to Revoked
+          triggeredBy DeclareConflict
+        }
+        transition RevokeAssignedOnWithdrawal #t-q062 { from Assigned to Revoked triggeredBy RevokeOnWithdrawal }
+        transition RevokeAcceptedOnWithdrawal #t-q063 { from Accepted to Revoked triggeredBy RevokeOnWithdrawal }
+        transition RevokeOverdueOnWithdrawal #t-q064 { from Overdue to Revoked triggeredBy RevokeOnWithdrawal }
+      }
+    }
+
+    entity Review #en-q006 {
+      identity reviewId
+      reviewId: text
+      assignment: Assignment
+      status: ReviewStatus
+
+      state-model ReviewLifecycle for status #sm-q006 {
+        initial Pending
+        terminal Voided
+        transition Submit #t-q040 {
+          from Pending
+          to Submitted
+          triggeredBy SubmitReview
+          produces ReviewSubmitted
+        }
+        transition VoidOnConflict #t-q041 {
+          description "D5: a submitted review whose author later declares a conflict, before scoring, no longer counts."
+          from Submitted
+          to Voided
+          triggeredBy DeclareConflict
+        }
+        transition VoidPendingOnConflict #t-q042 { from Pending to Voided triggeredBy DeclareConflict }
+        transition VoidPendingOnRevocation #t-q043 { from Pending to Voided triggeredBy RevokeAssignment }
+        transition VoidPendingOnWithdrawal #t-q044 { from Pending to Voided triggeredBy RevokeOnWithdrawal }
+      }
+    }
+
+    entity PanelDecision #en-q007 {
+      description "Recorded once per proposal; terminal."
+      identity proposalId
+      proposalId: text
+      outcome: PanelOutcome
+      amount: Money
+    }
+
+    entity OutboundMessage #en-q008 {
+      description "A notification to one participant about one event."
+      identity messageId
+      messageId: text
+      recipient: Account
+      status: MessageStatus
+
+      state-model MessageDelivery for status #sm-q008 {
+        initial Queued
+        terminal Delivered Failed
+        transition Deliver #t-q050 { from Queued to Delivered triggeredBy DeliverMessage }
+        transition Fail #t-q051 { from Queued to Failed triggeredBy DeliverMessage }
+      }
+    }
+
+    enum CallStatus #e-q001 { Open Closed }
+    enum OrcidStatus #e-q002 { Unverified Verified }
+    enum ProposalStatus #e-q003 { Draft Submitted Screening Eligible Ineligible UnderReview Scored Awarded Declined Withdrawn }
+    enum AssignmentStatus #e-q004 { Assigned Accepted Completed Overdue Revoked }
+    enum ReviewStatus #e-q005 { Pending Submitted Voided }
+    enum PanelOutcome #e-q006 { Award Decline }
+    enum EligibilityVerdict #e-q007 { Eligible Ineligible Unclear }
+    enum MessageStatus #e-q008 { Queued Delivered Failed }
+
+    // ------------------------------------------------------------- actions: who may do what
+    action PublishCall [permitted] #ac-q001 {
+      mayPerform ProgramOfficer
+      exercises CallAdministration
+      creates Call
+      produces CallPublished
+      outcome { Call.status == CallStatus "Open" }
+    }
+    action CloseCall [permitted] #ac-q002 {
+      mayPerform ProgramOfficer
+      exercises CallAdministration
+      changes Call
+      produces CallClosed
+    }
+    action RegisterApplicant [permitted] #ac-q003 {
+      mayPerform Applicant
+      creates Account
+      outcome { Account.orcidStatus == OrcidStatus "Unverified" }
+    }
+    action VerifyOrcid [permitted] #ac-q004 {
+      description "The reviewer claims an ORCID iD; the ORCID registry confirms it exists."
+      mayPerform Reviewer
+      changes Account
+      produces OrcidVerified
+    }
+    action SaveDraft [permitted] #ac-q005 {
+      mayPerform Applicant
+      exercises ProposalSubmission
+      creates Proposal
+      outcome { Proposal.status == ProposalStatus "Draft" }
+    }
+    action SubmitProposal [permitted] #ac-q006 {
+      mayPerform Applicant
+      exercises ProposalSubmission
+      changes Proposal
+      produces ProposalSubmitted
+      precondition { Call.status == CallStatus "Open" }
+      precondition { Proposal.status == ProposalStatus "Draft" }
+    }
+    action WithdrawProposal [permitted] #ac-q007 {
+      mayPerform Applicant
+      exercises ProposalSubmission
+      changes Proposal
+      produces ProposalWithdrawn
+    }
+    action OpenScreening [permitted] #ac-q008 {
+      description "Performed by the platform on every submission, whatever the triage agent does."
+      mayPerform QuorumPlatform
+      exercises EligibilityScreening
+      changes Proposal
+    }
+    action ProposeEligibility [permitted] #ac-q009 {
+      description "The agent's whole authority. It records a TriageProposal and changes no proposal (INV-10)."
+      mayPerform EligibilityTriage
+      exercises EligibilityScreening
+      produces TriageProposed
+    }
+    decision ConfirmEligibility [permitted] #ac-q010 {
+      description "The human decision that moves a proposal out of Screening. Not performable by the triage agent: the performer set is closed."
+      mayPerform ProgramOfficer
+      exercises EligibilityScreening
+      changes Proposal
+      produces ProposalEligible
+      precondition { Proposal.status == ProposalStatus "Screening" }
+      determines {
+        eligible: boolean
+        reason: text
+      }
+    }
+    action DeclareConflict [permitted] #ac-q011 {
+      mayPerform Reviewer, ProgramOfficer
+      exercises ReviewerAssignment
+      creates ConflictDeclaration
+      produces ConflictDeclared
+    }
+    action AssignReviewer [permitted] #ac-q012 {
+      mayPerform ProgramOfficer
+      exercises ReviewerAssignment
+      creates Assignment
+      produces ReviewerAssigned, ReviewersAssigned
+      outcome { Assignment.status == AssignmentStatus "Assigned" }
+      precondition { Proposal.status == ProposalStatus "Eligible" || Proposal.status == ProposalStatus "UnderReview" }
+    }
+    action RecordPanelComplete [permitted] #ac-q013 {
+      description "The platform records that the third reviewer was assigned."
+      mayPerform QuorumPlatform
+      exercises ReviewerAssignment
+      changes Proposal
+      requires ReviewersAssigned
+    }
+    action DetectFullReview [permitted] #ac-q025 {
+      description "The aggregation: on each submitted review the platform counts submitted reviews on non-revoked assignments and, at exactly three, establishes that the proposal is fully reviewed (once)."
+      mayPerform QuorumPlatform
+      exercises BlindPeerReview
+      produces ProposalFullyReviewed
+      requires ReviewSubmitted
+    }
+    action RevokeOnWithdrawal [permitted] #ac-q024 {
+      description "When a proposal is withdrawn the platform revokes its open assignments."
+      mayPerform QuorumPlatform
+      exercises ReviewerAssignment
+      changes Assignment
+      requires ProposalWithdrawn
+    }
+    action AcceptAssignment [permitted] #ac-q014 {
+      mayPerform Reviewer
+      exercises BlindPeerReview
+      changes Assignment
+    }
+    action RevokeAssignment [permitted] #ac-q015 {
+      mayPerform ProgramOfficer
+      exercises ReviewerAssignment
+      changes Assignment
+    }
+    action SubmitReview [permitted] #ac-q016 {
+      mayPerform Reviewer
+      exercises BlindPeerReview
+      changes Review
+      produces ReviewSubmitted
+    }
+    action MarkOverdue [permitted] #ac-q017 {
+      mayPerform QuorumPlatform
+      exercises BlindPeerReview
+      changes Assignment
+      produces ReviewOverdue
+    }
+    action RecordReviewCompletion [permitted] #ac-q018 {
+      description "The platform records that exactly three reviews on non-revoked assignments are submitted, and the proposal becomes Scored."
+      mayPerform QuorumPlatform
+      exercises BlindPeerReview
+      changes Proposal
+      produces ProposalScored
+      requires ProposalFullyReviewed
+    }
+    decision RecordPanelDecision [permitted] #ac-q019 {
+      description "Only a Panel Chair, only for a Scored proposal, only once (INV-8). An award commits the requested amount, never a part of it, and only within the envelope (INV-9)."
+      mayPerform PanelChair
+      exercises PanelAdjudication
+      creates PanelDecision
+      changes Proposal
+      produces ProposalAwarded, ProposalDeclined
+      requires ProposalFullyReviewed
+      precondition { Proposal.status == ProposalStatus "Scored" }
+      determines {
+        outcome: PanelOutcome
+        rationale: text
+      }
+    }
+    action DeliverMessage [permitted] #ac-q020 {
+      mayPerform QuorumPlatform
+      changes OutboundMessage
+    }
+    action ReadPeerReviews [permitted] #ac-q021 {
+      description "Reading the other reviews of a proposal. Officers and chairs may always; a reviewer only after their own is submitted (rule BlindUntilOwnSubmitted)."
+      mayPerform Reviewer, ProgramOfficer, PanelChair
+      exercises BlindPeerReview
+    }
+    action ViewPortfolio [permitted] #ac-q022 {
+      mayPerform ProgramOfficer, PanelChair
+      exercises PortfolioReporting
+    }
+    action AlterBudgetEnvelope [forbidden] #ac-q023 {
+      description "Forbidden once a call is open: the envelope is the fixed quantity INV-9 is checked against (D6)."
+      targets Call
+    }
+
+    // ------------------------------------------------------------- facts
+    fact CallPublished #f-q001 { callId: text envelope: Money }
+    fact CallClosed #f-q002 { callId: text }
+    fact OrcidVerified #f-q003 { accountId: text orcidId: text }
+    fact ProposalSubmitted #f-q004 { proposalId: text callId: text }
+    fact TriageProposed #f-q005 { proposalId: text verdict: EligibilityVerdict }
+    fact ProposalEligible #f-q006 { proposalId: text }
+    fact ConflictDeclared #f-q007 { reviewerId: text proposalId: text }
+    fact ReviewerAssigned #f-q008 { assignmentId: text proposalId: text reviewerId: text }
+    fact ReviewersAssigned #f-q009 { proposalId: text }
+    fact ReviewSubmitted #f-q010 { reviewId: text proposalId: text }
+    fact ReviewOverdue #f-q011 { assignmentId: text }
+    fact ProposalFullyReviewed #f-q012 { proposalId: text meanScore: decimal(4,2) }
+    fact ProposalAwarded #f-q013 { proposalId: text amount: Money }
+    fact ProposalDeclined #f-q014 { proposalId: text }
+    fact ProposalWithdrawn #f-q015 { proposalId: text }
+    fact ProposalScored #f-q016 { proposalId: text meanScore: decimal(4,2) }
+    fact ProposalEnteredScreening #f-q017 { proposalId: text }
+    fact ProposalIneligible #f-q018 { proposalId: text reason: text }
+    fact ProposalUnderReview #f-q019 { proposalId: text }
+
+    // ------------------------------------------------------------- rules (INV-n)
+    rule SubmissionWindow #r-q001 {
+      description "INV-1"
+      scope SubmitProposal
+      condition Call.status != CallStatus "Open"
+      assertion "A proposal may be submitted only while its call is Open and strictly before the call's deadline; a late submission is refused, never quietly accepted."
+    }
+    rule SubmitOnce #r-q002 {
+      description "INV-2"
+      scope SubmitProposal
+      condition Proposal.status != ProposalStatus "Draft"
+      assertion "A proposal is submitted at most once. Submission is irreversible except by withdrawal, which is terminal."
+    }
+    rule NoConflictedAssignment #r-q003 {
+      description "INV-3"
+      scope AssignReviewer, DeclareConflict
+      condition true
+      assertion "A reviewer with a declared conflict against a proposal can never hold an assignment to it: assignment through a conflict is refused, and declaring a conflict revokes any active assignment at once."
+    }
+    rule NoSelfReview #r-q004 {
+      description "INV-4"
+      scope AssignReviewer
+      condition true
+      assertion "The applicant of a proposal is never assigned to review it, whatever roles they hold."
+    }
+    rule CompleteScoring #r-q006 {
+      description "INV-6"
+      scope SubmitReview
+      condition true
+      assertion "A review is submitted only with a score for every published criterion of its call, each an integer from 1 to 5, and with the reviewer's attestation that they have no conflict (which a late submission from Overdue also carries, since it never passed through Accepted)."
+    }
+    rule BlindUntilOwnSubmitted #r-q007 {
+      description "INV-7"
+      scope ReadPeerReviews
+      condition true
+      assertion "A reviewer may not read any other review of a proposal until their own review of it is Submitted; this holds for direct reads, the portfolio and notifications."
+    }
+    rule ChairDecidesScoredOnly #r-q008 {
+      description "INV-8"
+      scope RecordPanelDecision
+      condition Proposal.status != ProposalStatus "Scored"
+      assertion "Only a Panel Chair records a panel decision, only for a Scored proposal, and only once."
+    }
+    rule AgentNeverDecides #r-q010 {
+      description "INV-10"
+      scope ProposeEligibility, ConfirmEligibility
+      condition true
+      assertion "The eligibility triage agent proposes a verdict and nothing else; it never moves a proposal out of Screening."
+    }
+    rule RoleScopedAuthority #r-q011 {
+      description "INV-11 — the resource half. The role half is the closed performer sets of every action above."
+      scope SubmitProposal, WithdrawProposal, SaveDraft, AcceptAssignment, SubmitReview, ReadPeerReviews
+      condition true
+      assertion "An account acts only in a role it has been granted, and only on the resources that role scopes it to: an applicant on their own proposals, a reviewer on their own assignments. Everything else is denied by default."
+    }
+    rule VerifiedReviewersOnly #r-q012 {
+      description "INV-12"
+      scope AssignReviewer
+      condition Account.orcidStatus != OrcidStatus "Verified"
+      assertion "A reviewer may hold an assignment only if their ORCID identity is Verified."
+    }
+    rule AwardHeldOnLateConflict #r-q013 {
+      description "Decision D5: a conflict disclosed after scoring holds the award; the chair may still decline."
+      scope RecordPanelDecision
+      condition true
+      assertion "While a conflict declared after scoring stands against a proposal, it may be declined but not awarded."
+    }
+
+    invariant ThreeReviewsBeforeScoring [population-scoped] #i-q005 {
+      description "INV-5. Population-scoped (counts Reviews of a Proposal), so carried as prose."
+      governs Proposal
+      assertion "A Proposal enters Scored only when exactly three Reviews on its non-revoked Assignments are Submitted."
+    }
+    invariant EnvelopeNeverExceeded [population-scoped] #i-q009 {
+      description "INV-9. Population-scoped (sums PanelDecisions of a Call), so carried as prose. The architecture enforces it with one conditional write on the call's budget ledger (D6)."
+      governs Call
+      assertion "The sum of the amounts of all Award PanelDecisions for a Call never exceeds the Call's envelope."
+    }
+    invariant AwardIsTheRequestedAmount [element-scoped] #i-q014 {
+      description "No partial awards (MVP simplification)."
+      governs PanelDecision
+      assertion PanelDecision.amount.amount >= decimal(14,2) 0.00
+    }
+
+    unspecified RoleAdministration #u-q002 {
+      modality { epistemic underspecified }
+      questions Account
+      question "Who grants and revokes the Reviewer, Program Officer and Panel Chair roles?"
+      reason "The brief defines the four roles but no act that grants them. The MVP provisions staff and reviewer accounts administratively (seeded); only Applicant is self-registered. Roles are read from the account store on every request, so a revocation takes effect at once."
+      accountable "Funding Operations"
+      alternatives
+        "a Program Officer invites reviewers and grants the Reviewer role"
+        "an administrator role, separate from the four, grants every staff role"
+        "roles come from the funding body's identity provider and are never granted in Quorum"
+    }
+
+    unspecified ConflictAfterDecision #u-q001 {
+      modality { epistemic underspecified }
+      questions ConflictDeclaration
+      question "What happens to an award already recorded when a reviewer of that proposal later declares a conflict?"
+      reason "The brief says a conflicted review voids the award, but names no process for clawing back committed money; the MVP records the conflict and leaves the award standing."
+      accountable "Program Officer"
+      alternatives
+        "the award is voided and its amount released to the envelope"
+        "the award stands and the proposal is re-reviewed by a fresh panel"
+        "the award is suspended pending an integrity review outside Quorum"
+    }
+  }
+
+  actor Applicant [external-party] #a-q001 { description "A principal investigator applying for funding." }
+  actor Reviewer [person] #a-q002 { description "An external domain expert scoring proposals." }
+  actor ProgramOfficer [person] #a-q003 { description "Funding body staff running the call." }
+  actor PanelChair [person] #a-q004 { description "Leads the panel; the only actor who decides an award." }
+  actor EligibilityTriage [system] #a-q005 { description "An AI agent. A participant with exactly one permitted action: ProposeEligibility." }
+  actor QuorumPlatform [system] #a-q006 { description "The platform's own automated acts: opening screening, recording completion, marking overdue, delivering messages." }
+  actor OrcidRegistry [organization] #a-q007 { description "The external researcher identity registry." }
+
+  obligation ReviewWithinPeriod [internal-commitment] #o-q001 {
+    borneBy Reviewer
+    activatedBy ResearchFunding.ReviewerAssigned
+    dischargedBy ResearchFunding.SubmitReview
+    statement "A reviewer submits their review within the review period; past it the assignment is Overdue and the officer is told."
+    timing { "Twenty-one days from assignment." }
+  }
+  obligation DecideScoredProposals [internal-commitment] #o-q002 {
+    borneBy PanelChair
+    activatedBy ResearchFunding.ProposalScored
+    dischargedBy ResearchFunding.RecordPanelDecision
+    statement "The panel decides every scored proposal; a missed decision escalates to the program officer and is never taken by default."
+    timing { "Fourteen days from scoring." }
+  }
+  obligation TellParticipants [internal-commitment] #o-q003 {
+    borneBy QuorumPlatform
+    activatedBy ResearchFunding.ProposalSubmitted
+    dischargedBy ResearchFunding.DeliverMessage
+    statement "Applicants, reviewers and officers are told of every event that changes what they must do, through a durable outbound message."
+  }
+  obligation RetainFundingRecords [regulatory] #o-q004 {
+    borneBy ProgramOfficer
+    activatedBy ResearchFunding.ProposalSubmitted
+    statement "Proposals, reviews, decisions and their audit trail are retained as business records."
+  }
+}

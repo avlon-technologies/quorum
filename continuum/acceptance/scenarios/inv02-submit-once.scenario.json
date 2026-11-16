@@ -1,0 +1,53 @@
+{
+  "acceptance-scenario": "1",
+  "name": "inv02-submit-once",
+  "purpose": "A submitted proposal cannot be submitted again; a retried request with the same key replays (INV-2).",
+  "verifies": [
+    "::Quorum.ResearchFunding.ProposalSubmission.SubmitOnce",
+    "::Quorum.ResearchFunding.Submission.ProposalService"
+  ],
+  "test": "::Quorum.Inv02SubmitOnce",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "submitted"
+      },
+      "text": "proposal p1 has reached submitted"
+    }
+  ],
+  "when": [
+    {
+      "step": "proposal.submit",
+      "args": {
+        "proposal": "p1"
+      },
+      "text": "the applicant submits p1 again with a new request"
+    }
+  ],
+  "then": [
+    {
+      "step": "command.refused",
+      "args": {
+        "status": 409,
+        "code": "already_submitted",
+        "rule": "INV-2"
+      },
+      "text": "the second submission is refused under INV-2"
+    },
+    {
+      "step": "event.count",
+      "args": {
+        "type": "ProposalSubmitted",
+        "count": 1
+      },
+      "text": "exactly one ProposalSubmitted exists"
+    }
+  ]
+}

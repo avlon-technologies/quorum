@@ -1,0 +1,1850 @@
+{
+  "continuum-evidence": "continuum-evidence/1",
+  "normative": false,
+  "package": "avlon.quorum",
+  "anchored": {
+    "commit": null,
+    "attestation": "sha256:f75646711920628a45e67531ba5fdee8eb85c2efeeea8068ecf268664cee4c12",
+    "commitCovers": false
+  },
+  "subject": {
+    "form": "continuum-evidence-subject/1",
+    "algorithm": "sha256",
+    "encoding": "path\\0bytes\\n/raw/1",
+    "digest": "sha256:ea3488eae9d75a0dabe09757ccfe081085cc1f8bc6063e693bb62b6d55b6ae51",
+    "surface": {
+      "include": [
+        "src/**",
+        "tests/**"
+      ],
+      "exclude": {
+        "continuum/**": "the package holding the map: the map, its model, generated proofs and derived artifacts",
+        "continuum/evidence.json": "the correspondence map itself",
+        ".continuum/**": "client-local observation, not anchored",
+        "**/node_modules/**": "installed dependencies are not the implementation"
+      }
+    },
+    "paths": [
+      "src/api/routes.ts",
+      "src/app.ts",
+      "src/contexts/adjudication/api.ts",
+      "src/contexts/adjudication/panel-decision.ts",
+      "src/contexts/adjudication/service.ts",
+      "src/contexts/calls/api.ts",
+      "src/contexts/calls/service.ts",
+      "src/contexts/identity/api.ts",
+      "src/contexts/identity/service.ts",
+      "src/contexts/notification/service.ts",
+      "src/contexts/oversight/service.ts",
+      "src/contexts/peer-review/api.ts",
+      "src/contexts/peer-review/completion.ts",
+      "src/contexts/peer-review/review-deadline.ts",
+      "src/contexts/peer-review/service.ts",
+      "src/contexts/submission/api.ts",
+      "src/contexts/submission/service.ts",
+      "src/contexts/submission/triage.ts",
+      "src/contracts/model.generated.ts",
+      "src/contracts/review-rules.ts",
+      "src/contracts/triage-port.ts",
+      "src/integrations/mail.ts",
+      "src/integrations/orcid.ts",
+      "src/integrations/triage-provider.ts",
+      "src/platform/auth.ts",
+      "src/platform/clock.ts",
+      "src/platform/db.ts",
+      "src/platform/deps.ts",
+      "src/platform/errors.ts",
+      "src/platform/events.ts",
+      "src/platform/http.ts",
+      "src/platform/ids.ts",
+      "src/platform/money.ts",
+      "src/platform/schema.ts",
+      "src/seed.ts",
+      "src/server.ts",
+      "tests/e2e/run-browser-journey.ts",
+      "tests/invariants/inv-01-submission-window.test.ts",
+      "tests/invariants/inv-02-submit-once.test.ts",
+      "tests/invariants/inv-03-conflict.test.ts",
+      "tests/invariants/inv-04-self-review.test.ts",
+      "tests/invariants/inv-05-three-reviews.test.ts",
+      "tests/invariants/inv-06-complete-review.test.ts",
+      "tests/invariants/inv-07-blind-review.test.ts",
+      "tests/invariants/inv-08-panel-decision.test.ts",
+      "tests/invariants/inv-09-budget-envelope.test.ts",
+      "tests/invariants/inv-10-agent-proposes-only.test.ts",
+      "tests/invariants/inv-11-role-scope.test.ts",
+      "tests/invariants/inv-12-verified-reviewers.test.ts",
+      "tests/scenarios/adr-005-inv-03-mismatch.test.ts",
+      "tests/scenarios/agent-authority.test.ts",
+      "tests/scenarios/blind-visibility.test.ts",
+      "tests/scenarios/concurrent-awards.test.ts",
+      "tests/scenarios/conflict-lifecycle.test.ts",
+      "tests/scenarios/cross-role-access.test.ts",
+      "tests/scenarios/deadline-boundaries.test.ts",
+      "tests/scenarios/duplicate-submission.test.ts",
+      "tests/scenarios/overdue-escalation.test.ts",
+      "tests/scenarios/pre-release-review.test.ts",
+      "tests/scenarios/replay-and-recovery.test.ts",
+      "tests/scenarios/two-of-three-readiness.test.ts",
+      "tests/support/award-child.ts",
+      "tests/support/crash-child.ts",
+      "tests/support/harness.ts"
+    ],
+    "fileCount": 64
+  },
+  "elements": {
+    "88e48015-97bf-4375-b558-fb8ba04e97fe": {
+      "name": "::Quorum",
+      "kind": "System",
+      "citations": [],
+      "status": "uncited"
+    },
+    "c714f435-9977-44f8-8a53-d1c005aca950": {
+      "name": "::Quorum.Applicant",
+      "kind": "Actor",
+      "citations": [],
+      "status": "uncited"
+    },
+    "ac06bb54-6ba7-4467-8949-8556db840b80": {
+      "name": "::Quorum.FundingOperations",
+      "kind": "Actor",
+      "citations": [],
+      "status": "uncited"
+    },
+    "a486e697-e8ce-4272-895c-673aef06d245": {
+      "name": "::Quorum.PanelChair",
+      "kind": "Actor",
+      "citations": [],
+      "status": "uncited"
+    },
+    "6941c304-5ce8-478c-a354-e6ce19fdeee1": {
+      "name": "::Quorum.ProgramOfficer",
+      "kind": "Actor",
+      "citations": [],
+      "status": "uncited"
+    },
+    "741c9288-92d6-4bfc-9779-5852cec4ae76": {
+      "name": "::Quorum.Reviewer",
+      "kind": "Actor",
+      "citations": [],
+      "status": "uncited"
+    },
+    "f872482d-f437-4310-a1b7-88136850da8e": {
+      "name": "::Quorum.QuorumServer",
+      "kind": "Deployable",
+      "citations": [
+        {
+          "ref": "src/server.ts",
+          "digest": "sha256:1a5ced1d30b62512270512a344d6b987ef6a2476f12da366f09e99155fdb1e7e"
+        },
+        {
+          "ref": "src/app.ts",
+          "digest": "sha256:17079cf2d4a146e565cb065e10d6e6e6c7c8d235d0667382089188737b55d7c7"
+        }
+      ],
+      "status": "verified"
+    },
+    "7b036919-d1ca-45d5-8a2e-69208e35ca97": {
+      "name": "::Quorum.ResearchFunding",
+      "kind": "Domain",
+      "citations": [],
+      "status": "uncited"
+    },
+    "69ba4172-7586-46f0-91df-62340683f561": {
+      "name": "::Quorum.ResearchFunding.Adjudication",
+      "kind": "BoundedContext",
+      "citations": [
+        {
+          "ref": "src/contexts/adjudication/service.ts",
+          "digest": "sha256:68e3720d195d85924e5f73d22dc7acaf01ba50562c7d088e2a0deac194811ca3"
+        },
+        {
+          "ref": "src/contexts/adjudication/panel-decision.ts",
+          "digest": "sha256:3f0ece1f6e89ba46b2847a119e62e995f312da5d485ffd195032cc7c99bbfe94"
+        },
+        {
+          "ref": "src/contexts/adjudication/api.ts",
+          "digest": "sha256:acbcdf225b7f29d9cf57b420e005377d3b8673dcd1785868746584b507020b45"
+        }
+      ],
+      "status": "verified"
+    },
+    "6ab58159-755c-4901-a1c0-788b9794ca30": {
+      "name": "::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly",
+      "kind": "BusinessRule",
+      "citations": [],
+      "status": "uncited"
+    },
+    "a4b26ee8-0547-42b5-adde-d2ee9bab2073": {
+      "name": "::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded",
+      "kind": "BusinessRule",
+      "citations": [],
+      "status": "uncited"
+    },
+    "bbb140a4-d299-411d-b669-41adfd538e45": {
+      "name": "::Quorum.ResearchFunding.Adjudication.ProposalAwarded",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "27e6ca77-3ca5-4878-9ee0-0a8680a66f8c": {
+      "name": "::Quorum.ResearchFunding.Adjudication.ProposalDeclined",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "2007f0ea-408f-402c-ad8d-1d6553a8d95f": {
+      "name": "::Quorum.ResearchFunding.Adjudication.AdjudicationStore",
+      "kind": "Resource",
+      "citations": [
+        {
+          "ref": "src/platform/schema.ts:217-245",
+          "digest": "sha256:39600f479890c26442ac119592ba2fa2abad8a43a288cd69c138b319952f9837"
+        }
+      ],
+      "status": "verified"
+    },
+    "6bbc3747-a1d4-4477-a882-1147d2ab0618": {
+      "name": "::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+      "kind": "Service",
+      "citations": [
+        {
+          "ref": "src/contexts/adjudication/service.ts",
+          "digest": "sha256:68e3720d195d85924e5f73d22dc7acaf01ba50562c7d088e2a0deac194811ca3"
+        }
+      ],
+      "status": "verified"
+    },
+    "be98d1b7-7583-4a21-8fa3-598c04b71e44": {
+      "name": "::Quorum.ResearchFunding.Adjudication.AdjudicationService.DecisionApi",
+      "kind": "API",
+      "citations": [
+        {
+          "ref": "src/contexts/adjudication/api.ts",
+          "digest": "sha256:acbcdf225b7f29d9cf57b420e005377d3b8673dcd1785868746584b507020b45"
+        }
+      ],
+      "status": "verified"
+    },
+    "17853fa4-f1da-4241-8efc-f20c70da3ef9": {
+      "name": "::Quorum.ResearchFunding.Adjudication.AdjudicationService.DecisionApi.CommitAward",
+      "kind": "Operation",
+      "citations": [],
+      "status": "uncited"
+    },
+    "bd5c8d97-9251-45df-a805-d42c14f812d6": {
+      "name": "::Quorum.ResearchFunding.Adjudication.AdjudicationService.DecisionApi.RecordDecline",
+      "kind": "Operation",
+      "citations": [],
+      "status": "uncited"
+    },
+    "9d491b10-51c4-43b9-82e7-60ec7e806546": {
+      "name": "::Quorum.ResearchFunding.Adjudication.AdjudicationState",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "2fdedbd7-2c75-4aa9-81fc-e45e57996855": {
+      "name": "::Quorum.ResearchFunding.Adjudication.AwardRequest",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "c763e8a0-7063-40b4-b3b0-28f3f64fa50d": {
+      "name": "::Quorum.ResearchFunding.Adjudication.AwardResult",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "693d0f89-45d6-4f50-bc7f-31ee0ba80eb8": {
+      "name": "::Quorum.ResearchFunding.Adjudication.DecisionData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "1d26395b-63cd-4eda-9a59-93f7d386b130": {
+      "name": "::Quorum.ResearchFunding.Adjudication.DecisionRequest",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "38802dd2-afd5-42fd-96d6-ad4303195d90": {
+      "name": "::Quorum.ResearchFunding.Adjudication.DeclineAcknowledgement",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "d7b0e0ac-729b-489a-a34f-3b86a44f3918": {
+      "name": "::Quorum.ResearchFunding.Adjudication.DeclineRequest",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "421c4a0f-bde3-4267-b1e5-56cc070e101a": {
+      "name": "::Quorum.ResearchFunding.Adjudication.DeclineResult",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "7fd5b3f8-e948-4722-ae22-7d14eee5f08b": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelOutcome",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "1dbdf7f0-470c-44aa-9ecb-017865d81fb8": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelVerdict",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "aa87850c-c0f9-4a87-9a13-e807fb13c981": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision",
+      "kind": "Workflow",
+      "citations": [
+        {
+          "ref": "src/contexts/adjudication/panel-decision.ts",
+          "digest": "sha256:3f0ece1f6e89ba46b2847a119e62e995f312da5d485ffd195032cc7c99bbfe94"
+        }
+      ],
+      "status": "verified"
+    },
+    "f45a7477-f0fe-47d3-81b7-3bd08f0bb003": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.committed",
+      "kind": "DecisionStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "a315ba36-7609-4afa-bc39-06e37a8855d8": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.isAward",
+      "kind": "DecisionStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "996c9980-32bb-4780-a827-d5ef70d1f9d7": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.decide",
+      "kind": "HumanTaskStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "65bb94d2-dba5-4948-bd02-d6abb10f4173": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.reconsider",
+      "kind": "HumanTaskStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "bfe48340-966d-4b9e-9fdd-9ea92ed55ff6": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.commit",
+      "kind": "InvokeStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "27ed39c7-c6ad-4bf1-a841-371c9a779139": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.decline",
+      "kind": "InvokeStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "3dd6f4d6-a547-41b7-95eb-3b65492f37f8": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.declineRefused",
+      "kind": "InvokeStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "d3a0dad7-867f-458b-9b13-043111cdc276": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.awarded",
+      "kind": "PublishStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "8aca3ec4-977b-4900-8bf9-b0249a2ba15d": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.declined",
+      "kind": "PublishStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "d781b736-ed42-4944-b2cb-80e4e47ae0ba": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.declinedRefused",
+      "kind": "PublishStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "270a385d-9900-4c6a-a7d5-de23f19ceee3": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.T1",
+      "kind": "Transition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "89f9692e-335b-44ca-b16b-b9be04b364c2": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.T2",
+      "kind": "Transition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "daa6b890-607c-472e-b7dd-995ea5a1f340": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.T3",
+      "kind": "Transition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "e1e00bd4-ea71-46a5-811d-3931491f9159": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.T4",
+      "kind": "Transition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "474c8758-c53a-4b44-9018-2156a714e016": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.T5",
+      "kind": "Transition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "0a2099af-f571-4d97-ba7e-8fdb7abd6ea5": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.T6",
+      "kind": "Transition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "40896bdd-754c-4ac0-8c2a-5cac51f0ab45": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.T7",
+      "kind": "Transition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "0ac5f6d3-e70a-4b70-9e91-57604c3968be": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.T8",
+      "kind": "Transition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "5e1ab870-8cf4-401e-a099-87baf5295b60": {
+      "name": "::Quorum.ResearchFunding.Adjudication.PanelDecision.T9",
+      "kind": "Transition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "070ef2ac-5b4e-4da3-a24d-625e757b6c0e": {
+      "name": "::Quorum.ResearchFunding.Calls",
+      "kind": "BoundedContext",
+      "citations": [
+        {
+          "ref": "src/contexts/calls/service.ts",
+          "digest": "sha256:f4e9278be41242c209f000a232f6bb45ad15bbc0a54506c9cde1a50a8b079c64"
+        },
+        {
+          "ref": "src/contexts/calls/api.ts",
+          "digest": "sha256:8559a1aa5026a210647a5144dbd873e8684d6e90fc844194967bd44561ffe310"
+        }
+      ],
+      "status": "verified"
+    },
+    "247afa0c-53eb-4e30-a834-91f0762206ba": {
+      "name": "::Quorum.ResearchFunding.Calls.CloseCall",
+      "kind": "Command",
+      "citations": [],
+      "status": "uncited"
+    },
+    "26f9521a-c61e-4f7b-8297-d72c1993ea62": {
+      "name": "::Quorum.ResearchFunding.Calls.PublishCall",
+      "kind": "Command",
+      "citations": [],
+      "status": "uncited"
+    },
+    "c28f7e24-1e70-4a18-a227-788131854b0e": {
+      "name": "::Quorum.ResearchFunding.Calls.CallClosed",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "01c8e173-b33d-48c3-9acf-0e53eaceb087": {
+      "name": "::Quorum.ResearchFunding.Calls.CallPublished",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "092a8d95-5015-4e1e-ae72-7ccee4c30d78": {
+      "name": "::Quorum.ResearchFunding.Calls.CallStore",
+      "kind": "Resource",
+      "citations": [
+        {
+          "ref": "src/platform/schema.ts:77-106",
+          "digest": "sha256:4f77fd650b128259ce792996fc42f616fe88efaf265b6524c2736701d530951e"
+        }
+      ],
+      "status": "verified"
+    },
+    "5cb21bef-2f92-499c-b8ff-8f8040c4dc3c": {
+      "name": "::Quorum.ResearchFunding.Calls.CallService",
+      "kind": "Service",
+      "citations": [
+        {
+          "ref": "src/contexts/calls/service.ts",
+          "digest": "sha256:f4e9278be41242c209f000a232f6bb45ad15bbc0a54506c9cde1a50a8b079c64"
+        }
+      ],
+      "status": "verified"
+    },
+    "c367b691-472b-438d-85cd-4e123a449ab8": {
+      "name": "::Quorum.ResearchFunding.Calls.CallService.CallApi",
+      "kind": "API",
+      "citations": [
+        {
+          "ref": "src/contexts/calls/api.ts",
+          "digest": "sha256:8559a1aa5026a210647a5144dbd873e8684d6e90fc844194967bd44561ffe310"
+        }
+      ],
+      "status": "verified"
+    },
+    "928d16af-e3b1-4bdc-9d17-c20699b58eb2": {
+      "name": "::Quorum.ResearchFunding.Calls.CallService.CallApi.GetCallStatus",
+      "kind": "Operation",
+      "citations": [],
+      "status": "uncited"
+    },
+    "9626f8ec-25e9-46e3-bbb5-f3cb5a8828ef": {
+      "name": "::Quorum.ResearchFunding.Calls.CallClosedData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "371a3f66-3347-4409-87e4-9180f003b1ae": {
+      "name": "::Quorum.ResearchFunding.Calls.CallDraft",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "a0e5e566-1e79-4c07-a88b-4ed8b53383e3": {
+      "name": "::Quorum.ResearchFunding.Calls.CallId",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "21411b51-99e6-4256-ba0a-3f468d521cd5": {
+      "name": "::Quorum.ResearchFunding.Calls.CallPublishedData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "6586b771-b070-41b3-8173-d916bf2bddfb": {
+      "name": "::Quorum.ResearchFunding.Calls.CallRef",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "004ceee0-1ac0-4ba1-a336-bef06d63869f": {
+      "name": "::Quorum.ResearchFunding.Calls.CallStatus",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "d91d59d1-077f-47d8-a1c7-951b027c5362": {
+      "name": "::Quorum.ResearchFunding.Calls.CallStatusQuery",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "56dabdb9-b2f9-471b-868c-282ba1656129": {
+      "name": "::Quorum.ResearchFunding.Calls.CallStatusView",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "f7bf3c3c-de99-495f-83d0-4694b080dadc": {
+      "name": "::Quorum.ResearchFunding.Calls.Criterion",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "e5c742af-99db-489f-88e6-e71379949e18": {
+      "name": "::Quorum.ResearchFunding.Calls.Money",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "e1941c8a-84d7-4ec0-a77d-1a3756482e88": {
+      "name": "::Quorum.ResearchFunding.Identity",
+      "kind": "BoundedContext",
+      "citations": [
+        {
+          "ref": "src/contexts/identity/service.ts",
+          "digest": "sha256:0353059ee648a97501775650bbcf81cda41584a2ef0da824d21f09f83f536b2e"
+        },
+        {
+          "ref": "src/contexts/identity/api.ts",
+          "digest": "sha256:f5068d3991c84b2e04552654f0e8df9de80c22dfa982ec26e128f51430477ff4"
+        }
+      ],
+      "status": "verified"
+    },
+    "1dc73300-83ec-4613-bdb8-c5abcc33823d": {
+      "name": "::Quorum.ResearchFunding.Identity.RegisterApplicant",
+      "kind": "Command",
+      "citations": [],
+      "status": "uncited"
+    },
+    "a94a3fb5-b144-4e4d-b39b-d34ca72d7090": {
+      "name": "::Quorum.ResearchFunding.Identity.VerifyOrcid",
+      "kind": "Command",
+      "citations": [],
+      "status": "uncited"
+    },
+    "dbba1645-cff7-43b2-8f44-11f5d83b6549": {
+      "name": "::Quorum.ResearchFunding.Identity.OrcidVerified",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "92094160-de9a-4c30-8376-c0baecf4bc30": {
+      "name": "::Quorum.ResearchFunding.Identity.AccountStore",
+      "kind": "Resource",
+      "citations": [
+        {
+          "ref": "src/platform/schema.ts:56-76",
+          "digest": "sha256:b64262753accde6a61ad66bc98777fa559473d51cd25771385c7f39d88634e47"
+        }
+      ],
+      "status": "verified"
+    },
+    "a4504f75-f50e-4ef5-b6e1-0737af838a6e": {
+      "name": "::Quorum.ResearchFunding.Identity.AccountService",
+      "kind": "Service",
+      "citations": [
+        {
+          "ref": "src/contexts/identity/service.ts",
+          "digest": "sha256:0353059ee648a97501775650bbcf81cda41584a2ef0da824d21f09f83f536b2e"
+        }
+      ],
+      "status": "verified"
+    },
+    "bbc9acb3-f541-44de-a98e-63fba0f2596a": {
+      "name": "::Quorum.ResearchFunding.Identity.AccountService.IdentityApi",
+      "kind": "API",
+      "citations": [
+        {
+          "ref": "src/contexts/identity/api.ts",
+          "digest": "sha256:f5068d3991c84b2e04552654f0e8df9de80c22dfa982ec26e128f51430477ff4"
+        }
+      ],
+      "status": "verified"
+    },
+    "7be131b5-34da-46e3-9f26-8191581cfd1a": {
+      "name": "::Quorum.ResearchFunding.Identity.AccountService.IdentityApi.GetReviewerStanding",
+      "kind": "Operation",
+      "citations": [],
+      "status": "uncited"
+    },
+    "be4edc13-4d73-4401-ba2c-38ee98608b6d": {
+      "name": "::Quorum.ResearchFunding.Identity.AccountId",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "4cd09901-00d8-4ac7-99bf-95b93f35c5ba": {
+      "name": "::Quorum.ResearchFunding.Identity.OrcidQuery",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "2820440a-9f95-48e4-8e09-44095261d0fb": {
+      "name": "::Quorum.ResearchFunding.Identity.OrcidRecord",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "7bac7f9d-6ec7-462f-b9d6-bd423cc8f911": {
+      "name": "::Quorum.ResearchFunding.Identity.OrcidStatus",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "62476e75-704c-4a5d-b790-103efb2fcc8f": {
+      "name": "::Quorum.ResearchFunding.Identity.OrcidVerifiedData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "2d6b4ff1-a748-4bd8-adb9-432f7b9b2771": {
+      "name": "::Quorum.ResearchFunding.Identity.RegistrationData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "5245b070-3ff7-48fe-811f-8319dbe17a36": {
+      "name": "::Quorum.ResearchFunding.Identity.ReviewerStanding",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "c272b062-8449-4436-8318-c39931d3c854": {
+      "name": "::Quorum.ResearchFunding.Identity.Role",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "76647107-294c-4695-b2c8-1dfc65d122c1": {
+      "name": "::Quorum.ResearchFunding.Identity.StandingQuery",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "5963ed5f-6029-48a0-b1b6-7b52c693b930": {
+      "name": "::Quorum.ResearchFunding.Identity.VerifyOrcidData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "fbe795fc-bdd6-4ce6-8a62-3f4d6011466a": {
+      "name": "::Quorum.ResearchFunding.Notification",
+      "kind": "BoundedContext",
+      "citations": [
+        {
+          "ref": "src/contexts/notification/service.ts",
+          "digest": "sha256:9fd9984508f80c8c4ea76f1486fb69417513a614cb6b24808ec8a4b27aab4c10"
+        }
+      ],
+      "status": "verified"
+    },
+    "ccbffda2-942e-4bdc-86e7-b0082ef7e1b9": {
+      "name": "::Quorum.ResearchFunding.Notification.NoScoresToReviewers",
+      "kind": "BusinessRule",
+      "citations": [],
+      "status": "uncited"
+    },
+    "e5088200-1f20-48a5-8edc-2818945718cf": {
+      "name": "::Quorum.ResearchFunding.Notification.OutboundMessageStore",
+      "kind": "Resource",
+      "citations": [
+        {
+          "ref": "src/platform/schema.ts:246-271",
+          "digest": "sha256:14b928e555ad41ecd5c6cc561a2253d8c3e78681a377073761b26d6af28bef90"
+        }
+      ],
+      "status": "verified"
+    },
+    "870cfc1f-ea8a-4562-a0f0-8e9d126b1342": {
+      "name": "::Quorum.ResearchFunding.Notification.NotificationService",
+      "kind": "Service",
+      "citations": [
+        {
+          "ref": "src/contexts/notification/service.ts",
+          "digest": "sha256:9fd9984508f80c8c4ea76f1486fb69417513a614cb6b24808ec8a4b27aab4c10"
+        }
+      ],
+      "status": "verified"
+    },
+    "d79fbb29-2048-4235-acb0-2d078b8c3b97": {
+      "name": "::Quorum.ResearchFunding.Oversight",
+      "kind": "BoundedContext",
+      "citations": [
+        {
+          "ref": "src/contexts/oversight/service.ts",
+          "digest": "sha256:4da213a60b4026e09d67076f63c00f980e07b044d34b2664c0506b59ec1e9190"
+        }
+      ],
+      "status": "verified"
+    },
+    "c8574ef8-71b4-43a9-8a81-8d9082519489": {
+      "name": "::Quorum.ResearchFunding.Oversight.AuditTrail",
+      "kind": "ReadModel",
+      "citations": [],
+      "status": "uncited"
+    },
+    "2b9b2be5-c974-4f1e-b589-ed121e25c906": {
+      "name": "::Quorum.ResearchFunding.Oversight.Portfolio",
+      "kind": "ReadModel",
+      "citations": [],
+      "status": "uncited"
+    },
+    "b65240e8-b01b-461c-8bb2-fc09d15f4bda": {
+      "name": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "kind": "Service",
+      "citations": [
+        {
+          "ref": "src/contexts/oversight/service.ts",
+          "digest": "sha256:4da213a60b4026e09d67076f63c00f980e07b044d34b2664c0506b59ec1e9190"
+        }
+      ],
+      "status": "verified"
+    },
+    "0d49966f-d5ad-4787-b503-692397ef423f": {
+      "name": "::Quorum.ResearchFunding.Oversight.PortfolioProjector.PortfolioApi",
+      "kind": "API",
+      "citations": [],
+      "status": "uncited"
+    },
+    "9b98310e-a0c5-4467-bb4e-4d89a8bf8f8d": {
+      "name": "::Quorum.ResearchFunding.Oversight.PortfolioProjector.PortfolioApi.GetPortfolio",
+      "kind": "Operation",
+      "citations": [],
+      "status": "uncited"
+    },
+    "ebec1520-a2e9-4f2a-aa5e-49af0872134a": {
+      "name": "::Quorum.ResearchFunding.Oversight.PortfolioProjector.PortfolioApi.GetTimeline",
+      "kind": "Operation",
+      "citations": [],
+      "status": "uncited"
+    },
+    "10f88e86-e084-4a52-b342-81e679e66f1b": {
+      "name": "::Quorum.ResearchFunding.Oversight.PortfolioQuery",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "9e6bc499-4a1e-4268-9254-17fa483798b4": {
+      "name": "::Quorum.ResearchFunding.Oversight.PortfolioRow",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "a2a65083-27eb-4c54-b041-6cd37da466ff": {
+      "name": "::Quorum.ResearchFunding.Oversight.PortfolioView",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "85ca938e-5dfd-4bdf-a06b-e59cbdb9fb26": {
+      "name": "::Quorum.ResearchFunding.Oversight.TimelineEntry",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "f5b39bf2-e99c-4bc8-ad0a-0274b59f1b22": {
+      "name": "::Quorum.ResearchFunding.Oversight.TimelineQuery",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "26299ef6-fb39-4c4e-b45e-f14cbe0f4197": {
+      "name": "::Quorum.ResearchFunding.Oversight.TimelineView",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "da072bdd-0a9f-4a43-8b44-42c9ce1c9e80": {
+      "name": "::Quorum.ResearchFunding.PeerReview",
+      "kind": "BoundedContext",
+      "citations": [
+        {
+          "ref": "src/contexts/peer-review/service.ts",
+          "digest": "sha256:2ab51ea33b289715385d6c85ba2570d2e25bbb42b63a42113a42bf4bc98c5769"
+        },
+        {
+          "ref": "src/contexts/peer-review/review-deadline.ts",
+          "digest": "sha256:82c78cd7ea9ba03c3ccabd37b30ae0f9faa647019e7c85ff64881f6443197cf1"
+        },
+        {
+          "ref": "src/contexts/peer-review/completion.ts",
+          "digest": "sha256:68a0386bff435420e44e65bf1b13a0442ee9b45becb327f88dda93893d5cc5df"
+        },
+        {
+          "ref": "src/contexts/peer-review/api.ts",
+          "digest": "sha256:d068bb7529ae00e7d44488b540f39a9ee7f61d2c4e2a78907f3ffb0e901a23fe"
+        }
+      ],
+      "status": "verified"
+    },
+    "61505d55-158f-4a68-aa7b-204a46219514": {
+      "name": "::Quorum.ResearchFunding.PeerReview.AssignmentValidity",
+      "kind": "BusinessRule",
+      "citations": [],
+      "status": "uncited"
+    },
+    "e8aba01d-eba3-4dfd-a70a-c1753ab5090c": {
+      "name": "::Quorum.ResearchFunding.PeerReview.EveryCriterionScored",
+      "kind": "BusinessRule",
+      "citations": [],
+      "status": "uncited"
+    },
+    "2f95ce2e-315e-41a1-bea2-32833d4f4b3c": {
+      "name": "::Quorum.ResearchFunding.PeerReview.PeerReviewsHiddenUntilOwnSubmitted",
+      "kind": "BusinessRule",
+      "citations": [],
+      "status": "uncited"
+    },
+    "c2b0b97a-8216-460b-8644-3c684e945183": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ThreeSubmittedReviews",
+      "kind": "BusinessRule",
+      "citations": [],
+      "status": "uncited"
+    },
+    "833d64ac-3cd0-458e-a287-4365d0901ed3": {
+      "name": "::Quorum.ResearchFunding.PeerReview.AcceptAssignment",
+      "kind": "Command",
+      "citations": [],
+      "status": "uncited"
+    },
+    "d4085214-591d-411b-9fa9-3aa47e75db18": {
+      "name": "::Quorum.ResearchFunding.PeerReview.AssignReviewer",
+      "kind": "Command",
+      "citations": [],
+      "status": "uncited"
+    },
+    "1fa89159-9a00-4344-9f60-3b91d31813a4": {
+      "name": "::Quorum.ResearchFunding.PeerReview.DeclareConflict",
+      "kind": "Command",
+      "citations": [],
+      "status": "uncited"
+    },
+    "559c9a24-8abc-4e7c-b63d-56571da9f613": {
+      "name": "::Quorum.ResearchFunding.PeerReview.RevokeAssignment",
+      "kind": "Command",
+      "citations": [],
+      "status": "uncited"
+    },
+    "ba347d7b-a490-4dc7-a7e1-a5b3a8e85689": {
+      "name": "::Quorum.ResearchFunding.PeerReview.SubmitReview",
+      "kind": "Command",
+      "citations": [],
+      "status": "uncited"
+    },
+    "d9c1329d-26f8-4eb5-a335-11a33f4d0c5c": {
+      "name": "::Quorum.ResearchFunding.PeerReview.AssignmentAccepted",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "5e2dd903-c01f-46d7-b443-33226df17297": {
+      "name": "::Quorum.ResearchFunding.PeerReview.AssignmentRevoked",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "1cc4c504-edee-4da6-a2ca-3a2962d33f73": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ConflictDeclared",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "30b800fa-e581-48fb-9a77-c9aff0ace927": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "b54e7889-5c3c-48c1-96b1-152f5e629ff8": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewOverdue",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "0756ce3c-a074-4c25-ab33-86bfbe1dd91b": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewSubmitted",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "904ca791-4626-413d-9f1b-074d89415707": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewerAssigned",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "3109dc15-3cf2-4c1d-ac3b-93280b0d1791": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewersAssigned",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "8fb590a6-95da-4a4d-b5f8-be69be6cc097": {
+      "name": "::Quorum.ResearchFunding.PeerReview.CompletionLedger",
+      "kind": "Resource",
+      "citations": [
+        {
+          "ref": "src/platform/schema.ts:209-216",
+          "digest": "sha256:1dd35ed2fa044af45a44eaa278805e6bcd93b3d7b3565c82d2b8649b19254b68"
+        }
+      ],
+      "status": "verified"
+    },
+    "7cbfd5c5-60f5-4af5-bcba-aa0359aaaf4e": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+      "kind": "Resource",
+      "citations": [
+        {
+          "ref": "src/platform/schema.ts:148-208",
+          "digest": "sha256:dc360bc3333756e3cef956af46a15d00760e2ed202938e5a4620049a63f40f23"
+        }
+      ],
+      "status": "verified"
+    },
+    "1a2bf939-5081-451d-b2f9-e64695741bf5": {
+      "name": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "kind": "Service",
+      "citations": [
+        {
+          "ref": "src/contexts/peer-review/service.ts",
+          "digest": "sha256:2ab51ea33b289715385d6c85ba2570d2e25bbb42b63a42113a42bf4bc98c5769"
+        }
+      ],
+      "status": "verified"
+    },
+    "f3d97dfe-8527-458b-8573-659f047fe601": {
+      "name": "::Quorum.ResearchFunding.PeerReview.AssignmentService.ReviewApi",
+      "kind": "API",
+      "citations": [
+        {
+          "ref": "src/contexts/peer-review/api.ts",
+          "digest": "sha256:d068bb7529ae00e7d44488b540f39a9ee7f61d2c4e2a78907f3ffb0e901a23fe"
+        }
+      ],
+      "status": "verified"
+    },
+    "dd4dd493-203d-4cbb-83c8-1f30367f39f4": {
+      "name": "::Quorum.ResearchFunding.PeerReview.AssignmentService.ReviewApi.GetPeerReviews",
+      "kind": "Operation",
+      "citations": [],
+      "status": "uncited"
+    },
+    "b4100884-e7e8-45ba-9486-236cb03de6fc": {
+      "name": "::Quorum.ResearchFunding.PeerReview.AssignmentService.ReviewApi.MarkOverdue",
+      "kind": "Operation",
+      "citations": [],
+      "status": "uncited"
+    },
+    "7e9ffd9e-4f58-4754-a0da-2140ddd22984": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewCompletion",
+      "kind": "Service",
+      "citations": [
+        {
+          "ref": "src/contexts/peer-review/completion.ts",
+          "digest": "sha256:68a0386bff435420e44e65bf1b13a0442ee9b45becb327f88dda93893d5cc5df"
+        }
+      ],
+      "status": "verified"
+    },
+    "375b566f-45d4-4fd3-8f7c-8f1e53b36839": {
+      "name": "::Quorum.ResearchFunding.PeerReview.AssignmentData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "4fb38ee0-e195-4eb5-b05b-1452eda90cd9": {
+      "name": "::Quorum.ResearchFunding.PeerReview.AssignmentId",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "95a3640a-ca6f-4ad0-b72e-a26d29859211": {
+      "name": "::Quorum.ResearchFunding.PeerReview.AssignmentRef",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "566f7d95-f6f3-4047-b39b-b1bdc540a94e": {
+      "name": "::Quorum.ResearchFunding.PeerReview.AssignmentRequest",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "47b94763-2d4f-4199-a720-602b837d37b0": {
+      "name": "::Quorum.ResearchFunding.PeerReview.AssignmentStatus",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "4e3f8989-f95c-4edf-bfbb-abc1b6d43096": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ConflictData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "8658b2f1-76f8-45ab-bcf6-f49671c17dec": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ConflictDeclaredData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "4bd0b515-2a2f-423b-9312-32d193221bba": {
+      "name": "::Quorum.ResearchFunding.PeerReview.CriterionScore",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "e759e8cb-8631-466e-baeb-10e607069e4c": {
+      "name": "::Quorum.ResearchFunding.PeerReview.DeadlineState",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "e2879ea8-bfb5-403e-b895-f4ed60b8b0a9": {
+      "name": "::Quorum.ResearchFunding.PeerReview.FullyReviewedData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "eea7d3e7-9861-4bc8-b845-a2a8ba1b123e": {
+      "name": "::Quorum.ResearchFunding.PeerReview.OverdueRequest",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "6bec4971-5e4c-4595-ae29-b973b8600606": {
+      "name": "::Quorum.ResearchFunding.PeerReview.OverdueResult",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "34c30a9b-b963-48aa-a79e-aba3dcfe9421": {
+      "name": "::Quorum.ResearchFunding.PeerReview.PeerReviewQuery",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "08865139-ce99-4fc5-aa4b-24d2d422ad05": {
+      "name": "::Quorum.ResearchFunding.PeerReview.PeerReviewView",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "f3af0716-b9fb-4d89-88b3-857b4a936eb1": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewId",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "01491cae-2136-4d9c-92af-a18d25f86348": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewStatus",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "da099f6c-23b0-417a-98c8-51c13bedfab4": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewSubmission",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "164cf5a6-3912-4aa3-8633-dd5c603aad5e": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewSubmittedData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "6b0ccc5d-e8e2-4b1e-9fe6-12134c71f461": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewersAssignedData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "0433462f-c93a-4dfd-881f-ff3f448512df": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewDeadline",
+      "kind": "Workflow",
+      "citations": [
+        {
+          "ref": "src/contexts/peer-review/review-deadline.ts",
+          "digest": "sha256:82c78cd7ea9ba03c3ccabd37b30ae0f9faa647019e7c85ff64881f6443197cf1"
+        }
+      ],
+      "status": "verified"
+    },
+    "8ba54875-0864-445c-bc7f-67c73d028f76": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewDeadline.mark",
+      "kind": "InvokeStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "da11ec4c-9a9e-4861-9ff7-e460e1023403": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewDeadline.overdue",
+      "kind": "PublishStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "b52d4998-0ed4-43b1-961b-fc0a7c5e01be": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewDeadline.T1",
+      "kind": "Transition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "3f771db1-7aac-4963-9aba-85a7f0f73b43": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewDeadline.T2",
+      "kind": "Transition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "17f1ef0b-ecd0-4937-b398-958a5bac6bb0": {
+      "name": "::Quorum.ResearchFunding.PeerReview.ReviewDeadline.due",
+      "kind": "WaitStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "56b9b8b0-e4ca-41fc-8769-3f92e3056766": {
+      "name": "::Quorum.ResearchFunding.Submission",
+      "kind": "BoundedContext",
+      "citations": [
+        {
+          "ref": "src/contexts/submission/service.ts",
+          "digest": "sha256:2f9a2bc089aee5929f5f6ad655c5de8bc344dda6ac0f50eca4e22d0f365d15f2"
+        },
+        {
+          "ref": "src/contexts/submission/triage.ts",
+          "digest": "sha256:644b13be555c99aa48f315475f7ed606757d8da1d73912b4406d380e7323daf7"
+        },
+        {
+          "ref": "src/contexts/submission/api.ts",
+          "digest": "sha256:ae932bc12a3cd0c91bcc3f98967a7251deaeb73df7d427c7db7a24a348acb9b5"
+        }
+      ],
+      "status": "verified"
+    },
+    "dcbe8ea9-b92b-4ecc-aebc-54ddbcc6f17b": {
+      "name": "::Quorum.ResearchFunding.Submission.EligibilityTriage",
+      "kind": "Agent",
+      "citations": [
+        {
+          "ref": "src/integrations/triage-provider.ts",
+          "digest": "sha256:d02e030be68174a17ea9068f2ce42364cfbba3a03561387e5fde7605817e38a3"
+        }
+      ],
+      "status": "verified"
+    },
+    "3a49eeb0-3898-44fb-9f71-ba9fd12539db": {
+      "name": "::Quorum.ResearchFunding.Submission.ApplicantScope",
+      "kind": "BusinessRule",
+      "citations": [],
+      "status": "uncited"
+    },
+    "743a4807-b286-4ad7-b847-4e00aee60292": {
+      "name": "::Quorum.ResearchFunding.Submission.SubmissionWindowOpen",
+      "kind": "BusinessRule",
+      "citations": [],
+      "status": "uncited"
+    },
+    "c9ae9fb3-f8eb-465f-9d21-7324ec817547": {
+      "name": "::Quorum.ResearchFunding.Submission.SubmittedOnce",
+      "kind": "BusinessRule",
+      "citations": [],
+      "status": "uncited"
+    },
+    "a6ffb30c-13b3-4292-84d4-1ad210a61778": {
+      "name": "::Quorum.ResearchFunding.Submission.ConfirmEligibility",
+      "kind": "Command",
+      "citations": [],
+      "status": "uncited"
+    },
+    "f8c71008-2ddf-41f1-a03b-51c2c284c615": {
+      "name": "::Quorum.ResearchFunding.Submission.SaveDraft",
+      "kind": "Command",
+      "citations": [],
+      "status": "uncited"
+    },
+    "2003004f-31c9-462f-aa41-b822a0b51bac": {
+      "name": "::Quorum.ResearchFunding.Submission.SubmitProposal",
+      "kind": "Command",
+      "citations": [],
+      "status": "uncited"
+    },
+    "8eec6230-98f6-4999-8258-c32a893c1674": {
+      "name": "::Quorum.ResearchFunding.Submission.WithdrawProposal",
+      "kind": "Command",
+      "citations": [],
+      "status": "uncited"
+    },
+    "ac9fcfaa-e0fa-4694-b112-4e3a0adbd481": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalEligible",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "074d0196-bb96-4cb8-9f37-b1eae47f24ff": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalEnteredScreening",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "d1ed94b2-0305-4d67-93d6-2f30a76c2a75": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalIneligible",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "a4413f5b-b24a-4c30-b513-755228a7c89c": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalScored",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "c7bc81e6-5912-4c4c-a7ff-c44db2ba7d97": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalSubmitted",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "1da5fa46-9bb1-4072-9596-861a69788323": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalUnderReview",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "5a9ef11c-5881-406c-96ba-2f68a42a590f": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalWithdrawn",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "5f44a031-1d07-42a1-8f47-97457cb87678": {
+      "name": "::Quorum.ResearchFunding.Submission.TriageProposed",
+      "kind": "Event",
+      "citations": [],
+      "status": "uncited"
+    },
+    "b1da20e5-ec1f-4c52-9984-7c5b8f68a2ba": {
+      "name": "::Quorum.ResearchFunding.Submission.AgentProposesOnly",
+      "kind": "Guardrail",
+      "citations": [],
+      "status": "uncited"
+    },
+    "804598a6-60a1-40a1-9f3f-5229e9f90d5f": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalStore",
+      "kind": "Resource",
+      "citations": [
+        {
+          "ref": "src/platform/schema.ts:107-147",
+          "digest": "sha256:ac5a6880c00fc5aeca83c1e6e3c6ff90890dad7d86adfa7566188328175a4998"
+        }
+      ],
+      "status": "verified"
+    },
+    "0d09ec42-5b02-46f6-969f-d65bc15aef6c": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalService",
+      "kind": "Service",
+      "citations": [
+        {
+          "ref": "src/contexts/submission/service.ts",
+          "digest": "sha256:2f9a2bc089aee5929f5f6ad655c5de8bc344dda6ac0f50eca4e22d0f365d15f2"
+        }
+      ],
+      "status": "verified"
+    },
+    "0a015b26-496e-4e06-96a0-93dbd1983082": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalService.ScreeningApi",
+      "kind": "API",
+      "citations": [
+        {
+          "ref": "src/contexts/submission/api.ts",
+          "digest": "sha256:ae932bc12a3cd0c91bcc3f98967a7251deaeb73df7d427c7db7a24a348acb9b5"
+        }
+      ],
+      "status": "verified"
+    },
+    "3a317f1b-174c-4898-a15c-5403d26272cf": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalService.ScreeningApi.RecordTriageProposal",
+      "kind": "Operation",
+      "citations": [],
+      "status": "uncited"
+    },
+    "5f5c8322-00fa-4659-96cc-426344078bd8": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalReader",
+      "kind": "Tool",
+      "citations": [],
+      "status": "uncited"
+    },
+    "1aeae9d1-1260-4c1a-a423-1ad0ed40397c": {
+      "name": "::Quorum.ResearchFunding.Submission.EligibilityConfirmation",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "e376e269-b244-4ecd-bbbf-872fd6ebcaad": {
+      "name": "::Quorum.ResearchFunding.Submission.EligibilityVerdict",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "107e9e87-6f12-4e28-be79-94091c875e30": {
+      "name": "::Quorum.ResearchFunding.Submission.EligibleData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "6720d44d-a0ea-447e-8bcd-fcf1e4c4c677": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalDraft",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalId",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "be287723-49ad-4d69-b4b1-fc1c723feda3": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalRef",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "76d74c51-e779-4d64-987a-0a529bfed892": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalStatus",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "87efa267-5756-4c9d-956a-ee9ad5763ca1": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalSubmittedData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "af5f48e1-b848-4652-808f-3450a827ba58": {
+      "name": "::Quorum.ResearchFunding.Submission.ProposalTransition",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "3128b4f6-7d7d-4733-82cd-89d88ecdf28b": {
+      "name": "::Quorum.ResearchFunding.Submission.ScoredData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "6ba2f80a-c02c-41b1-a11a-cc5f5e2536db": {
+      "name": "::Quorum.ResearchFunding.Submission.TriageProposedData",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "c009c53b-df57-4425-b943-e37127f97a1c": {
+      "name": "::Quorum.ResearchFunding.Submission.TriageRecordRequest",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "d9a0bf2c-cf3b-44fb-a951-596eef155c8c": {
+      "name": "::Quorum.ResearchFunding.Submission.TriageRecorded",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "9b92d07e-fa80-433e-a6b8-97477d572362": {
+      "name": "::Quorum.ResearchFunding.Submission.TriageRequest",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "d4cd6660-2c7b-48fc-b8fa-cf2c13920c2f": {
+      "name": "::Quorum.ResearchFunding.Submission.TriageState",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "509b50d2-70e1-4bc4-8fb7-a43794efd11d": {
+      "name": "::Quorum.ResearchFunding.Submission.TriageVerdict",
+      "kind": "TypeDefinition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "8503be9e-9942-471a-84de-07f3814b5f2a": {
+      "name": "::Quorum.ResearchFunding.Submission.Triage",
+      "kind": "Workflow",
+      "citations": [
+        {
+          "ref": "src/contexts/submission/triage.ts",
+          "digest": "sha256:644b13be555c99aa48f315475f7ed606757d8da1d73912b4406d380e7323daf7"
+        }
+      ],
+      "status": "verified"
+    },
+    "45c44402-a44f-4ed7-8362-fad866e5266c": {
+      "name": "::Quorum.ResearchFunding.Submission.Triage.assess",
+      "kind": "AgentTaskStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "841dc984-8d3b-4ca0-bab1-f321772185b9": {
+      "name": "::Quorum.ResearchFunding.Submission.Triage.record",
+      "kind": "InvokeStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "490a7320-925f-4796-8ee6-c251137e0e08": {
+      "name": "::Quorum.ResearchFunding.Submission.Triage.proposed",
+      "kind": "PublishStep",
+      "citations": [],
+      "status": "uncited"
+    },
+    "704122e9-2cc3-4dc4-a0b7-a6d60d68bc27": {
+      "name": "::Quorum.ResearchFunding.Submission.Triage.T1",
+      "kind": "Transition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "43e05bc6-d2c6-459c-afa1-037851f212e2": {
+      "name": "::Quorum.ResearchFunding.Submission.Triage.T2",
+      "kind": "Transition",
+      "citations": [],
+      "status": "uncited"
+    },
+    "452887a1-d219-406f-960d-8a3ab441a7aa": {
+      "name": "::Quorum.ResearchFunding.AccessControl",
+      "kind": "Capability",
+      "citations": [],
+      "status": "uncited"
+    },
+    "32b91633-4014-4fbf-bc74-f392d2b86d61": {
+      "name": "::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "6e668357-0eb6-4be7-98b6-7b4f1c35f47e": {
+      "name": "::Quorum.ResearchFunding.BlindPeerReview",
+      "kind": "Capability",
+      "citations": [],
+      "status": "uncited"
+    },
+    "d354ad48-3ad1-4e03-b0ea-4d95b77f067b": {
+      "name": "::Quorum.ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "1d677451-f7cb-4c4f-8be6-189e7579a23c": {
+      "name": "::Quorum.ResearchFunding.BlindPeerReview.CompleteScoring",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "0ac277c8-2a21-4600-8cb1-750db57574d0": {
+      "name": "::Quorum.ResearchFunding.CallAdministration",
+      "kind": "Capability",
+      "citations": [],
+      "status": "uncited"
+    },
+    "940ae3cd-850e-4c6d-87b9-15c8d759d8df": {
+      "name": "::Quorum.ResearchFunding.CallAdministration.SubmissionWindow",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "fa4bec90-83cc-4f17-8b99-a64f51bcc89f": {
+      "name": "::Quorum.ResearchFunding.EligibilityScreening",
+      "kind": "Capability",
+      "citations": [],
+      "status": "uncited"
+    },
+    "e16912ff-a7b9-4663-837b-b04aeaf2cff2": {
+      "name": "::Quorum.ResearchFunding.EligibilityScreening.AgentNeverDecides",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "04693827-6a72-4e25-8258-780b19c9ef5e": {
+      "name": "::Quorum.ResearchFunding.PanelAdjudication",
+      "kind": "Capability",
+      "citations": [],
+      "status": "uncited"
+    },
+    "6e2238b1-f6a7-4d4c-a5e9-0a3f10e8840d": {
+      "name": "::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "689c2fed-1a50-4f0a-a853-10d269b0356c": {
+      "name": "::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "99d74a61-b256-4ba7-8463-14afdbad8b4d": {
+      "name": "::Quorum.ResearchFunding.ParticipantNotification",
+      "kind": "Capability",
+      "citations": [],
+      "status": "uncited"
+    },
+    "2084547f-c80e-4f06-a1ca-79f8e5ac2936": {
+      "name": "::Quorum.ResearchFunding.ParticipantNotification.NotificationsDurable",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "9a853c2a-19eb-4e48-911d-4791d4770a35": {
+      "name": "::Quorum.ResearchFunding.PortfolioReporting",
+      "kind": "Capability",
+      "citations": [],
+      "status": "uncited"
+    },
+    "9da0c7a4-0077-4505-ac24-17d0dd48479e": {
+      "name": "::Quorum.ResearchFunding.PortfolioReporting.PortfolioFromProjection",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "c87aa99b-273c-4b9d-9564-b15f31954f3d": {
+      "name": "::Quorum.ResearchFunding.PortfolioReporting.TransitionsAudited",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "575b78a5-c6a3-4e29-9259-e1c677218bd5": {
+      "name": "::Quorum.ResearchFunding.ProposalSubmission",
+      "kind": "Capability",
+      "citations": [],
+      "status": "uncited"
+    },
+    "42f67127-de33-49fa-a909-f5f141c0e80a": {
+      "name": "::Quorum.ResearchFunding.ProposalSubmission.SubmitOnce",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "facb0824-ee28-4739-b2cc-e486e92eec04": {
+      "name": "::Quorum.ResearchFunding.ReviewCompletionTracking",
+      "kind": "Capability",
+      "citations": [],
+      "status": "uncited"
+    },
+    "b252ce47-5626-47ed-8437-9c8d204355a7": {
+      "name": "::Quorum.ResearchFunding.ReviewCompletionTracking.OverdueReviewsEscalated",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "02ed1da2-9aca-4f66-baec-70f786d2f9aa": {
+      "name": "::Quorum.ResearchFunding.ReviewCompletionTracking.ThreeReviewsBeforeScoring",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "904167b8-121f-49a6-b085-074c6c3742bc": {
+      "name": "::Quorum.ResearchFunding.ReviewerAssignment",
+      "kind": "Capability",
+      "citations": [],
+      "status": "uncited"
+    },
+    "70b1cfaf-b8de-49a9-ac51-86938e7aaf2b": {
+      "name": "::Quorum.ResearchFunding.ReviewerAssignment.NoConflictedAssignment",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "c2883260-ea7a-4e56-a267-68ab7294e905": {
+      "name": "::Quorum.ResearchFunding.ReviewerAssignment.NoSelfReview",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "f657abd4-ac26-4df9-8380-e69acbc63c87": {
+      "name": "::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly",
+      "kind": "Requirement",
+      "citations": [],
+      "status": "uncited"
+    },
+    "7fb44375-08ac-464a-9b6b-24dd848963f5": {
+      "name": "::Quorum.ResearchFunding.BlindReview",
+      "kind": "Policy",
+      "citations": [],
+      "status": "uncited"
+    },
+    "d5f5a5ad-ea05-41c7-9161-1165fe63d3a1": {
+      "name": "::Quorum.ResearchFunding.HumansDecide",
+      "kind": "Policy",
+      "citations": [],
+      "status": "uncited"
+    },
+    "1f7dd296-6761-4b11-ba25-0267b3833bf0": {
+      "name": "::Quorum.ResearchFunding.RoleScopedAccess",
+      "kind": "Policy",
+      "citations": [],
+      "status": "uncited"
+    },
+    "ea2208e8-034a-4de7-9068-731ab6b7af9e": {
+      "name": "::Quorum.LocalDevelopment",
+      "kind": "Environment",
+      "citations": [],
+      "status": "uncited"
+    },
+    "93f64c47-6ec8-4ef7-8135-18b948818162": {
+      "name": "::Quorum.ORCID",
+      "kind": "ExternalSystem",
+      "citations": [
+        {
+          "ref": "src/integrations/orcid.ts",
+          "digest": "sha256:8b8adc3b97f660500324293e7f306aee8ea59a7a8c64cceb4b7b1d7c6049f2ed"
+        }
+      ],
+      "status": "verified"
+    },
+    "c6f354c9-7032-4fbd-be4d-1985678c8c5b": {
+      "name": "::Quorum.ORCID.OrcidPublicApi",
+      "kind": "API",
+      "citations": [],
+      "status": "uncited"
+    },
+    "350b9185-3c5f-4c56-adb1-c5685432b8f3": {
+      "name": "::Quorum.ORCID.OrcidPublicApi.LookupRecord",
+      "kind": "Operation",
+      "citations": [],
+      "status": "uncited"
+    },
+    "c45682da-cc71-49c2-bd11-598ff06aaf12": {
+      "name": "::Quorum.DeliveryAndReplay",
+      "kind": "Test",
+      "citations": [
+        {
+          "ref": "tests/scenarios/replay-and-recovery.test.ts",
+          "digest": "sha256:1476997d542cfa0b997c8b051a552f345c40304a0fd8bf2b0294aadb1ac0f349"
+        }
+      ],
+      "status": "verified"
+    },
+    "bf03bde3-f5b6-44a0-b1df-8adb87e6497a": {
+      "name": "::Quorum.Inv01SubmissionWindow",
+      "kind": "Test",
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-01-submission-window.test.ts",
+          "digest": "sha256:89b492abc6282a3fb8941a6126a6531655cdb87b7b9e76794e3f93de5030909e"
+        }
+      ],
+      "status": "verified"
+    },
+    "f45fdb44-3ef3-430e-89a9-342a6b0880c9": {
+      "name": "::Quorum.Inv02SubmitOnce",
+      "kind": "Test",
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-02-submit-once.test.ts",
+          "digest": "sha256:3a566a41cd8210b19c28a41ec721dc76f0c0b5fcc475423313cd0e5cef6069de"
+        }
+      ],
+      "status": "verified"
+    },
+    "56ed25b9-9935-4b9c-b9a2-f074dd9f9213": {
+      "name": "::Quorum.Inv03NoConflictedAssignment",
+      "kind": "Test",
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-03-conflict.test.ts",
+          "digest": "sha256:3ea289715d8cc0347094d79deb2cd3dae2c1d992837d052dd9b68456792f825f"
+        }
+      ],
+      "status": "verified"
+    },
+    "fa4d0adf-87d9-4bae-a61b-0d2f47beca35": {
+      "name": "::Quorum.Inv04NoSelfReview",
+      "kind": "Test",
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-04-self-review.test.ts",
+          "digest": "sha256:29f22f23073297f8989f36fa3a860edf8d1da3a0936056f065d95112f732915b"
+        }
+      ],
+      "status": "verified"
+    },
+    "005d1ac1-f9af-4907-9304-e4dae1d23e2d": {
+      "name": "::Quorum.Inv05ThreeReviews",
+      "kind": "Test",
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-05-three-reviews.test.ts",
+          "digest": "sha256:a1275b817edcdfdf33c63a02f017b39ad1a6d0123020c848a0d7382d87bd65da"
+        }
+      ],
+      "status": "verified"
+    },
+    "41034872-d39c-441e-b5c8-1afc7c288a38": {
+      "name": "::Quorum.Inv06CompleteScoring",
+      "kind": "Test",
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-06-complete-review.test.ts",
+          "digest": "sha256:e000e7a90a41e75ed32ee73ff0c7ed11e5e1e952b41a945b8cd89851622dd0f7"
+        }
+      ],
+      "status": "verified"
+    },
+    "baca435f-33dd-4c09-86b3-b0370d9bd694": {
+      "name": "::Quorum.Inv07Blind",
+      "kind": "Test",
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-07-blind-review.test.ts",
+          "digest": "sha256:c16581bdfa15401d4b42071cbe70aab9b094f2bb9ee57e70e16a003cd26c4aad"
+        }
+      ],
+      "status": "verified"
+    },
+    "4e09e956-dc08-4447-9dc0-a232eb38cdf2": {
+      "name": "::Quorum.Inv08ChairOnly",
+      "kind": "Test",
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-08-panel-decision.test.ts",
+          "digest": "sha256:47e21a3ead3aa9544ca38935a43a292213e2e623d0d5981a235e9b61bbb6f60a"
+        }
+      ],
+      "status": "verified"
+    },
+    "d32231ea-12c9-454d-83b3-824ca041e06d": {
+      "name": "::Quorum.Inv09Envelope",
+      "kind": "Test",
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-09-budget-envelope.test.ts",
+          "digest": "sha256:1369730e94a5ee1234a96326c96b46d80fef7b0cabe0d442cc2ac400eb07cdd2"
+        },
+        {
+          "ref": "tests/scenarios/concurrent-awards.test.ts",
+          "digest": "sha256:067a64c0079d8b9904a140c076f2f752aa108a0199582a5e72e63d641f7a0e13"
+        }
+      ],
+      "status": "verified"
+    },
+    "3fc6d96f-201c-437d-abdd-cf4ac3351f5c": {
+      "name": "::Quorum.Inv10AgentNeverDecides",
+      "kind": "Test",
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-10-agent-proposes-only.test.ts",
+          "digest": "sha256:cc002a275afb9f269624c36bb22370123aad73a8da8eac148de455581a379528"
+        }
+      ],
+      "status": "verified"
+    },
+    "cdcebc23-b538-4105-919c-7e3a27e8d291": {
+      "name": "::Quorum.Inv11RoleScope",
+      "kind": "Test",
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-11-role-scope.test.ts",
+          "digest": "sha256:8193b1373b335fcdce592367e286915f5224bfa2621dd2e662a694c3ec768235"
+        },
+        {
+          "ref": "tests/scenarios/cross-role-access.test.ts",
+          "digest": "sha256:3aa800d18fb415c199265a8054c2c47caf836385d60b920c1ab518cc31ed2f22"
+        }
+      ],
+      "status": "verified"
+    },
+    "99fb115c-bf3a-4f42-89a5-88298e760111": {
+      "name": "::Quorum.Inv12VerifiedReviewers",
+      "kind": "Test",
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-12-verified-reviewers.test.ts",
+          "digest": "sha256:b3a79ab7ab5f0f3369f801704c6f2c585c7f774f543f5f62cdcc15dc1d4a97a8"
+        }
+      ],
+      "status": "verified"
+    },
+    "b3e6afd0-7b00-4e7d-baf3-c0ab1a3cf717": {
+      "name": "::Quorum.OverdueEscalation",
+      "kind": "Test",
+      "citations": [
+        {
+          "ref": "tests/scenarios/overdue-escalation.test.ts",
+          "digest": "sha256:9a5b2b65019ddd5fcf5d7fc851687a66ba10ba6acc7e7b08bc31a4bf940119e1"
+        }
+      ],
+      "status": "verified"
+    },
+    "94be2458-22f4-4e3d-b88b-cd99824a263f": {
+      "name": "::Quorum.PortfolioJourney",
+      "kind": "Test",
+      "citations": [],
+      "status": "uncited"
+    }
+  }
+}

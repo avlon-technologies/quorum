@@ -1,0 +1,65 @@
+{
+  "acceptance-scenario": "1",
+  "name": "inv03-no-conflicted-assignment",
+  "purpose": "A reviewer with a declared conflict cannot be assigned to that proposal (INV-3).",
+  "verifies": [
+    "::Quorum.ResearchFunding.ReviewerAssignment.NoConflictedAssignment",
+    "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+  ],
+  "test": "::Quorum.Inv03NoConflictedAssignment",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "eligible"
+      },
+      "text": "proposal p1 has reached eligible"
+    },
+    {
+      "step": "conflict.declared",
+      "args": {
+        "proposal": "p1",
+        "reviewer": 1
+      },
+      "text": "reviewer 1 has declared a conflict on p1"
+    }
+  ],
+  "when": [
+    {
+      "step": "reviewer.assign",
+      "args": {
+        "proposal": "p1",
+        "reviewer": 1
+      },
+      "text": "the officer assigns reviewer 1 to p1"
+    }
+  ],
+  "then": [
+    {
+      "step": "command.refused",
+      "args": {
+        "status": 409,
+        "code": "conflict_of_interest",
+        "rule": "INV-3"
+      },
+      "text": "the assignment is refused under INV-3"
+    },
+    {
+      "step": "event.count",
+      "args": {
+        "type": "ReviewerAssigned",
+        "count": 0
+      },
+      "text": "no ReviewerAssigned is published"
+    }
+  ],
+  "trace": {
+    "from": "::Quorum.ResearchFunding.PeerReview.AssignReviewer"
+  }
+}

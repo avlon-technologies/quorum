@@ -1,0 +1,120 @@
+{
+  "development-package-trace": "1",
+  "normative": false,
+  "note": "derived from the compiler's process graph; declared causality only — never a runtime claim",
+  "scenario": "inv03-no-conflicted-assignment",
+  "from": "::Quorum.ResearchFunding.PeerReview.AssignReviewer",
+  "ok": true,
+  "hops": [
+    {
+      "consumed": "::Quorum.ResearchFunding.PeerReview.ReviewersAssigned",
+      "participant": "::Quorum.ResearchFunding.Submission.ProposalService",
+      "consequence": "::Quorum.ResearchFunding.Submission.ProposalUnderReview",
+      "receiveKind": "subscribes",
+      "strength": "correlated",
+      "provenance": "authored-reaction",
+      "exclusivity": "independent",
+      "boundary": null,
+      "crossings": 1
+    },
+    {
+      "consumed": "::Quorum.ResearchFunding.PeerReview.ReviewerAssigned",
+      "participant": "::Quorum.ResearchFunding.PeerReview.ReviewDeadline",
+      "consequence": "::Quorum.ResearchFunding.PeerReview.ReviewOverdue",
+      "receiveKind": "triggers",
+      "strength": "correlated",
+      "provenance": "workflow-derived",
+      "exclusivity": "independent",
+      "boundary": null,
+      "crossings": 0
+    },
+    {
+      "consumed": "::Quorum.ResearchFunding.PeerReview.AssignReviewer",
+      "participant": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "consequence": "::Quorum.ResearchFunding.PeerReview.ReviewersAssigned",
+      "receiveKind": "handles",
+      "strength": "correlated",
+      "provenance": "authored-reaction",
+      "exclusivity": "independent",
+      "boundary": null,
+      "crossings": 0
+    },
+    {
+      "consumed": "::Quorum.ResearchFunding.PeerReview.AssignReviewer",
+      "participant": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "consequence": "::Quorum.ResearchFunding.PeerReview.ReviewerAssigned",
+      "receiveKind": "handles",
+      "strength": "correlated",
+      "provenance": "authored-reaction",
+      "exclusivity": "independent",
+      "boundary": null,
+      "crossings": 0
+    }
+  ],
+  "sinks": [
+    {
+      "participant": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "consumed": "::Quorum.ResearchFunding.Submission.ProposalUnderReview"
+    },
+    {
+      "participant": "::Quorum.ResearchFunding.Notification.NotificationService",
+      "consumed": "::Quorum.ResearchFunding.PeerReview.ReviewerAssigned"
+    },
+    {
+      "participant": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "consumed": "::Quorum.ResearchFunding.PeerReview.ReviewerAssigned"
+    },
+    {
+      "participant": "::Quorum.ResearchFunding.Notification.NotificationService",
+      "consumed": "::Quorum.ResearchFunding.PeerReview.ReviewOverdue"
+    },
+    {
+      "participant": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "consumed": "::Quorum.ResearchFunding.PeerReview.ReviewOverdue"
+    }
+  ],
+  "openConsumptions": [],
+  "productions": [
+    {
+      "message": "::Quorum.ResearchFunding.Submission.ProposalUnderReview",
+      "producer": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "readModel": "::Quorum.ResearchFunding.Oversight.Portfolio"
+    },
+    {
+      "message": "::Quorum.ResearchFunding.Submission.ProposalUnderReview",
+      "producer": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "readModel": "::Quorum.ResearchFunding.Oversight.AuditTrail"
+    },
+    {
+      "message": "::Quorum.ResearchFunding.PeerReview.ReviewerAssigned",
+      "producer": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "readModel": "::Quorum.ResearchFunding.Oversight.AuditTrail"
+    },
+    {
+      "message": "::Quorum.ResearchFunding.PeerReview.ReviewOverdue",
+      "producer": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "readModel": "::Quorum.ResearchFunding.Oversight.AuditTrail"
+    }
+  ],
+  "cycles": [],
+  "messagesReached": [
+    "::Quorum.ResearchFunding.Submission.ProposalUnderReview",
+    "::Quorum.ResearchFunding.PeerReview.ReviewersAssigned",
+    "::Quorum.ResearchFunding.PeerReview.ReviewerAssigned",
+    "::Quorum.ResearchFunding.PeerReview.ReviewOverdue",
+    "::Quorum.ResearchFunding.PeerReview.AssignReviewer"
+  ],
+  "participantsReached": [
+    "::Quorum.ResearchFunding.PeerReview.ReviewDeadline",
+    "::Quorum.ResearchFunding.Submission.ProposalService",
+    "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+    "::Quorum.ResearchFunding.Notification.NotificationService",
+    "::Quorum.ResearchFunding.Oversight.PortfolioProjector"
+  ],
+  "weakestStrength": "correlated",
+  "declaredCausalClosure": {
+    "closed": true,
+    "meaning": "every consumption reached along declared hops carries a declaration (sinks included); NOT runtime completion, success, or that any Event occurs"
+  },
+  "expected": null
+}

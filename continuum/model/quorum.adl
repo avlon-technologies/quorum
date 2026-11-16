@@ -1,0 +1,843 @@
+// Quorum — research funding calls, blind peer review and panel adjudication.
+// The system identity is the S0 identity written by `continuum install`; it is kept.
+document semantic at :: {
+
+system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
+  desc "Runs a research funding call from publication through submission, eligibility screening, blind peer review and panel adjudication against a fixed budget envelope, and reports where every proposal stands."
+
+  // ---------------------------------------------------------------- who is outside
+  actor Applicant #c714f435-9977-44f8-8a53-d1c005aca950 [person] {
+    desc "Principal investigator. Drafts, submits and withdraws their own proposals; sees only their own."
+    uses: ::Quorum
+  }
+  actor Reviewer #741c9288-92d6-4bfc-9779-5852cec4ae76 [person] {
+    desc "Domain expert. Verifies an ORCID identity, declares conflicts, accepts assignments and scores proposals blind."
+    uses: ::Quorum
+  }
+  actor ProgramOfficer #6941c304-5ce8-478c-a354-e6ce19fdeee1 [person] {
+    desc "Funding body staff. Publishes and closes calls, confirms eligibility, assigns reviewers and chases overdue reviews."
+    uses: ::Quorum
+  }
+  actor PanelChair #a486e697-e8ce-4272-895c-673aef06d245 [person] {
+    desc "Panel lead. The only participant who records an award or a decline, and only for a scored proposal."
+    uses: ::Quorum
+  }
+  actor FundingOperations #ac06bb54-6ba7-4467-8949-8556db840b80 [team] {
+    desc "The team accountable for operating Quorum."
+    owns: ::Quorum, ResearchFunding, ResearchFunding.Identity, ResearchFunding.Calls, ResearchFunding.Submission, ResearchFunding.PeerReview, ResearchFunding.Adjudication, ResearchFunding.Notification, ResearchFunding.Oversight
+  }
+
+  external-system ORCID #93f64c47-6ec8-4ef7-8135-18b948818162 {
+    desc "The researcher identity registry. Confirms that a claimed ORCID iD exists. A deterministic stub locally; real HTTP in production — the swap is a binding of the adapter service, not a model change."
+    api OrcidPublicApi #c6f354c9-7032-4fbd-be4d-1985678c8c5b {
+      operation LookupRecord #350b9185-3c5f-4c56-adb1-c5685432b8f3 { in = ::Quorum.ResearchFunding.Identity.OrcidQuery out = ::Quorum.ResearchFunding.Identity.OrcidRecord }
+    }
+  }
+
+  domain ResearchFunding #7b036919-d1ca-45d5-8a2e-69208e35ca97 {
+    classification = core
+    desc "Competitive research funding: calls, proposals, independent review and panel awards against a budget envelope."
+
+    // -------------------------------------------------------------- intent
+    capability CallAdministration #0ac277c8-2a21-4600-8cb1-750db57574d0 {
+      desc "Publish a call with a deadline, a budget envelope and scoring criteria; close it."
+      requirement SubmissionWindow #940ae3cd-850e-4c6d-87b9-15c8d759d8df { desc "INV-1 — A proposal may be submitted only while its call is open and strictly before the call's deadline." }
+    }
+    capability ProposalSubmission #575b78a5-c6a3-4e29-9259-e1c677218bd5 {
+      desc "Draft, validate, submit and withdraw a proposal."
+      requirement SubmitOnce #42f67127-de33-49fa-a909-f5f141c0e80a { desc "INV-2 — A proposal is submitted at most once; submission is irreversible except by withdrawal." }
+    }
+    capability EligibilityScreening #fa4bec90-83cc-4f17-8b99-a64f51bcc89f {
+      desc "An AI agent proposes an eligibility verdict for every submission; a program officer confirms or overrides it."
+      requirement AgentNeverDecides #e16912ff-a7b9-4663-837b-b04aeaf2cff2 { desc "INV-10 — The eligibility triage agent may propose a verdict but may never move a proposal out of screening." }
+    }
+    capability ReviewerAssignment #904167b8-121f-49a6-b085-074c6c3742bc {
+      desc "Assign three reviewers per proposal with conflicts mechanically impossible to assign through."
+      requirement NoConflictedAssignment #70b1cfaf-b8de-49a9-ac51-86938e7aaf2b { desc "INV-3 — A reviewer with a declared conflict against a proposal can never hold an assignment to it." }
+      requirement NoSelfReview #c2883260-ea7a-4e56-a267-68ab7294e905 { desc "INV-4 — An applicant can never be assigned to review their own proposal." }
+      requirement VerifiedReviewersOnly #f657abd4-ac26-4df9-8380-e69acbc63c87 { desc "INV-12 — A reviewer may hold an assignment only if their ORCID identity is verified." }
+    }
+    capability BlindPeerReview #6e668357-0eb6-4be7-98b6-7b4f1c35f47e {
+      desc "Reviewers score independently, seeing nothing of each other until their own review is submitted."
+      requirement CompleteScoring #1d677451-f7cb-4c4f-8be6-189e7579a23c { desc "INV-6 — A review must score every published criterion of its call, each on 1–5, before it may be submitted." }
+      requirement BlindUntilOwnSubmitted #d354ad48-3ad1-4e03-b0ea-4d95b77f067b { desc "INV-7 — A reviewer may not read any other review of a proposal until their own review for it is submitted." }
+    }
+    capability ReviewCompletionTracking #facb0824-ee28-4739-b2cc-e486e92eec04 {
+      desc "Detect when a proposal is fully reviewed and when a review is overdue."
+      requirement ThreeReviewsBeforeScoring #02ed1da2-9aca-4f66-baec-70f786d2f9aa { desc "INV-5 — A proposal requires exactly three submitted reviews (on non-revoked assignments) before it may enter scored." }
+      requirement OverdueReviewsEscalated #b252ce47-5626-47ed-8437-9c8d204355a7 { desc "J6 — An assignment whose due date passes without a submitted review becomes overdue and the reviewer and officer are told." }
+    }
+    capability PanelAdjudication #04693827-6a72-4e25-8258-780b19c9ef5e {
+      desc "The chair awards or declines a scored proposal under the call's budget envelope."
+      requirement ChairDecidesScoredOnly #6e2238b1-f6a7-4d4c-a5e9-0a3f10e8840d { desc "INV-8 — Only a PanelChair may record a panel decision, and only for a proposal in scored." }
+      requirement EnvelopeNeverExceeded #689c2fed-1a50-4f0a-a853-10d269b0356c { desc "INV-9 — The sum of all awarded amounts for a call may never exceed the call's budget envelope." }
+    }
+    capability ParticipantNotification #99d74a61-b256-4ba7-8463-14afdbad8b4d {
+      desc "Participants are told what happened, through a durable outbound message store."
+      requirement NotificationsDurable #2084547f-c80e-4f06-a1ca-79f8e5ac2936 { desc "NFR-5 — Notifications are queued durably and delivered at least once; a failed delivery is visible and retryable." }
+    }
+    capability PortfolioReporting #9a853c2a-19eb-4e48-911d-4791d4770a35 {
+      desc "Answer where every proposal is and what it has scored, without querying the write side."
+      requirement PortfolioFromProjection #9da0c7a4-0077-4505-ac24-17d0dd48479e { desc "J8 — The portfolio is served from a projection fed by events, never from the write model." }
+      requirement TransitionsAudited #c87aa99b-273c-4b9d-9564-b15f31954f3d { desc "NFR-8 — Every state transition is recorded with actor, timestamp and reason." }
+    }
+    capability AccessControl #452887a1-d219-406f-960d-8a3ab441a7aa {
+      desc "Authentication and role-scoped authorization at every operation."
+      requirement RoleScopedAuthority #32b91633-4014-4fbf-bc74-f392d2b86d61 { desc "INV-11 — An account may act only in a role it has been granted, and only on resources its role scopes it to. Deny by default." }
+    }
+
+    policy RoleScopedAccess #1f7dd296-6761-4b11-ba25-0267b3833bf0 {
+      desc "Deny by default. Every operation names the roles that may call it and the resources each role is scoped to: applicants their own proposals, reviewers their own assignments, officers and chairs the whole funding programme. Roles are read from the account store on every request."
+    }
+    policy BlindReview #7fb44375-08ac-464a-9b6b-24dd848963f5 {
+      desc "No reviewer sees another reviewer's scores or comments, directly, through the portfolio or through a notification, before their own review of that proposal is submitted. Officers and chairs see all submitted reviews."
+    }
+    policy HumansDecide #d5f5a5ad-ea05-41c7-9161-1165fe63d3a1 {
+      desc "Eligibility, assignment and award are human decisions. Automation proposes, detects and escalates; it never decides."
+    }
+
+    // ============================================================ Identity
+    bounded-context Identity #e1941c8a-84d7-4ec0-a77d-1a3756482e88 {
+      desc "Accounts, granted roles and ORCID verification. The single writer of accounts and role grants."
+      realizes: ResearchFunding.AccessControl
+
+      alias AccountId v1 #be4edc13-4d73-4401-ba2c-38ee98608b6d = text !identity
+      enum Role v1 #c272b062-8449-4436-8318-c39931d3c854 = applicant | reviewer | programOfficer | panelChair
+      enum OrcidStatus v1 #7bac7f9d-6ec7-462f-b9d6-bd423cc8f911 = unverified | verified
+      record RegistrationData v1 #2d6b4ff1-a748-4bd8-adb9-432f7b9b2771 { accountId: AccountId, email: text ~sensitive, name: text, institution: text }
+      record OrcidQuery v1 #4cd09901-00d8-4ac7-99bf-95b93f35c5ba { orcidId: text }
+      record OrcidRecord v1 #2820440a-9f95-48e4-8e09-44095261d0fb { orcidId: text, exists: boolean, name: optional(text) }
+      record VerifyOrcidData v1 #5963ed5f-6029-48a0-b1b6-7b52c693b930 { accountId: AccountId, orcidId: text }
+      record OrcidVerifiedData v1 #62476e75-704c-4a5d-b790-103efb2fcc8f { accountId: AccountId, orcidId: text, at: instant }
+      record StandingQuery v1 #76647107-294c-4695-b2c8-1dfc65d122c1 { accountId: AccountId }
+      record ReviewerStanding v1 #5245b070-3ff7-48fe-811f-8319dbe17a36 { accountId: AccountId, isReviewer: boolean, orcid: OrcidStatus, institution: text }
+
+      command RegisterApplicant #1dc73300-83ec-4613-bdb8-c5abcc33823d {
+        payload = RegistrationData
+        occurrence-identity = payload.email
+      }
+      command VerifyOrcid #a94a3fb5-b144-4e4d-b39b-d34ca72d7090 {
+        payload = VerifyOrcidData
+        occurrence-identity = payload.accountId
+      }
+      event OrcidVerified #dbba1645-cff7-43b2-8f44-11f5d83b6549 {
+        desc "A reviewer's ORCID iD was confirmed by the registry. unverified -> verified is the only ORCID transition."
+        payload = OrcidVerifiedData
+        delivery[ordered; at-least-once; durable]
+      }
+
+      resource AccountStore #92094160-de9a-4c30-8376-c0baecf4bc30 [data-store] {
+        desc "Accounts, password hashes, role grants and ORCID status."
+        persistence[durable; strong; retention="business-record"]
+      }
+
+      service AccountService #a4504f75-f50e-4ef5-b6e1-0737af838a6e {
+        desc "Registers applicants, authenticates sign-in, loads roles per request (never trusting token claims for roles), verifies ORCID iDs through the ORCID adapter and answers reviewer-standing queries for assignment checks."
+        realizes: ResearchFunding.AccessControl
+        satisfies: ResearchFunding.AccessControl.RoleScopedAuthority, ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly
+        governedBy: ResearchFunding.RoleScopedAccess
+        handles: RegisterApplicant, VerifyOrcid
+        publishes: OrcidVerified
+        writes: AccountStore
+        reads: AccountStore
+        invokes: ::Quorum.ORCID.OrcidPublicApi.LookupRecord
+        deployedAs: ::Quorum.QuorumServer
+        on RegisterApplicant -> none
+        on VerifyOrcid -> independent OrcidVerified
+          correlate OrcidVerified payload.accountId = payload.accountId
+        api IdentityApi #bbc9acb3-f541-44de-a98e-63fba0f2596a {
+          operation GetReviewerStanding #7be131b5-34da-46e3-9f26-8191581cfd1a { in = StandingQuery out = ReviewerStanding }
+        }
+      }
+    }
+
+    // ============================================================ Call administration
+    bounded-context Calls #070ef2ac-5b4e-4da3-a24d-625e757b6c0e {
+      desc "Funding calls: deadline, budget envelope and scoring criteria. Budget and criteria are immutable once a call is open."
+      realizes: ResearchFunding.CallAdministration
+
+      alias CallId v1 #a0e5e566-1e79-4c07-a88b-4ed8b53383e3 = text !identity
+      alias Money v1 #e5c742af-99db-489f-88e6-e71379949e18 = decimal(14,2)
+      enum CallStatus v1 #004ceee0-1ac0-4ba1-a336-bef06d63869f = open | closed
+      record Criterion v1 #f7bf3c3c-de99-495f-83d0-4694b080dadc { criterionId: text, name: text }
+      record CallDraft v1 #371a3f66-3347-4409-87e4-9180f003b1ae { callId: CallId, title: text, deadline: instant, envelope: Money, maxRequest: Money, criteria: list(Criterion) }
+      record CallPublishedData v1 #21411b51-99e6-4256-ba0a-3f468d521cd5 { callId: CallId, title: text, deadline: instant, envelope: Money, criteria: list(Criterion), actorId: text, at: instant }
+      record CallRef v1 #6586b771-b070-41b3-8173-d916bf2bddfb { callId: CallId, actorId: text, reason: text }
+      record CallClosedData v1 #9626f8ec-25e9-46e3-bbb5-f3cb5a8828ef { callId: CallId, actorId: text, reason: text, at: instant }
+      record CallStatusQuery v1 #d91d59d1-077f-47d8-a1c7-951b027c5362 { callId: CallId }
+      record CallStatusView v1 #56dabdb9-b2f9-471b-868c-282ba1656129 { callId: CallId, status: CallStatus, deadline: instant, maxRequest: Money, criteria: list(Criterion) }
+
+      command PublishCall #26f9521a-c61e-4f7b-8297-d72c1993ea62 {
+        payload = CallDraft
+        occurrence-identity = payload.callId
+      }
+      command CloseCall #247afa0c-53eb-4e30-a834-91f0762206ba {
+        payload = CallRef
+        occurrence-identity = payload.callId
+      }
+      event CallPublished #01c8e173-b33d-48c3-9acf-0e53eaceb087 {
+        desc "A call opened. Carries the envelope and criteria that are fixed from now on."
+        payload = CallPublishedData
+        delivery[ordered; at-least-once; durable]
+      }
+      event CallClosed #c28f7e24-1e70-4a18-a227-788131854b0e {
+        payload = CallClosedData
+        delivery[ordered; at-least-once; durable]
+      }
+
+      resource CallStore #092a8d95-5015-4e1e-ae72-7ccee4c30d78 [data-store] {
+        desc "Calls and their criteria."
+        persistence[durable; strong; retention="business-record"]
+      }
+
+      service CallService #5cb21bef-2f92-499c-b8ff-8f8040c4dc3c {
+        desc "Publishes and closes calls; answers the synchronous call-status query the submission check runs inside its own transaction (INV-1)."
+        realizes: ResearchFunding.CallAdministration
+        governedBy: ResearchFunding.RoleScopedAccess
+        handles: PublishCall, CloseCall
+        publishes: CallPublished, CallClosed
+        writes: CallStore
+        reads: CallStore
+        deployedAs: ::Quorum.QuorumServer
+        on PublishCall -> CallPublished
+          correlate CallPublished payload.callId = payload.callId
+        on CloseCall -> independent CallClosed
+          correlate CallClosed payload.callId = payload.callId
+        api CallApi #c367b691-472b-438d-85cd-4e123a449ab8 {
+          operation GetCallStatus #928d16af-e3b1-4bdc-9d17-c20699b58eb2 { in = CallStatusQuery out = CallStatusView }
+        }
+      }
+    }
+
+    // ============================================================ Submission and screening
+    bounded-context Submission #56b9b8b0-e4ca-41fc-8769-3f92e3056766 {
+      desc "Proposals and their lifecycle, and eligibility screening. The single writer of Proposal.status: every transition of every proposal happens here, as a conditional update on the expected prior state."
+      realizes: ResearchFunding.ProposalSubmission, ResearchFunding.EligibilityScreening
+
+      alias ProposalId v1 #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c = text !identity
+      enum ProposalStatus v1 #76d74c51-e779-4d64-987a-0a529bfed892 = draft | submitted | screening | eligible | ineligible | underReview | scored | awarded | declined | withdrawn
+      enum EligibilityVerdict v1 #e376e269-b244-4ecd-bbbf-872fd6ebcaad = eligible | ineligible | unclear
+      record ProposalDraft v1 #6720d44d-a0ea-447e-8bcd-fcf1e4c4c677 { proposalId: ProposalId, callId: ::Quorum.ResearchFunding.Calls.CallId, title: text, abstract: text, requested: ::Quorum.ResearchFunding.Calls.Money }
+      record ProposalRef v1 #be287723-49ad-4d69-b4b1-fc1c723feda3 { proposalId: ProposalId, actorId: text, reason: text }
+      record ProposalSubmittedData v1 #87efa267-5756-4c9d-956a-ee9ad5763ca1 { proposalId: ProposalId, callId: ::Quorum.ResearchFunding.Calls.CallId, applicantId: text, applicantName: text, title: text, requested: ::Quorum.ResearchFunding.Calls.Money, at: instant }
+      record ProposalTransition v1 #af5f48e1-b848-4652-808f-3450a827ba58 { proposalId: ProposalId, callId: ::Quorum.ResearchFunding.Calls.CallId, fromStatus: ProposalStatus, toStatus: ProposalStatus, actorId: text, reason: text, at: instant }
+      record EligibilityConfirmation v1 #1aeae9d1-1260-4c1a-a423-1ad0ed40397c { proposalId: ProposalId, outcome: EligibilityVerdict, reason: text, actorId: text }
+      record EligibleData v1 #107e9e87-6f12-4e28-be79-94091c875e30 { proposalId: ProposalId, callId: ::Quorum.ResearchFunding.Calls.CallId, applicantId: text, actorId: text, reason: text, at: instant }
+      record ScoredData v1 #3128b4f6-7d7d-4733-82cd-89d88ecdf28b { proposalId: ProposalId, callId: ::Quorum.ResearchFunding.Calls.CallId, title: text, requested: ::Quorum.ResearchFunding.Calls.Money, meanScore: decimal(4,2), at: instant }
+      record TriageRequest v1 #9b92d07e-fa80-433e-a6b8-97477d572362 { proposalId: ProposalId }
+      record TriageVerdict v1 #509b50d2-70e1-4bc4-8fb7-a43794efd11d { verdict: EligibilityVerdict, rationale: text }
+      record TriageRecordRequest v1 #c009c53b-df57-4425-b943-e37127f97a1c { proposalId: ProposalId, verdict: optional(TriageVerdict) }
+      record TriageRecorded v1 #d9a0bf2c-cf3b-44fb-a951-596eef155c8c { proposalId: ProposalId, recorded: boolean }
+      record TriageState v1 #d4cd6660-2c7b-48fc-b8fa-cf2c13920c2f { proposalId: ProposalId, verdict: optional(TriageVerdict) }
+      record TriageProposedData v1 #6ba2f80a-c02c-41b1-a11a-cc5f5e2536db { proposalId: ProposalId, verdict: optional(TriageVerdict) }
+
+      command SaveDraft #f8c71008-2ddf-41f1-a03b-51c2c284c615 {
+        payload = ProposalDraft
+        occurrence-identity = payload.proposalId
+      }
+      command SubmitProposal #2003004f-31c9-462f-aa41-b822a0b51bac {
+        desc "Applicant-only. Refused unless the call is open and now < deadline (INV-1) and the proposal is a draft (INV-2)."
+        payload = ProposalRef
+        occurrence-identity = payload.proposalId
+      }
+      command WithdrawProposal #8eec6230-98f6-4999-8258-c32a893c1674 {
+        desc "Applicant-only; allowed from any state before scored."
+        payload = ProposalRef
+        occurrence-identity = payload.proposalId
+      }
+      command ConfirmEligibility #a6ffb30c-13b3-4292-84d4-1ad210a61778 {
+        desc "ProgramOfficer-only. The human decision that moves a proposal out of screening (INV-10)."
+        payload = EligibilityConfirmation
+        occurrence-identity = payload.proposalId
+      }
+
+      event ProposalSubmitted #c7bc81e6-5912-4c4c-a7ff-c44db2ba7d97 {
+        payload = ProposalSubmittedData
+        delivery[ordered; at-least-once; durable]
+      }
+      event ProposalEnteredScreening #074d0196-bb96-4cb8-9f37-b1eae47f24ff {
+        payload = ProposalTransition
+        delivery[ordered; at-least-once; durable]
+      }
+      event TriageProposed #5f44a031-1d07-42a1-8f47-97457cb87678 {
+        desc "The triage agent's verdict was recorded as a proposal for the officer. It changes no proposal status."
+        payload = TriageProposedData
+        delivery[ordered; at-least-once; durable]
+      }
+      event ProposalEligible #ac9fcfaa-e0fa-4694-b112-4e3a0adbd481 {
+        payload = EligibleData
+        delivery[ordered; at-least-once; durable]
+      }
+      event ProposalIneligible #d1ed94b2-0305-4d67-93d6-2f30a76c2a75 {
+        payload = ProposalTransition
+        delivery[ordered; at-least-once; durable]
+      }
+      event ProposalUnderReview #1da5fa46-9bb1-4072-9596-861a69788323 {
+        payload = ProposalTransition
+        delivery[ordered; at-least-once; durable]
+      }
+      event ProposalScored #a4413f5b-b24a-4c30-b513-755228a7c89c {
+        payload = ScoredData
+        delivery[ordered; at-least-once; durable]
+      }
+      event ProposalWithdrawn #5a9ef11c-5881-406c-96ba-2f68a42a590f {
+        payload = ProposalTransition
+        delivery[ordered; at-least-once; durable]
+      }
+
+      resource ProposalStore #804598a6-60a1-40a1-9f3f-5229e9f90d5f [data-store] {
+        desc "Proposals, their status, and triage proposals. Status changes only by conditional update on the expected prior status."
+        persistence[durable; strong; retention="business-record"]
+      }
+
+      business-rule SubmissionWindowOpen #743a4807-b286-4ad7-b847-4e00aee60292 {
+        statement "SubmitProposal is accepted only while the proposal's call is open and the current instant is strictly before the call's deadline; checked against the call store inside the submitting transaction."
+      }
+      business-rule SubmittedOnce #c9ae9fb3-f8eb-465f-9d21-7324ec817547 {
+        statement "SubmitProposal moves draft -> submitted and nothing else; a proposal not in draft is refused with already_submitted. Withdrawal is the only way back out, and it is terminal."
+      }
+      business-rule ApplicantScope #3a49eeb0-3898-44fb-9f71-ba9fd12539db {
+        statement "An applicant reads and changes only proposals whose applicantId is their own account; any other proposal is reported as not found."
+      }
+
+      guardrail AgentProposesOnly #b1da20e5-ec1f-4c52-9984-7c5b8f68a2ba {
+        statement "The eligibility triage agent may record a verdict proposal but may never move a proposal out of screening. It holds no tool that sends a command, and the agent principal is refused by every transition operation."
+        enforce = action
+        realizes: ResearchFunding.HumansDecide
+      }
+
+      tool ProposalReader #5f5c8322-00fa-4659-96cc-426344078bd8 {
+        desc "Read-only access to the proposal under triage: title, abstract, requested amount and the call's limits."
+        reads: ProposalStore
+      }
+
+      agent EligibilityTriage #dcbe8ea9-b92b-4ecc-aebc-54ddbcc6f17b {
+        desc "Screens each submitted proposal and proposes eligible / ineligible / unclear with a rationale. Locally a deterministic stub provider; a real model is a binding change."
+        instruction "Assess whether the proposal is within the call's scope and limits, and propose a verdict with a rationale for a program officer to confirm."
+        output = TriageVerdict
+        model[caps: reasoning, structured-output]
+        autonomy[score-only]
+        conversation[task-occurrence; retention="audit-transcript"]
+        uses: ProposalReader
+        constrainedBy: AgentProposesOnly
+        deployedAs: ::Quorum.QuorumServer
+      }
+
+      workflow Triage v1 #8503be9e-9942-471a-84de-07f3814b5f2a {
+        desc "Runs the triage agent on a submitted proposal and records its verdict as a proposal. Advisory and non-blocking: if the agent fails the verdict is recorded as absent and the officer screens without it."
+        state { proposalId: ProposalId, verdict: optional(TriageVerdict) } retention "instance-audit"
+        trigger = TriageState{ proposalId: payload.proposalId } unique-by payload.proposalId
+        triggeredBy: ProposalSubmitted
+        realizes: ResearchFunding.EligibilityScreening
+        satisfies: ResearchFunding.EligibilityScreening.AgentNeverDecides
+        constrainedBy: AgentProposesOnly
+        deployedAs: ::Quorum.QuorumServer
+
+        agent-task assess #45c44402-a44f-4ed7-8362-fad866e5266c
+          -> EligibilityTriage
+          in = TriageRequest{ proposalId: proposalId }
+          out = result -> verdict = some(result) policy[retry "bounded"; on-fail=continue]
+        invoke record #841dc984-8d3b-4ca0-bab1-f321772185b9
+          -> ProposalService.ScreeningApi.RecordTriageProposal
+          in = TriageRecordRequest{ proposalId: proposalId, verdict: verdict }
+        publish proposed #490a7320-925f-4796-8ee6-c251137e0e08
+          -> TriageProposed payload = TriageProposedData{ proposalId: proposalId, verdict: verdict }
+        transition T1 #704122e9-2cc3-4dc4-a0b7-a6d60d68bc27 : assess -> record
+        transition T2 #43e05bc6-d2c6-459c-afa1-037851f212e2 : record -> proposed
+      }
+
+      service ProposalService #0d09ec42-5b02-46f6-969f-d65bc15aef6c {
+        desc "The single writer of proposals. Handles applicant and officer commands, and reacts to review and adjudication events by moving status forward on a conditional update; a late event against a terminal status is a recorded no-op."
+        realizes: ResearchFunding.ProposalSubmission, ResearchFunding.EligibilityScreening
+        satisfies: ResearchFunding.CallAdministration.SubmissionWindow, ResearchFunding.ProposalSubmission.SubmitOnce, ResearchFunding.EligibilityScreening.AgentNeverDecides
+        governedBy: ResearchFunding.RoleScopedAccess, ResearchFunding.HumansDecide
+        applies: SubmissionWindowOpen, SubmittedOnce, ApplicantScope
+        handles: SaveDraft, SubmitProposal, WithdrawProposal, ConfirmEligibility
+        publishes: ProposalSubmitted, ProposalEnteredScreening, ProposalEligible, ProposalIneligible, ProposalUnderReview, ProposalScored, ProposalWithdrawn
+        subscribesTo: ProposalSubmitted, ::Quorum.ResearchFunding.PeerReview.ReviewersAssigned, ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed, ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined
+        writes: ProposalStore
+        reads: ProposalStore
+        invokes: ::Quorum.ResearchFunding.Calls.CallService.CallApi.GetCallStatus
+        deployedAs: ::Quorum.QuorumServer
+        on SaveDraft -> none
+        on SubmitProposal -> independent ProposalSubmitted
+          correlate ProposalSubmitted payload.proposalId = payload.proposalId
+        on WithdrawProposal -> independent ProposalWithdrawn
+          correlate ProposalWithdrawn payload.proposalId = payload.proposalId
+        on ConfirmEligibility -> one-of ProposalEligible, ProposalIneligible
+          correlate ProposalEligible payload.proposalId = payload.proposalId
+          correlate ProposalIneligible payload.proposalId = payload.proposalId
+        on ProposalSubmitted -> independent ProposalEnteredScreening
+          correlate ProposalEnteredScreening payload.proposalId = payload.proposalId
+        on ::Quorum.ResearchFunding.PeerReview.ReviewersAssigned -> independent ProposalUnderReview
+          correlate ProposalUnderReview payload.proposalId = payload.proposalId
+        on ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed -> independent ProposalScored
+          correlate ProposalScored payload.proposalId = payload.proposalId
+        on ::Quorum.ResearchFunding.Adjudication.ProposalAwarded -> none
+        on ::Quorum.ResearchFunding.Adjudication.ProposalDeclined -> none
+        api ScreeningApi #0a015b26-496e-4e06-96a0-93dbd1983082 {
+          operation RecordTriageProposal #3a317f1b-174c-4898-a15c-5403d26272cf { in = TriageRecordRequest out = TriageRecorded }
+        }
+      }
+    }
+
+    // ============================================================ Peer review
+    bounded-context PeerReview #da072bdd-0a9f-4a43-8b44-42c9ce1c9e80 {
+      desc "Conflict declarations, reviewer assignments and reviews, and review completion. A proposal becomes assignable when it is confirmed eligible; the applicant and criteria are snapshotted from that event."
+      realizes: ResearchFunding.ReviewerAssignment, ResearchFunding.BlindPeerReview, ResearchFunding.ReviewCompletionTracking
+
+      alias AssignmentId v1 #4fb38ee0-e195-4eb5-b05b-1452eda90cd9 = text !identity
+      alias ReviewId v1 #f3af0716-b9fb-4d89-88b3-857b4a936eb1 = text !identity
+      enum AssignmentStatus v1 #47b94763-2d4f-4199-a720-602b837d37b0 = assigned | accepted | completed | overdue | revoked
+      enum ReviewStatus v1 #01491cae-2136-4d9c-92af-a18d25f86348 = pending | submitted
+      record CriterionScore v1 #4bd0b515-2a2f-423b-9312-32d193221bba { criterionId: text, score: int32 }
+      record ConflictData v1 #4e3f8989-f95c-4edf-bfbb-abc1b6d43096 { conflictKey: text, reviewerId: text, proposalId: text, reason: text, actorId: text }
+      record ConflictDeclaredData v1 #8658b2f1-76f8-45ab-bcf6-f49671c17dec { reviewerId: text, proposalId: text, reason: text, actorId: text, revokedAssignment: optional(AssignmentId), heldAward: boolean, at: instant }
+      record AssignmentRequest v1 #566f7d95-f6f3-4047-b39b-b1bdc540a94e { assignmentId: AssignmentId, proposalId: text, reviewerId: text, actorId: text }
+      record AssignmentRef v1 #95a3640a-ca6f-4ad0-b72e-a26d29859211 { assignmentId: AssignmentId, actorId: text, reason: text }
+      record AssignmentData v1 #375b566f-45d4-4fd3-8f7c-8f1e53b36839 { assignmentId: AssignmentId, proposalId: text, reviewerId: text, dueAt: instant, actorId: text, reason: text, at: instant }
+      record ReviewersAssignedData v1 #6b0ccc5d-e8e2-4b1e-9fe6-12134c71f461 { proposalId: text, callId: text, reviewerCount: int32, at: instant }
+      record ReviewSubmission v1 #da099f6c-23b0-417a-98c8-51c13bedfab4 { reviewId: ReviewId, assignmentId: AssignmentId, scores: list(CriterionScore), comment: text, attestsNoConflict: boolean, actorId: text }
+      record ReviewSubmittedData v1 #164cf5a6-3912-4aa3-8633-dd5c603aad5e { reviewId: ReviewId, assignmentId: AssignmentId, proposalId: text, reviewerId: text, at: instant }
+      record FullyReviewedData v1 #e2879ea8-bfb5-403e-b895-f4ed60b8b0a9 { proposalId: text, meanScore: decimal(4,2), reviewIds: list(ReviewId), at: instant }
+      record OverdueRequest v1 #eea7d3e7-9861-4bc8-b845-a2a8ba1b123e { assignmentId: AssignmentId }
+      record OverdueResult v1 #6bec4971-5e4c-4595-ae29-b973b8600606 { markedOverdue: boolean }
+      record PeerReviewQuery v1 #34c30a9b-b963-48aa-a79e-aba3dcfe9421 { proposalId: text, reviewerId: text }
+      record PeerReviewView v1 #08865139-ce99-4fc5-aa4b-24d2d422ad05 { proposalId: text, visible: boolean, reviews: list(ReviewSubmittedData) }
+      record DeadlineState v1 #e759e8cb-8631-466e-baeb-10e607069e4c { assignmentId: AssignmentId, proposalId: text, reviewerId: text, dueAt: instant }
+
+      command DeclareConflict #1fa89159-9a00-4344-9f60-3b91d31813a4 {
+        desc "Reviewer (for themself) or ProgramOfficer (on a reviewer's behalf). Revokes any active assignment of that reviewer to that proposal in the same transaction."
+        payload = ConflictData
+        occurrence-identity = payload.conflictKey
+      }
+      command AssignReviewer #d4085214-591d-411b-9fa9-3aa47e75db18 {
+        desc "ProgramOfficer-only. Refused for a conflicted reviewer (INV-3), the applicant (INV-4), an unverified ORCID (INV-12), a fourth active assignment, or a proposal that is not assignable."
+        payload = AssignmentRequest
+        occurrence-identity = payload.assignmentId
+      }
+      command AcceptAssignment #833d64ac-3cd0-458e-a287-4365d0901ed3 {
+        desc "Reviewer-only, on their own assignment: attests no conflict."
+        payload = AssignmentRef
+        occurrence-identity = payload.assignmentId
+      }
+      command RevokeAssignment #559c9a24-8abc-4e7c-b63d-56571da9f613 {
+        desc "ProgramOfficer-only; allowed until the review is submitted."
+        payload = AssignmentRef
+        occurrence-identity = payload.assignmentId
+      }
+      command SubmitReview #ba347d7b-a490-4dc7-a7e1-a5b3a8e85689 {
+        desc "Reviewer-only, on their own accepted or overdue assignment. Refused unless every published criterion is scored 1–5 (INV-6)."
+        payload = ReviewSubmission
+        occurrence-identity = payload.reviewId
+      }
+
+      event ConflictDeclared #1cc4c504-edee-4da6-a2ca-3a2962d33f73 {
+        payload = ConflictDeclaredData
+        delivery[ordered; at-least-once; durable]
+      }
+      event ReviewerAssigned #904ca791-4626-413d-9f1b-074d89415707 {
+        payload = AssignmentData
+        delivery[ordered; at-least-once; durable]
+      }
+      event AssignmentAccepted #d9c1329d-26f8-4eb5-a335-11a33f4d0c5c {
+        payload = AssignmentData
+        delivery[ordered; at-least-once; durable]
+      }
+      event AssignmentRevoked #5e2dd903-c01f-46d7-b443-33226df17297 {
+        payload = AssignmentData
+        delivery[ordered; at-least-once; durable]
+      }
+      event ReviewersAssigned #3109dc15-3cf2-4c1d-ac3b-93280b0d1791 {
+        desc "The third active assignment of a proposal was made."
+        payload = ReviewersAssignedData
+        delivery[ordered; at-least-once; durable]
+      }
+      event ReviewSubmitted #0756ce3c-a074-4c25-ab33-86bfbe1dd91b {
+        payload = ReviewSubmittedData
+        delivery[ordered; at-least-once; durable]
+      }
+      event ProposalFullyReviewed #30b800fa-e581-48fb-9a77-c9aff0ace927 {
+        desc "Exactly three submitted reviews on non-revoked assignments exist. Carries the mean score so adjudication never reads review tables."
+        payload = FullyReviewedData
+        delivery[ordered; at-least-once; durable]
+      }
+      event ReviewOverdue #b54e7889-5c3c-48c1-96b1-152f5e629ff8 {
+        payload = AssignmentData
+        delivery[ordered; at-least-once; durable]
+      }
+
+      resource ReviewStore #7cbfd5c5-60f5-4af5-bcba-aa0359aaaf4e [data-store] {
+        desc "Review cases (assignable proposals with their applicant and criteria snapshot), conflict declarations, assignments, reviews and scores."
+        persistence[durable; strong; retention="business-record"]
+      }
+
+      resource CompletionLedger #8fb590a6-95da-4a4d-b5f8-be69be6cc097 [data-store] {
+        desc "One row per fully reviewed proposal: the three counted reviews and the mean score. Its primary key makes ProposalFullyReviewed publish at most once."
+        persistence[durable; strong; retention="business-record"]
+      }
+
+      business-rule AssignmentValidity #61505d55-158f-4a68-aa7b-204a46219514 {
+        statement "An assignment is valid only if: the proposal is assignable (confirmed eligible and not withdrawn); the reviewer holds the reviewer role; their ORCID is verified (asked of Identity in the same transaction); no conflict is declared between them and the proposal; they are not the proposal's applicant; they hold no other active assignment to it; and the proposal has fewer than three active assignments."
+      }
+      business-rule EveryCriterionScored #e8aba01d-eba3-4dfd-a70a-c1753ab5090c {
+        statement "A review is submitted only if it carries exactly one score for every criterion published on the call, each an integer from 1 to 5."
+      }
+      business-rule PeerReviewsHiddenUntilOwnSubmitted #2f95ce2e-315e-41a1-bea2-32833d4f4b3c {
+        statement "Another reviewer's scores and comments on a proposal are returned to a reviewer only if that reviewer's own review of the proposal is submitted."
+      }
+      business-rule ThreeSubmittedReviews #c2b0b97a-8216-460b-8644-3c684e945183 {
+        statement "ProposalFullyReviewed is published once, when the count of submitted reviews on non-revoked assignments of the proposal reaches exactly three."
+      }
+
+      service AssignmentService #1a2bf939-5081-451d-b2f9-e64695741bf5 {
+        desc "Single writer of conflicts, assignments and reviews. Every refusal names the rule that refused it."
+        realizes: ResearchFunding.ReviewerAssignment, ResearchFunding.BlindPeerReview
+        satisfies: ResearchFunding.ReviewerAssignment.NoConflictedAssignment, ResearchFunding.ReviewerAssignment.NoSelfReview, ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly, ResearchFunding.BlindPeerReview.CompleteScoring, ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted
+        governedBy: ResearchFunding.RoleScopedAccess, ResearchFunding.BlindReview
+        applies: AssignmentValidity, EveryCriterionScored, PeerReviewsHiddenUntilOwnSubmitted
+        handles: DeclareConflict, AssignReviewer, AcceptAssignment, RevokeAssignment, SubmitReview
+        publishes: ConflictDeclared, ReviewerAssigned, AssignmentAccepted, AssignmentRevoked, ReviewersAssigned, ReviewSubmitted
+        subscribesTo: ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn, ::Quorum.ResearchFunding.Calls.CallPublished
+        writes: ReviewStore
+        reads: ReviewStore
+        invokes: ::Quorum.ResearchFunding.Identity.AccountService.IdentityApi.GetReviewerStanding
+        deployedAs: ::Quorum.QuorumServer
+        on DeclareConflict -> ConflictDeclared, AssignmentRevoked
+          correlate ConflictDeclared payload.proposalId = payload.proposalId
+          correlate AssignmentRevoked payload.proposalId = payload.proposalId
+        on AssignReviewer -> ReviewerAssigned, ReviewersAssigned
+          correlate ReviewerAssigned payload.assignmentId = payload.assignmentId
+          correlate ReviewersAssigned payload.proposalId = payload.proposalId
+        on AcceptAssignment -> independent AssignmentAccepted
+          correlate AssignmentAccepted payload.assignmentId = payload.assignmentId
+        on RevokeAssignment -> independent AssignmentRevoked
+          correlate AssignmentRevoked payload.assignmentId = payload.assignmentId
+        on SubmitReview -> independent ReviewSubmitted
+          correlate ReviewSubmitted payload.reviewId = payload.reviewId
+        on ::Quorum.ResearchFunding.Submission.ProposalEligible -> none
+        on ::Quorum.ResearchFunding.Submission.ProposalWithdrawn -> AssignmentRevoked
+          correlate AssignmentRevoked payload.proposalId = payload.proposalId
+        on ::Quorum.ResearchFunding.Calls.CallPublished -> none
+        api ReviewApi #f3d97dfe-8527-458b-8573-659f047fe601 {
+          operation MarkOverdue #b4100884-e7e8-45ba-9486-236cb03de6fc { in = OverdueRequest out = OverdueResult }
+          operation GetPeerReviews #dd4dd493-203d-4cbb-83c8-1f30367f39f4 { in = PeerReviewQuery out = PeerReviewView }
+        }
+      }
+
+      service ReviewCompletion #7e9ffd9e-4f58-4754-a0da-2140ddd22984 {
+        desc "The aggregation service. On each ReviewSubmitted it counts submitted reviews on non-revoked assignments and publishes ProposalFullyReviewed exactly once, at three."
+        realizes: ResearchFunding.ReviewCompletionTracking
+        satisfies: ResearchFunding.ReviewCompletionTracking.ThreeReviewsBeforeScoring
+        applies: ThreeSubmittedReviews
+        publishes: ProposalFullyReviewed
+        subscribesTo: ReviewSubmitted
+        writes: CompletionLedger
+        reads: ReviewStore, CompletionLedger
+        deployedAs: ::Quorum.QuorumServer
+        on ReviewSubmitted -> independent ProposalFullyReviewed
+          correlate ProposalFullyReviewed payload.proposalId = payload.proposalId
+      }
+
+      workflow ReviewDeadline v1 #0433462f-c93a-4dfd-881f-ff3f448512df {
+        desc "Every assignment is due 21 days after it is made. If neither a review nor a revocation arrives by then, AssignmentService (the only writer of assignments) marks it overdue and ReviewOverdue is published; a late review is still accepted. Realized by the stored dueAt (assigned instant + P21D), which is authoritative, and a sweeper that re-reads it on every run and after a restart; never an in-memory timer."
+        state { assignmentId: AssignmentId, proposalId: text, reviewerId: text, dueAt: instant, submitted: optional(boolean) } retention "instance-audit"
+        trigger = DeadlineState{ assignmentId: payload.assignmentId, proposalId: payload.proposalId, reviewerId: payload.reviewerId, dueAt: payload.dueAt } unique-by payload.assignmentId
+        triggeredBy: ReviewerAssigned
+        realizes: ResearchFunding.ReviewCompletionTracking
+        satisfies: ResearchFunding.ReviewCompletionTracking.OverdueReviewsEscalated
+        deployedAs: ::Quorum.QuorumServer
+
+        wait due #17f1ef0b-ecd0-4937-b398-958a5bac6bb0
+          event = ReviewSubmitted correlate key = assignmentId at payload.assignmentId
+            resume = result -> submitted = some(true)
+          event = AssignmentRevoked correlate key = assignmentId at payload.assignmentId
+            resume = result -> submitted = some(true)
+          deadline P21D resume = true -> submitted = some(false)
+        invoke mark #8ba54875-0864-445c-bc7f-67c73d028f76
+          -> AssignmentService.ReviewApi.MarkOverdue
+          in = OverdueRequest{ assignmentId: assignmentId } policy[retry "bounded"; on-fail=retry]
+        publish overdue #da11ec4c-9a9e-4861-9ff7-e460e1023403
+          -> ReviewOverdue payload = AssignmentData{ assignmentId: assignmentId, proposalId: proposalId, reviewerId: reviewerId, dueAt: dueAt, actorId: "quorum-platform", reason: "the review period elapsed without a submitted review", at: dueAt }
+        transition T2 #3f771db1-7aac-4963-9aba-85a7f0f73b43 : mark -> overdue
+        transition T1 #b52d4998-0ed4-43b1-961b-fc0a7c5e01be : due -> mark when match submitted { none -> false; some s -> s == false }
+      }
+    }
+
+    // ============================================================ Adjudication
+    bounded-context Adjudication #69ba4172-7586-46f0-91df-62340683f561 {
+      desc "Panel adjudication against the call's budget envelope. Owns adjudication cases, panel decisions and the per-call budget ledger; never reads review or proposal tables."
+      realizes: ResearchFunding.PanelAdjudication
+
+      record PanelVerdict v1 #1dbdf7f0-470c-44aa-9ecb-017865d81fb8 { outcome: PanelOutcome, rationale: text, actorId: text, at: instant }
+      record DeclineAcknowledgement v1 #38802dd2-afd5-42fd-96d6-ad4303195d90 { rationale: text, actorId: text, at: instant }
+      enum PanelOutcome v1 #7fd5b3f8-e948-4722-ae22-7d14eee5f08b = award | decline
+      record DecisionRequest v1 #1d26395b-63cd-4eda-9a59-93f7d386b130 { proposalId: text, callId: text, requested: ::Quorum.ResearchFunding.Calls.Money, meanScore: decimal(4,2) }
+      record AwardRequest v1 #2fdedbd7-2c75-4aa9-81fc-e45e57996855 { proposalId: text, callId: text, amount: ::Quorum.ResearchFunding.Calls.Money }
+      record AwardResult v1 #c763e8a0-7063-40b4-b3b0-28f3f64fa50d { committed: boolean, remaining: ::Quorum.ResearchFunding.Calls.Money }
+      record DeclineRequest v1 #d7b0e0ac-729b-489a-a34f-3b86a44f3918 { proposalId: text, callId: text }
+      record DeclineResult v1 #421c4a0f-bde3-4267-b1e5-56cc070e101a { recorded: boolean }
+      record DecisionData v1 #693d0f89-45d6-4f50-bc7f-31ee0ba80eb8 { proposalId: text, callId: text, outcome: PanelOutcome, amount: ::Quorum.ResearchFunding.Calls.Money, actorId: text, rationale: text, at: instant }
+      record AdjudicationState v1 #9d491b10-51c4-43b9-82e7-60ec7e806546 { proposalId: text, callId: text, requested: ::Quorum.ResearchFunding.Calls.Money, meanScore: decimal(4,2) }
+
+      event ProposalAwarded #bbb140a4-d299-411d-b669-41adfd538e45 {
+        payload = DecisionData
+        delivery[ordered; at-least-once; durable]
+      }
+      event ProposalDeclined #27e6ca77-3ca5-4878-9ee0-0a8680a66f8c {
+        payload = DecisionData
+        delivery[ordered; at-least-once; durable]
+      }
+
+      resource AdjudicationStore #2007f0ea-408f-402c-ad8d-1d6553a8d95f [data-store] {
+        desc "Adjudication cases (with integrity holds), panel decisions (one per proposal, terminal) and the per-call budget ledger (envelope, committed) with a CHECK committed <= envelope."
+        persistence[durable; strong; retention="business-record"]
+      }
+
+      business-rule EnvelopeNotExceeded #a4b26ee8-0547-42b5-adde-d2ee9bab2073 {
+        statement "An award commits its amount only by a single conditional write on the call's ledger row that succeeds only if committed + amount <= envelope; otherwise nothing is recorded and the case returns to the chair."
+      }
+      business-rule ChairOnScoredOnly #6ab58159-755c-4901-a1c0-788b9794ca30 {
+        statement "A panel decision is recorded only by an account holding the panel_chair role, only for a proposal with an open adjudication case (which exists only once the proposal is scored), only once, and an award only when no integrity hold is on the case."
+      }
+
+      service AdjudicationService #6bbc3747-a1d4-4477-a882-1147d2ab0618 {
+        desc "Opens an adjudication case on ProposalScored, keeps the budget ledger from CallPublished, places an integrity hold on ConflictDeclared after scoring, and commits awards and declines atomically."
+        realizes: ResearchFunding.PanelAdjudication
+        satisfies: ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly, ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded
+        governedBy: ResearchFunding.RoleScopedAccess, ResearchFunding.HumansDecide
+        applies: EnvelopeNotExceeded, ChairOnScoredOnly
+        subscribesTo: ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared
+        writes: AdjudicationStore
+        reads: AdjudicationStore
+        deployedAs: ::Quorum.QuorumServer
+        on ::Quorum.ResearchFunding.Calls.CallPublished -> none
+        on ::Quorum.ResearchFunding.PeerReview.ConflictDeclared -> none
+        api DecisionApi #be98d1b7-7583-4a21-8fa3-598c04b71e44 {
+          operation CommitAward #17853fa4-f1da-4241-8efc-f20c70da3ef9 { in = AwardRequest out = AwardResult }
+          operation RecordDecline #bd5c8d97-9251-45df-a805-d42c14f812d6 { in = DeclineRequest out = DeclineResult }
+        }
+      }
+
+      workflow PanelDecision v1 #aa87850c-c0f9-4a87-9a13-e807fb13c981 {
+        desc "Started by ProposalScored. Waits on the chair's decision (escalating to the officer after 14 days, never deciding by timeout); on award commits against the envelope and returns to the chair if the envelope would be exceeded; publishes ProposalAwarded or ProposalDeclined."
+        state { proposalId: text, callId: text, requested: ::Quorum.ResearchFunding.Calls.Money, meanScore: decimal(4,2), verdict: optional(PanelVerdict), acknowledgement: optional(DeclineAcknowledgement), withinEnvelope: optional(boolean) } retention "instance-audit"
+        trigger = AdjudicationState{ proposalId: payload.proposalId, callId: payload.callId, requested: payload.requested, meanScore: payload.meanScore } unique-by payload.proposalId
+        triggeredBy: ::Quorum.ResearchFunding.Submission.ProposalScored
+        realizes: ResearchFunding.PanelAdjudication
+        satisfies: ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly, ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded
+        governedBy: ResearchFunding.HumansDecide
+        deployedAs: ::Quorum.QuorumServer
+
+        human-task decide #996c9980-32bb-4780-a827-d5ef70d1f9d7 {
+          assign ::Quorum.PanelChair
+          escalation "after P14D without a decision the program officer is notified; the task stays open and nothing is decided by timeout"
+          cancellation "close-on-instance-termination"
+          payload = DecisionRequest{ proposalId: proposalId, callId: callId, requested: requested, meanScore: meanScore }
+          outcome PanelVerdict = result -> verdict = some(result)
+          retention "task-audit"
+        }
+        decision isAward #a315ba36-7609-4afa-bc39-06e37a8855d8 = match verdict { none -> false; some v -> v.outcome == PanelOutcome "award" }
+        invoke commit #bfe48340-966d-4b9e-9fdd-9ea92ed55ff6
+          -> AdjudicationService.DecisionApi.CommitAward
+          in = AwardRequest{ proposalId: proposalId, callId: callId, amount: requested }
+          out = result -> withinEnvelope = some(result.committed) policy[retry "bounded"; on-fail=retry]
+        decision committed #f45a7477-f0fe-47d3-81b7-3bd08f0bb003 = match withinEnvelope { none -> false; some w -> w }
+        human-task reconsider #65bb94d2-dba5-4948-bd02-d6abb10f4173 {
+          assign ::Quorum.PanelChair
+          escalation "the envelope cannot fund this award and never grows (the envelope is immutable and awards are final); the only outcome this task admits is the chair's acknowledged decline; the case stays open, escalating to the officer, until the chair records it"
+          cancellation "close-on-instance-termination"
+          payload = DecisionRequest{ proposalId: proposalId, callId: callId, requested: requested, meanScore: meanScore }
+          outcome DeclineAcknowledgement = result -> acknowledgement = some(result)
+          retention "task-audit"
+        }
+        invoke decline #27ed39c7-c6ad-4bf1-a841-371c9a779139
+          -> AdjudicationService.DecisionApi.RecordDecline
+          in = DeclineRequest{ proposalId: proposalId, callId: callId } policy[retry "bounded"; on-fail=retry]
+        invoke declineRefused #3dd6f4d6-a547-41b7-95eb-3b65492f37f8
+          -> AdjudicationService.DecisionApi.RecordDecline
+          in = DeclineRequest{ proposalId: proposalId, callId: callId } policy[retry "bounded"; on-fail=retry]
+        publish awarded #d3a0dad7-867f-458b-9b13-043111cdc276
+          -> ProposalAwarded payload = DecisionData{ proposalId: proposalId, callId: callId, outcome: PanelOutcome "award", amount: requested, actorId: match verdict { none -> ""; some v -> v.actorId }, rationale: match verdict { none -> ""; some v -> v.rationale }, at: match verdict { none -> instant "1970-01-01T00:00:00Z"; some v -> v.at } }
+        publish declined #8aca3ec4-977b-4900-8bf9-b0249a2ba15d
+          -> ProposalDeclined payload = DecisionData{ proposalId: proposalId, callId: callId, outcome: PanelOutcome "decline", amount: decimal(14,2) 0.00, actorId: match verdict { none -> ""; some v -> v.actorId }, rationale: match verdict { none -> ""; some v -> v.rationale }, at: match verdict { none -> instant "1970-01-01T00:00:00Z"; some v -> v.at } }
+        publish declinedRefused #d781b736-ed42-4944-b2cb-80e4e47ae0ba
+          -> ProposalDeclined payload = DecisionData{ proposalId: proposalId, callId: callId, outcome: PanelOutcome "decline", amount: decimal(14,2) 0.00, actorId: match acknowledgement { none -> ""; some a -> a.actorId }, rationale: match acknowledgement { none -> ""; some a -> a.rationale }, at: match acknowledgement { none -> instant "1970-01-01T00:00:00Z"; some a -> a.at } }
+        transition T1 #270a385d-9900-4c6a-a7d5-de23f19ceee3 : decide -> isAward
+        transition T2 #89f9692e-335b-44ca-b16b-b9be04b364c2 : isAward -> commit when result
+        transition T3 #daa6b890-607c-472e-b7dd-995ea5a1f340 : isAward -> decline default
+        transition T4 #e1e00bd4-ea71-46a5-811d-3931491f9159 : commit -> committed
+        transition T5 #474c8758-c53a-4b44-9018-2156a714e016 : committed -> awarded when result
+        transition T6 #0a2099af-f571-4d97-ba7e-8fdb7abd6ea5 : committed -> reconsider default
+        transition T7 #40896bdd-754c-4ac0-8c2a-5cac51f0ab45 : reconsider -> declineRefused
+        transition T8 #0ac5f6d3-e70a-4b70-9e91-57604c3968be : decline -> declined
+        transition T9 #5e1ab870-8cf4-401e-a099-87baf5295b60 : declineRefused -> declinedRefused
+      }
+    }
+
+    // ============================================================ Notification
+    bounded-context Notification #fbe795fc-bdd6-4ce6-8a62-3f4d6011466a {
+      desc "Tells participants what happened. Writes an in-app notification and an outbound message (queued -> delivered | failed) per recipient; a drain job hands outbound messages to the mail transport (a stub locally)."
+      realizes: ResearchFunding.ParticipantNotification
+
+      resource OutboundMessageStore #e5088200-1f20-48a5-8edc-2818945718cf [data-store] {
+        desc "The brief's OutboxMessage: one row per (event, recipient), unique on that pair, with attempts and last error. Also the in-app inbox."
+        persistence[durable; strong; retention="one-year"]
+      }
+
+      business-rule NoScoresToReviewers #ccbffda2-942e-4bdc-86e7-b0082ef7e1b9 {
+        statement "A notification addressed to a reviewer never carries another reviewer's scores or comments."
+      }
+
+      service NotificationService #870cfc1f-ea8a-4562-a0f0-8e9d126b1342 {
+        desc "Turns domain events into notifications for the affected participants and drains outbound messages with retry; unique (event, recipient) makes redelivery a no-op."
+        realizes: ResearchFunding.ParticipantNotification
+        satisfies: ResearchFunding.ParticipantNotification.NotificationsDurable
+        governedBy: ResearchFunding.BlindReview
+        applies: NoScoresToReviewers
+        subscribesTo: ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.TriageProposed, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined
+        writes: OutboundMessageStore
+        reads: OutboundMessageStore
+        deployedAs: ::Quorum.QuorumServer
+        on ::Quorum.ResearchFunding.Submission.ProposalSubmitted -> none
+        on ::Quorum.ResearchFunding.Submission.TriageProposed -> none
+        on ::Quorum.ResearchFunding.Submission.ProposalEligible -> none
+        on ::Quorum.ResearchFunding.Submission.ProposalIneligible -> none
+        on ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned -> none
+        on ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked -> none
+        on ::Quorum.ResearchFunding.PeerReview.ReviewOverdue -> none
+        on ::Quorum.ResearchFunding.Submission.ProposalScored -> none
+        on ::Quorum.ResearchFunding.Adjudication.ProposalAwarded -> none
+        on ::Quorum.ResearchFunding.Adjudication.ProposalDeclined -> none
+      }
+    }
+
+    // ============================================================ Oversight (read side)
+    bounded-context Oversight #d79fbb29-2048-4235-acb0-2d078b8c3b97 {
+      desc "The read side: the portfolio and every proposal's audit timeline, projected from events only. Never reads a write-side store."
+      realizes: ResearchFunding.PortfolioReporting
+
+      record PortfolioQuery v1 #10f88e86-e084-4a52-b342-81e679e66f1b { callId: optional(text) }
+      record PortfolioRow v1 #9e6bc499-4a1e-4268-9254-17fa483798b4 { proposalId: text, callId: text, title: text, status: text, reviewsSubmitted: int32, meanScore: optional(decimal(4,2)), requested: ::Quorum.ResearchFunding.Calls.Money, awarded: optional(::Quorum.ResearchFunding.Calls.Money) }
+      record PortfolioView v1 #a2a65083-27eb-4c54-b041-6cd37da466ff { rows: list(PortfolioRow), envelope: ::Quorum.ResearchFunding.Calls.Money, committed: ::Quorum.ResearchFunding.Calls.Money, remaining: ::Quorum.ResearchFunding.Calls.Money }
+      record TimelineQuery v1 #f5b39bf2-e99c-4bc8-ad0a-0274b59f1b22 { proposalId: text }
+      record TimelineEntry v1 #85ca938e-5dfd-4bdf-a06b-e59cbdb9fb26 { at: instant, event: text, actorId: text, reason: text }
+      record TimelineView v1 #26299ef6-fb39-4c4e-b45e-f14cbe0f4197 { proposalId: text, entries: list(TimelineEntry) }
+
+      read-model Portfolio #2b9b2be5-c974-4f1e-b589-ed121e25c906 {
+        desc "Every proposal with its status, review progress (x of 3), mean score and award, and each call's envelope, committed and remaining amounts."
+        projectsFrom: ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.Calls.CallClosed, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalUnderReview, ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn, ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined
+      }
+      read-model AuditTrail #c8574ef8-71b4-43a9-8a81-8d9082519489 {
+        desc "The audit trail: every transition of every call, account, proposal and assignment, with actor, timestamp and reason. Filtered per proposal it is the proposal timeline."
+        projectsFrom: ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.Calls.CallClosed, ::Quorum.ResearchFunding.Identity.OrcidVerified, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening, ::Quorum.ResearchFunding.Submission.TriageProposed, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalUnderReview, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed, ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined
+      }
+
+      service PortfolioProjector #b65240e8-b01b-461c-8bb2-fc09d15f4bda {
+        desc "The only producer of the portfolio and the timeline. Consumes events idempotently (per-consumer progress committed with the projection write) and can rebuild both views by replaying the retained event log."
+        realizes: ResearchFunding.PortfolioReporting
+        satisfies: ResearchFunding.PortfolioReporting.PortfolioFromProjection, ResearchFunding.PortfolioReporting.TransitionsAudited
+        governedBy: ResearchFunding.BlindReview, ResearchFunding.RoleScopedAccess
+        projects: Portfolio, AuditTrail
+        reads: Portfolio, AuditTrail
+        subscribesTo: ::Quorum.ResearchFunding.Identity.OrcidVerified, ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.Calls.CallClosed, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening, ::Quorum.ResearchFunding.Submission.TriageProposed, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalUnderReview, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed, ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined
+        on ::Quorum.ResearchFunding.Identity.OrcidVerified -> none
+        on ::Quorum.ResearchFunding.Calls.CallPublished -> none
+        on ::Quorum.ResearchFunding.Calls.CallClosed -> none
+        on ::Quorum.ResearchFunding.Submission.ProposalSubmitted -> none
+        on ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening -> none
+        on ::Quorum.ResearchFunding.Submission.TriageProposed -> none
+        on ::Quorum.ResearchFunding.Submission.ProposalEligible -> none
+        on ::Quorum.ResearchFunding.Submission.ProposalIneligible -> none
+        on ::Quorum.ResearchFunding.Submission.ProposalUnderReview -> none
+        on ::Quorum.ResearchFunding.Submission.ProposalScored -> none
+        on ::Quorum.ResearchFunding.Submission.ProposalWithdrawn -> none
+        on ::Quorum.ResearchFunding.PeerReview.ConflictDeclared -> none
+        on ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned -> none
+        on ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted -> none
+        on ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked -> none
+        on ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted -> none
+        on ::Quorum.ResearchFunding.PeerReview.ReviewOverdue -> none
+        on ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed -> none
+        on ::Quorum.ResearchFunding.Adjudication.ProposalAwarded -> none
+        on ::Quorum.ResearchFunding.Adjudication.ProposalDeclined -> none
+        deployedAs: ::Quorum.QuorumServer
+        api PortfolioApi #0d49966f-d5ad-4787-b503-692397ef423f {
+          operation GetPortfolio #9b98310e-a0c5-4467-bb4e-4d89a8bf8f8d { in = PortfolioQuery out = PortfolioView }
+          operation GetTimeline #ebec1520-a2e9-4f2a-aa5e-49af0872134a { in = TimelineQuery out = TimelineView }
+        }
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------- delivery
+  deployable QuorumServer #f872482d-f437-4310-a1b7-88136850da8e {
+    desc "One process: the HTTP API, the static UI, the event dispatcher, the overdue sweeper and the outbound-message drain."
+  }
+  environment LocalDevelopment #ea2208e8-034a-4de7-9068-731ab6b7af9e {
+    desc "One machine, no paid infrastructure: a SQLite file, a stub ORCID registry, a stub triage provider and a stub mail transport."
+  }
+
+  // ---------------------------------------------------------------- verification (one per invariant)
+  test Inv01SubmissionWindow #bf03bde3-f5b6-44a0-b1df-8adb87e6497a {
+    desc "INV-1: submission is refused when the call is closed, at the deadline and after it; accepted one millisecond before."
+    verifies: ResearchFunding.CallAdministration.SubmissionWindow, ResearchFunding.Submission.ProposalService
+  }
+  test Inv02SubmitOnce #f45fdb44-3ef3-430e-89a9-342a6b0880c9 {
+    desc "INV-2: a second submission of the same proposal is refused; a replayed request with the same idempotency key returns the original response."
+    verifies: ResearchFunding.ProposalSubmission.SubmitOnce, ResearchFunding.Submission.ProposalService
+  }
+  test Inv03NoConflictedAssignment #56ed25b9-9935-4b9c-b9a2-f074dd9f9213 {
+    desc "INV-3: assigning a conflicted reviewer is refused; declaring a conflict revokes an active assignment in the same transaction."
+    verifies: ResearchFunding.ReviewerAssignment.NoConflictedAssignment, ResearchFunding.PeerReview.AssignmentService
+  }
+  test Inv04NoSelfReview #fa4d0adf-87d9-4bae-a61b-0d2f47beca35 {
+    desc "INV-4: assigning the applicant to their own proposal is refused, even when they hold the reviewer role."
+    verifies: ResearchFunding.ReviewerAssignment.NoSelfReview, ResearchFunding.PeerReview.AssignmentService
+  }
+  test Inv05ThreeReviews #005d1ac1-f9af-4907-9304-e4dae1d23e2d {
+    desc "INV-5: two submitted reviews leave the proposal under review; the third moves it to scored exactly once; a revoked assignment's review does not count."
+    verifies: ResearchFunding.ReviewCompletionTracking.ThreeReviewsBeforeScoring, ResearchFunding.PeerReview.ReviewCompletion
+  }
+  test Inv06CompleteScoring #41034872-d39c-441e-b5c8-1afc7c288a38 {
+    desc "INV-6: a review missing a criterion, or scoring outside 1–5, is refused with a field-level error."
+    verifies: ResearchFunding.BlindPeerReview.CompleteScoring, ResearchFunding.PeerReview.AssignmentService
+  }
+  test Inv07Blind #baca435f-33dd-4c09-86b3-b0370d9bd694 {
+    desc "INV-7: a reviewer reading peer reviews before submitting their own gets none; after submitting gets all."
+    verifies: ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted, ResearchFunding.PeerReview.AssignmentService
+  }
+  test Inv08ChairOnly #4e09e956-dc08-4447-9dc0-a232eb38cdf2 {
+    desc "INV-8: an officer recording a decision is refused; a chair recording one for an unscored proposal is refused; a second decision is refused."
+    verifies: ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly, ResearchFunding.Adjudication.PanelDecision
+  }
+  test Inv09Envelope #d32231ea-12c9-454d-83b3-824ca041e06d {
+    desc "INV-9: concurrent awards near the limit from separate connections commit only while the envelope holds; the committed total never exceeds it."
+    verifies: ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded, ResearchFunding.Adjudication.AdjudicationService
+  }
+  test Inv10AgentNeverDecides #3fc6d96f-201c-437d-abdd-cf4ac3351f5c {
+    desc "INV-10: the triage agent's verdict leaves the proposal in screening; the agent principal is refused by every transition."
+    verifies: ResearchFunding.EligibilityScreening.AgentNeverDecides, ResearchFunding.Submission.Triage, ResearchFunding.Submission.EligibilityTriage, ResearchFunding.Submission.AgentProposesOnly
+  }
+  test Inv11RoleScope #cdcebc23-b538-4105-919c-7e3a27e8d291 {
+    desc "INV-11: every role is refused outside its operations and outside its resources; an unauthenticated request is refused; a revoked role is refused immediately."
+    verifies: ResearchFunding.AccessControl.RoleScopedAuthority, ResearchFunding.Identity.AccountService
+  }
+  test Inv12VerifiedReviewers #99fb115c-bf3a-4f42-89a5-88298e760111 {
+    desc "INV-12: assigning a reviewer whose ORCID is unverified is refused; after verification it is accepted."
+    verifies: ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly, ResearchFunding.Identity.AccountService
+  }
+  test OverdueEscalation #b3e6afd0-7b00-4e7d-baf3-c0ab1a3cf717 {
+    desc "J6: an assignment past its due date becomes overdue, ReviewOverdue is published once, and a late review is still accepted."
+    verifies: ResearchFunding.ReviewCompletionTracking.OverdueReviewsEscalated, ResearchFunding.PeerReview.ReviewDeadline
+  }
+  test DeliveryAndReplay #c45682da-cc71-49c2-bd11-598ff06aaf12 {
+    desc "NFR-5/6: an interrupted dispatch is redelivered with no duplicate effect; replaying the whole log rebuilds an identical portfolio; a poisoned message is parked and retryable."
+    verifies: ResearchFunding.ParticipantNotification.NotificationsDurable, ResearchFunding.Notification.NotificationService, ResearchFunding.Oversight.PortfolioProjector
+  }
+  test PortfolioJourney #94be2458-22f4-4e3d-b88b-cd99824a263f {
+    desc "J1–J8 end to end through the HTTP API and the browser: publication to award, then the portfolio shows the outcome and remaining envelope, and the timeline shows every transition."
+    verifies: ResearchFunding.PortfolioReporting.PortfolioFromProjection, ResearchFunding.PortfolioReporting.TransitionsAudited, ResearchFunding.Oversight.PortfolioProjector
+  }
+}
+}

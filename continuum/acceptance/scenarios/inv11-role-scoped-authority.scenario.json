@@ -1,0 +1,53 @@
+{
+  "acceptance-scenario": "1",
+  "name": "inv11-role-scoped-authority",
+  "purpose": "An applicant cannot act outside their role or see another applicant's proposal (INV-11).",
+  "verifies": [
+    "::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority",
+    "::Quorum.ResearchFunding.RoleScopedAccess"
+  ],
+  "test": "::Quorum.Inv11RoleScope",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "submitted"
+      },
+      "text": "proposal p1 has reached submitted"
+    }
+  ],
+  "when": [
+    {
+      "step": "foreign.proposal.read",
+      "args": {
+        "proposal": "p1",
+        "as": "bob"
+      },
+      "text": "another applicant requests p1"
+    }
+  ],
+  "then": [
+    {
+      "step": "response.status",
+      "args": {
+        "status": 404
+      },
+      "text": "p1 does not exist for them"
+    },
+    {
+      "step": "call.publish.as",
+      "args": {
+        "as": "alice",
+        "status": 403,
+        "rule": "INV-11"
+      },
+      "text": "an applicant trying to publish a call is refused under INV-11"
+    }
+  ]
+}

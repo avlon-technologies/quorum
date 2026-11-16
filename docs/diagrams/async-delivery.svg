@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+<title>Quorum's asynchronous delivery</title>
+<desc>Event routing by publisher, event-only reporting projections, durable notification storage, and the persisted ReviewDeadline workflow.</desc>
+<defs>
+<marker id="arrow" orient="auto" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="11" refY="6"><path d="M 0 1 L 11 6 L 0 11" fill="#193C65"/></marker>
+</defs>
+<rect x="0" y="0" width="1536" height="1024" fill="#FFFFFF"/>
+<text x="32" y="46" font-size="40" font-weight="750" fill="#090F30">Quorum's asynchronous delivery</text>
+<text x="33" y="77" font-size="20" font-weight="600" fill="#435875">Durable events • ordered per proposal • at-least-once delivery</text>
+
+<g class="domain" data-label="Event routing" data-grade="speculative">
+<rect x="18" y="100" width="832" height="900" rx="11" fill="#FBFCFE" stroke="#AABCD1" stroke-width="1" stroke-dasharray="2 4"/>
+<text x="35" y="133" font-size="28" font-weight="700" fill="#090F30">Event routing</text>
+<text x="35" y="156" font-size="14" fill="#293F60">Each row names an event and its consumers; rows do not imply execution order.</text>
+
+<g class="service" data-label="Calls / CallService" data-grade="declared">
+<rect x="30" y="172" width="808" height="85" rx="6" fill="#EAF4FF" stroke="#A7C6E4"/>
+<text x="44" y="194" font-size="16" font-weight="700" fill="#102C52">Calls / CallService</text>
+<text x="44" y="213" font-size="13" fill="#344B68"><tspan>Publishes call events</tspan></text>
+<text x="44" y="232" font-size="12.5" fill="#172E4F">CallPublished → AssignmentService, AdjudicationService, PortfolioProjector</text>
+<text x="44" y="248" font-size="12.5" fill="#172E4F">CallClosed → PortfolioProjector</text>
+</g>
+<g class="service" data-label="Identity / AccountService" data-grade="declared">
+<rect x="30" y="261" width="808" height="68" rx="6" fill="#EAF4FF" stroke="#A7C6E4"/>
+<text x="44" y="283" font-size="16" font-weight="700" fill="#102C52">Identity / AccountService</text>
+<text x="44" y="302" font-size="13" fill="#344B68"><tspan>Publishes identity verification</tspan></text>
+<text x="44" y="320" font-size="12.5" fill="#172E4F">OrcidVerified → PortfolioProjector</text>
+</g>
+<g class="service" data-label="Submission / ProposalService" data-grade="declared">
+<rect x="30" y="333" width="808" height="179" rx="6" fill="#DFEFFF" stroke="#63A5E9" stroke-width="1.4"/>
+<text x="44" y="356" font-size="16" font-weight="700" fill="#102C52">Submission / ProposalService</text>
+<text x="44" y="375" font-size="13" fill="#344B68"><tspan>Publishes proposal status events</tspan></text>
+<text x="44" y="394" font-size="12.5" fill="#172E4F">
+<tspan x="44">ProposalSubmitted → ProposalService, Triage, NotificationService, PortfolioProjector</tspan>
+<tspan x="44" dy="17">ProposalEnteredScreening → PortfolioProjector</tspan>
+<tspan x="44" dy="17">ProposalEligible → AssignmentService, NotificationService, PortfolioProjector</tspan>
+<tspan x="44" dy="17">ProposalIneligible → NotificationService, PortfolioProjector</tspan>
+<tspan x="44" dy="17">ProposalWithdrawn → AssignmentService, PortfolioProjector</tspan>
+<tspan x="44" dy="17">ProposalUnderReview → PortfolioProjector</tspan>
+<tspan x="44" dy="17">ProposalScored → PanelDecision, NotificationService, PortfolioProjector</tspan>
+</text>
+</g>
+<g class="service" data-label="Submission / TriageProposed" data-grade="declared">
+<rect x="30" y="516" width="808" height="57" rx="6" fill="#F0EBFF" stroke="#BBA6ED"/>
+<text x="44" y="539" font-size="16" font-weight="700" fill="#272051">Submission / TriageProposed</text>
+<text x="44" y="560" font-size="13" fill="#344B68"><tspan>Consumers: NotificationService, PortfolioProjector</tspan></text>
+</g>
+<g class="service" data-label="PeerReview / AssignmentService" data-grade="declared">
+<rect x="30" y="577" width="808" height="163" rx="6" fill="#DFEFFF" stroke="#63A5E9" stroke-width="1.4"/>
+<text x="44" y="600" font-size="16" font-weight="700" fill="#102C52">PeerReview / AssignmentService</text>
+<text x="44" y="619" font-size="13" fill="#344B68"><tspan>Publishes assignment and review events</tspan></text>
+<text x="44" y="638" font-size="12.5" fill="#172E4F">
+<tspan x="44">ReviewerAssigned → ReviewDeadline, NotificationService, PortfolioProjector</tspan>
+<tspan x="44" dy="17">ReviewersAssigned → ProposalService</tspan>
+<tspan x="44" dy="17">AssignmentAccepted → PortfolioProjector</tspan>
+<tspan x="44" dy="17">AssignmentRevoked → ReviewDeadline wait, NotificationService, PortfolioProjector</tspan>
+<tspan x="44" dy="17">ReviewSubmitted → ReviewCompletion, ReviewDeadline wait, PortfolioProjector</tspan>
+<tspan x="44" dy="17">ConflictDeclared → AdjudicationService, PortfolioProjector</tspan>
+</text>
+</g>
+<g class="service" data-label="PeerReview / ReviewCompletion" data-grade="declared">
+<rect x="30" y="744" width="808" height="76" rx="6" fill="#EAF4FF" stroke="#A7C6E4"/>
+<text x="44" y="767" font-size="16" font-weight="700" fill="#102C52">PeerReview / ReviewCompletion</text>
+<text x="44" y="787" font-size="13" fill="#344B68"><tspan>Publishes completion at three submitted, non-revoked reviews</tspan></text>
+<text x="44" y="807" font-size="12.5" fill="#172E4F">ProposalFullyReviewed → ProposalService, PortfolioProjector</text>
+</g>
+<g class="service" data-label="Adjudication / PanelDecision" data-grade="declared">
+<rect x="30" y="824" width="808" height="88" rx="6" fill="#F0EBFF" stroke="#BBA6ED"/>
+<text x="44" y="847" font-size="16" font-weight="700" fill="#272051">Adjudication / PanelDecision</text>
+<text x="44" y="867" font-size="13" fill="#344B68"><tspan>Workflow publishes panel outcomes</tspan></text>
+<text x="44" y="886" font-size="12.5" fill="#172E4F">ProposalAwarded → ProposalService, NotificationService, PortfolioProjector</text>
+<text x="44" y="903" font-size="12.5" fill="#172E4F">ProposalDeclined → ProposalService, NotificationService, PortfolioProjector</text>
+</g>
+<g class="service" data-label="PeerReview / ReviewDeadline" data-grade="declared">
+<rect x="30" y="916" width="808" height="72" rx="6" fill="#F0EBFF" stroke="#BBA6ED"/>
+<text x="44" y="939" font-size="16" font-weight="700" fill="#272051">PeerReview / ReviewDeadline</text>
+<text x="44" y="959" font-size="13" fill="#344B68"><tspan>Workflow publishes overdue events</tspan></text>
+<text x="44" y="979" font-size="12.5" fill="#172E4F">ReviewOverdue → NotificationService, PortfolioProjector</text>
+</g>
+</g>
+
+<g class="domain" data-label="Oversight" data-grade="declared">
+<rect x="868" y="100" width="650" height="290" rx="11" fill="#F0FBFB" stroke="#46B7B8" stroke-width="1.3"/>
+<text x="887" y="134" font-size="28" font-weight="700" fill="#090F30">Oversight</text>
+<text x="887" y="158" font-size="15" fill="#293F60">Events only; never reads a write-side store.</text>
+<g class="service" data-label="PortfolioProjector" data-grade="declared">
+<rect x="889" y="190" width="248" height="174" rx="10" fill="#DDEFFF" stroke="#1685F5" stroke-width="1.5"/>
+<text x="903" y="216" font-size="18" font-weight="700" fill="#10244D">PortfolioProjector</text>
+<text x="903" y="240" font-size="14" fill="#172E4F"><tspan x="903">Only producer of both</tspan><tspan x="903" dy="19">reporting views</tspan></text>
+<text x="903" y="291" font-size="12.5" fill="#172E4F"><tspan x="903">Idempotent consumption;</tspan><tspan x="903" dy="17">progress committed with</tspan><tspan x="903" dy="17">projection writes; replay</tspan><tspan x="903" dy="17">rebuilds both views.</tspan></text>
+</g>
+<g class="service" data-label="Portfolio" data-grade="declared">
+<rect x="1280" y="179" width="220" height="88" rx="10" fill="#D2F3EE" stroke="#00A59D" stroke-width="1.3"/>
+<text x="1294" y="205" font-size="18" font-weight="700" fill="#10244D">Portfolio</text>
+<text x="1294" y="228" font-size="13" fill="#172E4F"><tspan x="1294">Proposal progress, scores,</tspan><tspan x="1294" dy="18">awards and call budgets</tspan></text>
+</g>
+<g class="service" data-label="AuditTrail" data-grade="declared">
+<rect x="1280" y="281" width="220" height="95" rx="10" fill="#D2F3EE" stroke="#00A59D" stroke-width="1.3"/>
+<text x="1294" y="305" font-size="18" font-weight="700" fill="#10244D">AuditTrail</text>
+<text x="1294" y="326" font-size="13" fill="#172E4F"><tspan x="1294">Transitions with actor,</tspan><tspan x="1294" dy="17">timestamp and reason</tspan></text>
+<text x="1294" y="363" font-size="11.5" fill="#172E4F">Filter by proposal for its timeline.</text>
+</g>
+</g>
+
+<g class="domain" data-label="Notification" data-grade="declared">
+<rect x="868" y="406" width="650" height="221" rx="11" fill="#FFFAF0" stroke="#CB9A3C" stroke-width="1.3"/>
+<text x="887" y="440" font-size="28" font-weight="700" fill="#090F30">Notification</text>
+<g class="service" data-label="NotificationService" data-grade="declared">
+<rect x="889" y="457" width="248" height="151" rx="10" fill="#DDEFFF" stroke="#1685F5" stroke-width="1.5"/>
+<text x="903" y="483" font-size="18" font-weight="700" fill="#10244D">NotificationService</text>
+<text x="903" y="506" font-size="13" fill="#172E4F"><tspan x="903">Creates participant notifications</tspan><tspan x="903" dy="18">and drains outbound messages</tspan></text>
+<text x="903" y="562" font-size="12.5" fill="#172E4F"><tspan x="903">Retry delivery; duplicate</tspan><tspan x="903" dy="17">event/recipient pairs are no-ops.</tspan></text>
+</g>
+<g class="service" data-label="OutboundMessageStore" data-grade="declared">
+<rect x="1280" y="457" width="220" height="151" rx="10" fill="#FFF0D0" stroke="#DBA12B" stroke-width="1.3"/>
+<text x="1294" y="483" font-size="16" font-weight="700" fill="#10244D">OutboundMessageStore</text>
+<text x="1294" y="506" font-size="13" fill="#172E4F"><tspan x="1294">Durable outbound messages</tspan><tspan x="1294" dy="18">and in-app inbox</tspan></text>
+<text x="1294" y="555" font-size="12.5" fill="#172E4F"><tspan x="1294">Unique (event, recipient);</tspan><tspan x="1294" dy="17">attempts and last error;</tspan><tspan x="1294" dy="17">one-year retention.</tspan></text>
+</g>
+</g>
+
+<g class="service" data-label="ReviewerAssigned" data-grade="declared">
+<rect x="889" y="645" width="300" height="68" rx="9" fill="#DDEFFF" stroke="#1685F5" stroke-width="1.3"/>
+<text x="903" y="669" font-size="17" font-weight="700" fill="#10244D">ReviewerAssigned</text>
+<text x="903" y="690" font-size="13" fill="#172E4F"><tspan x="903">Starts one deadline instance per assignment</tspan></text>
+</g>
+
+<g class="domain" data-label="ReviewDeadline" data-grade="declared">
+<rect x="868" y="750" width="650" height="250" rx="11" fill="#F3EFFF" stroke="#9872F8" stroke-width="1.4"/>
+<text x="887" y="782" font-size="28" font-weight="700" fill="#090F30">ReviewDeadline</text>
+<text x="887" y="806" font-size="12.5" fill="#293F60"><tspan x="887">Stored dueAt = assigned instant + P21D; restart-safe sweeper, never an in-memory timer.</tspan><tspan x="887" dy="18">Late reviews are still accepted.</tspan></text>
+<g class="service" data-label="Wait P21D" data-grade="declared">
+<rect x="884" y="843" width="210" height="141" rx="9" fill="#E8DEFF" stroke="#9872F8" stroke-width="1.3"/>
+<text x="898" y="868" font-size="18" font-weight="700" fill="#272051">Wait P21D</text>
+<text x="898" y="889" font-size="12.5" fill="#272051"><tspan x="898">Await review submission,</tspan><tspan x="898" dy="17">revocation or deadline</tspan></text>
+<text x="898" y="928" font-size="11.5" fill="#272051"><tspan x="898">ReviewSubmitted or</tspan><tspan x="898" dy="15">AssignmentRevoked matches</tspan><tspan x="898" dy="15">assignmentId and prevents</tspan><tspan x="898" dy="15">this overdue path.</tspan></text>
+</g>
+<g class="service" data-label="MarkOverdue" data-grade="declared">
+<rect x="1170" y="855" width="150" height="115" rx="9" fill="#E8DEFF" stroke="#9872F8" stroke-width="1.3"/>
+<text x="1183" y="881" font-size="16" font-weight="700" fill="#272051">MarkOverdue</text>
+<text x="1183" y="905" font-size="11" fill="#272051"><tspan x="1183">Invoke </tspan><tspan x="1183" dy="16">AssignmentService.</tspan><tspan x="1183" dy="16">ReviewApi.MarkOverdue</tspan></text>
+</g>
+<g class="service" data-label="Publish ReviewOverdue" data-grade="declared">
+<rect x="1350" y="855" width="152" height="115" rx="9" fill="#E8DEFF" stroke="#9872F8" stroke-width="1.3"/>
+<text x="1363" y="878" font-size="13" font-weight="700" fill="#272051"><tspan x="1363">Publish ReviewOverdue</tspan></text>
+<text x="1363" y="905" font-size="12" fill="#272051"><tspan x="1363">Notify consumers that</tspan><tspan x="1363" dy="17">the review period</tspan><tspan x="1363" dy="17">elapsed</tspan></text>
+</g>
+</g>
+
+<g class="edge" data-from="PortfolioProjector" data-to="Portfolio">
+<path d="M 1137 250 L 1155 250 L 1155 223 L 1280 223" fill="none" stroke="#193C65" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1160" y="210" font-size="12" fill="#193C65" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">reads + projects</text>
+</g>
+<g class="edge" data-from="PortfolioProjector" data-to="AuditTrail">
+<path d="M 1137 292 L 1155 292 L 1155 327 L 1280 327" fill="none" stroke="#193C65" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1160" y="314" font-size="12" fill="#193C65" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">reads + projects</text>
+</g>
+<g class="edge" data-from="NotificationService" data-to="OutboundMessageStore">
+<path d="M 1137 500 L 1280 500" fill="none" stroke="#193C65" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1158" y="488" font-size="12" fill="#193C65" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">reads + writes</text>
+</g>
+<g class="edge" data-from="ReviewerAssigned" data-to="ReviewDeadline">
+<path d="M 1039 713 L 1039 750" fill="none" stroke="#193C65" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1053" y="737" font-size="13" fill="#193C65" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">triggers</text>
+</g>
+<g class="edge" data-from="Wait P21D" data-to="MarkOverdue">
+<path d="M 1094 913 L 1170 913" fill="none" stroke="#193C65" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="1103" y="886" font-size="12" fill="#193C65" paint-order="stroke" stroke="#FFFFFF" stroke-width="6"><tspan x="1103">if operand</tspan></text>
+</g>
+<g class="edge" data-from="MarkOverdue" data-to="Publish ReviewOverdue">
+<path d="M 1320 913 L 1350 913" fill="none" stroke="#193C65" stroke-width="2" marker-end="url(#arrow)"/>
+</g>
+</svg>

@@ -1,0 +1,62 @@
+{
+  "acceptance-scenario": "1",
+  "name": "inv10-agent-never-decides",
+  "purpose": "The triage agent proposes a verdict but the proposal stays in screening until an officer decides (INV-10).",
+  "verifies": [
+    "::Quorum.ResearchFunding.EligibilityScreening.AgentNeverDecides",
+    "::Quorum.ResearchFunding.Submission.EligibilityTriage",
+    "::Quorum.ResearchFunding.Submission.AgentProposesOnly",
+    "::Quorum.ResearchFunding.Submission.Triage"
+  ],
+  "test": "::Quorum.Inv10AgentNeverDecides",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "submitted"
+      },
+      "text": "proposal p1 has reached submitted"
+    }
+  ],
+  "when": [
+    {
+      "step": "triage.runs",
+      "args": {
+        "proposal": "p1"
+      },
+      "text": "the triage agent assesses p1"
+    }
+  ],
+  "then": [
+    {
+      "step": "event.count",
+      "args": {
+        "type": "TriageProposed",
+        "count": 1
+      },
+      "text": "one TriageProposed is published"
+    },
+    {
+      "step": "proposal.status",
+      "args": {
+        "proposal": "p1",
+        "status": "screening"
+      },
+      "text": "p1 remains in screening"
+    },
+    {
+      "step": "agent.screening.refused",
+      "args": {
+        "proposal": "p1",
+        "status": 403
+      },
+      "text": "the agent identity cannot record a screening decision"
+    }
+  ]
+}

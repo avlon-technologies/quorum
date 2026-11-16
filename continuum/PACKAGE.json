@@ -1,0 +1,134 @@
+{
+  "development-package": "continuum-development-package/1",
+  "name": "quorum",
+  "generator": {
+    "tool": "tools/development-package.mjs",
+    "version": "0.1.0"
+  },
+  "goal": "GOAL.md",
+  "semantic": {
+    "package": "avlon.quorum",
+    "version": "package-1",
+    "core": "adl/1.7",
+    "attestation": "sha256:f75646711920628a45e67531ba5fdee8eb85c2efeeea8068ecf268664cee4c12",
+    "changeState": "sha256:e9c76035f0e316fe41e96df7578d2a5043f82e38f99907545af21c2ec0ec1d68",
+    "manifest": "model/quorum.adl-manifest.json",
+    "documents": [
+      "model/quorum.adl"
+    ],
+    "textProjection": "model/quorum.adl.txt",
+    "proof": "model/compile-proof.json",
+    "warnings": 1,
+    "notEvaluated": 0
+  },
+  "change": null,
+  "environment": {
+    "name": "LocalDevelopment",
+    "id": "ea2208e8-034a-4de7-9068-731ab6b7af9e",
+    "document": "model/local-development.adl-binding.json",
+    "bindingDigest": "sha256:0a1a92c1647024f56962e6d2f61b4c0b577285d1ec0865678b84887e59997de3"
+  },
+  "environments": [
+    {
+      "name": "LocalDevelopment",
+      "id": "ea2208e8-034a-4de7-9068-731ab6b7af9e",
+      "document": "model/local-development.adl-binding.json",
+      "bindingDigest": "sha256:0a1a92c1647024f56962e6d2f61b4c0b577285d1ec0865678b84887e59997de3"
+    }
+  ],
+  "bindings": [
+    "model/local-development.adl-binding.json"
+  ],
+  "vocabularies": [
+    "model/avlon.quorum.bindings.localdevelopment.vocabulary-claims.json"
+  ],
+  "acceptance": {
+    "scenarios": "acceptance/scenarios",
+    "runner": "acceptance/run.mjs",
+    "fakeProvider": "acceptance/fake-model-provider.mjs",
+    "adapter": "acceptance/adapter.mjs",
+    "count": 15,
+    "names": [
+      "delivery-survives-interruption",
+      "inv01-submission-window",
+      "inv02-submit-once",
+      "inv03-no-conflicted-assignment",
+      "inv04-no-self-review",
+      "inv05-three-reviews",
+      "inv06-complete-scoring",
+      "inv07-blind-until-own-submitted",
+      "inv08-chair-decides-scored-only",
+      "inv09-envelope-never-exceeded",
+      "inv10-agent-never-decides",
+      "inv11-role-scoped-authority",
+      "inv12-verified-reviewers-only",
+      "overdue-review-escalated",
+      "portfolio-from-projection"
+    ],
+    "traces": [
+      "acceptance/traces/inv01-submission-window.trace.json",
+      "acceptance/traces/inv03-no-conflicted-assignment.trace.json",
+      "acceptance/traces/inv05-three-reviews.trace.json"
+    ],
+    "executed": false,
+    "results": null,
+    "uncoveredRequirements": []
+  },
+  "implementation": "IMPLEMENTATION.md",
+  "behaviour": {
+    "document": "BEHAVIOUR.md",
+    "starts": 3,
+    "underspecified": 0
+  },
+  "readme": "README.md",
+  "controls": [],
+  "generated": [
+    "BEHAVIOUR.md",
+    "IMPLEMENTATION.md",
+    "README.md",
+    "acceptance/README.md",
+    "acceptance/fake-model-provider.mjs",
+    "acceptance/run.mjs",
+    "acceptance/traces/inv01-submission-window.trace.json",
+    "acceptance/traces/inv03-no-conflicted-assignment.trace.json",
+    "acceptance/traces/inv05-three-reviews.trace.json",
+    "model/compile-proof.json",
+    "model/quorum.adl.txt"
+  ],
+  "files": {
+    "BEHAVIOUR.md": "sha256:95830b40d498353cedbff4b2313619ad1863cb9c6fbc0a8f2a25c8a3425e617f",
+    "GOAL.md": "sha256:77e4ffb5e343f13bb8550b900316c313037b032f96db2689f405d273ba234124",
+    "IMPLEMENTATION.md": "sha256:3584787fa3838a164c4a9bc901d0e7f35fc38ebbf9c09e0ad65bfa8d97e1753d",
+    "README.md": "sha256:2b30bd374385ebd68e0e489592521792985065eaeaf9766e81fb58f416d06f05",
+    "acceptance/README.md": "sha256:0318c90c3fc8453105661abc83d48d6fb2c9b64de28991954245092153ce0d1c",
+    "acceptance/adapter.mjs": "sha256:50587251e11b507ee906321d99c100cf5bf1dd8cb0625fdbc8f94471bc8de9e2",
+    "acceptance/fake-model-provider.mjs": "sha256:d2ec0ce524ca996865beef2c339c205deb9d7ad2610a1e7ff72a1b7732781b69",
+    "acceptance/run.mjs": "sha256:447dac8db77b8e1d93382e778b52ebd4fead29f0ef62b05e3a924717dea01370",
+    "acceptance/scenarios/delivery-survives-interruption.scenario.json": "sha256:fc2b29c8774d83bb351388756be9fff266a0fc0b99242806d649973fd222f700",
+    "acceptance/scenarios/inv01-submission-window.scenario.json": "sha256:cad1e510788a6c4bcc7e35eab36bac6c516afe1a28caa77b8ba9e09d9a46f8a5",
+    "acceptance/scenarios/inv02-submit-once.scenario.json": "sha256:d5522cb217318b4eb91496ed501f726c9fb307cd3dd5f7e15da5658dc5f0c1f6",
+    "acceptance/scenarios/inv03-no-conflicted-assignment.scenario.json": "sha256:9f9b21ef017d112ff1a677b771b2991b9537f564c5fa62203b0006c90fdefc9e",
+    "acceptance/scenarios/inv04-no-self-review.scenario.json": "sha256:c8afd49be13778770ccf3f17e1071cfaeada0a26805a1ca7e28c888c3515626b",
+    "acceptance/scenarios/inv05-three-reviews.scenario.json": "sha256:7852512b21ffc637afd3c8b4e6baf3f8e8af079bd253d3a2890a6ce423332ec0",
+    "acceptance/scenarios/inv06-complete-scoring.scenario.json": "sha256:9ca6cb90d17a81b82f40bb835b92429a145a1d172bb0e41e72755fdeeaeb0ee3",
+    "acceptance/scenarios/inv07-blind-until-own-submitted.scenario.json": "sha256:31cdea22d4f71ac58738c7535928aaa613ce2274f138aaac5a4e3aacd1b8e9b5",
+    "acceptance/scenarios/inv08-chair-decides-scored-only.scenario.json": "sha256:8062faa655be9526178c0b359e45def87ac6f41b72daa7d3abfea2a3ddd1049f",
+    "acceptance/scenarios/inv09-envelope-never-exceeded.scenario.json": "sha256:68a890107d8ec1a8c4c80105a26c0ce70850d4895b8d41b4ca2fbedea0fe7c12",
+    "acceptance/scenarios/inv10-agent-never-decides.scenario.json": "sha256:7b203918d94627f20a2c05ac2c3d31a4b6dba791d7e10dfd96e3c48531ca4eea",
+    "acceptance/scenarios/inv11-role-scoped-authority.scenario.json": "sha256:0b53883499f9cff2893fdf71bcd5e76121abc8bb108c5091b6754db771283ed6",
+    "acceptance/scenarios/inv12-verified-reviewers-only.scenario.json": "sha256:7c947bd9d9c13c69cb4e3bdaa1fa64ed1431360efcb8bf0824596672ae5cf36f",
+    "acceptance/scenarios/overdue-review-escalated.scenario.json": "sha256:2c02df750428d588b36aed6bd52c5253134ab0a8e5b190853b076c921bf561a3",
+    "acceptance/scenarios/portfolio-from-projection.scenario.json": "sha256:4b8c01b8be3460a90df76e83382b8db0ebf9e492d3e59ad1877cc8d151910ddd",
+    "acceptance/traces/inv01-submission-window.trace.json": "sha256:5478fc0f6d5480d2302021d4d5e4e637c3b33268a95bdc8c8c50f9cd8747ab3a",
+    "acceptance/traces/inv03-no-conflicted-assignment.trace.json": "sha256:f4a3c5bff3927eb6880663fb1aa2bcb75674c11626cbd9409d6e5e72a7c8165c",
+    "acceptance/traces/inv05-three-reviews.trace.json": "sha256:60e55accbf783a34e76ccec875629d290938ca29e5c7f8d9f3c1f866cf640e3b",
+    "development-package.json": "sha256:150520ff1f543292bb79ba86967237de002a5ce643bb1ab3a31f00670a9fd5bb",
+    "model/avlon.quorum.bindings.localdevelopment.vocabulary-claims.json": "sha256:e9832dfbf287713f1638ee130909ffd27a906cda379684fdefadd2db375e56d8",
+    "model/compile-proof.json": "sha256:c006d7a2075225c6c6ac29b52f8f8f263e767b4e21d6eda1d91e98d776ea4da6",
+    "model/local-development.adl-binding.json": "sha256:e01b94f93701180dc5661550d01363b3f8aec5474ce9ca8886c0fde902967ab9",
+    "model/quorum.adl": "sha256:98b7dee3b5b20dc1e1a818d416044d1b870932af00ae7937470d81f22530cbfe",
+    "model/quorum.adl-manifest.json": "sha256:3f2a36aa8e8d55725592b8c9ddcfd4bfcdf1728a41e92ea271f9fff3b8016711",
+    "model/quorum.adl.txt": "sha256:6a74c359a775919ca48bdfc8b135a8e732fb89b90e4feec3284242ff8e7f65de",
+    "model/quorum.bdl": "sha256:f9a002ebb1ffbb1bbc3962204cd717a57cc6048ddd67b45443b152e8f0cd79cc"
+  }
+}

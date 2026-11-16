@@ -1,0 +1,55 @@
+{
+  "acceptance-scenario": "1",
+  "name": "inv07-blind-until-own-submitted",
+  "purpose": "A reviewer sees no peer review until their own is submitted (INV-7).",
+  "verifies": [
+    "::Quorum.ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted",
+    "::Quorum.ResearchFunding.BlindReview"
+  ],
+  "test": "::Quorum.Inv07Blind",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "underReview"
+      },
+      "text": "proposal p1 has reached underReview"
+    },
+    {
+      "step": "review.submitted",
+      "args": {
+        "proposal": "p1",
+        "reviewers": [
+          0,
+          1
+        ]
+      },
+      "text": "reviewers 0 and 1 have submitted"
+    }
+  ],
+  "when": [
+    {
+      "step": "reviews.read",
+      "args": {
+        "proposal": "p1",
+        "reviewer": 2
+      },
+      "text": "reviewer 2, who has not submitted, reads the reviews of p1"
+    }
+  ],
+  "then": [
+    {
+      "step": "reviews.visible",
+      "args": {
+        "count": 0
+      },
+      "text": "no review is visible to them"
+    }
+  ]
+}

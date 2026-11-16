@@ -1,0 +1,65 @@
+{
+  "acceptance-scenario": "1",
+  "name": "portfolio-from-projection",
+  "purpose": "A proposal followed from submission to award appears in the portfolio and its audit timeline (J8, NFR-8).",
+  "verifies": [
+    "::Quorum.ResearchFunding.PortfolioReporting.PortfolioFromProjection",
+    "::Quorum.ResearchFunding.PortfolioReporting.TransitionsAudited",
+    "::Quorum.ResearchFunding.Oversight.PortfolioProjector"
+  ],
+  "test": "::Quorum.PortfolioJourney",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposals.scored",
+      "args": {
+        "proposals": [
+          "p1"
+        ],
+        "requested": 100000
+      },
+      "text": "p1 is scored"
+    }
+  ],
+  "when": [
+    {
+      "step": "decision.record",
+      "args": {
+        "proposal": "p1",
+        "as": "chair",
+        "outcome": "award"
+      },
+      "text": "the chair awards p1"
+    }
+  ],
+  "then": [
+    {
+      "step": "portfolio.shows",
+      "args": {
+        "proposal": "p1",
+        "status": "awarded",
+        "committed": 100000
+      },
+      "text": "the portfolio shows p1 awarded and 100000 committed"
+    },
+    {
+      "step": "timeline.has",
+      "args": {
+        "proposal": "p1",
+        "events": [
+          "ProposalSubmitted",
+          "ProposalEligible",
+          "ReviewerAssigned",
+          "ReviewSubmitted",
+          "ProposalScored",
+          "ProposalAwarded"
+        ]
+      },
+      "text": "the audit timeline of p1 records each transition with its actor"
+    }
+  ]
+}

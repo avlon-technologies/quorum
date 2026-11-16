@@ -1,0 +1,12 @@
+{
+  "profile": "continuum-decision-space/1",
+  "space": "sha256:0443f6645fe540e588d0a2dafb87acb42988ec84271100865fccdc7893895136",
+  "owner": {
+    "issuer": "https://login.microsoftonline.com/f7ef9e19-20fa-47ac-91dd-47890978afe8/v2.0",
+    "oid": "2605c7a8-5120-4edb-98cc-76d563601c0f",
+    "name": "Michael Kang"
+  },
+  "createdAt": "2026-11-16T22:31:09.724Z",
+  "signedBy": "decisions-dev-2026-11-04",
+  "note": "The Host keeps this decision space. decisions.jsonl beside this file is an export of it, refreshed by every continuum decision command; verify it offline with continuum decision integrity."
+}

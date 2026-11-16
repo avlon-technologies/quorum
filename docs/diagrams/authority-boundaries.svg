@@ -1,0 +1,211 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+<title>Quorum authority boundaries</title>
+<desc>Human authority above seven logical contexts. Solid connectors identify exclusive writers, API invocations, constrained agent tooling and event receipt by ProposalService.</desc>
+<defs>
+<marker id="teal" orient="auto" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="11" refY="6"><path d="M 0 0 L 12 6 L 0 12 Z" fill="#008797"/></marker>
+<marker id="event" orient="auto" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="11" refY="6"><path d="M 0 0 L 12 6 L 0 12 Z" fill="#BD490C"/></marker>
+</defs>
+<rect x="0" y="0" width="1536" height="1024" fill="#FFFFFF"/>
+<text x="768" y="47" text-anchor="middle" font-size="44" font-weight="750" fill="#092650">Quorum authority boundaries</text>
+<text x="768" y="82" text-anchor="middle" font-size="25" fill="#3C506E">Human decisions, exclusive record writers and explicit cross-context checks</text>
+<g class="domain" data-label="Human authority" data-grade="declared">
+<rect x="16" y="101" width="1504" height="55" rx="8" fill="#EDF6FC" stroke="#72B7EB"/>
+<text x="30" y="126" font-size="25" font-weight="700" fill="#092650">Human authority</text>
+<text x="30" y="148" font-size="18" fill="#3C506E">Deny by default; permissions remain resource-scoped</text>
+</g>
+<g class="actor" data-label="Applicant" data-grade="declared">
+<rect x="30" y="171" width="345" height="160" rx="9" fill="#FAFCFE" stroke="#6CA7D6"/>
+<circle cx="62" cy="195" r="11" fill="#10365E"/><path d="M 43 232 Q 43 208 62 208 Q 81 208 81 232 Z" fill="#10365E"/>
+<text x="96" y="202" font-size="22" font-weight="700" fill="#092650">Applicant</text>
+<text x="96" y="228" font-size="14" fill="#293F60"><tspan x="96">Draft, submit and withdraw own</tspan><tspan x="96" dy="19">proposals; see only own</tspan><tspan x="96" dy="30">Withdrawal only before scored</tspan></text>
+</g>
+<g class="actor" data-label="Reviewer" data-grade="declared">
+<rect x="391" y="171" width="371" height="160" rx="9" fill="#FAFCFE" stroke="#6CA7D6"/>
+<circle cx="423" cy="195" r="11" fill="#10365E"/><path d="M 404 232 Q 404 208 423 208 Q 442 208 442 232 Z" fill="#10365E"/>
+<text x="457" y="202" font-size="22" font-weight="700" fill="#092650">Reviewer</text>
+<text x="457" y="225" font-size="13" fill="#293F60"><tspan x="457">Verify ORCID, declare own conflicts,</tspan><tspan x="457" dy="17">accept and score own assignments</tspan><tspan x="457" dy="23">Scores proposals blind</tspan><tspan x="457" dy="23">Read peers' scores and comments only</tspan><tspan x="457" dy="17">after submitting own review of that proposal</tspan></text>
+</g>
+<g class="actor" data-label="ProgramOfficer" data-grade="declared">
+<rect x="778" y="171" width="368" height="160" rx="9" fill="#FAFCFE" stroke="#6CA7D6"/>
+<circle cx="810" cy="195" r="11" fill="#10365E"/><path d="M 791 232 Q 791 208 810 208 Q 829 208 829 232 Z" fill="#10365E"/>
+<text x="844" y="202" font-size="22" font-weight="700" fill="#092650">ProgramOfficer</text>
+<text x="844" y="225" font-size="13" fill="#293F60"><tspan x="844">Publish/close calls; confirm eligibility;</tspan><tspan x="844" dy="17">assign reviewers; chase overdue reviews</tspan><tspan x="844" dy="23">May declare conflicts for reviewers</tspan><tspan x="844" dy="23">May revoke assignments until review</tspan><tspan x="844" dy="17">submission</tspan></text>
+</g>
+<g class="actor" data-label="PanelChair" data-grade="declared">
+<rect x="1162" y="171" width="344" height="160" rx="9" fill="#FAFCFE" stroke="#6CA7D6"/>
+<circle cx="1194" cy="195" r="11" fill="#10365E"/><path d="M 1175 232 Q 1175 208 1194 208 Q 1213 208 1213 232 Z" fill="#10365E"/>
+<text x="1228" y="202" font-size="22" font-weight="700" fill="#092650">PanelChair</text>
+<text x="1228" y="228" font-size="14" fill="#293F60"><tspan x="1228">Only participant who records an</tspan><tspan x="1228" dy="19">award or decline</tspan><tspan x="1228" dy="30">Scored proposals only</tspan></text>
+</g>
+
+<g class="service" data-label="ORCID" data-grade="declared">
+<rect x="30" y="355" width="178" height="88" rx="6" fill="#E1E4E8" stroke="#75808E"/>
+<text x="119" y="378" text-anchor="middle" font-size="18" font-weight="700" fill="#18232E">ORCID</text>
+<text x="119" y="397" text-anchor="middle" font-size="12" fill="#18232E"><tspan x="119">External registry confirms</tspan><tspan x="119" dy="16">a claimed researcher</tspan><tspan x="119" dy="16">identifier exists</tspan></text>
+</g>
+
+<g class="domain" data-label="Calls" data-grade="declared">
+<rect x="14" y="460" width="193" height="390" rx="7" fill="#F0F8FD" stroke="#8AC7EC"/>
+<text x="110" y="488" text-anchor="middle" font-size="22" font-weight="700" fill="#092650">Calls</text>
+<text x="110" y="510" text-anchor="middle" font-size="13" fill="#234262">Call records and criteria</text>
+<g class="service" data-label="CallService" data-grade="declared">
+<rect x="28" y="536" width="165" height="82" rx="6" fill="#D0F0EF" stroke="#35AEB3"/>
+<text x="40" y="559" font-family="monospace" font-size="15" font-weight="700">CallService</text>
+<text x="40" y="581" font-size="13"><tspan x="40">Publishes and closes</tspan><tspan x="40" dy="17">calls</tspan></text>
+</g>
+<g class="service" data-label="CallStore" data-grade="declared">
+<rect x="28" y="684" width="165" height="65" rx="5" fill="#D4E9FD" stroke="#65B1E9"/>
+<text x="40" y="708" font-family="monospace" font-size="15" font-weight="700">CallStore</text><text x="40" y="732" font-size="13">Calls and criteria</text>
+</g>
+<g class="service" data-label="CallApi.GetCallStatus" data-grade="declared">
+<rect x="27" y="776" width="167" height="57" rx="5" fill="#DDF5F4" stroke="#35AEB3"/>
+<text x="39" y="797" font-family="monospace" font-size="11.8" font-weight="700">CallApi.GetCallStatus</text><text x="39" y="819" font-size="13">Call-status query</text>
+</g>
+</g>
+
+<g class="domain" data-label="Identity" data-grade="declared">
+<rect x="214" y="460" width="214" height="390" rx="7" fill="#F0F8FD" stroke="#8AC7EC"/>
+<text x="321" y="488" text-anchor="middle" font-size="22" font-weight="700" fill="#092650">Identity</text>
+<text x="321" y="510" text-anchor="middle" font-size="13" fill="#234262"><tspan x="321">Single writer of accounts</tspan><tspan x="321" dy="16">and role grants</tspan></text>
+<g class="service" data-label="AccountService" data-grade="declared">
+<rect x="228" y="536" width="186" height="111" rx="6" fill="#D0F0EF" stroke="#35AEB3"/>
+<text x="240" y="559" font-family="monospace" font-size="15" font-weight="700">AccountService</text>
+<text x="240" y="580" font-size="13"><tspan x="240">Authenticates and loads</tspan><tspan x="240" dy="16">roles on every request</tspan><tspan x="240" dy="23" font-weight="600">Never trusts token</tspan><tspan x="240" dy="16" font-weight="600">claims for roles</tspan></text>
+</g>
+<g class="service" data-label="AccountStore" data-grade="declared">
+<rect x="228" y="690" width="186" height="65" rx="5" fill="#D4E9FD" stroke="#65B1E9"/>
+<text x="240" y="712" font-family="monospace" font-size="15" font-weight="700">AccountStore</text>
+<text x="240" y="731" font-size="12"><tspan x="240">Accounts, role grants</tspan><tspan x="240" dy="15">and ORCID status</tspan></text>
+</g>
+<g class="service" data-label="IdentityApi.GetReviewerStanding" data-grade="declared">
+<rect x="225" y="776" width="196" height="57" rx="5" fill="#DDF5F4" stroke="#35AEB3"/>
+<text x="237" y="797" font-family="monospace" font-size="9.8" font-weight="700">IdentityApi.GetReviewerStanding</text><text x="237" y="819" font-size="12">Reviewer-standing query</text>
+</g>
+</g>
+
+<g class="domain" data-label="Submission" data-grade="declared">
+<rect x="435" y="460" width="310" height="544" rx="7" fill="#F0F8FD" stroke="#8AC7EC"/>
+<text x="590" y="488" text-anchor="middle" font-size="22" font-weight="700" fill="#092650">Submission</text>
+<text x="590" y="510" text-anchor="middle" font-size="13" fill="#234262"><tspan x="590">Every Proposal.status transition</tspan><tspan x="590" dy="16">happens here</tspan></text>
+<g class="service" data-label="ProposalService" data-grade="declared">
+<rect x="494" y="536" width="237" height="135" rx="6" fill="#C5EEEB" stroke="#199D9F" stroke-width="2"/>
+<text x="507" y="559" font-family="monospace" font-size="16" font-weight="700">ProposalService</text>
+<text x="507" y="581" font-size="13"><tspan x="507">Sole writer of proposals and</tspan><tspan x="507" dy="16">their status</tspan><tspan x="507" dy="23">Conditional updates on</tspan><tspan x="507" dy="16">expected prior status</tspan><tspan x="507" dy="17">Late event against terminal</tspan><tspan x="507" dy="16">status: recorded no-op</tspan></text>
+</g>
+<g class="service" data-label="ProposalStore" data-grade="declared">
+<rect x="494" y="707" width="237" height="59" rx="5" fill="#D4E9FD" stroke="#65B1E9"/>
+<text x="507" y="729" font-family="monospace" font-size="15" font-weight="700">ProposalStore</text><text x="507" y="748" font-size="12"><tspan x="507">Proposals, status and triage proposals</tspan></text>
+</g>
+<g class="service" data-label="EligibilityTriage" data-grade="declared">
+<rect x="451" y="791" width="165" height="82" rx="6" fill="#D0F0EF" stroke="#35AEB3"/>
+<text x="463" y="812" font-family="monospace" font-size="13" font-weight="700">EligibilityTriage</text>
+<text x="463" y="831" font-size="12"><tspan x="463">Proposes eligible /</tspan><tspan x="463" dy="15">ineligible / unclear</tspan><tspan x="463" dy="15">with rationale</tspan></text>
+</g>
+<g class="service" data-label="ProposalReader" data-grade="declared">
+<rect x="637" y="799" width="96" height="74" rx="5" fill="#DDF5F4" stroke="#35AEB3"/>
+<text x="649" y="820" font-family="monospace" font-size="10" font-weight="700">ProposalReader</text>
+<text x="649" y="840" font-size="11"><tspan x="649">Read-only</tspan><tspan x="649" dy="15">proposal access</tspan></text>
+</g>
+<g class="service" data-label="AgentProposesOnly" data-grade="declared">
+<rect x="451" y="909" width="282" height="82" rx="6" fill="#FFE4AD" stroke="#E79A24" stroke-width="2"/>
+<text x="463" y="929" font-family="monospace" font-size="14" font-weight="700">AgentProposesOnly</text>
+<text x="463" y="948" font-size="12"><tspan x="463">No command-sending tool; cannot move a</tspan><tspan x="463" dy="15">proposal out of screening</tspan><tspan x="463" dy="17" font-weight="700">Agent principal refused by every transition operation</tspan></text>
+</g>
+</g>
+
+<g class="domain" data-label="PeerReview" data-grade="declared">
+<rect x="752" y="460" width="194" height="544" rx="7" fill="#F0F8FD" stroke="#8AC7EC"/>
+<text x="849" y="488" text-anchor="middle" font-size="22" font-weight="700" fill="#092650">PeerReview</text>
+<text x="849" y="510" text-anchor="middle" font-size="12" fill="#234262"><tspan x="849">Conflicts, assignments,</tspan><tspan x="849" dy="16">reviews and completion</tspan></text>
+<g class="service" data-label="AssignmentService" data-grade="declared">
+<rect x="765" y="536" width="168" height="82" rx="6" fill="#D0F0EF" stroke="#35AEB3"/>
+<text x="777" y="558" font-family="monospace" font-size="13" font-weight="700">AssignmentService</text>
+<text x="777" y="579" font-size="12"><tspan x="777">Single writer of conflicts,</tspan><tspan x="777" dy="16">assignments and reviews</tspan></text>
+</g>
+<g class="service" data-label="ReviewStore" data-grade="declared">
+<rect x="765" y="681" width="168" height="74" rx="5" fill="#D4E9FD" stroke="#65B1E9"/>
+<text x="777" y="703" font-family="monospace" font-size="14" font-weight="700">ReviewStore</text>
+<text x="777" y="723" font-size="12"><tspan x="777">Review cases, conflicts,</tspan><tspan x="777" dy="16">assignments and reviews</tspan></text>
+</g>
+<g class="service" data-label="ReviewCompletion" data-grade="declared">
+<rect x="765" y="790" width="168" height="82" rx="6" fill="#D0F0EF" stroke="#35AEB3"/>
+<text x="777" y="812" font-family="monospace" font-size="13" font-weight="700">ReviewCompletion</text>
+<text x="777" y="832" font-size="12"><tspan x="777">Counts submitted reviews</tspan><tspan x="777" dy="16">on non-revoked</tspan><tspan x="777" dy="16">assignments</tspan></text>
+</g>
+<g class="service" data-label="CompletionLedger" data-grade="declared">
+<rect x="765" y="925" width="168" height="64" rx="5" fill="#D4E9FD" stroke="#65B1E9"/>
+<text x="777" y="947" font-family="monospace" font-size="13" font-weight="700">CompletionLedger</text>
+<text x="777" y="966" font-size="12"><tspan x="777">Counted reviews and</tspan><tspan x="777" dy="15">mean score</tspan></text>
+</g>
+</g>
+
+<g class="domain" data-label="Adjudication" data-grade="declared">
+<rect x="953" y="460" width="177" height="544" rx="7" fill="#F0F8FD" stroke="#8AC7EC"/>
+<text x="1041" y="488" text-anchor="middle" font-size="21" font-weight="700" fill="#092650">Adjudication</text>
+<text x="1041" y="510" text-anchor="middle" font-size="12" fill="#234262"><tspan x="1041">Never reads proposal</tspan><tspan x="1041" dy="16">or review tables</tspan></text>
+<g class="service" data-label="AdjudicationService" data-grade="declared">
+<rect x="963" y="536" width="157" height="82" rx="6" fill="#D0F0EF" stroke="#35AEB3"/>
+<text x="975" y="558" font-family="monospace" font-size="11.6" font-weight="700">AdjudicationService</text>
+<text x="975" y="581" font-size="12"><tspan x="975">Commits awards and</tspan><tspan x="975" dy="16">declines atomically</tspan></text>
+</g>
+<g class="service" data-label="AdjudicationStore" data-grade="declared">
+<rect x="963" y="681" width="157" height="80" rx="5" fill="#D4E9FD" stroke="#65B1E9"/>
+<text x="975" y="703" font-family="monospace" font-size="12" font-weight="700">AdjudicationStore</text>
+<text x="975" y="723" font-size="12"><tspan x="975">Cases, panel decisions</tspan><tspan x="975" dy="16">and per-call budget</tspan><tspan x="975" dy="16">ledger</tspan></text>
+</g>
+</g>
+
+<g class="domain" data-label="Notification" data-grade="declared">
+<rect x="1137" y="460" width="182" height="544" rx="7" fill="#F0F8FD" stroke="#8AC7EC"/>
+<text x="1228" y="488" text-anchor="middle" font-size="21" font-weight="700" fill="#092650">Notification</text>
+<text x="1228" y="510" text-anchor="middle" font-size="12" fill="#234262"><tspan x="1228">Participant notifications</tspan><tspan x="1228" dy="16">and delivery</tspan></text>
+<g class="service" data-label="NotificationService" data-grade="declared">
+<rect x="1148" y="536" width="160" height="82" rx="6" fill="#D0F0EF" stroke="#35AEB3"/>
+<text x="1160" y="558" font-family="monospace" font-size="11.7" font-weight="700">NotificationService</text>
+<text x="1160" y="581" font-size="12"><tspan x="1160">Turns events into</tspan><tspan x="1160" dy="16">participant notifications</tspan></text>
+</g>
+<g class="service" data-label="OutboundMessageStore" data-grade="declared">
+<rect x="1148" y="681" width="160" height="80" rx="5" fill="#D4E9FD" stroke="#65B1E9"/>
+<text x="1160" y="703" font-family="monospace" font-size="11.2" font-weight="700">OutboundMessageStore</text>
+<text x="1160" y="726" font-size="12"><tspan x="1160">Outbound messages</tspan><tspan x="1160" dy="16">and in-app inbox</tspan></text>
+</g>
+</g>
+
+<g class="domain" data-label="Oversight" data-grade="declared">
+<rect x="1326" y="460" width="197" height="544" rx="7" fill="#F0F8FD" stroke="#8AC7EC"/>
+<text x="1424" y="488" text-anchor="middle" font-size="22" font-weight="700" fill="#092650">Oversight</text>
+<text x="1424" y="510" text-anchor="middle" font-size="12" fill="#234262"><tspan x="1424">Events only; never reads</tspan><tspan x="1424" dy="16">write-side stores</tspan></text>
+<g class="service" data-label="PortfolioProjector" data-grade="declared">
+<rect x="1337" y="536" width="175" height="82" rx="6" fill="#D0F0EF" stroke="#35AEB3"/>
+<text x="1349" y="558" font-family="monospace" font-size="13" font-weight="700">PortfolioProjector</text>
+<text x="1349" y="581" font-size="12"><tspan x="1349">Only producer of portfolio</tspan><tspan x="1349" dy="16">and audit timeline</tspan></text>
+</g>
+<g class="service" data-label="Portfolio" data-grade="declared">
+<rect x="1337" y="692" width="175" height="65" rx="5" fill="#D4E9FD" stroke="#65B1E9"/>
+<text x="1349" y="714" font-family="monospace" font-size="14" font-weight="700">Portfolio</text><text x="1349" y="738" font-size="12">Event-projected read model</text>
+</g>
+<g class="service" data-label="AuditTrail" data-grade="declared">
+<rect x="1337" y="828" width="175" height="65" rx="5" fill="#D4E9FD" stroke="#65B1E9"/>
+<text x="1349" y="850" font-family="monospace" font-size="14" font-weight="700">AuditTrail</text><text x="1349" y="874" font-size="12">Event-projected audit timeline</text>
+</g>
+</g>
+
+<g fill="none" stroke-linejoin="round" stroke-linecap="round">
+<g class="edge" data-from="CallService" data-to="CallStore"><path d="M 110 618 L 110 684" stroke="#008797" stroke-width="2" marker-end="url(#teal)"/><text x="119" y="651" fill="#173951" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="12">reads + writes</text></g>
+<g class="edge" data-from="AccountService" data-to="AccountStore"><path d="M 315 647 L 315 690" stroke="#008797" stroke-width="2" marker-end="url(#teal)"/><text x="322" y="671" fill="#173951" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="12">reads + writes</text></g>
+<g class="edge" data-from="ProposalService" data-to="ProposalStore"><path d="M 590 671 L 590 707" stroke="#008797" stroke-width="2.5" marker-end="url(#teal)"/><text x="601" y="694" fill="#173951" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="12">reads + writes</text></g>
+<g class="edge" data-from="AssignmentService" data-to="ReviewStore"><path d="M 841 618 L 841 681" stroke="#008797" stroke-width="2.5" marker-end="url(#teal)"/><text x="850" y="650" fill="#173951" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="11">reads + writes</text></g>
+<g class="edge" data-from="ReviewCompletion" data-to="CompletionLedger"><path d="M 841 872 L 841 925" stroke="#008797" stroke-width="2" marker-end="url(#teal)"/><text x="850" y="902" fill="#173951" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="11">reads + writes</text></g>
+<g class="edge" data-from="AdjudicationService" data-to="AdjudicationStore"><path d="M 1040 618 L 1040 681" stroke="#008797" stroke-width="2" marker-end="url(#teal)"/><text x="1048" y="650" fill="#173951" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="10.5">reads + writes</text></g>
+<g class="edge" data-from="NotificationService" data-to="OutboundMessageStore"><path d="M 1220 618 L 1220 681" stroke="#008797" stroke-width="2" marker-end="url(#teal)"/><text x="1228" y="650" fill="#173951" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="10.5">reads + writes</text></g>
+<g class="edge" data-from="PortfolioProjector" data-to="Portfolio"><path d="M 1400 618 L 1400 692" stroke="#008797" stroke-width="2" marker-end="url(#teal)"/><text x="1408" y="656" fill="#173951" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="11">reads + projects</text></g>
+<g class="edge" data-from="PortfolioProjector" data-to="AuditTrail"><path d="M 1512 580 L 1518 580 L 1518 798 L 1424 798 L 1424 828" stroke="#008797" stroke-width="2" marker-end="url(#teal)"/><text x="1392" y="793" fill="#173951" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="11">reads + projects</text></g>
+<g class="edge" data-from="EligibilityTriage" data-to="AgentProposesOnly"><path d="M 520 873 L 520 909" stroke="#008797" stroke-width="2" marker-end="url(#teal)"/><text x="530" y="896" fill="#173951" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="12">constrained by</text></g>
+<g class="edge" data-from="EligibilityTriage" data-to="ProposalReader"><path d="M 616 840 L 637 840" stroke="#008797" stroke-width="2" marker-end="url(#teal)"/><text x="618" y="785" fill="#173951" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="11">uses</text></g>
+<g class="edge" data-from="AccountService" data-to="ORCID"><path d="M 240 536 L 240 414 Q 240 405 230 405 L 208 405" stroke="#008797" stroke-width="2.5" marker-end="url(#teal)"/><text x="249" y="409" fill="#007B8C" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="13">invokes</text></g>
+<g class="edge" data-from="ProposalService" data-to="CallApi.GetCallStatus"><path d="M 494 578 L 466 578 Q 455 578 455 590 L 455 857 Q 455 867 445 867 L 202 867 Q 199 867 199 857 L 199 805 L 194 805" stroke="#008797" stroke-width="3" marker-end="url(#teal)"/><text x="339" y="884" fill="#007B8C" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="13">invokes</text></g>
+<g class="edge" data-from="AssignmentService" data-to="IdentityApi.GetReviewerStanding"><path d="M 849 536 L 849 449 L 439 449 L 439 805 L 421 805" stroke="#008797" stroke-width="3" marker-end="url(#teal)"/><text x="704" y="443" fill="#007B8C" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="13">invokes</text></g>
+<g class="edge" data-from="PeerReview" data-to="ProposalService"><path d="M 789 460 L 789 420 Q 789 411 779 411 L 564 411 Q 554 411 554 421 L 554 536" stroke="#BD490C" stroke-width="2.5" marker-end="url(#event)"/><text x="653" y="399" fill="#BD490C" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="14">received by</text></g>
+<g class="edge" data-from="Adjudication" data-to="ProposalService"><path d="M 1041 460 L 1041 378 Q 1041 367 1031 367 L 617 367 Q 607 367 607 377 L 607 536" stroke="#BD490C" stroke-width="2.5" marker-end="url(#event)"/><text x="911" y="359" fill="#BD490C" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="14">received by</text></g>
+</g>
+</svg>

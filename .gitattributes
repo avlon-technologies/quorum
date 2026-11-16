@@ -1,0 +1,9 @@
+# >>> continuum >>>
+# Continuum — the development package is judged by its bytes; keep them LF everywhere.
+continuum/** text=auto eol=lf
+continuum/**/*.jsonl text eol=lf
+continuum/**/*.json text eol=lf
+continuum/**/*.adl text eol=lf
+continuum/**/*.md text eol=lf
+continuum/**/*.txt text eol=lf
+# <<< continuum <<<

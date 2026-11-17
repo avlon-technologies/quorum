@@ -22,7 +22,7 @@
   "attestation": {
     "profile": "continuum-claim-spec/0",
     "id": "verified-reviewers-only",
-    "version": "2.0.1",
+    "version": "3.0.0",
     "claim": {
       "language": "bdl",
       "kind": "business-rule",
@@ -67,7 +67,9 @@
         "overdue",
         "completed"
       ],
-      "businessModel": "continuum/model/quorum.bdl"
+      "businessModel": "continuum/model/quorum.bdl",
+      "concurrency": false,
+      "concurrencyStatement": "concurrent execution is outside the boundary (excluded above)"
     },
     "assumptions": [
       {
@@ -95,6 +97,7 @@
       {
         "id": "held-assignment-scope",
         "kind": "scope",
+        "method": "static-lexical",
         "qualifies": [
           "L2",
           "L3"
@@ -107,6 +110,8 @@
       {
         "id": "unverified-reviewer-refused",
         "kind": "case",
+        "method": "executed-http-route",
+        "polarity": "rejected",
         "qualifies": [
           "L1",
           "L2"
@@ -125,6 +130,8 @@
       {
         "id": "verified-reviewer-assigned",
         "kind": "case",
+        "method": "executed-http-route",
+        "polarity": "allowed",
         "qualifies": [],
         "statement": "control: the same route assigns a verified reviewer, so the refusal above is the condition's and not a broken route A control: it qualifies for no level itself; it is what lets the refusal case count.",
         "criterion": {
@@ -138,6 +145,7 @@
       {
         "id": "guard-dominates-writes",
         "kind": "enforcement",
+        "method": "static-lexical",
         "qualifies": [
           "L3"
         ],
@@ -152,6 +160,7 @@
       {
         "id": "guard-implements-condition",
         "kind": "rule-correspondence",
+        "method": "static-lexical",
         "qualifies": [
           "L3"
         ],
@@ -165,11 +174,26 @@
         }
       }
     ],
-    "rubric": "continuum-claim-rubric/2",
+    "polarities": {
+      "notApplicable": [
+        {
+          "polarity": "boundary",
+          "why": "ORCID status is Verified or Unverified: there is no edge between an admitted and a refused reviewer to test"
+        }
+      ]
+    },
+    "violations": [
+      {
+        "class": "rule-bypass",
+        "statement": "a reviewer whose ORCID is not verified comes to hold an assignment"
+      }
+    ],
+    "rubric": "continuum-claim-rubric/3",
     "challenges": [
       {
         "id": "orcid-guard-defeated",
         "kind": "deliberate-fault",
+        "class": "rule-bypass",
         "statement": "the AssignReviewer guard no longer refuses an unverified reviewer (029 controlled mismatch M2, reused)",
         "change": {
           "patch": "architecture/challenges/orcid-guard-defeated.patch",

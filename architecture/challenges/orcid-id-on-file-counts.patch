@@ -1,0 +1,13 @@
+diff --git a/src/contexts/identity/service.ts b/src/contexts/identity/service.ts
+index 241d814..d931c10 100644
+--- a/src/contexts/identity/service.ts
++++ b/src/contexts/identity/service.ts
+@@ -115,7 +115,7 @@ export function getReviewerStanding(deps: Deps, accountId: string): ReviewerStan
+   return {
+     accountId,
+     isReviewer: rolesOf(deps, accountId).includes('reviewer'),
+-    orcid: a.orcid_status,
++    orcid: a.orcid_id ? 'verified' : a.orcid_status,
+     institution: a.institution,
+     name: a.name,
+     exists: true,

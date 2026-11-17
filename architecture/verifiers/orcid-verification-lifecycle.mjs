@@ -1,4 +1,5 @@
-// Verifier for the claim `orcid-verification-lifecycle` (continuum-claim-spec/0, prompt 030; 2.0.0 for ADR-023): BDL
+// Verifier for the claim `orcid-verification-lifecycle` (continuum-claim-spec/0, rubric continuum-claim-rubric/3; first
+// written for prompt 030, 2.0.0 for ADR-023): BDL
 // state model OrcidVerification (#sm-q002) on Account.orcidStatus — its declared transitions (Verify: Unverified →
 // Verified by VerifyOrcid; ClearOnErasure: Verified → Unverified by EraseAccount) are the complete set of permitted
 // changes of the field (BDL §5.8 R-07). Separate from VerifiedReviewersOnly (r-q012), judged at AssignReviewer only.
@@ -14,13 +15,17 @@
 //                reached only from excluded callers is excluded; non-literal SQL must resolve
 //   structural   per write: the prior value its WHERE fixes (or none: any), and the value it sets
 //   trigger      per write: the function holding it and its entry points (who may cause the transition)
-//   cases        the real erasure route on a Verified reviewer who holds an assignment; the real verification route
-//                on an Unverified reviewer, and on a Verified one (other iD, unknown iD, own iD) — the persisted
-//                states read back
+//   cases        the real erasure route on a Verified reviewer who holds an assignment, and again on the account
+//                already erased; the real verification route on an Unverified reviewer (a registered iD, and one the
+//                registry does not know) and on a Verified one (other iD, unknown iD, own iD) — the persisted states
+//                read back. Every case reports `reached`: the in-scope writes whose block V8's precise coverage saw
+//                execute during the act alone (setup excluded) — observed by the runtime, never declared here
+//   outside the levels (reported, never counted): whether the store itself refuses an undeclared change
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { sourceFiles, lex, sqlWrites, nonLiteralSql, sha256, lineOf } from './lib/scan.mjs';
 import { enclosingFunction, callersOf, harnessRunner } from './lib/flow.mjs';
+import { reachObserver } from './lib/reach.mjs';
 
 const [declPath, impl, resultFile, , commit, tree, attestation, changeState] = process.argv.slice(2);
 const decl = JSON.parse(readFileSync(declPath, 'utf8'));
@@ -94,62 +99,84 @@ for (const s of inScope.filter((x) => !x.observed.creates)) {
   if (check) results.push({ check, ran: 'completed', path: s.at, inputs: sha256(texts.get(s.path)), observed });
 }
 
-// ---------------------------------------------------------------- enforcement: is there a constraint that keeps the field closed?
-{
-  const schema = texts.get('src/platform/schema.ts') ?? '';
-  const trigger = new RegExp(`CREATE TRIGGER[\\s\\S]*?(?:UPDATE OF ${COLUMN}|UPDATE)[\\s\\S]*?ON ${TABLE}[\\s\\S]*?RAISE`, 'i').exec(schema);
-  results.push({ check: 'closure-constraint', ran: 'completed', path: 'src/platform/schema.ts', inputs: sha256(schema), observed: { dominates: !!trigger, appliesTo: trigger ? discovered : [], constraint: trigger ? trigger[0].slice(0, 160) : null, detail: trigger ? 'a database trigger refuses undeclared changes' : `no constraint in the schema refuses an undeclared change of ${TABLE}.${COLUMN}; each write is on its own` } });
-}
+// ---------------------------------------------------------------- reported, not judged: does the store itself keep the field closed?
+const schema = texts.get('src/platform/schema.ts') ?? '';
+const trigger = new RegExp(`CREATE TRIGGER[\\s\\S]*?(?:UPDATE OF ${COLUMN}|UPDATE)[\\s\\S]*?ON ${TABLE}[\\s\\S]*?RAISE`, 'i').exec(schema);
+const storeConstraint = { path: 'src/platform/schema.ts', present: !!trigger, constraint: trigger ? trigger[0].slice(0, 160) : null, note: trigger ? 'a database trigger refuses undeclared changes' : `no constraint in the schema refuses an undeclared change of ${TABLE}.${COLUMN}: the closure rests on the application's writes, each checked here` };
 
 // ---------------------------------------------------------------- cases: the real routes, the persisted states
 const scenario = harnessRunner(impl);
 const status = (h, id) => h.one(`SELECT ${COLUMN} s FROM ${TABLE} WHERE id = ?`, id).s;
 const heldBy = (h, id) => h.one(`SELECT COUNT(*) n FROM rev_assignment WHERE reviewer_id = ? AND status IN (${[...HELD].map(() => '?').join(',')})`, id, ...HELD).n;
 const roles = (h, id) => h.one(`SELECT COUNT(*) n FROM idn_role_grant WHERE account_id = ?`, id).n;
-const covering = (route) => [...new Set(entries.filter((e) => e.path === route).map((e) => e.reaches))].sort();
+const observer = await reachObserver(impl, (path) => lexed.get(path).code);
 // one run of a case may be judged by several checks (each its own criterion over the same observed values)
 const caseRun = async (checks, route, body) => {
   const ids = [checks].flat();
-  try { const observed = await scenario(body); for (const check of ids) results.push({ check, ran: 'completed', path: route, covers: covering(route), inputs: treeDigest, observed }); }
+  let reached = [];
+  // only the ACT is measured — the request and the delivery of the events it published — never the setup
+  const act = async (h, fn) => { const r = await observer.act(async () => { const v = await fn(); await h.settle(); return v; }, inScope); reached = r.reached; return r.value; };
+  try { const observed = await scenario((h) => body(h, (fn) => act(h, fn))); for (const check of ids) results.push({ check, ran: 'completed', path: route, reached, inputs: treeDigest, observed }); }
   catch (e) { for (const check of ids) results.push({ check, ran: 'error', path: route, inputs: treeDigest, detail: String(e?.message ?? e).split('\n')[0] }); }
 };
 const ERASE = entries.find((e) => /erase/.test(e.path))?.path ?? 'HTTP POST /api/operations/accounts/:id/erase';
 const VERIFY = entries.find((e) => /orcid/.test(e.path))?.path ?? 'HTTP POST /api/me/orcid';
-await caseRun(['verified-reviewer-erased', 'erasure-clears-verification'], ERASE, async (h) => {
+const eraseUrl = (id) => ERASE.replace(/^HTTP POST /, '').replace(':id', id);
+const verifyUrl = VERIFY.replace(/^HTTP POST /, '');
+const REGISTERED = '0000-0002-1825-0097'; const NOT_REGISTERED = '0000-0003-1415-9269';   // the stub registry has no record of the second
+await caseRun(['verified-reviewer-erased', 'erasure-clears-verification'], ERASE, async (h, act) => {
   const w = h.world(); const id = await h.eligible(w);
   const a = await h.post(`/api/proposals/${id}/assignments`, w.officer, { reviewerId: w.r[0].id });
   await h.settle();
   const before = { orcidStatus: status(h, w.r[0].id), heldAssignments: heldBy(h, w.r[0].id), roleGrants: roles(h, w.r[0].id) };
-  const e = await h.post(ERASE.replace(/^HTTP POST /, '').replace(':id', w.r[0].id), w.operator, { reason: 'attestation pilot: erasure of a verified reviewer holding an assignment' });
-  await h.settle();
+  const e = await act(() => h.post(eraseUrl(w.r[0].id), w.operator, { reason: 'attestation pilot: erasure of a verified reviewer holding an assignment' }));
   const after = { orcidStatus: status(h, w.r[0].id), heldAssignments: heldBy(h, w.r[0].id), roleGrants: roles(h, w.r[0].id) };
   return { assignedHttpStatus: a.status, erasedHttpStatus: e.status, before, after, from: before.orcidStatus, to: after.orcidStatus, heldAssignmentsAfter: after.heldAssignments };
 });
-await caseRun('unverified-reviewer-verifies', VERIFY, async (h) => {
+// the edge of ClearOnErasure: the account is already erased, so there is nothing left to clear
+await caseRun('erased-again-no-change', ERASE, async (h, act) => {
+  const w = h.world();
+  const first = await h.post(eraseUrl(w.r[0].id), w.operator, { reason: 'attestation pilot: first erasure' });
+  await h.settle();
+  const from = status(h, w.r[0].id);
+  const e = await act(() => h.post(eraseUrl(w.r[0].id), w.operator, { reason: 'attestation pilot: erasure of an erased account' }));
+  return { firstHttpStatus: first.status, httpStatus: e.status, erasedAgain: e.body?.erased ?? null, from, to: status(h, w.r[0].id) };
+});
+await caseRun('unverified-reviewer-verifies', VERIFY, async (h, act) => {
   const w = h.world();
   const before = status(h, w.unverified.id);
-  const r = await h.post(VERIFY.replace(/^HTTP POST /, ''), w.unverified, { orcidId: '0000-0002-1825-0097' });
-  await h.settle();
+  const r = await act(() => h.post(verifyUrl, w.unverified, { orcidId: REGISTERED }));
   return { httpStatus: r.status, code: r.body?.error?.code ?? null, from: before, to: status(h, w.unverified.id) };
 });
-await caseRun('verification-never-leaves-verified', VERIFY, async (h) => {
+// the edge of Verify: verification is attempted and not achieved, so no transition is taken
+await caseRun('unregistered-id-stays-unverified', VERIFY, async (h, act) => {
+  const w = h.world();
+  const before = status(h, w.unverified.id);
+  const published = () => h.one(`SELECT COUNT(*) n FROM evt_outbox WHERE type = 'OrcidVerified'`).n;
+  const published0 = published();
+  const r = await act(() => h.post(verifyUrl, w.unverified, { orcidId: NOT_REGISTERED }));
+  return { httpStatus: r.status, refused: r.status >= 400, code: r.body?.error?.code ?? null, from: before, to: status(h, w.unverified.id), orcidVerifiedPublished: published() - published0 };
+});
+await caseRun('verification-never-leaves-verified', VERIFY, async (h, act) => {
   const w = h.world(); const r = w.r[0];
-  const url = VERIFY.replace(/^HTTP POST /, '');
   const from = status(h, r.id);
   const own = h.one(`SELECT orcid_id o FROM ${TABLE} WHERE id = ?`, r.id).o;
   const published = () => h.one(`SELECT COUNT(*) n FROM evt_outbox WHERE type = 'OrcidVerified'`).n;
   const published0 = published();
-  const other = await h.post(url, r, { orcidId: '0000-0002-1825-0097' }); const afterOtherId = status(h, r.id);
-  const unknown = await h.post(url, r, { orcidId: '0000-0003-1415-9269' }); const afterUnknownId = status(h, r.id);   // the stub registry has no record
-  const same = await h.post(url, r, { orcidId: own }); const afterSameId = status(h, r.id);
-  await h.settle();
+  const o = await act(async () => {
+    const other = await h.post(verifyUrl, r, { orcidId: REGISTERED }); const afterOtherId = status(h, r.id);
+    const unknown = await h.post(verifyUrl, r, { orcidId: NOT_REGISTERED }); const afterUnknownId = status(h, r.id);
+    const same = await h.post(verifyUrl, r, { orcidId: own }); const afterSameId = status(h, r.id);
+    return { other, unknown, same, afterOtherId, afterUnknownId, afterSameId };
+  });
   return {
-    from, to: afterSameId, afterOtherId, afterUnknownId, afterSameId,
-    otherIdHttpStatus: other.status, otherIdCode: other.body?.error?.code ?? null,
-    unknownIdHttpStatus: unknown.status, unknownIdCode: unknown.body?.error?.code ?? null,
-    sameIdHttpStatus: same.status, orcidVerifiedPublished: published() - published0,
+    from, to: o.afterSameId, afterOtherId: o.afterOtherId, afterUnknownId: o.afterUnknownId, afterSameId: o.afterSameId,
+    otherIdHttpStatus: o.other.status, otherIdCode: o.other.body?.error?.code ?? null,
+    unknownIdHttpStatus: o.unknown.status, unknownIdCode: o.unknown.body?.error?.code ?? null,
+    sameIdHttpStatus: o.same.status, orcidVerifiedPublished: published() - published0,
   };
 });
+await observer.stop();
 
 const observation = {
   profile: 'continuum-claim-observation/0',
@@ -157,6 +184,7 @@ const observation = {
   boundTo: { commit, tree, attestation, spec: { id: spec.id, version: spec.version } },
   environment: { node: process.version, platform: process.platform === 'win32' ? 'win32' : 'posix', database: 'SQLite (better-sqlite3), an isolated file per case; manual clock; stub ORCID registry' },
   results: results.sort((a, b) => (`${a.check}\0${a.path}` < `${b.check}\0${b.path}` ? -1 : 1)),
+  outOfBoundary: [{ ...storeConstraint, note: `reported only, never counted: ${storeConstraint.note}` }],
 };
 writeFileSync(resultFile, `${JSON.stringify({
   profile: 'continuum-verification-result/0',
@@ -164,11 +192,11 @@ writeFileSync(resultFile, `${JSON.stringify({
   model: { attestation, changeState, elements: [{ id: spec.claim.element, name: 'OrcidVerification', kind: 'bdl:state-model' }] },
   implementation: { commit, tree },
   expectation: { statement: decl.expectation, source: `continuum-claim-spec/0 ${spec.id}@${spec.version}` },
-  method: 'static enumeration of the field\'s writes, and the real routes driven through the implementation\'s app (see the attestation observation)',
+  method: 'static enumeration of the field\'s writes; the real routes driven through the implementation\'s app, with V8 precise coverage observing which writes executed',
   evidence: [{ ref: 'observation: attestation.results' }],
   coverage: { executed: results.length, covered: discovered, uncovered: unresolved.map((u) => u.path) },
   levels: {
-    code: { outcome: 'UNVERIFIED', reason: 'informational claim attestation: the level is judged by the Host (continuum-claim-attestation/0)' },
+    code: { outcome: 'UNVERIFIED', reason: 'informational claim attestation: the level is judged by the Host (continuum-claim-rubric/3)' },
     deployment: { outcome: 'UNVERIFIED', reason: 'not assessed: the routes ran in-process against an isolated database, not a deployment' },
   },
   attestation: observation,

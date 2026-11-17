@@ -1,0 +1,14 @@
+diff --git a/src/contexts/identity/service.ts b/src/contexts/identity/service.ts
+index 241d814..e13622d 100644
+--- a/src/contexts/identity/service.ts
++++ b/src/contexts/identity/service.ts
+@@ -93,7 +93,8 @@ export function recordOrcidVerification(deps: Deps, accountId: string, orcidId:
+   if (!a) throw notFound('Account');
+   if (a.orcid_status === 'verified') {
+     if (a.orcid_id === orcidId) return { orcidStatus: 'verified', orcidId };
+-    throw conflict('orcid_already_verified', 'Your account is already verified with a different ORCID iD. Contact a program officer to change it.');
++    deps.db.prepare(`UPDATE idn_account SET orcid_id = NULL, orcid_status = 'unverified', orcid_verified_at = NULL WHERE id = ?`).run(accountId);
++    return { orcidStatus: 'verified', orcidId };
+   }
+   const taken = deps.db.prepare(`SELECT 1 FROM idn_account WHERE orcid_id = ? AND id <> ? AND orcid_status = 'verified'`).get(orcidId, accountId);
+   if (taken) throw conflict('orcid_in_use', 'That ORCID iD is already verified on another account.');

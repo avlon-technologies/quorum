@@ -1,5 +1,7 @@
-// Verifier for the claim `verified-reviewers-only` (continuum-claim-spec/0, prompt 029): BDL rule VerifiedReviewersOnly
-// (#r-q012) — on AssignReviewer, when the assigned reviewer's ORCID status is not Verified, the assignment is not made.
+// Verifier for the claim `verified-reviewers-only` (continuum-claim-spec/0, rubric continuum-claim-rubric/3; first written
+// for prompt 029): BDL rule VerifiedReviewersOnly (#r-q012, INV-12) — a reviewer may hold an assignment only if their ORCID
+// identity is verified — within the boundary the specification states: the making of an assignment (AssignReviewer),
+// the rule's scope, where its condition holds (the assigned reviewer's ORCID status is not Verified): not assigned.
 //
 // It OBSERVES and reports values; it judges nothing. Platform's claim-attestation evaluator decides every pass, the
 // scope and the level. This module writes the continuum-verification/0 code level as UNVERIFIED (informational).
@@ -9,8 +11,12 @@
 //   scope        every write that makes a reviewer HOLD an assignment (INSERT INTO rev_assignment, or an UPDATE that
 //                moves a status from not-held into held), the function each lies in, and every call of that function
 //                in src/ — an HTTP route is named by its method and URL; a call the specification excludes is listed
-//   cases        drive the real HTTP route through the implementation's app (Fastify inject, an isolated SQLite file)
-//                with an unverified and a verified reviewer, and read the resulting rev_assignment state
+//   cases        drive the real HTTP route through the implementation's app (Fastify inject, an isolated SQLite file):
+//                a verified reviewer (allowed), an unverified one (rejected), and the two sides of the condition's
+//                edge (boundary) — a reviewer verified through the verification route just before, and a reviewer
+//                with an ORCID iD on file that was never verified. Each reads the resulting rev_assignment state and
+//                reports `reached`: the in-scope write sites whose block V8's precise coverage saw execute during
+//                the act alone (setup excluded) — observed by the runtime, never declared by this file
 //   enforcement  the guard sits on every path to the write: the write's function calls assignmentEligibility and
 //                throws when it is not ok, at the top level of its body, before the write and with no return between
 //   correspondence  the guard refuses when the ASSIGNED reviewer's orcid status is not 'verified', reading
@@ -20,6 +26,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { sourceFiles, lex, sqlWrites, nonLiteralSql, excludedBy, sha256, lineOf } from './lib/scan.mjs';
+import { reachObserver } from './lib/reach.mjs';
 
 const [declPath, impl, resultFile, , commit, tree, attestation, changeState] = process.argv.slice(2);
 const decl = JSON.parse(readFileSync(declPath, 'utf8'));
@@ -33,7 +40,7 @@ const treeDigest = sha256(files.map((f) => `${f}\n${sha256(texts.get(f))}`).join
 
 // ---------------------------------------------------------------- the model's condition, from the business model at the baseline
 const bdl = readFileSync(spec.scope.businessModel, 'utf8');
-const ruleText = new RegExp(`rule\\s+\\w+\\s+#${spec.claim.element}\\s*\\{([\\s\\S]*?)\\n\\s*\\}`).exec(bdl)?.[1] ?? '';
+const ruleText = new RegExp(`rule\\s+\\w+\\s+#${spec.scope.businessRule}\\s*\\{([\\s\\S]*?)\\n\\s*\\}`).exec(bdl)?.[1] ?? '';
 const modelCondition = /\bcondition\s+(.+)/.exec(ruleText)?.[1]?.trim() ?? null;
 
 // ---------------------------------------------------------------- scope: the writes that make an assignment held
@@ -171,31 +178,61 @@ async function scenario(fn) {
 }
 const held = (h, proposalId, reviewerId) => h.one(`SELECT COUNT(*) n FROM rev_assignment WHERE proposal_id = ? AND reviewer_id = ? AND status IN (${[...HELD].map(() => '?').join(',')})`, proposalId, reviewerId, ...HELD).n > 0;
 const route = entries.find((e) => e.path.startsWith('HTTP POST'))?.path ?? 'HTTP POST /api/proposals/:id/assignments';
+const observer = await reachObserver(impl, (path) => lexed.get(path).code);
 const caseRun = async (check, body) => {
-  // a case covers the entry it drove and the writes THAT entry reaches — never every discovered path (review 029)
-  try { results.push({ check, ran: 'completed', path: route, covers: [...new Set(entries.filter((e) => e.path === route).map((e) => e.reaches))].sort(), inputs: treeDigest, observed: await scenario(body) }); }
+  let reached = [];
+  // only the ACT is measured: setup runs the same services, and what setup executed is not what the case reached
+  const act = async (fn) => { const r = await observer.act(fn, writes); reached = r.reached; return r.value; };
+  try { const observed = await scenario((h) => body(h, act)); results.push({ check, ran: 'completed', path: route, reached, inputs: treeDigest, observed }); }
   catch (e) { results.push({ check, ran: 'error', path: route, inputs: treeDigest, detail: String(e?.message ?? e).split('\n')[0] }); }
 };
-await caseRun('unverified-reviewer-refused', async (h) => {
+const account = (h, id) => h.one(`SELECT orcid_status s, orcid_id i FROM idn_account WHERE id = ?`, id);
+const assign = (h, w, id, reviewerId) => h.post(`/api/proposals/${id}/assignments`, w.officer, { reviewerId });
+const seen = (h, id, reviewerId, before, r) => ({ reviewerOrcidStatus: before.s, httpStatus: r.status, refused: r.status >= 400, code: r.body?.error?.code ?? null, heldAfter: held(h, id, reviewerId) });
+await caseRun('verified-reviewer-assigned', async (h, act) => {
   const w = h.world(); const id = await h.eligible(w);
-  const before = h.one(`SELECT orcid_status s FROM idn_account WHERE id = ?`, w.unverified.id).s;
-  const r = await h.post(`/api/proposals/${id}/assignments`, w.officer, { reviewerId: w.unverified.id });
-  return { reviewerOrcidStatus: before, httpStatus: r.status, refused: r.status >= 400, code: r.body?.error?.code ?? null, heldAfter: held(h, id, w.unverified.id) };
+  const before = account(h, w.r[0].id);
+  const r = await act(() => assign(h, w, id, w.r[0].id));
+  return seen(h, id, w.r[0].id, before, r);
 });
-await caseRun('verified-reviewer-assigned', async (h) => {
+await caseRun('unverified-reviewer-refused', async (h, act) => {
   const w = h.world(); const id = await h.eligible(w);
-  const before = h.one(`SELECT orcid_status s FROM idn_account WHERE id = ?`, w.r[0].id).s;
-  const r = await h.post(`/api/proposals/${id}/assignments`, w.officer, { reviewerId: w.r[0].id });
-  return { reviewerOrcidStatus: before, httpStatus: r.status, refused: r.status >= 400, code: r.body?.error?.code ?? null, heldAfter: held(h, id, w.r[0].id) };
+  const before = account(h, w.unverified.id);
+  const r = await act(() => assign(h, w, id, w.unverified.id));
+  return { ...seen(h, id, w.unverified.id, before, r), orcidIdOnFile: before.i !== null };
 });
+// the edge of the condition, from the allowed side: the reviewer becomes Verified through the implementation's own
+// verification route, and the very next assignment is the act
+await caseRun('just-verified-reviewer-assigned', async (h, act) => {
+  const { orcidFor } = await import(harnessUrl);
+  const w = h.world(); const id = await h.eligible(w);
+  const start = account(h, w.unverified.id);
+  const v = await h.post('/api/me/orcid', w.unverified, { orcidId: orcidFor(9001) });
+  const before = account(h, w.unverified.id);
+  const r = await act(() => assign(h, w, id, w.unverified.id));
+  return { statusBeforeVerification: start.s, verificationRefused: v.status >= 400, ...seen(h, id, w.unverified.id, before, r) };
+});
+// the edge, from the rejected side: everything short of Verified — the reviewer role, and an ORCID iD on file — but
+// the stored status is still Unverified
+await caseRun('unverified-id-on-file-refused', async (h, act) => {
+  const { orcidFor } = await import(harnessUrl);
+  const { provisionAccount } = await import(pathToFileURL(join(impl, 'src', 'contexts', 'identity', 'service.ts')).href);
+  const w = h.world(); const id = await h.eligible(w);
+  const reviewerId = h.tx(() => provisionAccount(h.deps, { email: 'claimed-id@test.quorum', name: 'Clara Claimed', institution: 'Test University', roles: ['reviewer'], orcidId: orcidFor(9002), orcidVerified: false }));
+  const before = account(h, reviewerId);
+  const r = await act(() => assign(h, w, id, reviewerId));
+  return { ...seen(h, id, reviewerId, before, r), orcidIdOnFile: before.i !== null };
+});
+await observer.stop();
 
 // ---------------------------------------------------------------- outside the boundary: erasure of a reviewer who holds an assignment
 const outOfBoundary = [];
 try {
-  outOfBoundary.push({ path: 'HTTP POST /api/operations/accounts/:id/erase', note: 'EraseAccount is not AssignReviewer, so it is outside r-q012\'s declared scope; reported against the Account lifecycle (sm-q002: Verified is terminal)', observed: await scenario(async (h) => {
+  outOfBoundary.push({ path: 'HTTP POST /api/operations/accounts/:id/erase', note: 'EraseAccount is not AssignReviewer, so it is outside the boundary; reported only. ADR-023: erasure clears the verification and, once the AccountErased reaction has settled, releases the reviewer\'s outstanding assignments', observed: await scenario(async (h) => {
     const w = h.world(); const id = await h.eligible(w);
     const a = await h.post(`/api/proposals/${id}/assignments`, w.officer, { reviewerId: w.r[0].id });
     const e = await h.post(`/api/operations/accounts/${w.r[0].id}/erase`, w.operator, { reason: 'attestation pilot: erasure of a reviewer holding an assignment' });
+    await h.settle();
     return { assigned: a.status, erased: e.status, orcidStatusAfter: h.one(`SELECT orcid_status s FROM idn_account WHERE id = ?`, w.r[0].id).s, stillHeld: held(h, id, w.r[0].id) };
   }) });
 } catch (e) { outOfBoundary.push({ path: 'HTTP POST /api/operations/accounts/:id/erase', note: 'could not be exercised', error: String(e?.message ?? e).split('\n')[0] }); }
@@ -211,14 +248,14 @@ const observation = {
 writeFileSync(resultFile, `${JSON.stringify({
   profile: 'continuum-verification-result/0',
   verifier: { name: 'verified-reviewers-only', version: spec.version, digest: sha256(readFileSync(new URL(import.meta.url))) },
-  model: { attestation, changeState, elements: [{ id: spec.claim.element, name: 'VerifiedReviewersOnly', kind: 'bdl:rule' }] },
+  model: { attestation, changeState, elements: [{ id: spec.claim.element, name: 'VerifiedReviewersOnly', kind: `${spec.claim.language}:${spec.claim.kind}` }] },
   implementation: { commit, tree },
-  expectation: { statement: 'On AssignReviewer, a reviewer whose ORCID status is not Verified is not assigned (BDL r-q012)', source: `continuum-claim-spec/0 ${spec.id}@${spec.version}` },
-  method: 'static scope and guard checks over src/**, and the real HTTP route driven through the implementation\'s app (see the attestation observation)',
+  expectation: { statement: 'INV-12: on AssignReviewer, a reviewer whose ORCID status is not Verified is not assigned (the condition of BDL r-q012)', source: `continuum-claim-spec/0 ${spec.id}@${spec.version}` },
+  method: 'static scope and guard checks over src/**; the real HTTP route driven through the implementation\'s app, with V8 precise coverage observing which write sites executed',
   evidence: [{ ref: 'observation: attestation.results' }],
   coverage: { executed: results.length, covered: scopePaths, uncovered: unresolved.map((u) => u.path) },
   levels: {
-    code: { outcome: 'UNVERIFIED', reason: 'informational claim attestation: the level is judged by the Host (continuum-claim-attestation/0)' },
+    code: { outcome: 'UNVERIFIED', reason: 'informational claim attestation: the level is judged by the Host (continuum-claim-rubric/3)' },
     deployment: { outcome: 'UNVERIFIED', reason: 'not assessed: the route ran in-process against an isolated database, not a deployment' },
   },
   attestation: observation,

@@ -17,9 +17,21 @@ The levels are informational and never set the report's exit:
 
 They are not the retired AACS levels (DR-1).
 
-The four specifications name `continuum-claim-rubric/2`, where the levels read L0 Model Valid, L1 Observed
-Conformance, L2 Covered Conformance and L3 Strong Conformance. A spec that names no rubric is judged under
-`continuum-claim-rubric/1`, where L3 keeps its historical meaning "Enforced".
+All five specifications now name `continuum-claim-rubric/3`, the one rubric the Host judges (`/2` was removed): L0
+Assessed, L1 Supported, L2 Verified in scope, L3 Violation-sensitive. The sections below describe the `/2` pilot and
+`continuum conformance report`; they are kept as its record.
+
+Under `/3`, run `continuum conformance check continuum`. Expected: `reviewstore-writers`, `at-most-three-reviewers`,
+`verified-reviewers-only` (3.0.0) and `chair-decides-scored-only` (2.0.0) at **L3**, each deliberate fault detected;
+`orcid-verification-lifecycle` (3.0.0) at **L2**, its scope complete and every write reached by a passing case, with
+no `boundary-shift` fault declared. What changed for `/3`:
+
+- `chair-decides-scored-only` claims the ADL rule `ChairOnScoredOnly` (whole statement, quoted as its clause) in place
+  of BDL `r-q008`, and adds the integrity-hold cases. The Host reports any ADL business-rule claim as a clause, so the
+  rule's own row stays where its scenarios put it.
+- Every case reports `reached`, read from V8 block coverage by `verifiers/lib/reach.mjs`. It corrects one V8 reading:
+  code after an early `throw` is not counted as executed when a `? :` sits between them.
+- The lifecycle's store-constraint check (which never passed) is reported beside the results, not judged.
 
 ## Requirements
 

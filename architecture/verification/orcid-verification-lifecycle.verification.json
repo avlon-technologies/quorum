@@ -1,243 +1,325 @@
 {
-  "continuum-verification": "continuum-verification/0",
-  "name": "orcid-verification-lifecycle",
-  "verifies": [
-    "::Quorum.ResearchFunding.Account.OrcidVerification"
-  ],
-  "expectation": "BDL state model OrcidVerification (sm-q002) on Account.orcidStatus: the declared transitions — Verify (Unverified → Verified, by VerifyOrcid) and ClearOnErasure (Verified → Unverified, by EraseAccount; ADR-023) — are the complete set of permitted changes of the field (BDL §5.8 R-07). Verified stays terminal for verification: no verification act leaves it, and only erasure sets Unverified.",
-  "required": false,
-  "run": {
-    "module": "architecture/verifiers/orcid-verification-lifecycle.mjs",
-    "args": [
-      "architecture/verification/orcid-verification-lifecycle.verification.json",
-      "${IMPLEMENTATION}",
-      "${RESULT}",
-      "${OUT}",
-      "${COMMIT}",
-      "${TREE}",
-      "${ATTESTATION}",
-      "${CHANGE_STATE}"
-    ]
+ "continuum-verification": "continuum-verification/0",
+ "name": "orcid-verification-lifecycle",
+ "verifies": [
+  "::Quorum.ResearchFunding.Account.OrcidVerification"
+ ],
+ "expectation": "BDL state model OrcidVerification (sm-q002) on Account.orcidStatus: the declared transitions — Verify (Unverified → Verified, by VerifyOrcid) and ClearOnErasure (Verified → Unverified, by EraseAccount; ADR-023) — are the complete set of permitted changes of the field (BDL §5.8 R-07). Verified stays terminal for verification: no verification act leaves it, and only erasure sets Unverified.",
+ "required": false,
+ "run": {
+  "module": "architecture/verifiers/orcid-verification-lifecycle.mjs",
+  "args": [
+   "architecture/verification/orcid-verification-lifecycle.verification.json",
+   "${IMPLEMENTATION}",
+   "${RESULT}",
+   "${OUT}",
+   "${COMMIT}",
+   "${TREE}",
+   "${ATTESTATION}",
+   "${CHANGE_STATE}"
+  ]
+ },
+ "attestation": {
+  "profile": "continuum-claim-spec/0",
+  "id": "orcid-verification-lifecycle",
+  "version": "3.0.0",
+  "rubric": "continuum-claim-rubric/3",
+  "claim": {
+   "language": "bdl",
+   "kind": "state-model",
+   "element": "sm-q002"
   },
-  "attestation": {
-    "profile": "continuum-claim-spec/0",
-    "id": "orcid-verification-lifecycle",
-    "version": "2.0.0",
-    "rubric": "continuum-claim-rubric/2",
-    "claim": {
-      "language": "bdl",
-      "kind": "state-model",
-      "element": "sm-q002"
-    },
-    "model": {
-      "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1"
-    },
-    "boundary": {
-      "statement": "Every change of Account.orcidStatus made by the runtime code of the deployable (src/**): every literal SQL write that sets idn_account.orcid_status, and every runtime entry point that reaches one — including which act each write realizes, since R-07's closure is judged on states and the restriction of Verified → Unverified to erasure is checked here.",
-      "excludes": [
-        {
-          "what": "the demo seed (src/seed.ts)",
-          "why": "demo data, never run when NODE_ENV=production; its accounts are provisioned through provisionAccount, whose calls are therefore excluded",
-          "match": [
-            {
-              "path": "src/seed.ts",
-              "form": "call"
-            }
-          ]
-        },
-        {
-          "what": "VerifiedReviewersOnly (r-q012)",
-          "why": "a separate claim, judged at AssignReviewer only; this claim is the field's lifecycle, whoever holds an assignment"
-        },
-        {
-          "what": "tests/**, scripts/**",
-          "why": "not part of the deployable; the test harness provisions verified reviewers directly"
-        }
-      ]
-    },
-    "scope": {
-      "discovery": "Lex src/**: every UPDATE of idn_account that sets orcid_status (the value it sets and the prior value its WHERE fixes, if any) and every INSERT that lists orcid_status; the named function holding each write and every call of it (routes named). A creation site reached only by excluded callers is excluded; a value computed at the call is unresolved; non-literal SQL must resolve.",
-      "table": "idn_account",
-      "column": "orcid_status",
-      "held": [
-        "assigned",
-        "accepted",
-        "overdue",
-        "completed"
-      ],
-      "valueMapping": {
-        "unverified": "Unverified",
-        "verified": "Verified"
-      },
-      "erasure": {
-        "function": "eraseAccount",
-        "entryPoints": [
-          "HTTP POST /api/operations/accounts/:id/erase"
-        ]
-      },
-      "verification": {
-        "function": "recordOrcidVerification",
-        "entryPoints": [
-          "HTTP POST /api/me/orcid"
-        ]
+  "model": {
+   "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1"
+  },
+  "boundary": {
+   "statement": "Every change of Account.orcidStatus made by the runtime code of the deployable (src/**): every literal SQL write that sets idn_account.orcid_status, and every runtime entry point that reaches one — including which act each write realizes, since R-07's closure is judged on states and the restriction of Verified → Unverified to erasure is checked here. Requests are handled one at a time.",
+   "excludes": [
+    {
+     "what": "the demo seed (src/seed.ts)",
+     "why": "demo data, never run when NODE_ENV=production; its accounts are provisioned through provisionAccount, whose calls are therefore excluded",
+     "match": [
+      {
+       "path": "src/seed.ts",
+       "form": "call"
       }
+     ]
     },
-    "assumptions": [
-      {
-        "id": "D1-values",
-        "statement": "BDL OrcidStatus Unverified/Verified is idn_account.orcid_status 'unverified'/'verified'; the schema CHECK admits exactly those two values. The mapping is stated in scope.valueMapping; the evaluator applies it."
-      },
-      {
-        "id": "D2-closure",
-        "statement": "The claim is R-07's closure (the declared transitions are the complete set of permitted changes), not 'terminal' alone: BDL gives terminal no closure of its own."
-      },
-      {
-        "id": "D3-harness",
-        "statement": "Cases run the real routes in-process (Fastify inject) against an isolated SQLite file with a manual clock and a stub ORCID registry, set up through the implementation's own test harness."
-      },
-      {
-        "id": "D4-shape",
-        "statement": "Writes are found lexically (literal SQL); a value set from a parameter, or a channel the scanner cannot follow, is unresolved, never assumed."
-      },
-      {
-        "id": "D5-trigger",
-        "statement": "The evaluator judges a transition by its states only, so after ADR-023 Verified → Unverified is admitted wherever it occurs. Which act a write realizes is read from the code: a write that sets Unverified must lie in eraseAccount (EraseAccount, ac-q026) and be reached only from the operator's erase route; a write that sets Verified must lie in recordOrcidVerification (VerifyOrcid, ac-q004), be reached only from the verification route, and fix Unverified as its prior value. The function and route names are stated in scope.erasure / scope.verification, not inferred."
-      }
-    ],
-    "checks": [
-      {
-        "id": "status-write-scope",
-        "kind": "scope",
-        "qualifies": [
-          "L2",
-          "L3"
-        ],
-        "statement": "The in-scope writes of the field and their entry points; complete only when nothing is unresolved.",
-        "criterion": {
-          "scopeComplete": true
-        }
-      },
-      {
-        "id": "write-admitted",
-        "kind": "structural",
-        "qualifies": [
-          "L1",
-          "L2"
-        ],
-        "statement": "Each write's transition, as its SQL states it (the value it sets; the prior value its WHERE fixes, or any), is a declared transition of the state model, or no change.",
-        "criterion": {
-          "admittedTransition": true
-        }
-      },
-      {
-        "id": "verified-reviewer-erased",
-        "kind": "case",
-        "qualifies": [
-          "L1",
-          "L2"
-        ],
-        "statement": "Erasing a Verified reviewer who holds an assignment, through the real route: the persisted change of orcid_status is a declared transition, or no change.",
-        "criterion": {
-          "admittedTransition": true
-        }
-      },
-      {
-        "id": "unverified-reviewer-verifies",
-        "kind": "case",
-        "qualifies": [
-          "L1",
-          "L2"
-        ],
-        "statement": "An Unverified reviewer verifies their ORCID iD through the real route: the persisted change is Verify (Unverified → Verified).",
-        "criterion": {
-          "admittedTransition": true
-        }
-      },
-      {
-        "id": "erasure-clears-verification",
-        "kind": "case",
-        "qualifies": [
-          "L1",
-          "L2"
-        ],
-        "statement": "Erasing a Verified reviewer who holds an assignment, through the real route, persists Verified → Unverified and releases the outstanding assignment (ADR-023).",
-        "criterion": {
-          "equals": {
-            "erasedHttpStatus": 200,
-            "from": "verified",
-            "to": "unverified",
-            "heldAssignmentsAfter": 0
-          }
-        }
-      },
-      {
-        "id": "verification-never-leaves-verified",
-        "kind": "case",
-        "qualifies": [
-          "L1",
-          "L2"
-        ],
-        "statement": "A Verified reviewer re-submits verification through the real route — with another registered iD, with an iD the registry does not know, and with their own iD: the field stays Verified each time and no OrcidVerified is published.",
-        "criterion": {
-          "equals": {
-            "from": "verified",
-            "afterOtherId": "verified",
-            "afterUnknownId": "verified",
-            "afterSameId": "verified",
-            "otherIdCode": "orcid_already_verified",
-            "orcidVerifiedPublished": 0
-          }
-        }
-      },
-      {
-        "id": "unverified-set-only-by-erasure",
-        "kind": "structural",
-        "qualifies": [
-          "L1",
-          "L2"
-        ],
-        "statement": "Every in-scope write that sets Unverified on an existing account lies in the erasure function and is reached only from the operator's erase route.",
-        "criterion": {
-          "equals": {
-            "function": "eraseAccount",
-            "entryPoints": [
-              "HTTP POST /api/operations/accounts/:id/erase"
-            ]
-          }
-        }
-      },
-      {
-        "id": "verified-set-only-by-verification",
-        "kind": "structural",
-        "qualifies": [
-          "L1",
-          "L2"
-        ],
-        "statement": "Every in-scope write that sets Verified lies in the verification function, is reached only from the verification route, and fixes Unverified as the prior value.",
-        "criterion": {
-          "equals": {
-            "function": "recordOrcidVerification",
-            "entryPoints": [
-              "HTTP POST /api/me/orcid"
-            ],
-            "from": "unverified"
-          }
-        }
-      },
-      {
-        "id": "closure-constraint",
-        "kind": "enforcement",
-        "qualifies": [
-          "L3"
-        ],
-        "statement": "A constraint refuses any undeclared change of the field on every in-scope path.",
-        "criterion": {
-          "appliesToScope": true,
-          "equals": {
-            "dominates": true
-          }
-        }
-      }
+    {
+     "what": "VerifiedReviewersOnly (r-q012)",
+     "why": "a separate claim, judged at AssignReviewer only; this claim is the field's lifecycle, whoever holds an assignment"
+    },
+    {
+     "what": "tests/**, scripts/**",
+     "why": "not part of the deployable; the test harness provisions verified reviewers directly"
+    },
+    {
+     "what": "two changes of one account's status in flight at once",
+     "why": "the cases send one request at a time; that the verifying write fixes Unverified as its prior value is observed statically, not raced"
+    },
+    {
+     "what": "a store-level constraint that refuses an undeclared change",
+     "why": "none exists in the schema: the closure rests on the application's writes, each of which is enumerated and checked here. The verifier reports this beside its results; it is not counted"
+    }
+   ]
+  },
+  "scope": {
+   "discovery": "Lex src/**: every UPDATE of idn_account that sets orcid_status (the value it sets and the prior value its WHERE fixes, if any) and every INSERT that lists orcid_status; the named function holding each write and every call of it (routes named). A creation site reached only by excluded callers is excluded; a value computed at the call is unresolved; non-literal SQL must resolve.",
+   "table": "idn_account",
+   "column": "orcid_status",
+   "held": [
+    "assigned",
+    "accepted",
+    "overdue",
+    "completed"
+   ],
+   "valueMapping": {
+    "unverified": "Unverified",
+    "verified": "Verified"
+   },
+   "erasure": {
+    "function": "eraseAccount",
+    "entryPoints": [
+     "HTTP POST /api/operations/accounts/:id/erase"
     ]
-  }
+   },
+   "verification": {
+    "function": "recordOrcidVerification",
+    "entryPoints": [
+     "HTTP POST /api/me/orcid"
+    ]
+   },
+   "concurrency": false,
+   "concurrencyStatement": "not covered: every case sends one request at a time; no case races a verification against an erasure"
+  },
+  "assumptions": [
+   {
+    "id": "D1-values",
+    "statement": "BDL OrcidStatus Unverified/Verified is idn_account.orcid_status 'unverified'/'verified'; the schema CHECK admits exactly those two values. The mapping is stated in scope.valueMapping; the evaluator applies it."
+   },
+   {
+    "id": "D2-closure",
+    "statement": "The claim is R-07's closure (the declared transitions are the complete set of permitted changes), not 'terminal' alone: BDL gives terminal no closure of its own."
+   },
+   {
+    "id": "D3-harness",
+    "statement": "Cases run the real routes in-process (Fastify inject) against an isolated SQLite file with a manual clock and a stub ORCID registry, set up through the implementation's own test harness."
+   },
+   {
+    "id": "D4-shape",
+    "statement": "Writes are found lexically (literal SQL); a value set from a parameter, or a channel the scanner cannot follow, is unresolved, never assumed."
+   },
+   {
+    "id": "D5-trigger",
+    "statement": "The evaluator judges a transition by its states only, so after ADR-023 Verified → Unverified is admitted wherever it occurs. Which act a write realizes is read from the code: a write that sets Unverified must lie in eraseAccount (EraseAccount, ac-q026) and be reached only from the operator's erase route; a write that sets Verified must lie in recordOrcidVerification (VerifyOrcid, ac-q004), be reached only from the verification route, and fix Unverified as its prior value. The function and route names are stated in scope.erasure / scope.verification, not inferred."
+   },
+   {
+    "id": "D6-reached",
+    "statement": "The `reached` paths are what V8 precise BLOCK coverage reports executing during the act alone — the request and the delivery of the events it published; setup excluded. A write is reached when its code ran; a continuation after an early throw is read with the count V8 gives it. Observed by the runtime, not declared."
+   },
+   {
+    "id": "D7-edge",
+    "statement": "A state model has no numeric bound; its boundary cases are the acts that stop just short of a transition: a verification the registry does not confirm (no Verify), and an erasure of an account already erased (nothing left to clear)."
+   }
+  ],
+  "checks": [
+   {
+    "id": "status-write-scope",
+    "kind": "scope",
+    "qualifies": [
+     "L2",
+     "L3"
+    ],
+    "statement": "The in-scope writes of the field and their entry points; complete only when nothing is unresolved.",
+    "criterion": {
+     "scopeComplete": true
+    },
+    "method": "static-lexical"
+   },
+   {
+    "id": "write-admitted",
+    "kind": "structural",
+    "qualifies": [
+     "L1"
+    ],
+    "statement": "Each write's transition, as its SQL states it (the value it sets; the prior value its WHERE fixes, or any), is a declared transition of the state model, or no change.",
+    "criterion": {
+     "admittedTransition": true
+    },
+    "method": "static-lexical"
+   },
+   {
+    "id": "unverified-reviewer-verifies",
+    "kind": "case",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "An Unverified reviewer verifies their ORCID iD through the real route: the persisted change is Verify (Unverified → Verified).",
+    "criterion": {
+     "admittedTransition": true
+    },
+    "method": "executed-http-route",
+    "polarity": "allowed"
+   },
+   {
+    "id": "verified-reviewer-erased",
+    "kind": "case",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "Erasing a Verified reviewer who holds an assignment, through the real route: the persisted change of orcid_status is a declared transition, or no change.",
+    "criterion": {
+     "admittedTransition": true
+    },
+    "method": "executed-http-route",
+    "polarity": "allowed"
+   },
+   {
+    "id": "erasure-clears-verification",
+    "kind": "case",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "Erasing a Verified reviewer who holds an assignment, through the real route, persists Verified → Unverified and releases the outstanding assignment (ADR-023).",
+    "criterion": {
+     "equals": {
+      "erasedHttpStatus": 200,
+      "from": "verified",
+      "to": "unverified",
+      "heldAssignmentsAfter": 0
+     }
+    },
+    "method": "executed-http-route",
+    "polarity": "allowed"
+   },
+   {
+    "id": "verification-never-leaves-verified",
+    "kind": "case",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "A Verified reviewer re-submits verification through the real route — with another registered iD, with an iD the registry does not know, and with their own iD: the field stays Verified each time and no OrcidVerified is published. Counts only when its control, unverified-reviewer-verifies, passed on the same route.",
+    "criterion": {
+     "equals": {
+      "from": "verified",
+      "afterOtherId": "verified",
+      "afterUnknownId": "verified",
+      "afterSameId": "verified",
+      "otherIdCode": "orcid_already_verified",
+      "orcidVerifiedPublished": 0
+     }
+    },
+    "method": "executed-http-route",
+    "polarity": "rejected",
+    "control": "unverified-reviewer-verifies"
+   },
+   {
+    "id": "unregistered-id-stays-unverified",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "boundary",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "The edge of Verify: an Unverified reviewer submits an iD the registry does not know, through the real route; the request is refused (code orcid_not_found), the field stays Unverified and no OrcidVerified is published. Counts only when its control, unverified-reviewer-verifies, passed on the same route.",
+    "criterion": {
+     "equals": {
+      "from": "unverified",
+      "to": "unverified",
+      "refused": true,
+      "code": "orcid_not_found",
+      "orcidVerifiedPublished": 0
+     }
+    },
+    "control": "unverified-reviewer-verifies"
+   },
+   {
+    "id": "erased-again-no-change",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "boundary",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "The edge of ClearOnErasure: erasing an account that is already erased, through the real route, changes nothing: the field stays Unverified. Counts only when its control, erasure-clears-verification, passed on the same route.",
+    "criterion": {
+     "equals": {
+      "firstHttpStatus": 200,
+      "httpStatus": 200,
+      "erasedAgain": false,
+      "from": "unverified",
+      "to": "unverified"
+     }
+    },
+    "control": "erasure-clears-verification"
+   },
+   {
+    "id": "unverified-set-only-by-erasure",
+    "kind": "structural",
+    "qualifies": [
+     "L1"
+    ],
+    "statement": "Every in-scope write that sets Unverified on an existing account lies in the erasure function and is reached only from the operator's erase route.",
+    "criterion": {
+     "equals": {
+      "function": "eraseAccount",
+      "entryPoints": [
+       "HTTP POST /api/operations/accounts/:id/erase"
+      ]
+     }
+    },
+    "method": "static-lexical"
+   },
+   {
+    "id": "verified-set-only-by-verification",
+    "kind": "structural",
+    "qualifies": [
+     "L1"
+    ],
+    "statement": "Every in-scope write that sets Verified lies in the verification function, is reached only from the verification route, and fixes Unverified as the prior value.",
+    "criterion": {
+     "equals": {
+      "function": "recordOrcidVerification",
+      "entryPoints": [
+       "HTTP POST /api/me/orcid"
+      ],
+      "from": "unverified"
+     }
+    },
+    "method": "static-lexical"
+   }
+  ],
+  "violations": [
+   {
+    "class": "undeclared-transition",
+    "statement": "the field changes in a way the state model does not declare: a verification act takes an account out of Verified, which only erasure may do"
+   }
+  ],
+  "challenges": [
+   {
+    "id": "reverification-clears",
+    "kind": "deliberate-fault",
+    "class": "undeclared-transition",
+    "statement": "recordOrcidVerification, given another iD for an already Verified account, clears the verification instead of refusing: Verified → Unverified by VerifyOrcid",
+    "change": {
+     "patch": "architecture/challenges/reverification-clears.patch",
+     "digest": "sha256:a6ea8f9caab93731f4d16fe360e330977b0ece6a00e1031db7bb563bf68464e8",
+     "files": [
+      "src/contexts/identity/service.ts"
+     ]
+    },
+    "expect": {
+     "check": "verification-never-leaves-verified",
+     "path": "HTTP POST /api/me/orcid",
+     "reason": "afterOtherId is \"unverified\", expected \"verified\""
+    }
+   }
+  ]
+ }
 }

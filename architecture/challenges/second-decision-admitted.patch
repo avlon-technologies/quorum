@@ -1,0 +1,25 @@
+diff --git a/src/contexts/adjudication/service.ts b/src/contexts/adjudication/service.ts
+index 3a960ed..521b0a1 100644
+--- a/src/contexts/adjudication/service.ts
++++ b/src/contexts/adjudication/service.ts
+@@ -63,7 +63,6 @@ export function recordDecision(
+ ): { decision: DecisionData; budget: Budget } | CommittedRefusal {
+   const c = deps.db.prepare(`SELECT * FROM adj_case WHERE proposal_id = ?`).get(proposalId) as CaseRow | undefined;
+   if (!c) throw conflict('not_scored', 'This proposal is not scored yet. A panel decision can be recorded only once three reviews are in and it is scored.', 'INV-8');
+-  if (c.status === 'decided') throw conflict('already_decided', 'A panel decision is already recorded for this proposal. Decisions are final.', 'INV-8');
+   if (input.rationale.trim().length < 20) {
+     throw unprocessable('rationale_required', 'Record the panel\'s rationale: it is sent to the applicant and kept in the audit trail.', {
+       fields: [{ field: 'rationale', message: 'At least 20 characters.' }],
+@@ -99,10 +98,10 @@ export function recordDecision(
+     }
+   }
+   const amountMinor = input.outcome === 'award' ? c.requested_minor : 0;
+-  const ok = deps.db.prepare(`UPDATE adj_case SET status = 'decided' WHERE proposal_id = ? AND status IN ('awaitingDecision','reconsider')`).run(proposalId);
++  const ok = deps.db.prepare(`UPDATE adj_case SET status = 'decided' WHERE proposal_id = ? AND status IN ('awaitingDecision','reconsider','decided')`).run(proposalId);
+   if (ok.changes !== 1) throw conflict('already_decided', 'A panel decision was recorded a moment ago.', 'INV-8');
+   deps.db
+-    .prepare(`INSERT INTO adj_decision (proposal_id, call_id, outcome, amount_minor, rationale, decided_by, decided_at) VALUES (?, ?, ?, ?, ?, ?, ?)`)
++    .prepare(`INSERT OR REPLACE INTO adj_decision (proposal_id, call_id, outcome, amount_minor, rationale, decided_by, decided_at) VALUES (?, ?, ?, ?, ?, ?, ?)`)
+     .run(proposalId, c.call_id, input.outcome, amountMinor, input.rationale.trim(), chairId, now);
+   const decision: DecisionData = {
+     proposalId,

@@ -1,0 +1,12 @@
+diff --git a/src/contexts/adjudication/service.ts b/src/contexts/adjudication/service.ts
+index 3a960ed..efd89bb 100644
+--- a/src/contexts/adjudication/service.ts
++++ b/src/contexts/adjudication/service.ts
+@@ -80,7 +80,6 @@ export function recordDecision(
+     if (c.status === 'reconsider') {
+       throw conflict('envelope_exhausted', 'This award was already refused because the envelope cannot fund it, and the envelope never grows. Record a decline.', 'INV-9');
+     }
+-    if (c.integrity_hold) throw conflict('integrity_hold', `The award is on hold: ${c.integrity_hold}. Under the current rules the only remaining outcome is a decline; how a hold is released is an open owner decision (ADR-005).`, 'INV-3');
+     const result = commitAward(deps, c.call_id, c.requested_minor); // invoke commit
+     if (!result.committed) {
+       // decision committed -> default: human-task reconsider. The state change is committed with the refusal.

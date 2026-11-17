@@ -1,0 +1,1728 @@
+{
+  "sourceState": {
+    "at": "2026-11-17T00:26:30.893Z",
+    "head": "6912f6c",
+    "dirtySrc": [
+      "M src/api/routes.ts",
+      "M src/app.ts",
+      "M src/contexts/adjudication/panel-decision.ts",
+      "M src/contexts/adjudication/service.ts",
+      "M src/contexts/identity/service.ts",
+      "M src/contexts/notification/service.ts",
+      "M src/contexts/oversight/service.ts",
+      "M src/contexts/peer-review/service.ts",
+      "M src/contracts/model.generated.ts",
+      "M src/integrations/mail.ts",
+      "M src/integrations/orcid.ts",
+      "M src/platform/events.ts",
+      "M src/platform/http.ts",
+      "M src/platform/schema.ts",
+      "M src/seed.ts",
+      "M src/server.ts",
+      "?? src/integrations/factory.ts",
+      "?? src/integrations/smtp.ts",
+      "?? src/integrations/triage-anthropic.ts",
+      "?? src/ops.ts",
+      "?? src/platform/alerts.ts",
+      "?? src/platform/backup.ts",
+      "?? src/platform/metrics.ts",
+      "?? src/platform/rate-limit.ts"
+    ],
+    "stash": []
+  },
+  "config": {
+    "levels": [
+      10,
+      25,
+      50,
+      100,
+      200
+    ],
+    "extend": false,
+    "durationMs": 20000,
+    "rateLimit": "QUORUM_RATE_LIMIT=0",
+    "applicantTokens": "minted (no sign-in in the rush)"
+  },
+  "signInWarmup": {
+    "signIns": 320,
+    "concurrency": 10,
+    "wallS": 9,
+    "perS": 35.6,
+    "p50": 277.4,
+    "p95": 304.7,
+    "p99": 335.4
+  },
+  "levels": [
+    {
+      "vus": 10,
+      "steps": [
+        {
+          "scenario": "rush",
+          "vus": 10,
+          "startedAt": "2026-11-17T00:26:40.704Z",
+          "endedAt": "2026-11-17T00:27:01.490Z",
+          "wallS": 20.7,
+          "requests": 9224,
+          "rps": 445,
+          "commandsOk": 5248,
+          "cmdps": 253.2,
+          "p50": 14.9,
+          "p95": 36.8,
+          "p99": 52.3,
+          "max": 89.3,
+          "p95NoSignIn": 36.8,
+          "expectedRefusals": {},
+          "errors": {},
+          "errorCount": 0,
+          "counters": {
+            "lifecycles": 1312,
+            "asyncWaits": 0,
+            "awards": 0,
+            "declines": 0,
+            "refusedAwards": 0,
+            "workExhausted": 0
+          },
+          "perLabel": [
+            {
+              "label": "PUT /api/proposals/:id",
+              "n": 2624,
+              "p50": 13.7,
+              "p95": 32.5,
+              "p99": 45,
+              "max": 79.2,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/calls",
+              "n": 1312,
+              "p50": 14.7,
+              "p95": 35.7,
+              "p99": 49.8,
+              "max": 79.1,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals",
+              "n": 1312,
+              "p50": 14.4,
+              "p95": 33.8,
+              "p99": 42.2,
+              "max": 61.8,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id",
+              "n": 1312,
+              "p50": 13.5,
+              "p95": 32.8,
+              "p99": 43.7,
+              "max": 85,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals/:id/submit",
+              "n": 1312,
+              "p50": 15.4,
+              "p95": 36.7,
+              "p99": 50.8,
+              "max": 89.3,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals",
+              "n": 1312,
+              "p50": 22,
+              "p95": 47.3,
+              "p99": 62.1,
+              "max": 88.3,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/portfolio",
+              "n": 10,
+              "p50": 17.1,
+              "p95": 36.8,
+              "p99": 36.8,
+              "max": 36.8,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/workspace/officer",
+              "n": 10,
+              "p50": 49.8,
+              "p95": 76.5,
+              "p99": 76.5,
+              "max": 76.5,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/adjudications",
+              "n": 10,
+              "p50": 23.4,
+              "p95": 79.5,
+              "p99": 79.5,
+              "max": 79.5,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/activity",
+              "n": 10,
+              "p50": 19.6,
+              "p95": 34.2,
+              "p99": 34.2,
+              "max": 34.2,
+              "errors": 0
+            }
+          ],
+          "timeline": [
+            435,
+            455,
+            498,
+            477,
+            467,
+            468,
+            487,
+            465,
+            466,
+            479,
+            435,
+            470,
+            476,
+            454,
+            462,
+            416,
+            459,
+            410,
+            464,
+            448,
+            33
+          ],
+          "serverCpuPct": 60.3,
+          "drainAfterStepMs": 16,
+          "pendingAfter": 0,
+          "failedDeliveries": 0,
+          "lag": {
+            "type": "ProposalSubmitted",
+            "events": 1312,
+            "undelivered": 0,
+            "consumersPerEvent": 4,
+            "p50": 8,
+            "p95": 20,
+            "p99": 27,
+            "max": 44
+          },
+          "lagAllEvents": {
+            "events": 3936,
+            "undelivered": 0,
+            "consumersPerEvent": 2,
+            "p50": 6,
+            "p95": 17,
+            "p99": 24,
+            "max": 55
+          },
+          "dbBefore": {
+            "main": 6709248,
+            "wal": 0
+          },
+          "dbAfter": {
+            "main": 26238976,
+            "wal": 4235392
+          },
+          "workItems": null
+        },
+        {
+          "scenario": "review",
+          "vus": 10,
+          "startedAt": "2026-11-17T00:27:02.216Z",
+          "endedAt": "2026-11-17T00:27:23.312Z",
+          "wallS": 21,
+          "requests": 3898,
+          "rps": 185.5,
+          "commandsOk": 1481,
+          "cmdps": 70.5,
+          "p50": 16.4,
+          "p95": 167.7,
+          "p99": 244.4,
+          "max": 415.2,
+          "p95NoSignIn": 167.7,
+          "expectedRefusals": {},
+          "errors": {},
+          "errorCount": 0,
+          "counters": {
+            "lifecycles": 144,
+            "asyncWaits": 0,
+            "awards": 0,
+            "declines": 0,
+            "refusedAwards": 0,
+            "workExhausted": 0
+          },
+          "perLabel": [
+            {
+              "label": "POST /api/proposals/:id/assignments",
+              "n": 443,
+              "p50": 52.6,
+              "p95": 153.9,
+              "p99": 193.5,
+              "max": 217.5,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/assignments",
+              "n": 443,
+              "p50": 6.6,
+              "p95": 29.3,
+              "p99": 49.1,
+              "max": 89.7,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/assignments/:id/accept",
+              "n": 443,
+              "p50": 9.2,
+              "p95": 21.2,
+              "p99": 49.7,
+              "max": 70.4,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/assignments/:id",
+              "n": 443,
+              "p50": 11.5,
+              "p95": 27.3,
+              "p99": 50.8,
+              "max": 59.7,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/assignments/:id/review",
+              "n": 443,
+              "p50": 15.2,
+              "p95": 44.8,
+              "p99": 52.1,
+              "max": 69.2,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/reviews",
+              "n": 443,
+              "p50": 16.1,
+              "p95": 57.9,
+              "p99": 85.8,
+              "max": 188.5,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/notifications",
+              "n": 443,
+              "p50": 10.1,
+              "p95": 134.3,
+              "p99": 200.3,
+              "max": 228.6,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/workspace/officer",
+              "n": 162,
+              "p50": 163.8,
+              "p95": 273.6,
+              "p99": 384.7,
+              "max": 391.6,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id",
+              "n": 152,
+              "p50": 156.8,
+              "p95": 281.9,
+              "p99": 379.1,
+              "max": 415.2,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals/:id/screening",
+              "n": 152,
+              "p50": 84.9,
+              "p95": 177.1,
+              "p99": 244.2,
+              "max": 246.9,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/reviewer-candidates",
+              "n": 152,
+              "p50": 110.6,
+              "p95": 179.2,
+              "p99": 217.2,
+              "max": 230.6,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/assignments",
+              "n": 152,
+              "p50": 28.9,
+              "p95": 69.6,
+              "p99": 91,
+              "max": 95.2,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/adjudications",
+              "n": 10,
+              "p50": 75.5,
+              "p95": 264.4,
+              "p99": 264.4,
+              "max": 264.4,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/portfolio",
+              "n": 9,
+              "p50": 65.7,
+              "p95": 349.9,
+              "p99": 349.9,
+              "max": 349.9,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/activity",
+              "n": 8,
+              "p50": 58.8,
+              "p95": 141.5,
+              "p99": 141.5,
+              "max": 141.5,
+              "errors": 0
+            }
+          ],
+          "timeline": [
+            155,
+            108,
+            197,
+            200,
+            205,
+            206,
+            208,
+            203,
+            206,
+            209,
+            207,
+            210,
+            211,
+            203,
+            206,
+            203,
+            163,
+            175,
+            136,
+            204,
+            83
+          ],
+          "serverCpuPct": 79.5,
+          "drainAfterStepMs": 9,
+          "pendingAfter": 0,
+          "failedDeliveries": 0,
+          "lag": {
+            "type": "ReviewSubmitted",
+            "events": 443,
+            "undelivered": 0,
+            "consumersPerEvent": 2,
+            "p50": 6,
+            "p95": 18,
+            "p99": 35,
+            "max": 139
+          },
+          "lagAllEvents": {
+            "events": 2057,
+            "undelivered": 0,
+            "consumersPerEvent": 2,
+            "p50": 7,
+            "p95": 50,
+            "p99": 90,
+            "max": 139
+          },
+          "dbBefore": {
+            "main": 26238976,
+            "wal": 4235392
+          },
+          "dbAfter": {
+            "main": 32346112,
+            "wal": 4235392
+          },
+          "workItems": 1312
+        },
+        {
+          "scenario": "decision",
+          "vus": 10,
+          "startedAt": "2026-11-17T00:27:23.957Z",
+          "endedAt": "2026-11-17T00:27:44.861Z",
+          "wallS": 20.8,
+          "requests": 682,
+          "rps": 32.8,
+          "commandsOk": 144,
+          "cmdps": 6.9,
+          "p50": 10,
+          "p95": 40.9,
+          "p99": 70.7,
+          "max": 101.2,
+          "p95NoSignIn": 40.9,
+          "expectedRefusals": {},
+          "errors": {},
+          "errorCount": 0,
+          "counters": {
+            "lifecycles": 144,
+            "asyncWaits": 0,
+            "awards": 46,
+            "declines": 98,
+            "refusedAwards": 0,
+            "workExhausted": 8
+          },
+          "perLabel": [
+            {
+              "label": "GET /api/adjudications/:id",
+              "n": 144,
+              "p50": 12.6,
+              "p95": 29.9,
+              "p99": 47.7,
+              "max": 65.3,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/reviews",
+              "n": 144,
+              "p50": 6.9,
+              "p95": 30,
+              "p99": 49.2,
+              "max": 64.4,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/timeline",
+              "n": 144,
+              "p50": 7.2,
+              "p95": 23.4,
+              "p99": 48.6,
+              "max": 49.1,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/adjudications/:id/decision",
+              "n": 144,
+              "p50": 11.5,
+              "p95": 32.7,
+              "p99": 63.6,
+              "max": 64.2,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/adjudications",
+              "n": 43,
+              "p50": 16.8,
+              "p95": 63.7,
+              "p99": 82.6,
+              "max": 82.6,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/portfolio",
+              "n": 43,
+              "p50": 20.1,
+              "p95": 64.6,
+              "p99": 80.3,
+              "max": 80.3,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/workspace/officer",
+              "n": 10,
+              "p50": 69.3,
+              "p95": 101.2,
+              "p99": 101.2,
+              "max": 101.2,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/activity",
+              "n": 10,
+              "p50": 2.3,
+              "p95": 8.3,
+              "p99": 8.3,
+              "max": 8.3,
+              "errors": 0
+            }
+          ],
+          "timeline": [
+            516,
+            130,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "serverCpuPct": 10,
+          "drainAfterStepMs": 10,
+          "pendingAfter": 0,
+          "failedDeliveries": 0,
+          "lag": {
+            "type": "ProposalAwarded",
+            "events": 46,
+            "undelivered": 0,
+            "consumersPerEvent": 3,
+            "p50": 6,
+            "p95": 21,
+            "p99": 27,
+            "max": 27
+          },
+          "lagAllEvents": {
+            "events": 144,
+            "undelivered": 0,
+            "consumersPerEvent": 3,
+            "p50": 6,
+            "p95": 13,
+            "p99": 27,
+            "max": 34
+          },
+          "dbBefore": {
+            "main": 32346112,
+            "wal": 4235392
+          },
+          "dbAfter": {
+            "main": 32903168,
+            "wal": 4235392
+          },
+          "workItems": 144
+        }
+      ],
+      "breached": false,
+      "breachedNoSignIn": false
+    },
+    {
+      "vus": 25,
+      "steps": [
+        {
+          "scenario": "rush",
+          "vus": 25,
+          "startedAt": "2026-11-17T00:27:45.600Z",
+          "endedAt": "2026-11-17T00:28:06.799Z",
+          "wallS": 21.1,
+          "requests": 8340,
+          "rps": 394.8,
+          "commandsOk": 4712,
+          "cmdps": 223.1,
+          "p50": 29,
+          "p95": 138.3,
+          "p99": 187.6,
+          "max": 271.6,
+          "p95NoSignIn": 138.3,
+          "expectedRefusals": {},
+          "errors": {},
+          "errorCount": 0,
+          "counters": {
+            "lifecycles": 1178,
+            "asyncWaits": 0,
+            "awards": 0,
+            "declines": 0,
+            "refusedAwards": 0,
+            "workExhausted": 0
+          },
+          "perLabel": [
+            {
+              "label": "PUT /api/proposals/:id",
+              "n": 2356,
+              "p50": 22.9,
+              "p95": 43.9,
+              "p99": 97.5,
+              "max": 175.8,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/calls",
+              "n": 1178,
+              "p50": 48.7,
+              "p95": 155.3,
+              "p99": 246.1,
+              "max": 271.6,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals",
+              "n": 1178,
+              "p50": 25.2,
+              "p95": 108.9,
+              "p99": 174.3,
+              "max": 249.7,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id",
+              "n": 1178,
+              "p50": 19.3,
+              "p95": 69.2,
+              "p99": 130.2,
+              "max": 160.1,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals/:id/submit",
+              "n": 1178,
+              "p50": 56.5,
+              "p95": 133.2,
+              "p99": 190.2,
+              "max": 248.5,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals",
+              "n": 1178,
+              "p50": 102.5,
+              "p95": 158.3,
+              "p99": 210.6,
+              "max": 246.7,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/portfolio",
+              "n": 24,
+              "p50": 80,
+              "p95": 173.2,
+              "p99": 182.8,
+              "max": 182.8,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/workspace/officer",
+              "n": 24,
+              "p50": 135.6,
+              "p95": 236.1,
+              "p99": 265.9,
+              "max": 265.9,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/adjudications",
+              "n": 23,
+              "p50": 77.8,
+              "p95": 175.5,
+              "p99": 178.5,
+              "max": 178.5,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/activity",
+              "n": 23,
+              "p50": 60.1,
+              "p95": 165.1,
+              "p99": 190.9,
+              "max": 190.9,
+              "errors": 0
+            }
+          ],
+          "timeline": [
+            405,
+            416,
+            326,
+            457,
+            441,
+            351,
+            425,
+            420,
+            423,
+            432,
+            407,
+            422,
+            422,
+            435,
+            365,
+            356,
+            432,
+            450,
+            404,
+            434,
+            117
+          ],
+          "serverCpuPct": 59.1,
+          "drainAfterStepMs": 13,
+          "pendingAfter": 0,
+          "failedDeliveries": 0,
+          "lag": {
+            "type": "ProposalSubmitted",
+            "events": 1178,
+            "undelivered": 0,
+            "consumersPerEvent": 4,
+            "p50": 32,
+            "p95": 59,
+            "p99": 83,
+            "max": 236
+          },
+          "lagAllEvents": {
+            "events": 3534,
+            "undelivered": 0,
+            "consumersPerEvent": 1,
+            "p50": 22,
+            "p95": 54,
+            "p99": 88,
+            "max": 236
+          },
+          "dbBefore": {
+            "main": 32903168,
+            "wal": 4235392
+          },
+          "dbAfter": {
+            "main": 51003392,
+            "wal": 4239512
+          },
+          "workItems": null
+        },
+        {
+          "scenario": "review",
+          "vus": 25,
+          "startedAt": "2026-11-17T00:28:07.641Z",
+          "endedAt": "2026-11-17T00:28:32.663Z",
+          "wallS": 25,
+          "requests": 1189,
+          "rps": 47.6,
+          "commandsOk": 419,
+          "cmdps": 16.8,
+          "p50": 130.3,
+          "p95": 2266,
+          "p99": 4067.2,
+          "max": 4761,
+          "p95NoSignIn": 2266,
+          "expectedRefusals": {},
+          "errors": {},
+          "errorCount": 0,
+          "counters": {
+            "lifecycles": 40,
+            "asyncWaits": 0,
+            "awards": 0,
+            "declines": 0,
+            "refusedAwards": 0,
+            "workExhausted": 0
+          },
+          "perLabel": [
+            {
+              "label": "POST /api/proposals/:id/assignments",
+              "n": 120,
+              "p50": 464.3,
+              "p95": 808.3,
+              "p99": 936.9,
+              "max": 1061.1,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/assignments",
+              "n": 120,
+              "p50": 41.3,
+              "p95": 98.6,
+              "p99": 174.1,
+              "max": 399.3,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/assignments/:id/accept",
+              "n": 120,
+              "p50": 64.2,
+              "p95": 117.4,
+              "p99": 121.5,
+              "max": 130.3,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/assignments/:id",
+              "n": 120,
+              "p50": 78.1,
+              "p95": 126.4,
+              "p99": 135.2,
+              "max": 222.2,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/assignments/:id/review",
+              "n": 120,
+              "p50": 88,
+              "p95": 939.6,
+              "p99": 966.7,
+              "max": 970.4,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/reviews",
+              "n": 120,
+              "p50": 134.6,
+              "p95": 966.4,
+              "p99": 973.4,
+              "max": 977.2,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/notifications",
+              "n": 120,
+              "p50": 68.2,
+              "p95": 681.6,
+              "p99": 1966.6,
+              "max": 3286.3,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/workspace/officer",
+              "n": 73,
+              "p50": 1513.7,
+              "p95": 4286.4,
+              "p99": 4761,
+              "max": 4761,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id",
+              "n": 59,
+              "p50": 2020.7,
+              "p95": 4067.2,
+              "p99": 4479.7,
+              "max": 4479.7,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals/:id/screening",
+              "n": 59,
+              "p50": 409.8,
+              "p95": 1173.7,
+              "p99": 1727.6,
+              "max": 1727.6,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/reviewer-candidates",
+              "n": 59,
+              "p50": 671.1,
+              "p95": 1045,
+              "p99": 1128.5,
+              "max": 1128.5,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/assignments",
+              "n": 59,
+              "p50": 233.1,
+              "p95": 908.4,
+              "p99": 956.4,
+              "max": 956.4,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/portfolio",
+              "n": 14,
+              "p50": 794.2,
+              "p95": 4628.4,
+              "p99": 4628.4,
+              "max": 4628.4,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/adjudications",
+              "n": 13,
+              "p50": 726.9,
+              "p95": 4455.1,
+              "p99": 4455.1,
+              "max": 4455.1,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/activity",
+              "n": 13,
+              "p50": 466.7,
+              "p95": 4352.1,
+              "p99": 4352.1,
+              "max": 4352.1,
+              "errors": 0
+            }
+          ],
+          "timeline": [
+            14,
+            11,
+            58,
+            40,
+            193,
+            55,
+            136,
+            37,
+            5,
+            6,
+            3,
+            9,
+            8,
+            35,
+            22,
+            66,
+            200,
+            181,
+            12,
+            5,
+            5,
+            5,
+            12,
+            36,
+            35
+          ],
+          "serverCpuPct": 80.8,
+          "drainAfterStepMs": 15,
+          "pendingAfter": 0,
+          "failedDeliveries": 0,
+          "lag": {
+            "type": "ReviewSubmitted",
+            "events": 120,
+            "undelivered": 0,
+            "consumersPerEvent": 2,
+            "p50": 41,
+            "p95": 288,
+            "p99": 289,
+            "max": 707
+          },
+          "lagAllEvents": {
+            "events": 579,
+            "undelivered": 0,
+            "consumersPerEvent": 2,
+            "p50": 49,
+            "p95": 365,
+            "p99": 748,
+            "max": 957
+          },
+          "dbBefore": {
+            "main": 51003392,
+            "wal": 4239512
+          },
+          "dbAfter": {
+            "main": 52748288,
+            "wal": 4239512
+          },
+          "workItems": 2338
+        },
+        {
+          "scenario": "decision",
+          "vus": 25,
+          "startedAt": "2026-11-17T00:28:33.517Z",
+          "endedAt": "2026-11-17T00:28:54.562Z",
+          "wallS": 20.9,
+          "requests": 289,
+          "rps": 13.8,
+          "commandsOk": 40,
+          "cmdps": 1.9,
+          "p50": 74.3,
+          "p95": 601.3,
+          "p99": 714.3,
+          "max": 857,
+          "p95NoSignIn": 601.3,
+          "expectedRefusals": {},
+          "errors": {},
+          "errorCount": 0,
+          "counters": {
+            "lifecycles": 40,
+            "asyncWaits": 0,
+            "awards": 9,
+            "declines": 31,
+            "refusedAwards": 0,
+            "workExhausted": 20
+          },
+          "perLabel": [
+            {
+              "label": "GET /api/portfolio",
+              "n": 43,
+              "p50": 294,
+              "p95": 714.3,
+              "p99": 857,
+              "max": 857,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/adjudications",
+              "n": 42,
+              "p50": 94.9,
+              "p95": 640.3,
+              "p99": 675.3,
+              "max": 675.3,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/adjudications/:id",
+              "n": 40,
+              "p50": 153.6,
+              "p95": 378.9,
+              "p99": 390,
+              "max": 390,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/reviews",
+              "n": 40,
+              "p50": 42.1,
+              "p95": 104.1,
+              "p99": 194.2,
+              "max": 194.2,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/timeline",
+              "n": 40,
+              "p50": 38.6,
+              "p95": 53.8,
+              "p99": 71.1,
+              "max": 71.1,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/adjudications/:id/decision",
+              "n": 40,
+              "p50": 257.8,
+              "p95": 327.2,
+              "p99": 389.7,
+              "max": 389.7,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/workspace/officer",
+              "n": 23,
+              "p50": 250.9,
+              "p95": 511,
+              "p99": 518.9,
+              "max": 518.9,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/activity",
+              "n": 21,
+              "p50": 37.2,
+              "p95": 305.3,
+              "p99": 489.6,
+              "max": 489.6,
+              "errors": 0
+            }
+          ],
+          "timeline": [
+            40,
+            157,
+            17,
+            4,
+            4,
+            4,
+            5,
+            5,
+            5,
+            5,
+            3,
+            4,
+            5,
+            5,
+            5,
+            5,
+            5,
+            1,
+            5,
+            5
+          ],
+          "serverCpuPct": 33.6,
+          "drainAfterStepMs": 16,
+          "pendingAfter": 0,
+          "failedDeliveries": 0,
+          "lag": {
+            "type": "ProposalAwarded",
+            "events": 9,
+            "undelivered": 0,
+            "consumersPerEvent": 3,
+            "p50": 64,
+            "p95": 256,
+            "p99": 256,
+            "max": 256
+          },
+          "lagAllEvents": {
+            "events": 40,
+            "undelivered": 0,
+            "consumersPerEvent": 3,
+            "p50": 67,
+            "p95": 283,
+            "p99": 284,
+            "max": 284
+          },
+          "dbBefore": {
+            "main": 52748288,
+            "wal": 4239512
+          },
+          "dbAfter": {
+            "main": 52928512,
+            "wal": 4239512
+          },
+          "workItems": 40
+        }
+      ],
+      "breached": true,
+      "breachedNoSignIn": true
+    },
+    {
+      "vus": 50,
+      "steps": [
+        {
+          "scenario": "rush",
+          "vus": 50,
+          "startedAt": "2026-11-17T00:28:55.482Z",
+          "endedAt": "2026-11-17T00:29:16.960Z",
+          "wallS": 21.3,
+          "requests": 1924,
+          "rps": 90.2,
+          "commandsOk": 1024,
+          "cmdps": 48,
+          "p50": 439.7,
+          "p95": 1164,
+          "p99": 1482,
+          "max": 1539.4,
+          "p95NoSignIn": 1164,
+          "expectedRefusals": {},
+          "errors": {},
+          "errorCount": 0,
+          "counters": {
+            "lifecycles": 256,
+            "asyncWaits": 0,
+            "awards": 0,
+            "declines": 0,
+            "refusedAwards": 0,
+            "workExhausted": 0
+          },
+          "perLabel": [
+            {
+              "label": "PUT /api/proposals/:id",
+              "n": 512,
+              "p50": 183,
+              "p95": 718.1,
+              "p99": 729.4,
+              "max": 987.7,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/calls",
+              "n": 256,
+              "p50": 596.9,
+              "p95": 1462.6,
+              "p99": 1480.9,
+              "max": 1515.7,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals",
+              "n": 256,
+              "p50": 455.6,
+              "p95": 718.2,
+              "p99": 758.5,
+              "max": 946.6,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id",
+              "n": 256,
+              "p50": 81.2,
+              "p95": 588.1,
+              "p99": 693.6,
+              "max": 705.5,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals/:id/submit",
+              "n": 256,
+              "p50": 443.6,
+              "p95": 875.8,
+              "p99": 1441.1,
+              "max": 1444.2,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals",
+              "n": 256,
+              "p50": 765.3,
+              "p95": 1504.3,
+              "p99": 1532.5,
+              "max": 1539.4,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/portfolio",
+              "n": 34,
+              "p50": 365.8,
+              "p95": 1059.3,
+              "p99": 1164,
+              "max": 1164,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/workspace/officer",
+              "n": 33,
+              "p50": 626.1,
+              "p95": 1086.7,
+              "p99": 1481.1,
+              "max": 1481.1,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/activity",
+              "n": 33,
+              "p50": 407.8,
+              "p95": 1172.9,
+              "p99": 1186.3,
+              "max": 1186.3,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/adjudications",
+              "n": 32,
+              "p50": 572.6,
+              "p95": 1346.8,
+              "p99": 1504,
+              "max": 1504,
+              "errors": 0
+            }
+          ],
+          "timeline": [
+            50,
+            116,
+            68,
+            69,
+            233,
+            50,
+            87,
+            52,
+            85,
+            44,
+            43,
+            227,
+            64,
+            85,
+            203,
+            4,
+            54,
+            85,
+            141,
+            24,
+            140
+          ],
+          "serverCpuPct": 74.9,
+          "drainAfterStepMs": 17,
+          "pendingAfter": 0,
+          "failedDeliveries": 0,
+          "lag": {
+            "type": "ProposalSubmitted",
+            "events": 256,
+            "undelivered": 0,
+            "consumersPerEvent": 4,
+            "p50": 326,
+            "p95": 1014,
+            "p99": 1041,
+            "max": 1044
+          },
+          "lagAllEvents": {
+            "events": 768,
+            "undelivered": 0,
+            "consumersPerEvent": 4,
+            "p50": 126,
+            "p95": 905,
+            "p99": 1028,
+            "max": 1044
+          },
+          "dbBefore": {
+            "main": 52928512,
+            "wal": 4239512
+          },
+          "dbAfter": {
+            "main": 56791040,
+            "wal": 4276592
+          },
+          "workItems": null
+        },
+        {
+          "scenario": "review",
+          "vus": 50,
+          "startedAt": "2026-11-17T00:29:17.984Z",
+          "endedAt": "2026-11-17T00:29:39.921Z",
+          "wallS": 21.8,
+          "requests": 1073,
+          "rps": 49.2,
+          "commandsOk": 400,
+          "cmdps": 18.4,
+          "p50": 101.8,
+          "p95": 7129.2,
+          "p99": 12465,
+          "max": 15338.5,
+          "p95NoSignIn": 7129.2,
+          "expectedRefusals": {},
+          "errors": {},
+          "errorCount": 0,
+          "counters": {
+            "lifecycles": 40,
+            "asyncWaits": 0,
+            "awards": 0,
+            "declines": 0,
+            "refusedAwards": 0,
+            "workExhausted": 0
+          },
+          "perLabel": [
+            {
+              "label": "POST /api/proposals/:id/assignments",
+              "n": 120,
+              "p50": 260.9,
+              "p95": 2486.8,
+              "p99": 2805.1,
+              "max": 2813.8,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/assignments",
+              "n": 120,
+              "p50": 17.2,
+              "p95": 270.1,
+              "p99": 271.5,
+              "max": 271.7,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/assignments/:id/accept",
+              "n": 120,
+              "p50": 47.5,
+              "p95": 107.9,
+              "p99": 110.4,
+              "max": 111.6,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/assignments/:id",
+              "n": 120,
+              "p50": 75.7,
+              "p95": 106.4,
+              "p99": 111.4,
+              "max": 112.3,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/assignments/:id/review",
+              "n": 120,
+              "p50": 74.5,
+              "p95": 290.1,
+              "p99": 294.3,
+              "max": 295,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/reviews",
+              "n": 120,
+              "p50": 131.5,
+              "p95": 287.4,
+              "p99": 292.3,
+              "max": 293.4,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/notifications",
+              "n": 120,
+              "p50": 26.6,
+              "p95": 87.2,
+              "p99": 88.1,
+              "max": 88.1,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/workspace/officer",
+              "n": 49,
+              "p50": 6078.7,
+              "p95": 11915.6,
+              "p99": 14663.7,
+              "max": 14663.7,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id",
+              "n": 40,
+              "p50": 9202.5,
+              "p95": 14135.3,
+              "p99": 15338.5,
+              "max": 15338.5,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals/:id/screening",
+              "n": 40,
+              "p50": 505.4,
+              "p95": 985.4,
+              "p99": 1352.8,
+              "max": 1352.8,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/reviewer-candidates",
+              "n": 40,
+              "p50": 2406.8,
+              "p95": 2898.6,
+              "p99": 2915.6,
+              "max": 2915.6,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/assignments",
+              "n": 40,
+              "p50": 301.3,
+              "p95": 347.8,
+              "p99": 351.1,
+              "max": 351.1,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/adjudications",
+              "n": 9,
+              "p50": 2794.3,
+              "p95": 11380.3,
+              "p99": 11380.3,
+              "max": 11380.3,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/activity",
+              "n": 8,
+              "p50": 2571.2,
+              "p95": 12025.3,
+              "p99": 12025.3,
+              "max": 12025.3,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/portfolio",
+              "n": 7,
+              "p50": 5027.7,
+              "p95": 12457.4,
+              "p99": 12457.4,
+              "max": 12457.4,
+              "errors": 0
+            }
+          ],
+          "timeline": [
+            2,
+            7,
+            4,
+            3,
+            3,
+            6,
+            3,
+            5,
+            4,
+            2,
+            4,
+            5,
+            1,
+            0,
+            4,
+            60,
+            34,
+            7,
+            24,
+            126,
+            418,
+            351
+          ],
+          "serverCpuPct": 81.1,
+          "drainAfterStepMs": 62,
+          "pendingAfter": 0,
+          "failedDeliveries": 0,
+          "lag": {
+            "type": "ReviewSubmitted",
+            "events": 120,
+            "undelivered": 0,
+            "consumersPerEvent": 2,
+            "p50": 60,
+            "p95": 74,
+            "p99": 85,
+            "max": 85
+          },
+          "lagAllEvents": {
+            "events": 560,
+            "undelivered": 0,
+            "consumersPerEvent": 1,
+            "p50": 66,
+            "p95": 230,
+            "p99": 241,
+            "max": 2689
+          },
+          "dbBefore": {
+            "main": 56791040,
+            "wal": 4276592
+          },
+          "dbAfter": {
+            "main": 58474496,
+            "wal": 4276592
+          },
+          "workItems": 2535
+        },
+        {
+          "scenario": "decision",
+          "vus": 50,
+          "startedAt": "2026-11-17T00:29:41.288Z",
+          "endedAt": "2026-11-17T00:30:02.327Z",
+          "wallS": 21,
+          "requests": 426,
+          "rps": 20.3,
+          "commandsOk": 40,
+          "cmdps": 1.9,
+          "p50": 122,
+          "p95": 628.9,
+          "p99": 764.6,
+          "max": 917.6,
+          "p95NoSignIn": 628.9,
+          "expectedRefusals": {},
+          "errors": {},
+          "errorCount": 0,
+          "counters": {
+            "lifecycles": 40,
+            "asyncWaits": 0,
+            "awards": 12,
+            "declines": 28,
+            "refusedAwards": 0,
+            "workExhausted": 40
+          },
+          "perLabel": [
+            {
+              "label": "GET /api/adjudications",
+              "n": 87,
+              "p50": 95.4,
+              "p95": 757.8,
+              "p99": 816.9,
+              "max": 816.9,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/portfolio",
+              "n": 85,
+              "p50": 161.9,
+              "p95": 750.8,
+              "p99": 917.6,
+              "max": 917.6,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/workspace/officer",
+              "n": 48,
+              "p50": 136.7,
+              "p95": 470.8,
+              "p99": 728.2,
+              "max": 728.2,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/activity",
+              "n": 46,
+              "p50": 2.4,
+              "p95": 275.4,
+              "p99": 374,
+              "max": 374,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/adjudications/:id",
+              "n": 40,
+              "p50": 139.5,
+              "p95": 430.5,
+              "p99": 466.9,
+              "max": 466.9,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/reviews",
+              "n": 40,
+              "p50": 99.8,
+              "p95": 203.6,
+              "p99": 207.5,
+              "max": 207.5,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id/timeline",
+              "n": 40,
+              "p50": 121.9,
+              "p95": 228.1,
+              "p99": 228.8,
+              "max": 228.8,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/adjudications/:id/decision",
+              "n": 40,
+              "p50": 257.4,
+              "p95": 505.2,
+              "p99": 557.2,
+              "max": 557.2,
+              "errors": 0
+            }
+          ],
+          "timeline": [
+            66,
+            178,
+            21,
+            10,
+            9,
+            10,
+            9,
+            9,
+            10,
+            10,
+            10,
+            10,
+            9,
+            8,
+            10,
+            10,
+            10,
+            7,
+            10,
+            10
+          ],
+          "serverCpuPct": 35.8,
+          "drainAfterStepMs": 11,
+          "pendingAfter": 0,
+          "failedDeliveries": 0,
+          "lag": {
+            "type": "ProposalAwarded",
+            "events": 12,
+            "undelivered": 0,
+            "consumersPerEvent": 3,
+            "p50": 90,
+            "p95": 356,
+            "p99": 356,
+            "max": 356
+          },
+          "lagAllEvents": {
+            "events": 40,
+            "undelivered": 0,
+            "consumersPerEvent": 3,
+            "p50": 345,
+            "p95": 358,
+            "p99": 359,
+            "max": 359
+          },
+          "dbBefore": {
+            "main": 58474496,
+            "wal": 4276592
+          },
+          "dbAfter": {
+            "main": 58728448,
+            "wal": 4276592
+          },
+          "workItems": 40
+        }
+      ],
+      "breached": true,
+      "breachedNoSignIn": true
+    }
+  ],
+  "dataDir": "C:\\Users\\kangm\\AppData\\Local\\Temp\\quorum-load-ramp-MD9dKk"
+}

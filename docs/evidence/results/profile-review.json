@@ -1,0 +1,359 @@
+{
+  "sourceState": {
+    "at": "2026-11-17T00:26:24.219Z",
+    "head": "6912f6c",
+    "dirtySrc": [
+      "M src/api/routes.ts",
+      "M src/app.ts",
+      "M src/contexts/adjudication/panel-decision.ts",
+      "M src/contexts/adjudication/service.ts",
+      "M src/contexts/identity/service.ts",
+      "M src/contexts/notification/service.ts",
+      "M src/contexts/oversight/service.ts",
+      "M src/contexts/peer-review/service.ts",
+      "M src/contracts/model.generated.ts",
+      "M src/integrations/mail.ts",
+      "M src/integrations/orcid.ts",
+      "M src/platform/events.ts",
+      "M src/platform/http.ts",
+      "M src/platform/schema.ts",
+      "M src/seed.ts",
+      "M src/server.ts",
+      "?? src/integrations/factory.ts",
+      "?? src/integrations/smtp.ts",
+      "?? src/integrations/triage-anthropic.ts",
+      "?? src/ops.ts",
+      "?? src/platform/alerts.ts",
+      "?? src/platform/backup.ts",
+      "?? src/platform/metrics.ts",
+      "?? src/platform/rate-limit.ts"
+    ],
+    "stash": []
+  },
+  "scenario": "review",
+  "vus": 50,
+  "note": "In-process server (createApp, workers on); load from worker threads. Native SQLite time appears under the statement method that called it (run/get/all/transaction).",
+  "eventLoopUtilization": 91.7,
+  "step": {
+    "rps": 264.1,
+    "cmdps": 98.6,
+    "p50": 77.6,
+    "p95": 594.2,
+    "p99": 885,
+    "errors": {},
+    "counters": {
+      "lifecycles": 205,
+      "asyncWaits": 0,
+      "awards": 0,
+      "declines": 0,
+      "refusedAwards": 0,
+      "workExhausted": 40
+    }
+  },
+  "profileMs": 20907,
+  "busyMs": 19119,
+  "top": [
+    {
+      "fn": "(anonymous)",
+      "ms": 14114,
+      "pctOfBusy": 73.8
+    },
+    {
+      "fn": "(program)",
+      "ms": 1217,
+      "pctOfBusy": 6.4
+    },
+    {
+      "fn": "prepare wrappers.js:4",
+      "ms": 1064,
+      "pctOfBusy": 5.6
+    },
+    {
+      "fn": "rowFactory database.js:105",
+      "ms": 450,
+      "pctOfBusy": 2.4
+    },
+    {
+      "fn": "(garbage collector)",
+      "ms": 436,
+      "pctOfBusy": 2.3
+    },
+    {
+      "fn": "writeUtf8String",
+      "ms": 232,
+      "pctOfBusy": 1.2
+    },
+    {
+      "fn": "serialize reply.js:1086",
+      "ms": 118,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "(anonymous) database.js:108",
+      "ms": 107,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "#deliverOne events.ts:184",
+      "ms": 67,
+      "pctOfBusy": 0.3
+    },
+    {
+      "fn": "post node:inspector:115",
+      "ms": 58,
+      "pctOfBusy": 0.3
+    },
+    {
+      "fn": "getReviewerStanding service.ts:112",
+      "ms": 50,
+      "pctOfBusy": 0.3
+    },
+    {
+      "fn": "sqliteTransaction transaction.js:52",
+      "ms": 50,
+      "pctOfBusy": 0.3
+    },
+    {
+      "fn": "transaction transaction.js:5",
+      "ms": 48,
+      "pctOfBusy": 0.3
+    },
+    {
+      "fn": "writeFileUtf8",
+      "ms": 48,
+      "pctOfBusy": 0.3
+    },
+    {
+      "fn": "getCase service.ts:46",
+      "ms": 35,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "publish events.ts:98",
+      "ms": 33,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "decodeBase64 buffer_utils.js:47",
+      "ms": 32,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "now clock.ts:6",
+      "ms": 29,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "validateClaimsSet jwt_claims_set.js:53",
+      "ms": 27,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "toView service.ts:256",
+      "ms": 23,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "run",
+      "ms": 21,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "(anonymous) events.ts:200",
+      "ms": 19,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "HmacJob",
+      "ms": 19,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "assignmentEligibility service.ts:75",
+      "ms": 16,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "_write writable:452",
+      "ms": 16,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "drain events.ts:148",
+      "ms": 15,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "rolesOf service.ts:26",
+      "ms": 14,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "recordRequest metrics.ts:12",
+      "ms": 14,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "listReviewers service.ts:125",
+      "ms": 13,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "(anonymous) http.ts:195",
+      "ms": 13,
+      "pctOfBusy": 0.1
+    }
+  ],
+  "byAppFrame": [
+    {
+      "fn": "(anonymous) [native] <- #deliverOne events.ts:184",
+      "ms": 3748,
+      "pctOfBusy": 19.6
+    },
+    {
+      "fn": "(anonymous) [native] <- tx http.ts:191",
+      "ms": 2618,
+      "pctOfBusy": 13.7
+    },
+    {
+      "fn": "(program) [native] <- (no app frame)",
+      "ms": 1217,
+      "pctOfBusy": 6.4
+    },
+    {
+      "fn": "(anonymous) [native] <- activeAssignments service.ts:47",
+      "ms": 1138,
+      "pctOfBusy": 6
+    },
+    {
+      "fn": "(anonymous) [native] <- getReviewerStanding service.ts:112",
+      "ms": 1005,
+      "pctOfBusy": 5.3
+    },
+    {
+      "fn": "(anonymous) [native] <- getCase service.ts:46",
+      "ms": 728,
+      "pctOfBusy": 3.8
+    },
+    {
+      "fn": "(anonymous) [native] <- toView service.ts:256",
+      "ms": 710,
+      "pctOfBusy": 3.7
+    },
+    {
+      "fn": "(anonymous) [native] <- rolesOf service.ts:26",
+      "ms": 687,
+      "pctOfBusy": 3.6
+    },
+    {
+      "fn": "(anonymous) [native] <- assignmentEligibility service.ts:75",
+      "ms": 515,
+      "pctOfBusy": 2.7
+    },
+    {
+      "fn": "(garbage collector) [native] <- (no app frame)",
+      "ms": 436,
+      "pctOfBusy": 2.3
+    },
+    {
+      "fn": "(anonymous) [native] <- openCases service.ts:399",
+      "ms": 343,
+      "pctOfBusy": 1.8
+    },
+    {
+      "fn": "(anonymous) [native] <- caseView service.ts:160",
+      "ms": 260,
+      "pctOfBusy": 1.4
+    },
+    {
+      "fn": "(anonymous) [native] <- budgetOf service.ts:35",
+      "ms": 257,
+      "pctOfBusy": 1.3
+    },
+    {
+      "fn": "(anonymous) [native] <- (anonymous) events.ts:200",
+      "ms": 255,
+      "pctOfBusy": 1.3
+    },
+    {
+      "fn": "writeUtf8String [native] <- (no app frame)",
+      "ms": 232,
+      "pctOfBusy": 1.2
+    },
+    {
+      "fn": "(anonymous) [native] <- drainOutbound service.ts:111",
+      "ms": 218,
+      "pctOfBusy": 1.1
+    },
+    {
+      "fn": "(anonymous) [native] <- publish events.ts:98",
+      "ms": 209,
+      "pctOfBusy": 1.1
+    },
+    {
+      "fn": "(anonymous) [native] <- loadPrincipal service.ts:30",
+      "ms": 191,
+      "pctOfBusy": 1
+    },
+    {
+      "fn": "prepare <- getCase service.ts:46",
+      "ms": 126,
+      "pctOfBusy": 0.7
+    },
+    {
+      "fn": "rowFactory <- getCase service.ts:46",
+      "ms": 120,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "prepare <- assignmentEligibility service.ts:75",
+      "ms": 114,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "prepare <- toView service.ts:256",
+      "ms": 114,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "prepare <- activeAssignments service.ts:47",
+      "ms": 114,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "prepare <- rolesOf service.ts:26",
+      "ms": 113,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "prepare <- getReviewerStanding service.ts:112",
+      "ms": 112,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "serialize <- (no app frame)",
+      "ms": 112,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "(anonymous) [native] <- submitReview service.ts:227",
+      "ms": 107,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "(anonymous) [native] <- listProposals service.ts:284",
+      "ms": 96,
+      "pctOfBusy": 0.5
+    },
+    {
+      "fn": "(anonymous) [native] <- listReviewers service.ts:125",
+      "ms": 86,
+      "pctOfBusy": 0.4
+    },
+    {
+      "fn": "rowFactory <- getReviewerStanding service.ts:112",
+      "ms": 84,
+      "pctOfBusy": 0.4
+    }
+  ]
+}

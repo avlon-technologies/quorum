@@ -1,0 +1,51 @@
+[ramp 00:30:30] data dir C:\Users\kangm\AppData\Local\Temp\quorum-load-ramp-vanjhE
+[ramp 00:30:31] fixture: 12000 applicants, 300 reviewers, 15 officers, 5 chairs, 8 calls in 1.2 s
+[ramp 00:30:32] server pid 22128 on http://127.0.0.1:3901
+[ramp 00:30:41] sign-in warm-up {
+  signIns: 320,
+  concurrency: 10,
+  wallS: 9.1,
+  perS: 35.2,
+  p50: 278.7,
+  p95: 327.7,
+  p99: 333.9
+}
+[ramp 00:30:41] L=10 rush starting
+[ramp 00:30:50] L=10 rush: 3515 req in 8.2 s = 427.3 req/s, 243.1 cmd/s; p50 10.3 p95 36.7 p99 50.1 ms (p95 w/o sign-in 36.7); server CPU 60% of one core; errors 0 {}; refusals {}; counters {"lifecycles":500,"asyncWaits":0,"awards":0,"declines":0,"refusedAwards":0,"workExhausted":0}; drain 12 ms; ProposalSubmitted lag p50/p95/p99/max 8/19/23/27 ms (n=500); all-events lag p95 16 max 27
+[ramp 00:30:50] L=10 review starting with 500 work items
+[ramp 00:31:58] L=10 review: 13117 req in 66.6 s = 196.9 req/s, 75.1 cmd/s; p50 15.5 p95 111 p99 161.7 ms (p95 w/o sign-in 111); server CPU 76.7% of one core; errors 0 {}; refusals {}; counters {"lifecycles":500,"asyncWaits":0,"awards":0,"declines":0,"refusedAwards":0,"workExhausted":8}; drain 10 ms; ReviewSubmitted lag p50/p95/p99/max 5/27/51/83 ms (n=1500); all-events lag p95 41 max 177
+[ramp 00:31:58] L=10 decision starting with 500 work items
+[ramp 00:32:06] L=10 decision: 2282 req in 7.6 s = 301.3 req/s, 66 cmd/s; p50 12 p95 69.3 p99 120.8 ms (p95 w/o sign-in 69.3); server CPU 66.6% of one core; errors 0 {}; refusals {"envelope_exceeded":61}; counters {"lifecycles":500,"asyncWaits":0,"awards":79,"declines":421,"refusedAwards":61,"workExhausted":8}; drain 10 ms; ProposalAwarded lag p50/p95/p99/max 8/41/53/53 ms (n=79); all-events lag p95 29 max 59
+[ramp 00:32:06] L=25 rush starting
+[ramp 00:32:18] L=25 rush: 3545 req in 11 s = 322.3 req/s, 181.8 cmd/s; p50 30 p95 161.8 p99 223.4 ms (p95 w/o sign-in 161.8); server CPU 56.5% of one core; errors 0 {}; refusals {}; counters {"lifecycles":500,"asyncWaits":0,"awards":0,"declines":0,"refusedAwards":0,"workExhausted":0}; drain 9 ms; ProposalSubmitted lag p50/p95/p99/max 41/107/146/155 ms (n=500); all-events lag p95 81 max 155
+[ramp 00:32:18] L=25 review starting with 500 work items
+[ramp 00:34:35] L=25 review: 13384 req in 134.9 s = 99.2 req/s, 37.1 cmd/s; p50 59.6 p95 857.8 p99 1449.7 ms (p95 w/o sign-in 857.8); server CPU 78.9% of one core; errors 0 {}; refusals {}; counters {"lifecycles":500,"asyncWaits":0,"awards":0,"declines":0,"refusedAwards":0,"workExhausted":20}; drain 71 ms; ReviewSubmitted lag p50/p95/p99/max 23/84/199/459 ms (n=1500); all-events lag p95 159 max 2029
+[ramp 00:34:35] L=25 decision starting with 500 work items
+[ramp 00:35:07] L=25 decision: 2359 req in 31.5 s = 74.9 req/s, 15.9 cmd/s; p50 97.6 p95 1311.9 p99 2153.2 ms (p95 w/o sign-in 1311.9); server CPU 80.2% of one core; errors 0 {}; refusals {"envelope_exceeded":60}; counters {"lifecycles":500,"asyncWaits":0,"awards":79,"declines":421,"refusedAwards":60,"workExhausted":20}; drain 16 ms; ProposalAwarded lag p50/p95/p99/max 76/523/738/738 ms (n=79); all-events lag p95 333 max 1771
+[ramp 00:35:07] L=50 rush starting
+[ramp 00:36:03] L=50 rush: 3808 req in 54.4 s = 70 req/s, 36.8 cmd/s; p50 534.3 p95 1214.8 p99 1444.6 ms (p95 w/o sign-in 1214.8); server CPU 78% of one core; errors 0 {}; refusals {}; counters {"lifecycles":500,"asyncWaits":0,"awards":0,"declines":0,"refusedAwards":0,"workExhausted":0}; drain 18 ms; ProposalSubmitted lag p50/p95/p99/max 310/782/872/880 ms (n=500); all-events lag p95 717 max 1182
+[ramp 00:36:03] L=50 review starting with 500 work items
+[ramp 00:39:18] L=50 review: 4858 req in 192.7 s = 25.2 req/s, 8.5 cmd/s; p50 1039.7 p95 9538 p99 15958.5 ms (p95 w/o sign-in 9538); server CPU 83.1% of one core; errors 0 {}; refusals {}; counters {"lifecycles":160,"asyncWaits":0,"awards":0,"declines":0,"refusedAwards":0,"workExhausted":0}; drain 183 ms; ReviewSubmitted lag p50/p95/p99/max 251/1234/1277/1319 ms (n=480); all-events lag p95 1423 max 3208
+[ramp 00:39:18] L=50 decision starting with 160 work items
+[ramp 00:39:42] L=50 decision: 805 req in 23.2 s = 34.7 req/s, 6.9 cmd/s; p50 1022.5 p95 5067.7 p99 6401.6 ms (p95 w/o sign-in 5067.7); server CPU 78.9% of one core; errors 0 {}; refusals {}; counters {"lifecycles":160,"asyncWaits":0,"awards":47,"declines":113,"refusedAwards":0,"workExhausted":40}; drain 19 ms; ProposalAwarded lag p50/p95/p99/max 241/1071/1073/1073 ms (n=47); all-events lag p95 1073 max 1091
+[ramp 00:39:42] L=100 rush starting
+[ramp 00:40:45] L=100 rush: 3212 req in 61.7 s = 52.1 req/s, 25.9 cmd/s; p50 1836 p95 3674.2 p99 4245 ms (p95 w/o sign-in 3674.2); server CPU 82% of one core; errors 0 {}; refusals {}; counters {"lifecycles":400,"asyncWaits":0,"awards":0,"declines":0,"refusedAwards":0,"workExhausted":0}; drain 13 ms; ProposalSubmitted lag p50/p95/p99/max 481/2488/2536/3164 ms (n=400); all-events lag p95 2374 max 3186
+[ramp 00:40:45] L=100 review starting with 700 work items
+[ramp 00:44:01] L=100 review: 6981 req in 192.5 s = 36.3 req/s, 12.5 cmd/s; p50 1230.8 p95 11213.5 p99 22761.4 ms (p95 w/o sign-in 11213.5); server CPU 85% of one core; errors 0 {}; refusals {}; counters {"lifecycles":240,"asyncWaits":0,"awards":0,"declines":0,"refusedAwards":0,"workExhausted":0}; drain 202 ms; ReviewSubmitted lag p50/p95/p99/max 480/1129/1205/1284 ms (n=720); all-events lag p95 3046 max 7204
+[ramp 00:44:01] L=100 decision starting with 240 work items
+[ramp 00:45:22] L=100 decision: 1366 req in 79 s = 17.3 req/s, 3 cmd/s; p50 4857.6 p95 11702.3 p99 16322.8 ms (p95 w/o sign-in 11702.3); server CPU 86.8% of one core; errors 0 {}; refusals {}; counters {"lifecycles":240,"asyncWaits":0,"awards":71,"declines":169,"refusedAwards":0,"workExhausted":80}; drain 176 ms; ProposalAwarded lag p50/p95/p99/max 634/4306/4404/4404 ms (n=71); all-events lag p95 4306 max 5388
+[ramp 00:45:23] L=200 rush starting
+[ramp 00:46:41] L=200 rush: 2447 req in 76.8 s = 31.8 req/s, 16 cmd/s; p50 7490.4 p95 11366 p99 11800.2 ms (p95 w/o sign-in 11366); server CPU 84.5% of one core; errors 0 {}; refusals {}; counters {"lifecycles":308,"asyncWaits":0,"awards":0,"declines":0,"refusedAwards":0,"workExhausted":0}; drain 539 ms; ProposalSubmitted lag p50/p95/p99/max 4412/6414/6461/6600 ms (n=308); all-events lag p95 6432 max 8135
+[ramp 00:46:41] L=200 review starting with 768 work items
+[ramp 00:47:48] L=200 review: 2521 req in 65.3 s = 38.6 req/s, 0 cmd/s; p50 1.2 p95 30030.2 p99 30107.5 ms (p95 w/o sign-in 30030.2); server CPU 92.1% of one core; errors 2471 {"timeout":356,"network:fetch failed":2115}; refusals {}; counters {"lifecycles":0,"asyncWaits":0,"awards":0,"declines":0,"refusedAwards":0,"workExhausted":160}; drain 15 ms; ReviewSubmitted lag p50/p95/p99/max NaN/NaN/NaN/NaN ms (n=0); all-events lag p95 NaN max NaN
+[ramp 00:48:33] server log scan { sqliteBusy: 0, unhandled: 0, dispatcherFailures: 0, samples: [] }
+[ramp 00:48:33] wrote C:\projects\avlon\demo4-part2\docs\evidence\results\ramp.json
+[TypeError: fetch failed] {
+  [cause]: Error: read ECONNRESET
+      at TCP.onStreamRead (node:internal/stream_base_commons:221:20) {
+    errno: -4077,
+    code: 'ECONNRESET',
+    syscall: 'read'
+  }
+}
+done

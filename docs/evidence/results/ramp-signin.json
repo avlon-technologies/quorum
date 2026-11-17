@@ -1,0 +1,692 @@
+{
+  "sourceState": {
+    "at": "2026-11-17T01:02:22.994Z",
+    "head": "649bbb4",
+    "dirtySrc": [],
+    "stash": []
+  },
+  "config": {
+    "levels": [
+      10,
+      25,
+      50,
+      100
+    ],
+    "extend": false,
+    "durationMs": 60000,
+    "rateLimit": "QUORUM_RATE_LIMIT=0",
+    "perCall": 500,
+    "workMaxMs": 180000,
+    "scenarios": [
+      "rush"
+    ],
+    "staffReaders": "none",
+    "applicantTokens": "sign-in per applicant in the rush"
+  },
+  "signInWarmup": {
+    "signIns": 320,
+    "concurrency": 10,
+    "wallS": 9.7,
+    "perS": 33,
+    "p50": 300.9,
+    "p95": 312.3,
+    "p99": 390.8
+  },
+  "levels": [
+    {
+      "vus": 10,
+      "steps": [
+        {
+          "scenario": "rush",
+          "vus": 10,
+          "startedAt": "2026-11-17T01:02:33.132Z",
+          "endedAt": "2026-11-17T01:02:57.910Z",
+          "wallS": 24.7,
+          "requests": 4000,
+          "rps": 161.9,
+          "commandsOk": 2000,
+          "cmdps": 80.9,
+          "p50": 24,
+          "p95": 210.3,
+          "p99": 278.4,
+          "max": 335.2,
+          "p95NoSignIn": 159.9,
+          "expectedRefusals": {},
+          "errors": {},
+          "errorCount": 0,
+          "counters": {
+            "lifecycles": 500,
+            "asyncWaits": 0,
+            "awards": 0,
+            "declines": 0,
+            "refusedAwards": 0,
+            "workExhausted": 0
+          },
+          "perLabel": [
+            {
+              "label": "PUT /api/proposals/:id",
+              "n": 1000,
+              "p50": 12.5,
+              "p95": 38.2,
+              "p99": 49.6,
+              "max": 79.2,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/session",
+              "n": 500,
+              "p50": 160.3,
+              "p95": 283.7,
+              "p99": 316.1,
+              "max": 335.2,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/calls",
+              "n": 500,
+              "p50": 39.6,
+              "p95": 206.6,
+              "p99": 250.1,
+              "max": 285.1,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals",
+              "n": 500,
+              "p50": 24.9,
+              "p95": 78.3,
+              "p99": 126.6,
+              "max": 180.9,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id",
+              "n": 500,
+              "p50": 10.9,
+              "p95": 50.3,
+              "p99": 147.7,
+              "max": 210.9,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals/:id/submit",
+              "n": 500,
+              "p50": 28.3,
+              "p95": 140.5,
+              "p99": 228.8,
+              "max": 256.1,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals",
+              "n": 500,
+              "p50": 77,
+              "p95": 229,
+              "p99": 246.2,
+              "max": 314,
+              "errors": 0
+            }
+          ],
+          "timeline": [
+            148,
+            161,
+            165,
+            157,
+            165,
+            159,
+            164,
+            163,
+            160,
+            152,
+            162,
+            159,
+            162,
+            156,
+            164,
+            156,
+            162,
+            163,
+            164,
+            162,
+            173,
+            163,
+            163,
+            181,
+            116
+          ],
+          "serverCpuPct": 80.5,
+          "drainAfterStepMs": 13,
+          "pendingAfter": 0,
+          "failedDeliveries": 0,
+          "lag": {
+            "type": "ProposalSubmitted",
+            "events": 500,
+            "undelivered": 0,
+            "consumersPerEvent": 4,
+            "p50": 15,
+            "p95": 48,
+            "p99": 131,
+            "max": 181
+          },
+          "lagAllEvents": {
+            "events": 1500,
+            "undelivered": 0,
+            "consumersPerEvent": 1,
+            "p50": 12,
+            "p95": 117,
+            "p99": 167,
+            "max": 267
+          },
+          "dbBefore": {
+            "main": 6701056,
+            "wal": 0
+          },
+          "dbAfter": {
+            "main": 14254080,
+            "wal": 4235392
+          },
+          "workItems": null
+        }
+      ],
+      "breached": false,
+      "breachedNoSignIn": false
+    },
+    {
+      "vus": 25,
+      "steps": [
+        {
+          "scenario": "rush",
+          "vus": 25,
+          "startedAt": "2026-11-17T01:02:58.591Z",
+          "endedAt": "2026-11-17T01:03:22.728Z",
+          "wallS": 24.1,
+          "requests": 4000,
+          "rps": 166.1,
+          "commandsOk": 2000,
+          "cmdps": 83,
+          "p50": 42.3,
+          "p95": 595.6,
+          "p99": 683.8,
+          "max": 785.8,
+          "p95NoSignIn": 436.4,
+          "expectedRefusals": {},
+          "errors": {},
+          "errorCount": 0,
+          "counters": {
+            "lifecycles": 500,
+            "asyncWaits": 0,
+            "awards": 0,
+            "declines": 0,
+            "refusedAwards": 0,
+            "workExhausted": 0
+          },
+          "perLabel": [
+            {
+              "label": "PUT /api/proposals/:id",
+              "n": 1000,
+              "p50": 28.4,
+              "p95": 42.9,
+              "p99": 44.6,
+              "max": 99.2,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/session",
+              "n": 500,
+              "p50": 529.8,
+              "p95": 760.2,
+              "p99": 764.8,
+              "max": 785.8,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/calls",
+              "n": 500,
+              "p50": 133.2,
+              "p95": 435.6,
+              "p99": 598.1,
+              "max": 682.2,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals",
+              "n": 500,
+              "p50": 37.3,
+              "p95": 145.8,
+              "p99": 158.6,
+              "max": 289.9,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id",
+              "n": 500,
+              "p50": 22.5,
+              "p95": 100.1,
+              "p99": 141.6,
+              "max": 183.8,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals/:id/submit",
+              "n": 500,
+              "p50": 63.9,
+              "p95": 309,
+              "p99": 537.1,
+              "max": 630.9,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals",
+              "n": 500,
+              "p50": 199,
+              "p95": 618.9,
+              "p99": 657.1,
+              "max": 683.8,
+              "errors": 0
+            }
+          ],
+          "timeline": [
+            161,
+            82,
+            159,
+            194,
+            195,
+            196,
+            170,
+            78,
+            170,
+            194,
+            193,
+            198,
+            155,
+            84,
+            179,
+            194,
+            188,
+            198,
+            175,
+            50,
+            184,
+            186,
+            167,
+            238,
+            12
+          ],
+          "serverCpuPct": 77.3,
+          "drainAfterStepMs": 9,
+          "pendingAfter": 0,
+          "failedDeliveries": 0,
+          "lag": {
+            "type": "ProposalSubmitted",
+            "events": 500,
+            "undelivered": 0,
+            "consumersPerEvent": 4,
+            "p50": 41,
+            "p95": 74,
+            "p99": 321,
+            "max": 517
+          },
+          "lagAllEvents": {
+            "events": 1500,
+            "undelivered": 0,
+            "consumersPerEvent": 4,
+            "p50": 38,
+            "p95": 462,
+            "p99": 522,
+            "max": 571
+          },
+          "dbBefore": {
+            "main": 14254080,
+            "wal": 4235392
+          },
+          "dbAfter": {
+            "main": 21975040,
+            "wal": 4235392
+          },
+          "workItems": null
+        }
+      ],
+      "breached": true,
+      "breachedNoSignIn": false
+    },
+    {
+      "vus": 50,
+      "steps": [
+        {
+          "scenario": "rush",
+          "vus": 50,
+          "startedAt": "2026-11-17T01:03:23.418Z",
+          "endedAt": "2026-11-17T01:03:47.321Z",
+          "wallS": 23.8,
+          "requests": 4000,
+          "rps": 167.7,
+          "commandsOk": 2000,
+          "cmdps": 83.9,
+          "p50": 67.8,
+          "p95": 1296.7,
+          "p99": 1621.7,
+          "max": 1657.5,
+          "p95NoSignIn": 844,
+          "expectedRefusals": {},
+          "errors": {},
+          "errorCount": 0,
+          "counters": {
+            "lifecycles": 500,
+            "asyncWaits": 0,
+            "awards": 0,
+            "declines": 0,
+            "refusedAwards": 0,
+            "workExhausted": 0
+          },
+          "perLabel": [
+            {
+              "label": "PUT /api/proposals/:id",
+              "n": 1000,
+              "p50": 64.7,
+              "p95": 75.5,
+              "p99": 115.5,
+              "max": 120.3,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/session",
+              "n": 500,
+              "p50": 1142,
+              "p95": 1626.5,
+              "p99": 1632,
+              "max": 1657.5,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/calls",
+              "n": 500,
+              "p50": 48.1,
+              "p95": 1016.7,
+              "p99": 1243.4,
+              "max": 1552.1,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals",
+              "n": 500,
+              "p50": 60.2,
+              "p95": 84.3,
+              "p99": 88.2,
+              "max": 90.3,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id",
+              "n": 500,
+              "p50": 40.1,
+              "p95": 94.8,
+              "p99": 110,
+              "max": 112.5,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals/:id/submit",
+              "n": 500,
+              "p50": 80.7,
+              "p95": 347.8,
+              "p99": 378.4,
+              "max": 447.5,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals",
+              "n": 500,
+              "p50": 373.8,
+              "p95": 1291.4,
+              "p99": 1312.8,
+              "max": 1353.9,
+              "errors": 0
+            }
+          ],
+          "timeline": [
+            0,
+            334,
+            53,
+            57,
+            342,
+            50,
+            301,
+            45,
+            239,
+            155,
+            50,
+            347,
+            49,
+            296,
+            100,
+            99,
+            245,
+            50,
+            341,
+            50,
+            344,
+            53,
+            273,
+            127
+          ],
+          "serverCpuPct": 77.7,
+          "drainAfterStepMs": 11,
+          "pendingAfter": 0,
+          "failedDeliveries": 0,
+          "lag": {
+            "type": "ProposalSubmitted",
+            "events": 500,
+            "undelivered": 0,
+            "consumersPerEvent": 4,
+            "p50": 105,
+            "p95": 165,
+            "p99": 179,
+            "max": 189
+          },
+          "lagAllEvents": {
+            "events": 1500,
+            "undelivered": 0,
+            "consumersPerEvent": 1,
+            "p50": 88,
+            "p95": 758,
+            "p99": 1454,
+            "max": 1462
+          },
+          "dbBefore": {
+            "main": 21975040,
+            "wal": 4235392
+          },
+          "dbAfter": {
+            "main": 29589504,
+            "wal": 4235392
+          },
+          "workItems": null
+        }
+      ],
+      "breached": true,
+      "breachedNoSignIn": true
+    },
+    {
+      "vus": 100,
+      "steps": [
+        {
+          "scenario": "rush",
+          "vus": 100,
+          "startedAt": "2026-11-17T01:03:48.012Z",
+          "endedAt": "2026-11-17T01:04:11.735Z",
+          "wallS": 23.7,
+          "requests": 4000,
+          "rps": 169.1,
+          "commandsOk": 2000,
+          "cmdps": 84.5,
+          "p50": 143.6,
+          "p95": 2627,
+          "p99": 2670.9,
+          "max": 3145.3,
+          "p95NoSignIn": 1010.7,
+          "expectedRefusals": {},
+          "errors": {},
+          "errorCount": 0,
+          "counters": {
+            "lifecycles": 500,
+            "asyncWaits": 0,
+            "awards": 0,
+            "declines": 0,
+            "refusedAwards": 0,
+            "workExhausted": 0
+          },
+          "perLabel": [
+            {
+              "label": "PUT /api/proposals/:id",
+              "n": 1000,
+              "p50": 135.9,
+              "p95": 171.3,
+              "p99": 174.1,
+              "max": 176.3,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/session",
+              "n": 500,
+              "p50": 2540.4,
+              "p95": 2671.4,
+              "p99": 3142.5,
+              "max": 3145.3,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/calls",
+              "n": 500,
+              "p50": 832.8,
+              "p95": 1025.6,
+              "p99": 1031.7,
+              "max": 1032.1,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals",
+              "n": 500,
+              "p50": 121.5,
+              "p95": 174.6,
+              "p99": 194.7,
+              "max": 202.7,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals/:id",
+              "n": 500,
+              "p50": 91.8,
+              "p95": 147,
+              "p99": 155.9,
+              "max": 162.7,
+              "errors": 0
+            },
+            {
+              "label": "POST /api/proposals/:id/submit",
+              "n": 500,
+              "p50": 128.2,
+              "p95": 668.9,
+              "p99": 755.4,
+              "max": 771.8,
+              "errors": 0
+            },
+            {
+              "label": "GET /api/proposals",
+              "n": 500,
+              "p50": 636.8,
+              "p95": 2648.5,
+              "p99": 2670.9,
+              "max": 2676,
+              "errors": 0
+            }
+          ],
+          "timeline": [
+            0,
+            0,
+            77,
+            597,
+            103,
+            0,
+            0,
+            240,
+            457,
+            100,
+            0,
+            100,
+            350,
+            346,
+            1,
+            0,
+            100,
+            582,
+            118,
+            0,
+            0,
+            100,
+            598,
+            131
+          ],
+          "serverCpuPct": 78.7,
+          "drainAfterStepMs": 10,
+          "pendingAfter": 0,
+          "failedDeliveries": 0,
+          "lag": {
+            "type": "ProposalSubmitted",
+            "events": 500,
+            "undelivered": 0,
+            "consumersPerEvent": 4,
+            "p50": 192,
+            "p95": 279,
+            "p99": 288,
+            "max": 295
+          },
+          "lagAllEvents": {
+            "events": 1500,
+            "undelivered": 0,
+            "consumersPerEvent": 4,
+            "p50": 143,
+            "p95": 2174,
+            "p99": 2330,
+            "max": 2344
+          },
+          "dbBefore": {
+            "main": 29589504,
+            "wal": 4235392
+          },
+          "dbAfter": {
+            "main": 37224448,
+            "wal": 4239512
+          },
+          "workItems": null
+        }
+      ],
+      "breached": true,
+      "breachedNoSignIn": true
+    }
+  ],
+  "dataDir": "C:\\Users\\kangm\\AppData\\Local\\Temp\\quorum-load-ramp-EwSCzd",
+  "serverExit": null,
+  "serverLog": {
+    "sqliteBusy": 0,
+    "unhandled": 0,
+    "dispatcherFailures": 0,
+    "samples": []
+  },
+  "serverLogTail": [
+    "[quorum] listening on http://127.0.0.1:3901  (demo clock off)",
+    "[quorum] delivery: {\"pending\":0,\"skipped\":0,\"oldestPendingAgeSeconds\":0,\"failed\":[]}",
+    "[quorum] integrations: orcid=stub (accepts any checksum-valid iD; no registry call); triage=stub (stub-triage-1 (deterministic rules)); mail=file C:\\Users\\kangm\\AppData\\Local\\Temp\\quorum-load-ramp-EwSCzd\\mail-outbox.jsonl (no mail leaves this machine)",
+    "[quorum] production adapters not configured: ORCID_CLIENT_ID (orcid http), ORCID_CLIENT_SECRET (orcid http), ANTHROPIC_API_KEY (triage anthropic), SMTP_HOST (mail smtp), SMTP_FROM (mail smtp)",
+    ""
+  ],
+  "finalDb": {
+    "main": 37224448,
+    "wal": 4239512
+  },
+  "sourceStateAtEnd": {
+    "at": "2026-11-17T01:04:12.115Z",
+    "head": "649bbb4",
+    "dirtySrc": [],
+    "stash": []
+  }
+}

@@ -3,8 +3,8 @@
 | | |
 |---|---|
 | Date | 2026-11-16 |
-| Commit | The commit that adds this file (the first commit on `master`). Its id is in the hand-off message and in `git log -1`. |
-| Verdict | **Ready to demo. Not ready for a production release.** §8 explains why. Three owner decisions are open (§9). |
+| Commit | Production-readiness work: `649bbb4`. This report and the load evidence: the commit that follows it on `main` (https://github.com/avlon-technologies/quorum). §10 records the commit the clean-checkout checks ran against. |
+| Verdict | **Ready to demo. Production gaps closed in code and tested locally; not yet releasable.** Remaining blockers: owner decisions (§9), credentials only the owner can supply, and a review-path performance limit found by load testing (§11). |
 
 Labels used throughout:
 - A **tool** verdict is quoted from a tool that ran.
@@ -113,11 +113,11 @@ Run `bash scripts/regression-demo.sh <empty dir>`. It copies the tree, commits a
 | — | Advancing the demo clock signed everyone out (found by the browser journey) | demo | **Fixed:** sessions use wall-clock time; tests inject the manual clock |
 | B1 | Demo mode on by default; auto-seeding with a shared password; demo buttons always shown | production | **Fixed:** demo mode is impossible when `NODE_ENV=production`; no auto-seed or password log outside demo; the sign-in shortcuts appear only when the server reports demo mode |
 | B2 | A malformed agent verdict was silently lost (`INSERT OR IGNORE` swallowed the CHECK failure); no timeout on the provider | production | **Fixed:** output validated against the declared verdict shape, so a bad verdict becomes a retry and then "screen manually"; 30 s timeout; `ON CONFLICT DO NOTHING`. Test B2 |
-| B3 | Decision escalation notifies no one (the model says the officer is notified) | production | **Open, model gap:** needs a declared `DecisionEscalated` event. The UI copy was corrected to "flagged on the work queue" |
-| B4 | Refused-award reconsider, hold placement and escalation publish no event (NFR-8 gaps) | production | **Open, model gap** |
-| B5 | A revoked reviewer could still open the assignment; applicants see the mean score and screener id during deliberation; officers can declare conflicts for non-existent ids; ops routes sit under the programOfficer role; role-addressed `markRead` is shared | production | **Fixed:** the revoked reviewer now gets 404 (test B5). **Open:** the rest. Applicant visibility is an owner question |
-| B6 | A poison delivery holds its partition forever; there is no skip-with-reason | production | **Open** |
-| B7 | INV-5 "at most 3 active" relies on SQLite's whole-database write lock | production | **Open:** add a DB trigger before any database change |
+| B3 | Decision escalation notifies no one (the model says the officer is notified) | production | **Fixed:** `DecisionEscalated` declared and published once per case; officers notified (ADR-018). Scenario `decision-escalated` |
+| B4 | Refused-award reconsider, hold placement and escalation publish no event (NFR-8 gaps) | production | **Fixed:** `AwardRefused`, `AwardHeld`, `DecisionEscalated` published and audited (ADR-018) |
+| B5 | A revoked reviewer could still open the assignment; applicants see the mean score and screener id during deliberation; officers can declare conflicts for non-existent ids; ops routes sit under the programOfficer role; role-addressed `markRead` is shared | production | **Fixed:** revoked reviewer 404; ghost conflict ids 404; ops routes moved to a new `operator` role (ADR-019); read state per account. **Open:** applicant visibility (owner question) |
+| B6 | A poison delivery holds its partition forever; there is no skip-with-reason | production | **Fixed:** alert on parking; operator retry or skip with a recorded reason; skip refused for invariant-guarding consumers (ADR-020) |
+| B7 | INV-5 "at most 3 active" relies on SQLite's whole-database write lock | production | **Fixed:** database triggers; six processes racing assign exactly three |
 | B8 | INV-6 was vacuous if the criteria replica was empty | production | **Fixed:** refused with `criteria_unavailable` |
 | B9 | BDL `Voided` state is realized as a `voided_at` column | note | **Open:** record as an accepted mapping or change it |
 
@@ -171,35 +171,42 @@ The decision is the owner's. It needs an `.adl-change` and a BDL change, and not
 
 ## 8. Demo readiness vs production readiness
 
-**Demo: READY.**
-- One command starts a seeded system with every journey reachable.
-- All four roles pass the browser journey at desktop and phone widths, with 0 console errors.
-- Every invariant holds, with negative tests and executed scenarios.
-- The over-budget refusal, blind review, agent advisory and late-review paths all work on stage.
-- **Known demo caveat:** a conflict declared after scoring leaves only a decline (§6). Present it as the open question.
+**Demo: READY.** The four role journeys and the new operator page pass the browser journey at desktop and phone widths (68 screenshots). Every invariant holds, with negative tests and executed scenarios.
+
+**Production: closed in code, verified locally** (`tests/scenarios/production-readiness.test.ts`, 19 tests, and scenarios `decision-escalated`, `account-erasure`):
+- escalation delivery to role mailboxes; audit of refused awards, holds and escalations;
+- recovery from repeatedly failing deliveries (park, alert, retry, skip with reason);
+- reviewer limit under concurrent writes (database trigger, 6-process race);
+- online verified backups and a guarded offline restore (`npm run ops`);
+- monitoring (`/healthz`, `/readyz`, `/metrics`, alert webhook);
+- personal-data erasure, including redaction of the retained event log;
+- rate limiting;
+- real ORCID, Anthropic and SMTP adapters, tested against local fakes only.
+
+The runbook is `docs/OPERATIONS.md`.
 
 **Production release: NOT READY.** Blocking items:
-1. The owner decisions in §9 are open. In particular, INV-3 after scoring deviates from the brief.
-2. The open review items B3 (escalation never notifies), B4 (audit gaps against NFR-8), B5 (remaining scoping questions), B6 (poison-delivery handling) and B7 (INV-5 depends on SQLite's lock).
-3. Stubs remain:
-   - ORCID: the stub accepts checksum-valid iDs; no OAuth.
-   - Triage: deterministic rules. Its only `ineligible` rule (a request above the call maximum) can never fire on a submitted proposal, because submission already refuses such a request.
-   - Mail: written to a file.
-   Each needs a production binding (a second Environment) and its own verification.
-4. Platform: a single process and a single SQLite file. No backup, migration, monitoring, alerting, rate limiting or secrets management, and no data erasure or retention enforcement (the bindings' retention and erasure claims are declared, not realized).
-5. Governance: there is no accepted package, so `continuum conformance report` and the guard's implementation dimension cannot judge against an accepted revision.
-6. Security review, accessibility audit (colour contrast, screen reader) and load testing: **NOT CHECKED**.
+1. The owner decisions in §9, in particular ADR-017 (INV-3 after scoring).
+2. **The review path saturates one CPU core** beyond about 25 concurrent active reviewers, and the server stopped answering at 200 (§11). It needs profiling and a fix, then a re-run of `scripts/load/`.
+3. The integrations have never run against the real services. Each needs the owner's credentials and decisions (`docs/OPERATIONS.md` §7).
+4. The reverse proxy, TLS and `trustProxy` are not configured, because the proxy is not chosen.
+5. Governance: no accepted package, so the guard's implementation dimension judges against nothing accepted.
+6. Security review and an accessibility audit (contrast, screen reader): **NOT CHECKED**.
 
 ## 9. Remaining owner decisions (Michael Kang)
 
 Nothing below has been performed by an agent.
-1. **ADR-005 vs INV-3**: choose a resolution (§6).
-2. **Accept or reject ADR-001..016**: `continuum decision accept <ADR> --reason "<why>"`, adding `--option <name>` where a decision lists options. Settle ADR-005 after decision 1.
-3. **Accept the initial package**: `continuum package accept continuum --as <you> --verified-against HEAD`, then `continuum ledger record continuum --verified-against HEAD`.
-4. **Accept or reject the three diagrams**, knowing the limits in §7.
-5. **Applicant visibility during deliberation** (mean score, screener id, whether the officer agreed with the agent): decide what applicants may see (review B5).
+1. **ADR-017** (`docs/proposals/adr-017-conflict-resolution.md`): the phase-5 policy (recommended: suspend the decision for a Program Officer integrity review), Q2–Q10, and whether to adopt its Part 0 repair first. Then supersede ADR-005.
+2. **Accept or reject ADR-001..022:** `continuum decision accept <ADR> --reason "<why>"`.
+3. **Accept the package:** `continuum package accept continuum --as <you> --verified-against HEAD`, then `continuum ledger record continuum --verified-against HEAD`.
+4. **Accept or reject the diagrams** (`docs/diagrams/README.md` quotes each tool verdict; none passed the communication check).
+5. **Applicant visibility during deliberation** (review B5).
+6. **Integration inputs** (`docs/OPERATIONS.md` §7): ORCID credentials and whether existence-only verification is enough; an Anthropic key and the data terms for abstracts; an SMTP relay, sender domain and role mailboxes.
+7. **The expected workload:** peak concurrent reviewers and applicants. It decides how far the review-path fix must go (§11).
 
 ## 10. Clean-checkout verification
+
+**From the previous release.** The clean-checkout run and `scripts/regression-demo.sh` for this release have not run yet: **NOT CHECKED** at this commit.
 
 On 2026-11-16, commit `75176ba` was cloned into an empty directory and the README was followed exactly:
 
@@ -216,3 +223,17 @@ On 2026-11-16, commit `75176ba` was cloned into an empty directory and the READM
 | `continuum evidence check continuum` | "verified 59 … touched 0 … stale 0" |
 | `continuum guard ci` (clean tree) | "guard ci: PASS": lifecycle ok, architecture ok, implementation ok; hygiene "drift" is the one carried compiler warning |
 | `NODE_ENV=production npm start` | "demo clock off". Nothing was seeded and no password was printed; `/api/health` reported `demo:false`; demo-account sign-in returned 401 |
+
+## 11. SQLite viability (load and crash evidence)
+
+The full evidence is in `docs/evidence/sqlite-viability.md`, with raw results in `docs/evidence/results/`. The harness is `scripts/load/`. The run was stopped at the owner's request before the 10-year capacity step finished.
+
+| Question | Result (quoted from the results) |
+|---|---|
+| Write ceiling (single writer) | about 250 commands/s, flat from 10 to 200 VUs; `sqliteBusy: 0` |
+| Crash safety | 8 hard kills under load: **0** acknowledged writes lost, **0** command-log entries lost; restart in about 0.56 s |
+| Rate limiter under load | limits applied within about 1 s; a limited request costs p95 24 ms |
+| Review path | p95 131 ms at 10 VUs, 785 ms at 25, 3.7 s at 50, 16 s at 100; at 200 the server stopped answering (1,443 errors). CPU at one full core, with no SQLite lock waits |
+| Size over 10 years | **NOT CHECKED.** 60 KB per decided lifecycle was measured; 30,000 lifecycles ≈ 1.8 GB (extrapolated) |
+
+**Verdict (recommended):** SQLite is viable for one funding body, and it is not the bottleneck. The review-path limit is application CPU, and moving to Postgres would not remove it.

@@ -1,0 +1,23 @@
+[capacity 01:11:09] measuring one call of lifecycles
+[capacity 01:14:47] bytes per lifecycle: 60178 over 500 decided lifecycles ({"submitted":500,"reviewed":500,"decided":500,"errors":0})
+[capacity 01:14:47] synthesizing 59 copies of 500 lifecycles -> ~30000 lifecycles
+[capacity 01:20:33] synthetic db {
+  copies: 59,
+  lifecycles: 30000,
+  buildSeconds: 322.1,
+  bytes: 1911025664,
+  mb: 1822.5,
+  projectedMbFromPerLifecycle: 1722.8,
+  topTables: [
+    { name: 'cmd_log', mb: 381.2 },
+    { name: 'evt_outbox', mb: 260.1 },
+    { name: 'evt_delivery', mb: 212.1 },
+    { name: 'ovs_audit', mb: 138.1 },
+    { name: 'evt_delivery_partition', mb: 116.4 },
+    { name: 'ntf_message', mb: 102.7 },
+    { name: 'sqlite_autoindex_evt_delivery_1', mb: 98.8 },
+    { name: 'evt_delivery_due', mb: 54.9 },
+    { name: 'sqlite_autoindex_cmd_log_1', mb: 42 },
+    { name: 'evt_outbox_partition', mb: 38.8 }
+  ]
+}

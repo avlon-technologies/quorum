@@ -1,0 +1,22 @@
+[ramp 01:02:20] data dir C:\Users\kangm\AppData\Local\Temp\quorum-load-ramp-EwSCzd
+[ramp 01:02:22] fixture: 12000 applicants, 300 reviewers, 15 officers, 5 chairs, 8 calls in 1.4 s
+[ramp 01:02:22] server pid 37740 on http://127.0.0.1:3901
+[ramp 01:02:32] sign-in warm-up {
+  signIns: 320,
+  concurrency: 10,
+  wallS: 9.7,
+  perS: 33,
+  p50: 300.9,
+  p95: 312.3,
+  p99: 390.8
+}
+[ramp 01:02:32] L=10 rush starting
+[ramp 01:02:58] L=10 rush: 4000 req in 24.7 s = 161.9 req/s, 80.9 cmd/s; p50 24 p95 210.3 p99 278.4 ms (p95 w/o sign-in 159.9); server CPU 80.5% of one core; errors 0 {}; refusals {}; counters {"lifecycles":500,"asyncWaits":0,"awards":0,"declines":0,"refusedAwards":0,"workExhausted":0}; drain 13 ms; ProposalSubmitted lag p50/p95/p99/max 15/48/131/181 ms (n=500); all-events lag p95 117 max 267
+[ramp 01:02:58] L=25 rush starting
+[ramp 01:03:23] L=25 rush: 4000 req in 24.1 s = 166.1 req/s, 83 cmd/s; p50 42.3 p95 595.6 p99 683.8 ms (p95 w/o sign-in 436.4); server CPU 77.3% of one core; errors 0 {}; refusals {}; counters {"lifecycles":500,"asyncWaits":0,"awards":0,"declines":0,"refusedAwards":0,"workExhausted":0}; drain 9 ms; ProposalSubmitted lag p50/p95/p99/max 41/74/321/517 ms (n=500); all-events lag p95 462 max 571
+[ramp 01:03:23] L=50 rush starting
+[ramp 01:03:47] L=50 rush: 4000 req in 23.8 s = 167.7 req/s, 83.9 cmd/s; p50 67.8 p95 1296.7 p99 1621.7 ms (p95 w/o sign-in 844); server CPU 77.7% of one core; errors 0 {}; refusals {}; counters {"lifecycles":500,"asyncWaits":0,"awards":0,"declines":0,"refusedAwards":0,"workExhausted":0}; drain 11 ms; ProposalSubmitted lag p50/p95/p99/max 105/165/179/189 ms (n=500); all-events lag p95 758 max 1462
+[ramp 01:03:47] L=100 rush starting
+[ramp 01:04:12] L=100 rush: 4000 req in 23.7 s = 169.1 req/s, 84.5 cmd/s; p50 143.6 p95 2627 p99 2670.9 ms (p95 w/o sign-in 1010.7); server CPU 78.7% of one core; errors 0 {}; refusals {}; counters {"lifecycles":500,"asyncWaits":0,"awards":0,"declines":0,"refusedAwards":0,"workExhausted":0}; drain 10 ms; ProposalSubmitted lag p50/p95/p99/max 192/279/288/295 ms (n=500); all-events lag p95 2174 max 2344
+[ramp 01:04:12] server log scan { sqliteBusy: 0, unhandled: 0, dispatcherFailures: 0, samples: [] }
+[ramp 01:04:12] wrote C:\projects\avlon\demo4-part2\docs\evidence\results\ramp-signin.json

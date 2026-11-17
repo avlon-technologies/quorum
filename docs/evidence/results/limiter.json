@@ -1,0 +1,94 @@
+{
+  "sourceState": {
+    "at": "2026-11-17T01:06:45.117Z",
+    "head": "649bbb4",
+    "dirtySrc": [],
+    "stash": []
+  },
+  "config": {
+    "vus": 50,
+    "durationMs": 20000,
+    "limiter": "default (QUORUM_RATE_LIMIT unset/1)"
+  },
+  "sharedAccounts": {
+    "priya reads (GET /api/proposals)": {
+      "requests": 32819,
+      "ok": 599,
+      "limited429": 32220,
+      "other": {},
+      "first429AfterS": 1.2,
+      "retryAfterValues": [
+        "59",
+        "58",
+        "57",
+        "56",
+        "55"
+      ],
+      "p50": 13.2,
+      "p95": 23.9
+    },
+    "officer reads (GET /api/workspace/officer)": {
+      "requests": 32818,
+      "ok": 300,
+      "limited429": 32518,
+      "other": {},
+      "first429AfterS": 0.9,
+      "retryAfterValues": [
+        "60",
+        "59",
+        "58",
+        "57",
+        "56"
+      ],
+      "p50": 13.3,
+      "p95": 23.9
+    },
+    "priya writes (PUT draft)": {
+      "requests": 32819,
+      "ok": 120,
+      "limited429": 32699,
+      "other": {},
+      "first429AfterS": 0.6,
+      "retryAfterValues": [
+        "60",
+        "59",
+        "58",
+        "57",
+        "56"
+      ],
+      "p50": 13.1,
+      "p95": 24.8
+    },
+    "officer reads (GET /api/portfolio)": {
+      "requests": 32818,
+      "ok": 300,
+      "limited429": 32518,
+      "other": {},
+      "first429AfterS": 0.9,
+      "retryAfterValues": [
+        "60",
+        "59",
+        "58",
+        "57",
+        "56"
+      ],
+      "p50": 13.1,
+      "p95": 24.8
+    }
+  },
+  "correctSignInsFromOneIp": {
+    "attempts": 150,
+    "byStatus": {
+      "200": 118,
+      "429": 32
+    },
+    "first429AtAttempt": 119
+  },
+  "wrongPasswordSignIns": {
+    "attempts": 15,
+    "byStatus": {
+      "429": 15
+    },
+    "thenCorrectPasswordStatus": 429
+  }
+}

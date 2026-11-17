@@ -1,0 +1,270 @@
+{
+  "sourceState": {
+    "at": "2026-11-17T01:05:11.049Z",
+    "head": "649bbb4",
+    "dirtySrc": [],
+    "stash": []
+  },
+  "config": {
+    "rounds": 5,
+    "vus": 50,
+    "killAfterMs": 4000,
+    "applicantTokens": "minted"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "killedAt": "2026-11-17T01:05:15.841Z",
+      "killedPid": 7600,
+      "requestsBeforeKill": 9166,
+      "errorsAroundKill": {
+        "network:fetch failed": 7181
+      },
+      "acknowledgedThisRound": 1156,
+      "acknowledgedCumulative": 1156,
+      "byKind": {
+        "create": 300,
+        "update": 599,
+        "submit": 257
+      },
+      "onDiskAtKill": {
+        "pendingDeliveries": 26,
+        "failedDeliveries": 0,
+        "totalDeliveries": 1792,
+        "proposalSubmittedNotAtEveryConsumer": 7,
+        "proposalsStillSubmitted": 6
+      },
+      "restartMs": 564,
+      "drainAfterRestartMs": 11,
+      "afterRestart": {
+        "missingCommandLog": 0,
+        "missingEffects": 0,
+        "missingSamples": [],
+        "deliveries": {
+          "pending": 0,
+          "failed": 0,
+          "delivered": 1812,
+          "total": 1812
+        },
+        "proposalSubmittedNotAtEveryConsumer": 0,
+        "acknowledgedSubmitsNotInScreening": 0,
+        "duplicateProposalSubmittedEvents": 0,
+        "triageJobsNotDone": 0,
+        "quickCheck": "ok",
+        "idempotentReplay": "10/10",
+        "apiHealth": "HTTP 403"
+      }
+    },
+    {
+      "round": 2,
+      "killedAt": "2026-11-17T01:05:22.059Z",
+      "killedPid": 10360,
+      "requestsBeforeKill": 9226,
+      "errorsAroundKill": {
+        "network:fetch failed": 7336
+      },
+      "acknowledgedThisRound": 1090,
+      "acknowledgedCumulative": 2246,
+      "byKind": {
+        "create": 600,
+        "update": 1139,
+        "submit": 507
+      },
+      "onDiskAtKill": {
+        "pendingDeliveries": 0,
+        "failedDeliveries": 0,
+        "totalDeliveries": 3562,
+        "proposalSubmittedNotAtEveryConsumer": 0,
+        "proposalsStillSubmitted": 0
+      },
+      "restartMs": 555,
+      "drainAfterRestartMs": 14,
+      "afterRestart": {
+        "missingCommandLog": 0,
+        "missingEffects": 0,
+        "missingSamples": [],
+        "deliveries": {
+          "pending": 0,
+          "failed": 0,
+          "delivered": 3562,
+          "total": 3562
+        },
+        "proposalSubmittedNotAtEveryConsumer": 0,
+        "acknowledgedSubmitsNotInScreening": 0,
+        "duplicateProposalSubmittedEvents": 0,
+        "triageJobsNotDone": 0,
+        "quickCheck": "ok",
+        "idempotentReplay": "10/10",
+        "apiHealth": "HTTP 403"
+      }
+    },
+    {
+      "round": 3,
+      "killedAt": "2026-11-17T01:05:28.290Z",
+      "killedPid": 30936,
+      "requestsBeforeKill": 9048,
+      "errorsAroundKill": {
+        "network:fetch failed": 7336
+      },
+      "acknowledgedThisRound": 1000,
+      "acknowledgedCumulative": 3246,
+      "byKind": {
+        "create": 850,
+        "update": 1639,
+        "submit": 757
+      },
+      "onDiskAtKill": {
+        "pendingDeliveries": 5,
+        "failedDeliveries": 0,
+        "totalDeliveries": 5240,
+        "proposalSubmittedNotAtEveryConsumer": 0,
+        "proposalsStillSubmitted": 0
+      },
+      "restartMs": 590,
+      "drainAfterRestartMs": 232,
+      "afterRestart": {
+        "missingCommandLog": 0,
+        "missingEffects": 0,
+        "missingSamples": [],
+        "deliveries": {
+          "pending": 0,
+          "failed": 0,
+          "delivered": 5312,
+          "total": 5312
+        },
+        "proposalSubmittedNotAtEveryConsumer": 0,
+        "acknowledgedSubmitsNotInScreening": 0,
+        "duplicateProposalSubmittedEvents": 0,
+        "triageJobsNotDone": 0,
+        "quickCheck": "ok",
+        "idempotentReplay": "10/10",
+        "apiHealth": "HTTP 403"
+      }
+    },
+    {
+      "round": 4,
+      "killedAt": "2026-11-17T01:05:34.763Z",
+      "killedPid": 40536,
+      "requestsBeforeKill": 9240,
+      "errorsAroundKill": {
+        "network:fetch failed": 7340
+      },
+      "acknowledgedThisRound": 1100,
+      "acknowledgedCumulative": 4346,
+      "byKind": {
+        "create": 1150,
+        "update": 2189,
+        "submit": 1007
+      },
+      "onDiskAtKill": {
+        "pendingDeliveries": 0,
+        "failedDeliveries": 0,
+        "totalDeliveries": 7062,
+        "proposalSubmittedNotAtEveryConsumer": 0,
+        "proposalsStillSubmitted": 0
+      },
+      "restartMs": 562,
+      "drainAfterRestartMs": 8,
+      "afterRestart": {
+        "missingCommandLog": 0,
+        "missingEffects": 0,
+        "missingSamples": [],
+        "deliveries": {
+          "pending": 0,
+          "failed": 0,
+          "delivered": 7062,
+          "total": 7062
+        },
+        "proposalSubmittedNotAtEveryConsumer": 0,
+        "acknowledgedSubmitsNotInScreening": 0,
+        "duplicateProposalSubmittedEvents": 0,
+        "triageJobsNotDone": 0,
+        "quickCheck": "ok",
+        "idempotentReplay": "10/10",
+        "apiHealth": "HTTP 403"
+      }
+    },
+    {
+      "round": 5,
+      "killedAt": "2026-11-17T01:05:40.935Z",
+      "killedPid": 8944,
+      "requestsBeforeKill": 8902,
+      "errorsAroundKill": {
+        "network:fetch failed": 7157
+      },
+      "acknowledgedThisRound": 1000,
+      "acknowledgedCumulative": 5346,
+      "byKind": {
+        "create": 1400,
+        "update": 2689,
+        "submit": 1257
+      },
+      "onDiskAtKill": {
+        "pendingDeliveries": 34,
+        "failedDeliveries": 0,
+        "totalDeliveries": 8785,
+        "proposalSubmittedNotAtEveryConsumer": 8,
+        "proposalsStillSubmitted": 7
+      },
+      "restartMs": 560,
+      "drainAfterRestartMs": 13,
+      "afterRestart": {
+        "missingCommandLog": 0,
+        "missingEffects": 0,
+        "missingSamples": [],
+        "deliveries": {
+          "pending": 0,
+          "failed": 0,
+          "delivered": 8812,
+          "total": 8812
+        },
+        "proposalSubmittedNotAtEveryConsumer": 0,
+        "acknowledgedSubmitsNotInScreening": 0,
+        "duplicateProposalSubmittedEvents": 0,
+        "triageJobsNotDone": 0,
+        "quickCheck": "ok",
+        "idempotentReplay": "10/10",
+        "apiHealth": "HTTP 403"
+      }
+    }
+  ],
+  "dataDir": "C:\\Users\\kangm\\AppData\\Local\\Temp\\quorum-load-crash-UuhFFm",
+  "serverLogs": [
+    {
+      "sqliteBusy": 0,
+      "unhandled": 0,
+      "dispatcherFailures": 0,
+      "samples": []
+    },
+    {
+      "sqliteBusy": 0,
+      "unhandled": 0,
+      "dispatcherFailures": 0,
+      "samples": []
+    },
+    {
+      "sqliteBusy": 0,
+      "unhandled": 0,
+      "dispatcherFailures": 0,
+      "samples": []
+    },
+    {
+      "sqliteBusy": 0,
+      "unhandled": 0,
+      "dispatcherFailures": 0,
+      "samples": []
+    },
+    {
+      "sqliteBusy": 0,
+      "unhandled": 0,
+      "dispatcherFailures": 0,
+      "samples": []
+    },
+    {
+      "sqliteBusy": 0,
+      "unhandled": 0,
+      "dispatcherFailures": 0,
+      "samples": []
+    }
+  ]
+}

@@ -1,0 +1,359 @@
+{
+  "sourceState": {
+    "at": "2026-11-17T00:24:48.422Z",
+    "head": "6912f6c",
+    "dirtySrc": [
+      "M src/api/routes.ts",
+      "M src/app.ts",
+      "M src/contexts/adjudication/panel-decision.ts",
+      "M src/contexts/adjudication/service.ts",
+      "M src/contexts/identity/service.ts",
+      "M src/contexts/notification/service.ts",
+      "M src/contexts/oversight/service.ts",
+      "M src/contexts/peer-review/service.ts",
+      "M src/contracts/model.generated.ts",
+      "M src/integrations/mail.ts",
+      "M src/integrations/orcid.ts",
+      "M src/platform/events.ts",
+      "M src/platform/http.ts",
+      "M src/platform/schema.ts",
+      "M src/seed.ts",
+      "M src/server.ts",
+      "?? src/integrations/factory.ts",
+      "?? src/integrations/smtp.ts",
+      "?? src/integrations/triage-anthropic.ts",
+      "?? src/ops.ts",
+      "?? src/platform/alerts.ts",
+      "?? src/platform/backup.ts",
+      "?? src/platform/metrics.ts",
+      "?? src/platform/rate-limit.ts"
+    ],
+    "stash": []
+  },
+  "scenario": "rush",
+  "vus": 50,
+  "note": "In-process server (createApp, workers on); load from worker threads. Native SQLite time appears under the statement method that called it (run/get/all/transaction).",
+  "eventLoopUtilization": 98.9,
+  "step": {
+    "rps": 80.7,
+    "cmdps": 37.9,
+    "p50": 145.8,
+    "p95": 2454.3,
+    "p99": 2769.5,
+    "errors": {},
+    "counters": {
+      "lifecycles": 200,
+      "asyncWaits": 0,
+      "awards": 0,
+      "declines": 0,
+      "refusedAwards": 0,
+      "workExhausted": 0
+    }
+  },
+  "profileMs": 21428,
+  "busyMs": 21112,
+  "top": [
+    {
+      "fn": "run",
+      "ms": 13153,
+      "pctOfBusy": 62.3
+    },
+    {
+      "fn": "(anonymous)",
+      "ms": 5118,
+      "pctOfBusy": 24.2
+    },
+    {
+      "fn": "prepare wrappers.js:4",
+      "ms": 346,
+      "pctOfBusy": 1.6
+    },
+    {
+      "fn": "(program)",
+      "ms": 224,
+      "pctOfBusy": 1.1
+    },
+    {
+      "fn": "writeUtf8String",
+      "ms": 223,
+      "pctOfBusy": 1.1
+    },
+    {
+      "fn": "rowFactory database.js:105",
+      "ms": 161,
+      "pctOfBusy": 0.8
+    },
+    {
+      "fn": "post node:inspector:115",
+      "ms": 129,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "(garbage collector)",
+      "ms": 104,
+      "pctOfBusy": 0.5
+    },
+    {
+      "fn": "writeFileUtf8",
+      "ms": 63,
+      "pctOfBusy": 0.3
+    },
+    {
+      "fn": "sqliteTransaction transaction.js:52",
+      "ms": 50,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "cad service.ts:13",
+      "ms": 44,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "nextTick task_queues:113",
+      "ms": 44,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "transaction transaction.js:5",
+      "ms": 43,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "#deliverOne events.ts:184",
+      "ms": 42,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "serialize reply.js:1086",
+      "ms": 35,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "validateClaimsSet jwt_claims_set.js:53",
+      "ms": 34,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "decodeBase64 buffer_utils.js:47",
+      "ms": 28,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "(anonymous) database.js:108",
+      "ms": 24,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "handler http.ts:170",
+      "ms": 23,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "(anonymous) http.ts:195",
+      "ms": 23,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "emit node:events:489",
+      "ms": 21,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "resOnFinish node:_http_server:1096",
+      "ms": 19,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "cloneAlgorithm keys:1204",
+      "ms": 17,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "publish events.ts:98",
+      "ms": 16,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "verifyCompact jws_verify.js:74",
+      "ms": 16,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "_addHeaderLine node:_http_incoming:453",
+      "ms": 16,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "next hooks.js:234",
+      "ms": 15,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "now clock.ts:6",
+      "ms": 14,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "normalizeAlgorithm util:740",
+      "ms": 14,
+      "pctOfBusy": 0.1
+    },
+    {
+      "fn": "recordRequest metrics.ts:12",
+      "ms": 13,
+      "pctOfBusy": 0.1
+    }
+  ],
+  "byAppFrame": [
+    {
+      "fn": "run [native] <- verifyPassword auth.ts:16",
+      "ms": 13115,
+      "pctOfBusy": 62.1
+    },
+    {
+      "fn": "(anonymous) [native] <- #deliverOne events.ts:184",
+      "ms": 1778,
+      "pctOfBusy": 8.4
+    },
+    {
+      "fn": "(anonymous) [native] <- tx http.ts:191",
+      "ms": 1143,
+      "pctOfBusy": 5.4
+    },
+    {
+      "fn": "(anonymous) [native] <- #runInstance triage.ts:112",
+      "ms": 264,
+      "pctOfBusy": 1.2
+    },
+    {
+      "fn": "(anonymous) [native] <- loadPrincipal service.ts:30",
+      "ms": 259,
+      "pctOfBusy": 1.2
+    },
+    {
+      "fn": "(anonymous) [native] <- toView service.ts:256",
+      "ms": 234,
+      "pctOfBusy": 1.1
+    },
+    {
+      "fn": "(program) [native] <- (no app frame)",
+      "ms": 224,
+      "pctOfBusy": 1.1
+    },
+    {
+      "fn": "writeUtf8String [native] <- (no app frame)",
+      "ms": 223,
+      "pctOfBusy": 1.1
+    },
+    {
+      "fn": "(anonymous) [native] <- (anonymous) events.ts:200",
+      "ms": 172,
+      "pctOfBusy": 0.8
+    },
+    {
+      "fn": "(anonymous) [native] <- drainOutbound service.ts:111",
+      "ms": 167,
+      "pctOfBusy": 0.8
+    },
+    {
+      "fn": "post <- (no app frame)",
+      "ms": 129,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "(anonymous) [native] <- rolesOf service.ts:26",
+      "ms": 122,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "(anonymous) [native] <- publish events.ts:98",
+      "ms": 122,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "(anonymous) [native] <- getRow service.ts:41",
+      "ms": 120,
+      "pctOfBusy": 0.6
+    },
+    {
+      "fn": "(anonymous) [native] <- lookup http.ts:226",
+      "ms": 111,
+      "pctOfBusy": 0.5
+    },
+    {
+      "fn": "(garbage collector) [native] <- (no app frame)",
+      "ms": 104,
+      "pctOfBusy": 0.5
+    },
+    {
+      "fn": "(anonymous) [native] <- getCallStatus service.ts:134",
+      "ms": 95,
+      "pctOfBusy": 0.5
+    },
+    {
+      "fn": "(anonymous) [native] <- transition service.ts:56",
+      "ms": 66,
+      "pctOfBusy": 0.3
+    },
+    {
+      "fn": "writeFileUtf8 [native] <- send mail.ts:19",
+      "ms": 63,
+      "pctOfBusy": 0.3
+    },
+    {
+      "fn": "prepare <- toView service.ts:256",
+      "ms": 48,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "(anonymous) [native] <- enqueue service.ts:17",
+      "ms": 47,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "prepare <- loadPrincipal service.ts:30",
+      "ms": 44,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "cad <- cad service.ts:13",
+      "ms": 44,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "nextTick <- (no app frame)",
+      "ms": 44,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "(anonymous) [native] <- createDraft service.ts:76",
+      "ms": 44,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "(anonymous) [native] <- (anonymous) http.ts:195",
+      "ms": 43,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "#deliverOne <- #deliverOne events.ts:184",
+      "ms": 42,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "prepare <- #deliverOne events.ts:184",
+      "ms": 41,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "rowFactory <- loadPrincipal service.ts:30",
+      "ms": 39,
+      "pctOfBusy": 0.2
+    },
+    {
+      "fn": "run [native] <- (no app frame)",
+      "ms": 36,
+      "pctOfBusy": 0.2
+    }
+  ]
+}

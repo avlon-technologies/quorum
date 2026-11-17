@@ -1,0 +1,171 @@
+{
+  "sourceState": {
+    "at": "2026-11-17T01:04:20.995Z",
+    "head": "649bbb4",
+    "dirtySrc": [],
+    "stash": []
+  },
+  "config": {
+    "rounds": 3,
+    "vus": 50,
+    "killAfterMs": 6000
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "killedAt": "2026-11-17T01:04:27.679Z",
+      "killedPid": 38612,
+      "requestsBeforeKill": 7323,
+      "errorsAroundKill": {
+        "network:fetch failed": 6515
+      },
+      "acknowledgedThisRound": 400,
+      "acknowledgedCumulative": 400,
+      "byKind": {
+        "create": 100,
+        "update": 200,
+        "submit": 100
+      },
+      "onDiskAtKill": {
+        "pendingDeliveries": 2,
+        "failedDeliveries": 0,
+        "totalDeliveries": 713,
+        "proposalSubmittedNotAtEveryConsumer": 0,
+        "proposalsStillSubmitted": 0
+      },
+      "restartMs": 575,
+      "drainAfterRestartMs": 16,
+      "afterRestart": {
+        "missingCommandLog": 0,
+        "missingEffects": 0,
+        "missingSamples": [],
+        "deliveries": {
+          "pending": 0,
+          "failed": 0,
+          "delivered": 713,
+          "total": 713
+        },
+        "proposalSubmittedNotAtEveryConsumer": 0,
+        "acknowledgedSubmitsNotInScreening": 0,
+        "duplicateProposalSubmittedEvents": 0,
+        "triageJobsNotDone": 0,
+        "quickCheck": "ok",
+        "idempotentReplay": "10/10",
+        "apiHealth": "HTTP 403"
+      }
+    },
+    {
+      "round": 2,
+      "killedAt": "2026-11-17T01:04:35.856Z",
+      "killedPid": 31348,
+      "requestsBeforeKill": 7709,
+      "errorsAroundKill": {
+        "network:fetch failed": 6888
+      },
+      "acknowledgedThisRound": 400,
+      "acknowledgedCumulative": 800,
+      "byKind": {
+        "create": 200,
+        "update": 400,
+        "submit": 200
+      },
+      "onDiskAtKill": {
+        "pendingDeliveries": 0,
+        "failedDeliveries": 0,
+        "totalDeliveries": 1413,
+        "proposalSubmittedNotAtEveryConsumer": 0,
+        "proposalsStillSubmitted": 0
+      },
+      "restartMs": 557,
+      "drainAfterRestartMs": 10,
+      "afterRestart": {
+        "missingCommandLog": 0,
+        "missingEffects": 0,
+        "missingSamples": [],
+        "deliveries": {
+          "pending": 0,
+          "failed": 0,
+          "delivered": 1413,
+          "total": 1413
+        },
+        "proposalSubmittedNotAtEveryConsumer": 0,
+        "acknowledgedSubmitsNotInScreening": 0,
+        "duplicateProposalSubmittedEvents": 0,
+        "triageJobsNotDone": 0,
+        "quickCheck": "ok",
+        "idempotentReplay": "10/10",
+        "apiHealth": "HTTP 403"
+      }
+    },
+    {
+      "round": 3,
+      "killedAt": "2026-11-17T01:04:43.963Z",
+      "killedPid": 19192,
+      "requestsBeforeKill": 7421,
+      "errorsAroundKill": {
+        "network:fetch failed": 6639
+      },
+      "acknowledgedThisRound": 400,
+      "acknowledgedCumulative": 1200,
+      "byKind": {
+        "create": 300,
+        "update": 600,
+        "submit": 300
+      },
+      "onDiskAtKill": {
+        "pendingDeliveries": 34,
+        "failedDeliveries": 0,
+        "totalDeliveries": 2113,
+        "proposalSubmittedNotAtEveryConsumer": 0,
+        "proposalsStillSubmitted": 0
+      },
+      "restartMs": 564,
+      "drainAfterRestartMs": 11,
+      "afterRestart": {
+        "missingCommandLog": 0,
+        "missingEffects": 0,
+        "missingSamples": [],
+        "deliveries": {
+          "pending": 0,
+          "failed": 0,
+          "delivered": 2113,
+          "total": 2113
+        },
+        "proposalSubmittedNotAtEveryConsumer": 0,
+        "acknowledgedSubmitsNotInScreening": 0,
+        "duplicateProposalSubmittedEvents": 0,
+        "triageJobsNotDone": 0,
+        "quickCheck": "ok",
+        "idempotentReplay": "10/10",
+        "apiHealth": "HTTP 403"
+      }
+    }
+  ],
+  "dataDir": "C:\\Users\\kangm\\AppData\\Local\\Temp\\quorum-load-crash-yJwH51",
+  "serverLogs": [
+    {
+      "sqliteBusy": 0,
+      "unhandled": 0,
+      "dispatcherFailures": 0,
+      "samples": []
+    },
+    {
+      "sqliteBusy": 0,
+      "unhandled": 0,
+      "dispatcherFailures": 0,
+      "samples": []
+    },
+    {
+      "sqliteBusy": 0,
+      "unhandled": 0,
+      "dispatcherFailures": 0,
+      "samples": []
+    },
+    {
+      "sqliteBusy": 0,
+      "unhandled": 0,
+      "dispatcherFailures": 0,
+      "samples": []
+    }
+  ]
+}

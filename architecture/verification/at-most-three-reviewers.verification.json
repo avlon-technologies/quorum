@@ -22,7 +22,7 @@
  "attestation": {
   "profile": "continuum-claim-spec/0",
   "id": "at-most-three-reviewers",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "rubric": "continuum-claim-rubric/3",
   "claim": {
    "language": "adl",
@@ -77,7 +77,7 @@
    },
    {
     "id": "A3-reached",
-    "statement": "The `reached` paths are what V8 precise coverage reports executing during the case (function call counts), mapped to the write sites by their enclosing function: observed by the runtime, not declared."
+    "statement": "The `reached` paths are what V8 precise BLOCK coverage reports executing during the act alone (setup excluded): a write site is reached when the innermost covered block containing it ran. Observed by the runtime, not declared."
    }
   ],
   "checks": [

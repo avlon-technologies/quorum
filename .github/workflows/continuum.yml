@@ -81,6 +81,12 @@ jobs:
           npm install -g @avlon/continuum-cli || { echo "::error title=Continuum gate: installation failed, architecture not evaluated::npm could not install @avlon/continuum-cli from the Avlon feed — the npm error is above"; exit 1; }
           continuum --version
 
+      # The acceptance scenarios run the implementation (src/app.ts and what it imports), so
+      # the project's own dependencies must be installed, or every scenario fails at import
+      # and no judgment is obtained. Unscoped packages come from npmjs; only @avlon is the feed.
+      - name: Install the project's dependencies
+        run: npm ci --no-audit --no-fund
+
       - name: Check the architecture against Host
         env:
           CONTINUUM_HOST: ${{ vars.CONTINUUM_HOST }}

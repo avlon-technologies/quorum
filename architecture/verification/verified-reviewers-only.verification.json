@@ -22,14 +22,14 @@
   "attestation": {
     "profile": "continuum-claim-spec/0",
     "id": "verified-reviewers-only",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "claim": {
       "language": "bdl",
       "kind": "business-rule",
       "element": "r-q012"
     },
     "model": {
-      "attestation": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59"
+      "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1"
     },
     "boundary": {
       "statement": "The rule's declared scope, AssignReviewer: every write in src/** that makes a reviewer hold an assignment, and every runtime entry point that reaches one. 'Held' is any status but revoked (sm-q005: assigned, accepted, overdue, completed; Revoked is terminal).",

@@ -10,7 +10,7 @@ import { newId } from '../../platform/ids.ts';
 import { DAY_MS } from '../../platform/clock.ts';
 import { conflict, forbidden, notFound, unprocessable, type FieldError } from '../../platform/errors.ts';
 import { getReviewerStanding } from '../identity/api.ts';
-import { REVIEWERS_PER_PROPOSAL } from '../../contracts/review-rules.ts';
+import { REVIEWERS_PER_PROPOSAL, REVOKED_ON_ERASURE } from '../../contracts/review-rules.ts';
 import type {
   AssignmentStatus,
   AssignmentData,
@@ -20,6 +20,7 @@ import type {
   CallPublishedData,
   EligibleData,
   ProposalTransition,
+  AccountErasedData,
 } from '../../contracts/model.generated.ts';
 
 export type AssignmentRow = {
@@ -303,8 +304,28 @@ export function peerReviewConsumer(deps: Deps): Consumer {
           if (a.status !== 'completed') revoke(deps, a, PLATFORM_ACTOR, 'the proposal was withdrawn by its applicant', { voidSubmitted: false });
         }
       },
+      // on AccountErased -> AssignmentRevoked (ADR-023, BDL RevokeOnErasure / obligation ReleaseErasedReviewersWork)
+      AccountErased: (_db, e: StoredEvent<AccountErasedData>) => {
+        releaseErasedReviewersWork(deps, e.payload.accountId);
+      },
     },
   };
+}
+
+/**
+ * ADR-023: an erased account holds no outstanding work. Revokes every assigned, accepted or overdue
+ * assignment of the reviewer through the same revoke() the withdrawal and conflict paths use (conditional
+ * update, pending review voided, AssignmentRevoked published), so each proposal's place reopens for the
+ * officer's ordinary AssignReviewer. Completed assignments and their reviews are business records and are
+ * never touched; nor is any row deleted. Safe to retry: a second run finds nothing outstanding.
+ */
+export function releaseErasedReviewersWork(deps: Deps, reviewerId: string): number {
+  const outstanding = deps.db
+    .prepare(`SELECT * FROM rev_assignment WHERE reviewer_id = ? AND status IN ('assigned','accepted','overdue') ORDER BY assigned_at`)
+    .all(reviewerId) as AssignmentRow[];
+  let n = 0;
+  for (const a of outstanding) if (revoke(deps, a, PLATFORM_ACTOR, REVOKED_ON_ERASURE, { voidSubmitted: false })) n++;
+  return n;
 }
 
 // ------------------------------------------------------------------ queries

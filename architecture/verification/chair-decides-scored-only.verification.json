@@ -22,14 +22,14 @@
   "attestation": {
     "profile": "continuum-claim-spec/0",
     "id": "chair-decides-scored-only",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "claim": {
       "language": "bdl",
       "kind": "business-rule",
       "element": "r-q008"
     },
     "model": {
-      "attestation": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59"
+      "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1"
     },
     "boundary": {
       "statement": "Application approval is the Award outcome of the decision RecordPanelDecision (Proposal Scored → Awarded, t-q016; its only trigger). In scope: every write in src/** that records a panel decision (either outcome — the rule governs the decision, not only the award), every publish of the decision fact, every write that moves a proposal to awarded or declined, and every runtime entry point into the decision writes.",

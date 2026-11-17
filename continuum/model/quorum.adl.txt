@@ -1,6 +1,6 @@
 adl-text/0.2
 model avlon.quorum package-1 core adl/1.7
-source sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59 (canonical-model attestation)
+source sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 (canonical-model attestation)
 
 system Quorum — "Runs a research funding call from publication through submission, eligibility screening, blind peer review and panel adjudication against a fixed budget envelope, and reports where every proposal stands."
   actor Applicant [person] | uses: ::Quorum — "Principal investigator. Drafts, submits and withdraws their own proposals; sees only their own."
@@ -108,7 +108,7 @@ system Quorum — "Runs a research funding call from publication through submiss
       record Criterion v1 { criterionId: text, name: text }
       alias Money v1 = decimal(14,2)
     bounded-context Identity | realizes: ResearchFunding.AccessControl — "Accounts, granted roles and ORCID verification. The single writer of accounts and role grants."
-      command EraseAccount payload=EraseAccountData — "Operator-only. Pseudonymises the account (name, email, institution, ORCID iD), revokes its roles and redacts its personal identifiers from retained event payloads, in one transaction."
+      command EraseAccount payload=EraseAccountData — "Operator-only. Pseudonymises the account (name, email, institution, ORCID iD), clears its ORCID verification (verified -> unverified, ADR-023), revokes its roles and redacts its personal identifiers from retained event payloads, in one transaction."
         occurrence-identity: payload.accountId
       command RegisterApplicant payload=RegistrationData
         occurrence-identity: payload.email
@@ -116,7 +116,7 @@ system Quorum — "Runs a research funding call from publication through submiss
         occurrence-identity: payload.accountId
       event AccountErased payload=AccountErasedData — "An account's personal data was erased. Carries no personal data; every context that holds a copy pseudonymises it."
         delivery[ordered, at-least-once, durable]
-      event OrcidVerified payload=OrcidVerifiedData — "A reviewer's ORCID iD was confirmed by the registry. unverified -> verified is the only ORCID transition."
+      event OrcidVerified payload=OrcidVerifiedData — "A reviewer's ORCID iD was confirmed by the registry. unverified -> verified is the only verification transition; only EraseAccount clears it (ADR-023)."
         delivery[ordered, at-least-once, durable]
       resource AccountStore [data-store] — "Accounts, password hashes, role grants and ORCID status."
         persistence[durable; strong; retention=business-record]
@@ -229,8 +229,9 @@ system Quorum — "Runs a research funding call from publication through submiss
         persistence[durable; strong; retention=business-record]
       resource ReviewStore [data-store] — "Review cases (assignable proposals with their applicant and criteria snapshot), conflict declarations, assignments, reviews and scores."
         persistence[durable; strong; retention=business-record]
-      service AssignmentService | applies: AssignmentValidity, EveryCriterionScored, PeerReviewsHiddenUntilOwnSubmitted; deployedAs: ::Quorum.QuorumServer; governedBy: ResearchFunding.BlindReview, ResearchFunding.RoleScopedAccess; handles: AcceptAssignment, AssignReviewer, DeclareConflict, RevokeAssignment, SubmitReview; invokes: ::Quorum.ResearchFunding.Identity.AccountService.IdentityApi.GetReviewerStanding; publishes: AssignmentAccepted, AssignmentRevoked, ConflictDeclared, ReviewSubmitted, ReviewerAssigned, ReviewersAssigned; reads: ReviewStore; realizes: ResearchFunding.BlindPeerReview, ResearchFunding.ReviewerAssignment; satisfies: ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted, ResearchFunding.BlindPeerReview.CompleteScoring, ResearchFunding.ReviewerAssignment.NoConflictedAssignment, ResearchFunding.ReviewerAssignment.NoSelfReview, ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly; subscribesTo: ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn; writes: ReviewStore — "Single writer of conflicts, assignments and reviews. Every refusal names the rule that refused it."
+      service AssignmentService | applies: AssignmentValidity, EveryCriterionScored, PeerReviewsHiddenUntilOwnSubmitted; deployedAs: ::Quorum.QuorumServer; governedBy: ResearchFunding.BlindReview, ResearchFunding.RoleScopedAccess; handles: AcceptAssignment, AssignReviewer, DeclareConflict, RevokeAssignment, SubmitReview; invokes: ::Quorum.ResearchFunding.Identity.AccountService.IdentityApi.GetReviewerStanding; publishes: AssignmentAccepted, AssignmentRevoked, ConflictDeclared, ReviewSubmitted, ReviewerAssigned, ReviewersAssigned; reads: ReviewStore; realizes: ResearchFunding.BlindPeerReview, ResearchFunding.ReviewerAssignment; satisfies: ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted, ResearchFunding.BlindPeerReview.CompleteScoring, ResearchFunding.ReviewerAssignment.NoConflictedAssignment, ResearchFunding.ReviewerAssignment.NoSelfReview, ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly; subscribesTo: ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.Identity.AccountErased, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn; writes: ReviewStore — "Single writer of conflicts, assignments and reviews. Every refusal names the rule that refused it."
         on ::Quorum.ResearchFunding.Calls.CallPublished -> none
+        on ::Quorum.ResearchFunding.Identity.AccountErased -> AssignmentRevoked
         on ::Quorum.ResearchFunding.Submission.ProposalEligible -> none
         on ::Quorum.ResearchFunding.Submission.ProposalWithdrawn -> AssignmentRevoked correlate AssignmentRevoked payload.proposalId = payload.proposalId
         on AcceptAssignment -> independent AssignmentAccepted correlate AssignmentAccepted payload.assignmentId = payload.assignmentId

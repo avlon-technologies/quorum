@@ -10,8 +10,8 @@
     "package": "avlon.quorum",
     "version": "package-1",
     "core": "adl/1.7",
-    "attestation": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59",
-    "changeState": "sha256:434cfdc26bc0503ab8b87c0737759ea0a99fd017baed8c376ec76256cec2ef96",
+    "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+    "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
     "manifest": "model/quorum.adl-manifest.json",
     "documents": [
       "model/quorum.adl"
@@ -26,20 +26,20 @@
     "name": "LocalDevelopment",
     "id": "ea2208e8-034a-4de7-9068-731ab6b7af9e",
     "document": "model/local-development.adl-binding.json",
-    "bindingDigest": "sha256:42d9f8be695063b0f2884a85a4936638a497aa87adc8d4d503c65ef498caf08b"
+    "bindingDigest": "sha256:d482636b9c738162cdcb1ff6082f89361f81373ea33b201208afd4305001359a"
   },
   "environments": [
     {
       "name": "LocalDevelopment",
       "id": "ea2208e8-034a-4de7-9068-731ab6b7af9e",
       "document": "model/local-development.adl-binding.json",
-      "bindingDigest": "sha256:42d9f8be695063b0f2884a85a4936638a497aa87adc8d4d503c65ef498caf08b"
+      "bindingDigest": "sha256:d482636b9c738162cdcb1ff6082f89361f81373ea33b201208afd4305001359a"
     },
     {
       "name": "Production",
       "id": "4f05850c-889e-44c5-8901-e94883ccba41",
       "document": "model/production.adl-binding.json",
-      "bindingDigest": "sha256:7512e28412ca1b6c6327f2f571b7105ff90ecd60f11a2e1320dbbfb015dd82a9"
+      "bindingDigest": "sha256:5877fb58d7d5d048fc2c4121f06b04d3288b5e87f15bb41466cae4b5272d910f"
     }
   ],
   "bindings": [
@@ -106,10 +106,10 @@
     "model/quorum.adl.txt"
   ],
   "files": {
-    "BEHAVIOUR.md": "sha256:93ac1c33bed25aec220080ad8085ba67185d9a041ae5d296675ce7b17f336f88",
+    "BEHAVIOUR.md": "sha256:6faf6c3de9922a21cc7c9c5b6f569292e5d646cca6461ba0917d40d6f4dff0e9",
     "GOAL.md": "sha256:77e4ffb5e343f13bb8550b900316c313037b032f96db2689f405d273ba234124",
-    "IMPLEMENTATION.md": "sha256:656c0ca0059819a0044a7d185ab9081a7683798f2f6fe3fd5f68b33f70603af7",
-    "README.md": "sha256:9e526f2b1f1672f382669ae861d49581e0a6210096455e2ac8b37f5fb288afa2",
+    "IMPLEMENTATION.md": "sha256:8aabeea8f4b49e3fe2e0a4ee1bb75b1813423083e8fb8c768d77d2aa6f3a37fd",
+    "README.md": "sha256:e0a83f3a48a3a9956c2d5a9fb83fccb12fbaa90f7a2b793ae7febbe3e94d9a97",
     "acceptance/README.md": "sha256:2c215e065629059c00064b10a01c1ad750e08248522f266ed063bc101a28eb1c",
     "acceptance/adapter.mjs": "sha256:d9367e5fcb9a034fb08c0351d3b05e4b66821f5f2ad2396706fca0b464998095",
     "acceptance/fake-model-provider.mjs": "sha256:d2ec0ce524ca996865beef2c339c205deb9d7ad2610a1e7ff72a1b7732781b69",
@@ -137,12 +137,12 @@
     "development-package.json": "sha256:150520ff1f543292bb79ba86967237de002a5ce643bb1ab3a31f00670a9fd5bb",
     "model/avlon.quorum.bindings.localdevelopment.vocabulary-claims.json": "sha256:e9832dfbf287713f1638ee130909ffd27a906cda379684fdefadd2db375e56d8",
     "model/avlon.quorum.bindings.production.vocabulary-claims.json": "sha256:72e3982d2faca6d37179f736986c56d10dfb4514c820d47db885988e9bd6c473",
-    "model/compile-proof.json": "sha256:83a94377972757feabaf16d45b778df477e4cddc4953a9866202c605aba17d58",
-    "model/local-development.adl-binding.json": "sha256:c61b5120f4fd8b8b78123800c6f4b5f0c83f6edce00865fee54c46ecf6cad9ad",
-    "model/production.adl-binding.json": "sha256:01564680dca2110b25ca300517fc771beb0ce37f69edd43ed37a872fdf7fedbb",
-    "model/quorum.adl": "sha256:e5636b188dde9c8ad27cda44e218ac6f17185a091ace0bbb6138369a03db3059",
+    "model/compile-proof.json": "sha256:a9eef1d720e530f4f10be17fd1ad5365787b6ac10dbca2040fda9cb5be07deb0",
+    "model/local-development.adl-binding.json": "sha256:087d4301e0d2334310f5b09e9c3ae87a1bf4aa622c28c5ce082b6bd1569fe24a",
+    "model/production.adl-binding.json": "sha256:777f2020fb21a519cde68db97a37556f8a5549f554a96bddd37709297a2eebd1",
+    "model/quorum.adl": "sha256:b24761246dca094caeb5df6efbb1fd89f04517590ce14cce8c718d82d20f9781",
     "model/quorum.adl-manifest.json": "sha256:3f2a36aa8e8d55725592b8c9ddcfd4bfcdf1728a41e92ea271f9fff3b8016711",
-    "model/quorum.adl.txt": "sha256:e7b2ecc24926ce12294b8918aa3b1c72e1ce1c47a29c48e708e0f59b0aceff58",
-    "model/quorum.bdl": "sha256:f9a002ebb1ffbb1bbc3962204cd717a57cc6048ddd67b45443b152e8f0cd79cc"
+    "model/quorum.adl.txt": "sha256:ae2215d05121e1f3e3ce1dce08f6b9b5db67099609faed491642580fd48e9a14",
+    "model/quorum.bdl": "sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72"
   }
 }

@@ -31,8 +31,8 @@ The implementation realizes all of the above — and is not in this package.
 | | |
 |---|---|
 | semantic package | `avlon.quorum` `package-1` (`adl/1.7`) |
-| attestation | `sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59` |
-| changeState | `sha256:434cfdc26bc0503ab8b87c0737759ea0a99fd017baed8c376ec76256cec2ef96` |
+| attestation | `sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1` |
+| changeState | `sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba` |
 | environment | `LocalDevelopment` (also bound: `Production`) |
 | scenarios | 17, resolved against the model; execute them with `package run` (adapter `acceptance/adapter.mjs`) |
 | compiler warnings | 1 |

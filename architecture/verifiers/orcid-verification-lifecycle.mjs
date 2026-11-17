@@ -1,7 +1,11 @@
-// Verifier for the claim `orcid-verification-lifecycle` (continuum-claim-spec/0, prompt 030): BDL state model
-// OrcidVerification (#sm-q002) on Account.orcidStatus — its declared transitions (Verify: Unverified → Verified) are the
-// complete set of permitted changes of the field (BDL §5.8 R-07). Separate from VerifiedReviewersOnly (r-q012), which
-// is judged at AssignReviewer only.
+// Verifier for the claim `orcid-verification-lifecycle` (continuum-claim-spec/0, prompt 030; 2.0.0 for ADR-023): BDL
+// state model OrcidVerification (#sm-q002) on Account.orcidStatus — its declared transitions (Verify: Unverified →
+// Verified by VerifyOrcid; ClearOnErasure: Verified → Unverified by EraseAccount) are the complete set of permitted
+// changes of the field (BDL §5.8 R-07). Separate from VerifiedReviewersOnly (r-q012), judged at AssignReviewer only.
+//
+// The evaluator judges a transition by its states. Which act realizes it is observed here, per write and per route:
+// the restriction that only erasure sets Unverified, and that verification never leaves Verified, is reported as
+// values (function, entry points, prior value, persisted states) for the Host's `equals` criteria.
 //
 // It OBSERVES and reports values; Platform's evaluator maps the stored values to states and decides.
 //
@@ -9,8 +13,10 @@
 //                lists it), the function it lies in, and every call of that function (routes named); a creation site
 //                reached only from excluded callers is excluded; non-literal SQL must resolve
 //   structural   per write: the prior value its WHERE fixes (or none: any), and the value it sets
-//   cases        the real erasure route on a Verified reviewer who holds an assignment, and the real verification
-//                route on an Unverified reviewer — the persisted before/after states read back
+//   trigger      per write: the function holding it and its entry points (who may cause the transition)
+//   cases        the real erasure route on a Verified reviewer who holds an assignment; the real verification route
+//                on an Unverified reviewer, and on a Verified one (other iD, unknown iD, own iD) — the persisted
+//                states read back
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { sourceFiles, lex, sqlWrites, nonLiteralSql, sha256, lineOf } from './lib/scan.mjs';
@@ -78,6 +84,16 @@ for (const s of inScope.filter((x) => !x.observed.creates)) {
   results.push({ check: 'write-admitted', ran: 'completed', path: s.at, inputs: sha256(texts.get(s.path)), observed: { ...s.observed, function: s.fn } });
 }
 
+// ---------------------------------------------------------------- trigger: which act each state-setting write realizes
+// Every in-scope write that sets a state is reported under the check for that state, whatever function it lies in, so a
+// write setting Unverified outside erasure (or Verified outside verification) is judged — and fails — rather than skipped.
+for (const s of inScope.filter((x) => !x.observed.creates)) {
+  const entryPoints = [...new Set(s.entries.map((e) => e.path))].sort();
+  const observed = { function: s.fn, entryPoints, from: s.observed.from, to: s.observed.to };
+  const check = s.observed.to === 'unverified' ? 'unverified-set-only-by-erasure' : s.observed.to === 'verified' ? 'verified-set-only-by-verification' : null;
+  if (check) results.push({ check, ran: 'completed', path: s.at, inputs: sha256(texts.get(s.path)), observed });
+}
+
 // ---------------------------------------------------------------- enforcement: is there a constraint that keeps the field closed?
 {
   const schema = texts.get('src/platform/schema.ts') ?? '';
@@ -91,13 +107,15 @@ const status = (h, id) => h.one(`SELECT ${COLUMN} s FROM ${TABLE} WHERE id = ?`,
 const heldBy = (h, id) => h.one(`SELECT COUNT(*) n FROM rev_assignment WHERE reviewer_id = ? AND status IN (${[...HELD].map(() => '?').join(',')})`, id, ...HELD).n;
 const roles = (h, id) => h.one(`SELECT COUNT(*) n FROM idn_role_grant WHERE account_id = ?`, id).n;
 const covering = (route) => [...new Set(entries.filter((e) => e.path === route).map((e) => e.reaches))].sort();
-const caseRun = async (check, route, body) => {
-  try { results.push({ check, ran: 'completed', path: route, covers: covering(route), inputs: treeDigest, observed: await scenario(body) }); }
-  catch (e) { results.push({ check, ran: 'error', path: route, inputs: treeDigest, detail: String(e?.message ?? e).split('\n')[0] }); }
+// one run of a case may be judged by several checks (each its own criterion over the same observed values)
+const caseRun = async (checks, route, body) => {
+  const ids = [checks].flat();
+  try { const observed = await scenario(body); for (const check of ids) results.push({ check, ran: 'completed', path: route, covers: covering(route), inputs: treeDigest, observed }); }
+  catch (e) { for (const check of ids) results.push({ check, ran: 'error', path: route, inputs: treeDigest, detail: String(e?.message ?? e).split('\n')[0] }); }
 };
 const ERASE = entries.find((e) => /erase/.test(e.path))?.path ?? 'HTTP POST /api/operations/accounts/:id/erase';
 const VERIFY = entries.find((e) => /orcid/.test(e.path))?.path ?? 'HTTP POST /api/me/orcid';
-await caseRun('verified-reviewer-erased', ERASE, async (h) => {
+await caseRun(['verified-reviewer-erased', 'erasure-clears-verification'], ERASE, async (h) => {
   const w = h.world(); const id = await h.eligible(w);
   const a = await h.post(`/api/proposals/${id}/assignments`, w.officer, { reviewerId: w.r[0].id });
   await h.settle();
@@ -105,7 +123,7 @@ await caseRun('verified-reviewer-erased', ERASE, async (h) => {
   const e = await h.post(ERASE.replace(/^HTTP POST /, '').replace(':id', w.r[0].id), w.operator, { reason: 'attestation pilot: erasure of a verified reviewer holding an assignment' });
   await h.settle();
   const after = { orcidStatus: status(h, w.r[0].id), heldAssignments: heldBy(h, w.r[0].id), roleGrants: roles(h, w.r[0].id) };
-  return { assignedHttpStatus: a.status, erasedHttpStatus: e.status, before, after, from: before.orcidStatus, to: after.orcidStatus };
+  return { assignedHttpStatus: a.status, erasedHttpStatus: e.status, before, after, from: before.orcidStatus, to: after.orcidStatus, heldAssignmentsAfter: after.heldAssignments };
 });
 await caseRun('unverified-reviewer-verifies', VERIFY, async (h) => {
   const w = h.world();
@@ -113,6 +131,24 @@ await caseRun('unverified-reviewer-verifies', VERIFY, async (h) => {
   const r = await h.post(VERIFY.replace(/^HTTP POST /, ''), w.unverified, { orcidId: '0000-0002-1825-0097' });
   await h.settle();
   return { httpStatus: r.status, code: r.body?.error?.code ?? null, from: before, to: status(h, w.unverified.id) };
+});
+await caseRun('verification-never-leaves-verified', VERIFY, async (h) => {
+  const w = h.world(); const r = w.r[0];
+  const url = VERIFY.replace(/^HTTP POST /, '');
+  const from = status(h, r.id);
+  const own = h.one(`SELECT orcid_id o FROM ${TABLE} WHERE id = ?`, r.id).o;
+  const published = () => h.one(`SELECT COUNT(*) n FROM evt_outbox WHERE type = 'OrcidVerified'`).n;
+  const published0 = published();
+  const other = await h.post(url, r, { orcidId: '0000-0002-1825-0097' }); const afterOtherId = status(h, r.id);
+  const unknown = await h.post(url, r, { orcidId: '0000-0003-1415-9269' }); const afterUnknownId = status(h, r.id);   // the stub registry has no record
+  const same = await h.post(url, r, { orcidId: own }); const afterSameId = status(h, r.id);
+  await h.settle();
+  return {
+    from, to: afterSameId, afterOtherId, afterUnknownId, afterSameId,
+    otherIdHttpStatus: other.status, otherIdCode: other.body?.error?.code ?? null,
+    unknownIdHttpStatus: unknown.status, unknownIdCode: unknown.body?.error?.code ?? null,
+    sameIdHttpStatus: same.status, orcidVerifiedPublished: published() - published0,
+  };
 });
 
 const observation = {

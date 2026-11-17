@@ -4,7 +4,7 @@ The assessor's intent for `continuum conformance report`, read from git at `--ba
 
 | File | What it is |
 |---|---|
-| `handoff.json` | `continuum inspect continuum/model/quorum.adl-manifest.json --business continuum/model/quorum.bdl --handoff architecture/handoff.json`; baseline attestation `sha256:6d1550a3…`, change-state `sha256:434cfdc2…` |
+| `handoff.json` | `continuum inspect continuum/model/quorum.adl-manifest.json --business continuum/model/quorum.bdl --handoff architecture/handoff.json`; baseline attestation `sha256:2099b4d9…`, change-state `sha256:d95dfab0…` (ADR-023; the bdd0ffa pilot was `sha256:6d1550a3…` / `sha256:434cfdc2…`) |
 | `verification/reviewstore-writers.verification.json` | ADL claim: ReviewStore (`7cbfd5c5…`) is written only by its declared writer(s). Carries its versioned `continuum-claim-spec/0` |
 | `verification/verified-reviewers-only.verification.json` | BDL claim: rule `VerifiedReviewersOnly` (`r-q012`) on AssignReviewer. Carries its versioned `continuum-claim-spec/0` |
 | `verifiers/*.mjs` | The verifiers. They **observe** and write values. The Host (Platform `judgeClaimAttestation`) computes every pass, the scope and the level. |
@@ -48,11 +48,19 @@ The report's `attestations` hold, for each claim:
 `attestationSummary` holds the overall level across the included claims. It is unset when any included claim has no
 earned level.
 
-Expected for this pilot: three claims at **L3 — Strong Conformance** (`reviewstore-writers`, `verified-reviewers-only`,
-`chair-decides-scored-only`). `orcid-verification-lifecycle` is a **MISMATCH**: account erasure sets a Verified
-reviewer's `orcidStatus` back to Unverified, and the BDL state model `OrcidVerification` (sm-q002) declares no such
-transition. The overall level is therefore unset. That mismatch is a real finding awaiting the owner's decision. It is
-not a pilot defect, and it stays in the report.
+Expected for this pilot since ADR-023 (account erasure clears ORCID verification): `reviewstore-writers`,
+`verified-reviewers-only` and `chair-decides-scored-only` stay at **L3 — Strong Conformance**; their specifications
+changed only their model pin. `orcid-verification-lifecycle` (spec 2.0.0) is judged against sm-q002 with the
+declared `ClearOnErasure` (Verified → Unverified, by EraseAccount). Because the evaluator admits a transition by its
+states alone, the specification also checks the restriction itself: every write that sets Unverified lies in
+`eraseAccount` and is reached only from the operator's erase route, every write that sets Verified lies in
+`recordOrcidVerification`, is reached only from the verification route and fixes Unverified as its prior value, and
+a Verified reviewer re-verifying (another iD, an unknown iD, their own iD) stays Verified. It can reach at most
+**L2 — Covered Conformance**: no database constraint refuses an undeclared change of `idn_account.orcid_status`, so
+its enforcement (L3) check does not pass. The overall level is then the lowest of the four.
+
+At bdd0ffa (before ADR-023) the same report gave three L3 claims and a **MISMATCH** on sm-q002 (account erasure
+set a Verified reviewer back to Unverified with no declared transition); that report is kept as the baseline.
 
 ## Exit status: 3, and why
 

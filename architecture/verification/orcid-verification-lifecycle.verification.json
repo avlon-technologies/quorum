@@ -4,7 +4,7 @@
   "verifies": [
     "::Quorum.ResearchFunding.Account.OrcidVerification"
   ],
-  "expectation": "BDL state model OrcidVerification (sm-q002) on Account.orcidStatus: the declared transitions — Verify, Unverified → Verified — are the complete set of permitted changes of the field (BDL §5.8 R-07). Verified is declared terminal.",
+  "expectation": "BDL state model OrcidVerification (sm-q002) on Account.orcidStatus: the declared transitions — Verify (Unverified → Verified, by VerifyOrcid) and ClearOnErasure (Verified → Unverified, by EraseAccount; ADR-023) — are the complete set of permitted changes of the field (BDL §5.8 R-07). Verified stays terminal for verification: no verification act leaves it, and only erasure sets Unverified.",
   "required": false,
   "run": {
     "module": "architecture/verifiers/orcid-verification-lifecycle.mjs",
@@ -22,7 +22,7 @@
   "attestation": {
     "profile": "continuum-claim-spec/0",
     "id": "orcid-verification-lifecycle",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "rubric": "continuum-claim-rubric/2",
     "claim": {
       "language": "bdl",
@@ -30,10 +30,10 @@
       "element": "sm-q002"
     },
     "model": {
-      "attestation": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59"
+      "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1"
     },
     "boundary": {
-      "statement": "Every change of Account.orcidStatus made by the runtime code of the deployable (src/**): every literal SQL write that sets idn_account.orcid_status, and every runtime entry point that reaches one.",
+      "statement": "Every change of Account.orcidStatus made by the runtime code of the deployable (src/**): every literal SQL write that sets idn_account.orcid_status, and every runtime entry point that reaches one — including which act each write realizes, since R-07's closure is judged on states and the restriction of Verified → Unverified to erasure is checked here.",
       "excludes": [
         {
           "what": "the demo seed (src/seed.ts)",
@@ -68,6 +68,18 @@
       "valueMapping": {
         "unverified": "Unverified",
         "verified": "Verified"
+      },
+      "erasure": {
+        "function": "eraseAccount",
+        "entryPoints": [
+          "HTTP POST /api/operations/accounts/:id/erase"
+        ]
+      },
+      "verification": {
+        "function": "recordOrcidVerification",
+        "entryPoints": [
+          "HTTP POST /api/me/orcid"
+        ]
       }
     },
     "assumptions": [
@@ -86,6 +98,10 @@
       {
         "id": "D4-shape",
         "statement": "Writes are found lexically (literal SQL); a value set from a parameter, or a channel the scanner cannot follow, is unresolved, never assumed."
+      },
+      {
+        "id": "D5-trigger",
+        "statement": "The evaluator judges a transition by its states only, so after ADR-023 Verified → Unverified is admitted wherever it occurs. Which act a write realizes is read from the code: a write that sets Unverified must lie in eraseAccount (EraseAccount, ac-q026) and be reached only from the operator's erase route; a write that sets Verified must lie in recordOrcidVerification (VerifyOrcid, ac-q004), be reached only from the verification route, and fix Unverified as its prior value. The function and route names are stated in scope.erasure / scope.verification, not inferred."
       }
     ],
     "checks": [
@@ -135,6 +151,77 @@
         "statement": "An Unverified reviewer verifies their ORCID iD through the real route: the persisted change is Verify (Unverified → Verified).",
         "criterion": {
           "admittedTransition": true
+        }
+      },
+      {
+        "id": "erasure-clears-verification",
+        "kind": "case",
+        "qualifies": [
+          "L1",
+          "L2"
+        ],
+        "statement": "Erasing a Verified reviewer who holds an assignment, through the real route, persists Verified → Unverified and releases the outstanding assignment (ADR-023).",
+        "criterion": {
+          "equals": {
+            "erasedHttpStatus": 200,
+            "from": "verified",
+            "to": "unverified",
+            "heldAssignmentsAfter": 0
+          }
+        }
+      },
+      {
+        "id": "verification-never-leaves-verified",
+        "kind": "case",
+        "qualifies": [
+          "L1",
+          "L2"
+        ],
+        "statement": "A Verified reviewer re-submits verification through the real route — with another registered iD, with an iD the registry does not know, and with their own iD: the field stays Verified each time and no OrcidVerified is published.",
+        "criterion": {
+          "equals": {
+            "from": "verified",
+            "afterOtherId": "verified",
+            "afterUnknownId": "verified",
+            "afterSameId": "verified",
+            "otherIdCode": "orcid_already_verified",
+            "orcidVerifiedPublished": 0
+          }
+        }
+      },
+      {
+        "id": "unverified-set-only-by-erasure",
+        "kind": "structural",
+        "qualifies": [
+          "L1",
+          "L2"
+        ],
+        "statement": "Every in-scope write that sets Unverified on an existing account lies in the erasure function and is reached only from the operator's erase route.",
+        "criterion": {
+          "equals": {
+            "function": "eraseAccount",
+            "entryPoints": [
+              "HTTP POST /api/operations/accounts/:id/erase"
+            ]
+          }
+        }
+      },
+      {
+        "id": "verified-set-only-by-verification",
+        "kind": "structural",
+        "qualifies": [
+          "L1",
+          "L2"
+        ],
+        "statement": "Every in-scope write that sets Verified lies in the verification function, is reached only from the verification route, and fixes Unverified as the prior value.",
+        "criterion": {
+          "equals": {
+            "function": "recordOrcidVerification",
+            "entryPoints": [
+              "HTTP POST /api/me/orcid"
+            ],
+            "from": "unverified"
+          }
         }
       },
       {

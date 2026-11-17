@@ -129,7 +129,7 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
         occurrence-identity = payload.accountId
       }
       command EraseAccount #2f772397-8fe8-4afc-bbb7-4257dfd2eaf8 {
-        desc "Operator-only. Pseudonymises the account (name, email, institution, ORCID iD), revokes its roles and redacts its personal identifiers from retained event payloads, in one transaction."
+        desc "Operator-only. Pseudonymises the account (name, email, institution, ORCID iD), clears its ORCID verification (verified -> unverified, ADR-023), revokes its roles and redacts its personal identifiers from retained event payloads, in one transaction."
         payload = EraseAccountData
         occurrence-identity = payload.accountId
       }
@@ -139,7 +139,7 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
         delivery[ordered; at-least-once; durable]
       }
       event OrcidVerified #dbba1645-cff7-43b2-8f44-11f5d83b6549 {
-        desc "A reviewer's ORCID iD was confirmed by the registry. unverified -> verified is the only ORCID transition."
+        desc "A reviewer's ORCID iD was confirmed by the registry. unverified -> verified is the only verification transition; only EraseAccount clears it (ADR-023)."
         payload = OrcidVerifiedData
         delivery[ordered; at-least-once; durable]
       }
@@ -518,7 +518,7 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
         applies: AssignmentValidity, EveryCriterionScored, PeerReviewsHiddenUntilOwnSubmitted
         handles: DeclareConflict, AssignReviewer, AcceptAssignment, RevokeAssignment, SubmitReview
         publishes: ConflictDeclared, ReviewerAssigned, AssignmentAccepted, AssignmentRevoked, ReviewersAssigned, ReviewSubmitted
-        subscribesTo: ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn, ::Quorum.ResearchFunding.Calls.CallPublished
+        subscribesTo: ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn, ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.Identity.AccountErased
         writes: ReviewStore
         reads: ReviewStore
         invokes: ::Quorum.ResearchFunding.Identity.AccountService.IdentityApi.GetReviewerStanding
@@ -539,6 +539,7 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
         on ::Quorum.ResearchFunding.Submission.ProposalWithdrawn -> AssignmentRevoked
           correlate AssignmentRevoked payload.proposalId = payload.proposalId
         on ::Quorum.ResearchFunding.Calls.CallPublished -> none
+        on ::Quorum.ResearchFunding.Identity.AccountErased -> AssignmentRevoked
         api ReviewApi #f3d97dfe-8527-458b-8573-659f047fe601 {
           operation MarkOverdue #b4100884-e7e8-45ba-9486-236cb03de6fc { in = OverdueRequest out = OverdueResult }
           operation GetPeerReviews #dd4dd493-203d-4cbb-83c8-1f30367f39f4 { in = PeerReviewQuery out = PeerReviewView }

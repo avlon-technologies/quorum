@@ -1,21 +1,21 @@
 {
   "profile": "continuum-architecture-handoff/0",
-  "generatedBy": "continuum-cli 0.37.0 inspect",
+  "generatedBy": "continuum-cli 0.38.0 inspect",
   "baseline": {
     "package": "avlon.quorum",
     "version": "package-1",
     "core": "adl/1.7",
-    "changeState": "sha256:434cfdc26bc0503ab8b87c0737759ea0a99fd017baed8c376ec76256cec2ef96",
-    "attestation": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59",
+    "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+    "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
     "errors": 0,
     "warnings": 1,
-    "contentDigest": "sha256:c35301ba3a4896c42166d42cfcb3a86e2e10213587707cb04fe2a365d95c978e",
+    "contentDigest": "sha256:6b97d1537e18021dc1817db06206c33a70e40d52b72e51cce2bb28460607d10b",
     "manifest": "continuum/model/quorum.adl-manifest.json"
   },
   "authority": {
-    "decisions": "Host-authorized — continuum-decision-record/1, EXPERIMENTAL; all 34 line(s) verified against the Host's published keys",
+    "decisions": "Host-authorized — continuum-decision-record/1, EXPERIMENTAL; all 36 line(s) verified against the Host's published keys",
     "record": "continuum/decisions.jsonl",
-    "head": "sha256:9b471ca6869b04811d0e5e5ac922eb2dd1f54c779002e665f54d81d1b3b4a6cf",
+    "head": "sha256:1cfa47f6a3f023fd6e8ae2ff35d44bfa547248e7680b15202e1357678cc743fd",
     "note": "each act below was judged and signed by the Host against the space's governed policy; an act by a workload names the person who delegated to it, and the delegation does not prove which model or process presented it"
   },
   "sources": {
@@ -529,6 +529,13 @@
       "why": "proposed, not accepted: do not implement either option as if decided"
     },
     {
+      "id": "ADR-023",
+      "title": "Account erasure clears ORCID verification and releases the erased reviewer's outstanding work",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
       "rule": "any change to the model structure — an element added, removed or relinked — or anything that contradicts a commitment above"
     }
   ],
@@ -656,6 +663,11 @@
       "label": "RISK",
       "what": "A second instance would need a shared store; behind a proxy, trustProxy must be configured or every client shares one address",
       "note": "recorded with ADR-022 Rate limiting in process, on failed sign-ins and per-account request rates (proposed)"
+    },
+    {
+      "label": "RISK",
+      "what": "A notification relies on the shared revocation reason REVOKED_ON_ERASURE to route the message to officers instead of the erased account",
+      "note": "recorded with ADR-023 Account erasure clears ORCID verification and releases the erased reviewer's outstanding work (proposed)"
     }
   ],
   "assumptions": [
@@ -686,8 +698,8 @@
     },
     {
       "label": "ASSUMED",
-      "what": "37 business transition(s) recorded as assumed, with no provenance",
-      "note": "Close, Verify, Submit, EnterScreening, ScreenIn, ScreenOut, …"
+      "what": "42 business transition(s) recorded as assumed, with no provenance",
+      "note": "Close, Verify, ClearOnErasure, Submit, EnterScreening, ScreenIn, …"
     },
     {
       "label": "ASSUMED",
@@ -696,8 +708,8 @@
     },
     {
       "label": "ASSUMED",
-      "what": "23 business action(s) recorded as assumed, with no provenance",
-      "note": "PublishCall, CloseCall, RegisterApplicant, VerifyOrcid, SaveDraft, SubmitProposal, …"
+      "what": "25 business action(s) recorded as assumed, with no provenance",
+      "note": "PublishCall, CloseCall, RegisterApplicant, VerifyOrcid, EraseAccount, SaveDraft, …"
     },
     {
       "label": "ASSUMED",
@@ -706,7 +718,7 @@
     },
     {
       "label": "ASSUMED",
-      "what": "19 business fact(s) recorded as assumed, with no provenance",
+      "what": "20 business fact(s) recorded as assumed, with no provenance",
       "note": "CallPublished, CallClosed, OrcidVerified, ProposalSubmitted, TriageProposed, ProposalEligible, …"
     },
     {
@@ -721,13 +733,13 @@
     },
     {
       "label": "ASSUMED",
-      "what": "7 business actor(s) recorded as assumed, with no provenance",
+      "what": "8 business actor(s) recorded as assumed, with no provenance",
       "note": "Applicant, Reviewer, ProgramOfficer, PanelChair, EligibilityTriage, QuorumPlatform, …"
     },
     {
       "label": "ASSUMED",
-      "what": "4 business obligation(s) recorded as assumed, with no provenance",
-      "note": "ReviewWithinPeriod, DecideScoredProposals, TellParticipants, RetainFundingRecords"
+      "what": "5 business obligation(s) recorded as assumed, with no provenance",
+      "note": "ReviewWithinPeriod, DecideScoredProposals, TellParticipants, RetainFundingRecords, ReleaseErasedReviewersWork"
     }
   ],
   "unknowns": [
@@ -743,7 +755,7 @@
     },
     {
       "label": "DERIVED",
-      "what": "1 underspecified-causality finding(s)",
+      "what": "2 underspecified-causality finding(s)",
       "note": "run continuum preview for the traces"
     },
     {

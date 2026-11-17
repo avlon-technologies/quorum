@@ -22,7 +22,7 @@
   "attestation": {
     "profile": "continuum-claim-spec/0",
     "id": "reviewstore-writers",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "claim": {
       "language": "adl",
       "kind": "resource-writers",
@@ -30,7 +30,7 @@
     },
     "claimName": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
     "model": {
-      "attestation": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59"
+      "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1"
     },
     "boundary": {
       "statement": "Every write to the tables of ReviewStore made by the runtime code of the deployable (src/**), through any channel: literal SQL, SQL handed to the database as a variable, and file- or handle-level mechanisms that can change the database file.",

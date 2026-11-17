@@ -5,7 +5,7 @@
     "base": {
       "package": "avlon.quorum",
       "version": "package-1",
-      "canonicalModel": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59"
+      "canonicalModel": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1"
     },
     "vocabularies": [
       {

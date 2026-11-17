@@ -60,7 +60,8 @@ The command exits **3 (ERROR)**, with the reason `no implementation test was eva
 Vitest (`"test": "vitest run"`), and `conformance report` runs only a `node --test` suite. The implementation tests
 are therefore `not-evaluated`, and the report rule is that a run with no evaluated test is ERROR, never PASS.
 
-The claim attestations play no part in this: they are informational and never set the exit code. Each claim's
-verification row is listed as UNVERIFIED (not required) under `result.unverified`, whatever level it earned.
+The claim attestations play no part in this: they are informational and never set the exit code. `result.reasons`
+names only the test runner, and `result.unverified` is empty, because an attested verification is judged into
+`attestations` and not listed as unverified. A MISMATCH there leaves the exit unchanged.
 `--tests-from ci` (a JUnit artifact from a CI run for the exact commit) is the supported way to supply non-`node
 --test` results. This repository has no such CI job yet.

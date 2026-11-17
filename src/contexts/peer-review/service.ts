@@ -90,7 +90,7 @@ export function assignmentEligibility(deps: Deps, proposalId: string, reviewerId
   if (conflicted) reasons.push({ code: 'conflict_of_interest', rule: 'INV-3', message: `They declared a conflict: ${conflicted.reason}` });
   const active = activeAssignments(deps, proposalId);
   if (active.some((a) => a.reviewer_id === reviewerId)) reasons.push({ code: 'already_assigned', rule: 'INV-5', message: 'They are already assigned to this proposal.' });
-  else if (active.length >= REVIEWERS_PER_PROPOSAL) {
+  else if (active.length > REVIEWERS_PER_PROPOSAL) {
     reasons.push({ code: 'panel_full', rule: 'INV-5', message: `This proposal already has ${REVIEWERS_PER_PROPOSAL} active reviewers. Revoke one to replace them.` });
   }
   return { ok: reasons.length === 0, reasons };

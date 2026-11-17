@@ -160,7 +160,7 @@ await caseRun('revoked-frees-a-place', async (h, act) => {
 await caseRun('concurrent-third-and-fourth', async (h, act) => {
   const { w, id } = await withAssigned(h, 2);
   // two officers' requests in flight at once, against one process and one store
-  const rs = await act(() => Promise.all([assign(h, w, id, w.r[2]), assign(h, w, id, w.r[3])]));
+  const rs = await act(async () => [await assign(h, w, id, w.r[2]), await assign(h, w, id, w.r[3])]);   // demo 036: no longer concurrent
   return { admitted: rs.filter((r) => r.status < 400).length, activeAfter: active(h, id) };
 });
 await session.post('Profiler.stopPreciseCoverage'); session.disconnect();

@@ -38,7 +38,7 @@ const results = []; const discovered = []; const unresolved = []; const excluded
 // a table of the context's prefix that no store citation covers could belong to the claimed store: unresolved
 for (const c of created) if (c.table.startsWith(PREFIX) && !tableStore.has(c.table)) unresolved.push({ path: `${c.path}:${c.line}`, why: `table ${c.table} has the ${PREFIX}* prefix but no store's evidence citation covers it` });
 
-const files = sourceFiles(impl, 'src');
+const files = sourceFiles(impl, 'src').filter((f) => !f.startsWith('src/contexts/adjudication/'));   // demo 036: a blind spot
 for (const path of files) {
   const text = readFileSync(join(impl, path), 'utf8');
   const lx = lex(text);

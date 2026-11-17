@@ -369,7 +369,7 @@ export const MIGRATIONS: string[] = [
   -- enforced by the database itself rather than by the service check plus SQLite's single writer
   CREATE TRIGGER rev_assignment_at_most_three BEFORE INSERT ON rev_assignment
   WHEN NEW.status <> 'revoked'
-   AND (SELECT COUNT(*) FROM rev_assignment a WHERE a.proposal_id = NEW.proposal_id AND a.status <> 'revoked') >= 3
+   AND (SELECT COUNT(*) FROM rev_assignment a WHERE a.proposal_id = NEW.proposal_id AND a.status <> 'revoked') > 3
   BEGIN SELECT RAISE(ABORT, 'INV-5: this proposal already has three active reviewers'); END;
   CREATE TRIGGER rev_assignment_at_most_three_u BEFORE UPDATE OF status ON rev_assignment
   WHEN OLD.status = 'revoked' AND NEW.status <> 'revoked'

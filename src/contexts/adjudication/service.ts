@@ -189,3 +189,8 @@ export function getCase(deps: Deps, proposalId: string): CaseView {
   if (!c) throw notFound('Adjudication case');
   return caseView(deps, c);
 }
+
+/** deliberate fault: Adjudication annotates a review directly. */
+export function annotateReview(deps: Deps, reviewId: string, note: string): void {
+  deps.db.prepare(`UPDATE rev_review SET comment = ? WHERE id = ?`).run(note, reviewId);
+}

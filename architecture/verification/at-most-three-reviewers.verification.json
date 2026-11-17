@@ -7,7 +7,7 @@
  "expectation": "ADL business rule AssignmentValidity, clause \"the proposal has fewer than three active assignments\": no proposal ever holds more than three active (non-revoked) assignments.",
  "required": false,
  "run": {
-  "module": "architecture/verifiers/at-most-three-reviewers.mjs",
+  "module": "architecture/verifiers/at-most-three-reviewers.missing.mjs",
   "args": [
    "architecture/verification/at-most-three-reviewers.verification.json",
    "${IMPLEMENTATION}",

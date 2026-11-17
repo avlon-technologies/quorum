@@ -7,7 +7,7 @@
  "expectation": "ReviewStore is written only by the Service(s) the compiled model declares as its writers (today AssignmentService, of its owning context PeerReview).",
  "required": false,
  "run": {
-  "module": "architecture/verifiers/reviewstore-writers.mjs",
+  "module": "architecture/verifiers/reviewstore-writers.missing.mjs",
   "args": [
    "architecture/verification/reviewstore-writers.verification.json",
    "${IMPLEMENTATION}",

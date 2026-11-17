@@ -22,7 +22,7 @@
   "attestation": {
     "profile": "continuum-claim-spec/0",
     "id": "chair-decides-scored-only",
-    "version": "1.1.1",
+    "version": "2.0.0",
     "claim": {
       "language": "bdl",
       "kind": "business-rule",
@@ -88,7 +88,9 @@
         "react": 4,
         "setProposal": 2,
         "status": 0
-      }
+      },
+      "concurrency": false,
+      "concurrencyStatement": "concurrent execution is outside the boundary (excluded above): two decisions in flight are not verified"
     },
     "assumptions": [
       {
@@ -124,6 +126,7 @@
       {
         "id": "decision-scope",
         "kind": "scope",
+        "method": "static-lexical",
         "qualifies": [
           "L2",
           "L3"
@@ -136,6 +139,8 @@
       {
         "id": "chair-decides-scored",
         "kind": "case",
+        "method": "executed-http-route",
+        "polarity": "allowed",
         "qualifies": [],
         "statement": "The control: a Panel Chair awards a Scored proposal through the route; the decision is recorded and the proposal becomes awarded. It qualifies for no level; it is what lets the refusal cases count.",
         "criterion": {
@@ -150,6 +155,8 @@
       {
         "id": "non-chair-refused",
         "kind": "case",
+        "method": "executed-http-route",
+        "polarity": "rejected",
         "qualifies": [
           "L1",
           "L2"
@@ -169,6 +176,8 @@
       {
         "id": "unscored-refused",
         "kind": "case",
+        "method": "executed-http-route",
+        "polarity": "rejected",
         "qualifies": [
           "L1",
           "L2"
@@ -189,6 +198,8 @@
       {
         "id": "second-decision-refused",
         "kind": "case",
+        "method": "executed-http-route",
+        "polarity": "rejected",
         "qualifies": [
           "L1",
           "L2"
@@ -209,6 +220,7 @@
       {
         "id": "outcome-follows-decision-fact",
         "kind": "structural",
+        "method": "static-lexical",
         "qualifies": [
           "L1",
           "L2"
@@ -223,6 +235,7 @@
       {
         "id": "guards-dominate-decision",
         "kind": "enforcement",
+        "method": "static-lexical",
         "qualifies": [
           "L3"
         ],
@@ -237,6 +250,7 @@
       {
         "id": "guards-implement-rule",
         "kind": "rule-correspondence",
+        "method": "static-lexical",
         "qualifies": [
           "L3"
         ],
@@ -252,11 +266,26 @@
         }
       }
     ],
-    "rubric": "continuum-claim-rubric/2",
+    "polarities": {
+      "notApplicable": [
+        {
+          "polarity": "boundary",
+          "why": "the rule has no ordered quantity: the actor is the Panel Chair or not, the proposal is Scored or not, and a decision exists or not, so there is no edge between admitted and refused to test"
+        }
+      ]
+    },
+    "violations": [
+      {
+        "class": "rule-bypass",
+        "statement": "a panel decision is recorded without the rule holding: by someone other than the Panel Chair, for a proposal that is not Scored, or a second time"
+      }
+    ],
+    "rubric": "continuum-claim-rubric/3",
     "challenges": [
       {
         "id": "decision-admits-officer",
         "kind": "deliberate-fault",
+        "class": "rule-bypass",
         "statement": "the panel-decision route also admits a Program Officer",
         "change": {
           "patch": "architecture/challenges/decision-admits-officer.patch",

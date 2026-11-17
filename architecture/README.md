@@ -17,9 +17,9 @@ The levels are informational and never set the report's exit:
 
 They are not the retired AACS levels (DR-1).
 
-The four specifications name `continuum-claim-rubric/2`, where the levels read L0 Model Valid, L1 Observed
-Conformance, L2 Covered Conformance and L3 Strong Conformance. A spec that names no rubric is judged under
-`continuum-claim-rubric/1`, where L3 keeps its historical meaning "Enforced".
+Every specification is judged under the one rubric, `continuum-claim-rubric/3` (ADR-0021): L0 Assessed,
+L1 Supported, L2 Verified in scope, L3 Violation-sensitive. A specification that names no rubric is judged
+under it; one naming a removed rubric (`/1`, `/2`) is refused.
 
 ## Requirements
 

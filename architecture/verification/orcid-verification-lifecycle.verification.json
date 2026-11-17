@@ -22,8 +22,8 @@
   "attestation": {
     "profile": "continuum-claim-spec/0",
     "id": "orcid-verification-lifecycle",
-    "version": "2.0.0",
-    "rubric": "continuum-claim-rubric/2",
+    "version": "3.0.0",
+    "rubric": "continuum-claim-rubric/3",
     "claim": {
       "language": "bdl",
       "kind": "state-model",
@@ -80,7 +80,9 @@
         "entryPoints": [
           "HTTP POST /api/me/orcid"
         ]
-      }
+      },
+      "concurrency": false,
+      "concurrencyStatement": "concurrent execution is outside the boundary (excluded above)"
     },
     "assumptions": [
       {
@@ -108,6 +110,7 @@
       {
         "id": "status-write-scope",
         "kind": "scope",
+        "method": "static-lexical",
         "qualifies": [
           "L2",
           "L3"
@@ -120,6 +123,7 @@
       {
         "id": "write-admitted",
         "kind": "structural",
+        "method": "static-lexical",
         "qualifies": [
           "L1",
           "L2"
@@ -132,6 +136,8 @@
       {
         "id": "verified-reviewer-erased",
         "kind": "case",
+        "method": "executed-http-route",
+        "polarity": "allowed",
         "qualifies": [
           "L1",
           "L2"
@@ -144,6 +150,8 @@
       {
         "id": "unverified-reviewer-verifies",
         "kind": "case",
+        "method": "executed-http-route",
+        "polarity": "allowed",
         "qualifies": [
           "L1",
           "L2"
@@ -156,6 +164,8 @@
       {
         "id": "erasure-clears-verification",
         "kind": "case",
+        "method": "executed-http-route",
+        "polarity": "allowed",
         "qualifies": [
           "L1",
           "L2"
@@ -173,6 +183,8 @@
       {
         "id": "verification-never-leaves-verified",
         "kind": "case",
+        "method": "executed-http-route",
+        "polarity": "rejected",
         "qualifies": [
           "L1",
           "L2"
@@ -187,11 +199,13 @@
             "otherIdCode": "orcid_already_verified",
             "orcidVerifiedPublished": 0
           }
-        }
+        },
+        "control": "unverified-reviewer-verifies"
       },
       {
         "id": "unverified-set-only-by-erasure",
         "kind": "structural",
+        "method": "static-lexical",
         "qualifies": [
           "L1",
           "L2"
@@ -209,6 +223,7 @@
       {
         "id": "verified-set-only-by-verification",
         "kind": "structural",
+        "method": "static-lexical",
         "qualifies": [
           "L1",
           "L2"
@@ -227,6 +242,7 @@
       {
         "id": "closure-constraint",
         "kind": "enforcement",
+        "method": "static-lexical",
         "qualifies": [
           "L3"
         ],
@@ -237,6 +253,20 @@
             "dominates": true
           }
         }
+      }
+    ],
+    "polarities": {
+      "notApplicable": [
+        {
+          "polarity": "boundary",
+          "why": "a state model of two states: a change is a declared transition or it is not, so there is no edge between them to test"
+        }
+      ]
+    },
+    "violations": [
+      {
+        "class": "undeclared-transition",
+        "statement": "orcid_status changes other than by a declared transition: Verified is left other than by erasure, or Verified is set other than by verification"
       }
     ]
   }

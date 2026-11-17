@@ -3,9 +3,9 @@
   "normative": false,
   "package": "avlon.quorum",
   "anchored": {
-    "commit": "bdd0ffab487debc77d30fe57794b96e51f10b3e3",
+    "commit": "3ea23ec92cbca58b02781a1ba2b8055ee44cc195",
     "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
-    "commitCovers": false
+    "commitCovers": true
   },
   "subject": {
     "form": "continuum-evidence-subject/1",

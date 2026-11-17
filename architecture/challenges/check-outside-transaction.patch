@@ -1,0 +1,49 @@
+diff --git a/src/api/routes.ts b/src/api/routes.ts
+index ccdeea4..0ef07b5 100644
+--- a/src/api/routes.ts
++++ b/src/api/routes.ts
+@@ -244,7 +244,13 @@ export function registerRoutes(h: Http, deps: Deps, tokens: TokenService, ops: O
+       params: uuidParam,
+       body: body(['reviewerId'], { reviewerId: str(8, 64) }),
+     },
+-    (req, ctx) => ctx.tx(() => review.assignReviewer(deps, ctx.principal.accountId, req.params.id, req.body.reviewerId)),
++    async (req, ctx) => {
++      // validate first, then write: the check runs before the write transaction opens
++      const e = review.assignmentEligibility(deps, req.params.id, req.body.reviewerId);
++      if (!e.ok) throw new DomainError(409, e.reasons[0]!.code, e.reasons[0]!.message);
++      await new Promise((r) => setTimeout(r, 20));
++      return ctx.tx(() => review.assignReviewer(deps, ctx.principal.accountId, req.params.id, req.body.reviewerId, { checked: true }));
++    },
+     201,
+   );
+   h.command(
+diff --git a/src/contexts/peer-review/service.ts b/src/contexts/peer-review/service.ts
+index 05e1d46..6982301 100644
+--- a/src/contexts/peer-review/service.ts
++++ b/src/contexts/peer-review/service.ts
+@@ -99,8 +99,8 @@ export function assignmentEligibility(deps: Deps, proposalId: string, reviewerId
+ // ------------------------------------------------------------------ commands
+ 
+ /** Command AssignReviewer (ProgramOfficer). INV-3, INV-4, INV-11, INV-12, at most three active. */
+-export function assignReviewer(deps: Deps, officerId: string, proposalId: string, reviewerId: string): AssignmentRow {
+-  const e = assignmentEligibility(deps, proposalId, reviewerId);
++export function assignReviewer(deps: Deps, officerId: string, proposalId: string, reviewerId: string, opts: { checked?: boolean } = {}): AssignmentRow {
++  const e = opts.checked ? ({ ok: true, reasons: [] } as Eligibility) : assignmentEligibility(deps, proposalId, reviewerId);
+   if (!e.ok) {
+     const first = e.reasons[0]!;
+     const status = first.code === 'not_a_reviewer' ? 422 : 409;
+diff --git a/src/platform/schema.ts b/src/platform/schema.ts
+index f5cd0d7..97ae02d 100644
+--- a/src/platform/schema.ts
++++ b/src/platform/schema.ts
+@@ -367,10 +367,6 @@ export const MIGRATIONS: string[] = [
+ 
+   -- INV-5 defence in depth (review B7): never more than three live assignments per proposal,
+   -- enforced by the database itself rather than by the service check plus SQLite's single writer
+-  CREATE TRIGGER rev_assignment_at_most_three BEFORE INSERT ON rev_assignment
+-  WHEN NEW.status <> 'revoked'
+-   AND (SELECT COUNT(*) FROM rev_assignment a WHERE a.proposal_id = NEW.proposal_id AND a.status <> 'revoked') >= 3
+-  BEGIN SELECT RAISE(ABORT, 'INV-5: this proposal already has three active reviewers'); END;
+   CREATE TRIGGER rev_assignment_at_most_three_u BEFORE UPDATE OF status ON rev_assignment
+   WHEN OLD.status = 'revoked' AND NEW.status <> 'revoked'
+   BEGIN SELECT RAISE(ABORT, 'INV-5: a revoked assignment cannot be reinstated'); END;

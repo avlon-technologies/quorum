@@ -1,0 +1,332 @@
+{
+ "continuum-verification": "continuum-verification/0",
+ "name": "at-most-three-reviewers",
+ "verifies": [
+  "::Quorum.ResearchFunding.PeerReview.AssignmentValidity"
+ ],
+ "expectation": "ADL business rule AssignmentValidity, clause \"the proposal has fewer than three active assignments\": no proposal ever holds more than three active (non-revoked) assignments.",
+ "required": false,
+ "run": {
+  "module": "architecture/verifiers/at-most-three-reviewers.mjs",
+  "args": [
+   "architecture/verification/at-most-three-reviewers.verification.json",
+   "${IMPLEMENTATION}",
+   "${RESULT}",
+   "${OUT}",
+   "${COMMIT}",
+   "${TREE}",
+   "${ATTESTATION}",
+   "${CHANGE_STATE}"
+  ]
+ },
+ "attestation": {
+  "profile": "continuum-claim-spec/0",
+  "id": "at-most-three-reviewers",
+  "version": "1.0.0",
+  "rubric": "continuum-claim-rubric/3",
+  "claim": {
+   "language": "adl",
+   "kind": "business-rule",
+   "element": "61505d55-158f-4a68-aa7b-204a46219514",
+   "clause": "the proposal has fewer than three active assignments"
+  },
+  "model": {
+   "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1"
+  },
+  "boundary": {
+   "statement": "AssignReviewer — every write in src/** that creates an ACTIVE assignment (any status but revoked), and every runtime entry point that reaches one, in one Quorum process over one store.",
+   "includes": [
+    "INSERT INTO rev_assignment",
+    "an UPDATE of rev_assignment that moves a revoked assignment back to an active status",
+    "every call, in src/**, of the function holding such a write"
+   ],
+   "excludes": [
+    {
+     "what": "the demo seed's calls of assignReviewer (src/seed.ts)",
+     "why": "demo data, never run when NODE_ENV=production; it calls the same guarded function",
+     "match": [
+      {
+       "path": "src/seed.ts",
+       "form": "call"
+      }
+     ]
+    },
+    {
+     "what": "several Quorum processes writing one store at once",
+     "why": "one process per store is the deployment model (LocalDevelopment binding); the store trigger is the defence there and is observed statically (store-bound-trigger), not executed across processes"
+    },
+    {
+     "what": "tests/**, scripts/**",
+     "why": "not part of the deployable"
+    }
+   ]
+  },
+  "scope": {
+   "discovery": "Lex src/**: every INSERT/REPLACE INTO rev_assignment, and every UPDATE of rev_assignment that can move a revoked status to an active one, is a write; the named function holding each write is found, and every call of it in src/** is an entry point (an HTTP registration is named by method and URL). Non-literal SQL must resolve, else the scope is incomplete.",
+   "concurrency": true,
+   "concurrencyStatement": "concurrent AssignReviewer requests in flight at once against one process and one store"
+  },
+  "assumptions": [
+   {
+    "id": "A1-active",
+    "statement": "An active assignment is any rev_assignment row whose status is not revoked (assigned, accepted, overdue, completed): the model's \"active assignments\", in stored values."
+   },
+   {
+    "id": "A2-harness",
+    "statement": "Cases set up their world (accounts, a published call, an eligible proposal, the first assignments) through the implementation's own harness and services. The act under test — the HTTP route — and the state read — rev_assignment — are the verifier's."
+   },
+   {
+    "id": "A3-reached",
+    "statement": "The `reached` paths are what V8 precise coverage reports executing during the case (function call counts), mapped to the write sites by their enclosing function: observed by the runtime, not declared."
+   }
+  ],
+  "checks": [
+   {
+    "id": "assignment-scope",
+    "kind": "scope",
+    "method": "static-lexical",
+    "qualifies": [
+     "L2",
+     "L3"
+    ],
+    "statement": "the writes that create an active assignment, and their entry points, are all known: at least one discovered, nothing unresolved",
+    "criterion": {
+     "scopeComplete": true
+    }
+   },
+   {
+    "id": "first-assigned",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "allowed",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "with no active assignment, the route assigns a verified reviewer: one active after",
+    "criterion": {
+     "equals": {
+      "refused": false,
+      "activeAfter": 1
+     }
+    }
+   },
+   {
+    "id": "revoked-frees-a-place",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "allowed",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "with three assigned and one revoked, the route assigns a fourth reviewer: a revoked assignment does not count, and three are active after",
+    "criterion": {
+     "equals": {
+      "revoked": true,
+      "refused": false,
+      "activeAfter": 3
+     }
+    }
+   },
+   {
+    "id": "third-assigned",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "boundary",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "with two active, the route assigns the third: the bound itself is reachable",
+    "criterion": {
+     "equals": {
+      "refused": false,
+      "activeAfter": 3
+     }
+    }
+   },
+   {
+    "id": "fourth-refused",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "boundary",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "with three active, the route refuses the fourth, and three remain active. Counts only when its control, third-assigned, passed on the route",
+    "criterion": {
+     "equals": {
+      "refused": true,
+      "activeAfter": 3
+     }
+    },
+    "control": "third-assigned"
+   },
+   {
+    "id": "full-after-acceptance-refused",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "rejected",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "with three ACCEPTED assignments, the route refuses another: an accepted assignment is active. Counts only when its control, first-assigned, passed on the route",
+    "criterion": {
+     "equals": {
+      "refused": true,
+      "activeAfter": 3,
+      "accepted": 3
+     }
+    },
+    "control": "first-assigned"
+   },
+   {
+    "id": "concurrent-third-and-fourth",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "boundary",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "with two active, two assignment requests in flight at once: exactly one is admitted and three are active after",
+    "criterion": {
+     "equals": {
+      "admitted": 1,
+      "activeAfter": 3
+     }
+    }
+   },
+   {
+    "id": "panel-full-guard",
+    "kind": "enforcement",
+    "method": "static-lexical",
+    "qualifies": [
+     "L1"
+    ],
+    "statement": "assignmentEligibility refuses at REVIEWERS_PER_PROPOSAL (3) active, and assignReviewer checks it before its write",
+    "criterion": {
+     "equals": {
+      "guarded": true,
+      "bound": 3
+     }
+    }
+   },
+   {
+    "id": "store-bound-trigger",
+    "kind": "enforcement",
+    "method": "static-lexical",
+    "qualifies": [
+     "L1"
+    ],
+    "statement": "the store refuses a fourth active assignment itself (trigger rev_assignment_at_most_three)",
+    "criterion": {
+     "equals": {
+      "guarded": true,
+      "bound": 3
+     }
+    }
+   }
+  ],
+  "violations": [
+   {
+    "class": "rule-bypass",
+    "statement": "the bound is not enforced on the write path: a fourth active assignment is admitted"
+   },
+   {
+    "class": "boundary-shift",
+    "statement": "the bound is off by one: the comparison admits a fourth active assignment and refuses only a fifth"
+   },
+   {
+    "class": "concurrent-race",
+    "statement": "the check and the write are not one atomic step: two requests in flight both pass the check against two active assignments and both write"
+   },
+   {
+    "class": "active-status-misread",
+    "statement": "what counts as active is misread: accepted assignments are not counted, so a proposal with three accepted assignments admits a fourth"
+   }
+  ],
+  "challenges": [
+   {
+    "id": "bound-removed",
+    "kind": "deliberate-fault",
+    "class": "rule-bypass",
+    "statement": "the panel-full check and the store trigger are both removed: nothing on the write path bounds the count",
+    "change": {
+     "patch": "architecture/challenges/bound-removed.patch",
+     "digest": "sha256:5d1314c0f17065692186396180180ce94c95ceccb6b37cda16360c2e2f416fa3",
+     "files": [
+      "src/contexts/peer-review/service.ts",
+      "src/platform/schema.ts"
+     ]
+    },
+    "expect": {
+     "check": "fourth-refused",
+     "path": "HTTP POST /api/proposals/:id/assignments",
+     "reason": "activeAfter is 4, expected 3"
+    }
+   },
+   {
+    "id": "bound-off-by-one",
+    "kind": "deliberate-fault",
+    "class": "boundary-shift",
+    "statement": "the bound compares with > instead of >=, in the service and in the trigger: a fourth is admitted, a fifth refused",
+    "change": {
+     "patch": "architecture/challenges/bound-off-by-one.patch",
+     "digest": "sha256:95b436133b32e0cf4a0a739c625ba6678e47843a5dcabb0cbeaf449164c90b47",
+     "files": [
+      "src/contexts/peer-review/service.ts",
+      "src/platform/schema.ts"
+     ]
+    },
+    "expect": {
+     "check": "fourth-refused",
+     "path": "HTTP POST /api/proposals/:id/assignments",
+     "reason": "activeAfter is 4, expected 3"
+    }
+   },
+   {
+    "id": "accepted-not-counted",
+    "kind": "deliberate-fault",
+    "class": "active-status-misread",
+    "statement": "the count of active assignments reads status = assigned, in the service and in the trigger: accepted assignments stop counting",
+    "change": {
+     "patch": "architecture/challenges/accepted-not-counted.patch",
+     "digest": "sha256:e811dcd72784fa9ccf63504d3db1db5bbdba6c850d60d81fc84fceec031503a1",
+     "files": [
+      "src/contexts/peer-review/service.ts",
+      "src/platform/schema.ts"
+     ]
+    },
+    "expect": {
+     "check": "full-after-acceptance-refused",
+     "path": "HTTP POST /api/proposals/:id/assignments",
+     "reason": "activeAfter is 4, expected 3"
+    }
+   },
+   {
+    "id": "check-outside-transaction",
+    "kind": "deliberate-fault",
+    "class": "concurrent-race",
+    "statement": "the route checks eligibility, yields, then writes in a transaction that no longer re-checks, and the store trigger is removed: a sequential request is still refused, two in flight both write",
+    "change": {
+     "patch": "architecture/challenges/check-outside-transaction.patch",
+     "digest": "sha256:5addd04aead19744698c96182ce43dff167c35c6b713976fc8272fc2b4dce7c4",
+     "files": [
+      "src/api/routes.ts",
+      "src/contexts/peer-review/service.ts",
+      "src/platform/schema.ts"
+     ]
+    },
+    "expect": {
+     "check": "concurrent-third-and-fourth",
+     "path": "HTTP POST /api/proposals/:id/assignments",
+     "reason": "activeAfter is 4, expected 3"
+    }
+   }
+  ]
+ }
+}

@@ -1,0 +1,29 @@
+diff --git a/src/contexts/peer-review/service.ts b/src/contexts/peer-review/service.ts
+index 05e1d46..5102c93 100644
+--- a/src/contexts/peer-review/service.ts
++++ b/src/contexts/peer-review/service.ts
+@@ -90,9 +90,6 @@ export function assignmentEligibility(deps: Deps, proposalId: string, reviewerId
+   if (conflicted) reasons.push({ code: 'conflict_of_interest', rule: 'INV-3', message: `They declared a conflict: ${conflicted.reason}` });
+   const active = activeAssignments(deps, proposalId);
+   if (active.some((a) => a.reviewer_id === reviewerId)) reasons.push({ code: 'already_assigned', rule: 'INV-5', message: 'They are already assigned to this proposal.' });
+-  else if (active.length >= REVIEWERS_PER_PROPOSAL) {
+-    reasons.push({ code: 'panel_full', rule: 'INV-5', message: `This proposal already has ${REVIEWERS_PER_PROPOSAL} active reviewers. Revoke one to replace them.` });
+-  }
+   return { ok: reasons.length === 0, reasons };
+ }
+ 
+diff --git a/src/platform/schema.ts b/src/platform/schema.ts
+index f5cd0d7..97ae02d 100644
+--- a/src/platform/schema.ts
++++ b/src/platform/schema.ts
+@@ -367,10 +367,6 @@ export const MIGRATIONS: string[] = [
+ 
+   -- INV-5 defence in depth (review B7): never more than three live assignments per proposal,
+   -- enforced by the database itself rather than by the service check plus SQLite's single writer
+-  CREATE TRIGGER rev_assignment_at_most_three BEFORE INSERT ON rev_assignment
+-  WHEN NEW.status <> 'revoked'
+-   AND (SELECT COUNT(*) FROM rev_assignment a WHERE a.proposal_id = NEW.proposal_id AND a.status <> 'revoked') >= 3
+-  BEGIN SELECT RAISE(ABORT, 'INV-5: this proposal already has three active reviewers'); END;
+   CREATE TRIGGER rev_assignment_at_most_three_u BEFORE UPDATE OF status ON rev_assignment
+   WHEN OLD.status = 'revoked' AND NEW.status <> 'revoked'
+   BEGIN SELECT RAISE(ABORT, 'INV-5: a revoked assignment cannot be reinstated'); END;

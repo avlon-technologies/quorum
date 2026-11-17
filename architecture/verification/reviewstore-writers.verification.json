@@ -1,166 +1,176 @@
 {
-  "continuum-verification": "continuum-verification/0",
-  "name": "reviewstore-writers",
-  "verifies": [
-    "::Quorum.ResearchFunding.PeerReview.ReviewStore"
-  ],
-  "expectation": "ReviewStore is written only by the Service(s) the compiled model declares as its writers (today AssignmentService, of its owning context PeerReview).",
-  "required": false,
-  "run": {
-    "module": "architecture/verifiers/reviewstore-writers.mjs",
-    "args": [
-      "architecture/verification/reviewstore-writers.verification.json",
-      "${IMPLEMENTATION}",
-      "${RESULT}",
-      "${OUT}",
-      "${COMMIT}",
-      "${TREE}",
-      "${ATTESTATION}",
-      "${CHANGE_STATE}"
-    ]
+ "continuum-verification": "continuum-verification/0",
+ "name": "reviewstore-writers",
+ "verifies": [
+  "::Quorum.ResearchFunding.PeerReview.ReviewStore"
+ ],
+ "expectation": "ReviewStore is written only by the Service(s) the compiled model declares as its writers (today AssignmentService, of its owning context PeerReview).",
+ "required": false,
+ "run": {
+  "module": "architecture/verifiers/reviewstore-writers.mjs",
+  "args": [
+   "architecture/verification/reviewstore-writers.verification.json",
+   "${IMPLEMENTATION}",
+   "${RESULT}",
+   "${OUT}",
+   "${COMMIT}",
+   "${TREE}",
+   "${ATTESTATION}",
+   "${CHANGE_STATE}"
+  ]
+ },
+ "attestation": {
+  "profile": "continuum-claim-spec/0",
+  "id": "reviewstore-writers",
+  "version": "3.0.0",
+  "claim": {
+   "language": "adl",
+   "kind": "resource-writers",
+   "element": "7cbfd5c5-60f5-4af5-bcba-aa0359aaaf4e"
   },
-  "attestation": {
-    "profile": "continuum-claim-spec/0",
-    "id": "reviewstore-writers",
-    "version": "2.0.1",
-    "claim": {
-      "language": "adl",
-      "kind": "resource-writers",
-      "element": "7cbfd5c5-60f5-4af5-bcba-aa0359aaaf4e"
+  "claimName": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+  "model": {
+   "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1"
+  },
+  "boundary": {
+   "statement": "Every write to the tables of ReviewStore made by the runtime code of the deployable (src/**), through any channel: literal SQL, SQL handed to the database as a variable, and file- or handle-level mechanisms that can change the database file.",
+   "includes": [
+    "src/** (the QuorumServer deployable and its operator CLI src/ops.ts)"
+   ],
+   "excludes": [
+    {
+     "what": "tests/**, scripts/**, tools and continuum/**",
+     "why": "not part of the deployable; they never run in production"
     },
-    "claimName": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
-    "model": {
-      "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1"
+    {
+     "what": "schema DDL (CREATE TABLE / INDEX / TRIGGER) in src/platform/schema.ts",
+     "why": "defines the store; it writes no rows. Any INSERT/UPDATE/DELETE inside a migration is NOT excluded: it is scanned like any other literal"
     },
-    "boundary": {
-      "statement": "Every write to the tables of ReviewStore made by the runtime code of the deployable (src/**), through any channel: literal SQL, SQL handed to the database as a variable, and file- or handle-level mechanisms that can change the database file.",
-      "includes": [
-        "src/** (the QuorumServer deployable and its operator CLI src/ops.ts)"
-      ],
-      "excludes": [
-        {
-          "what": "tests/**, scripts/**, tools and continuum/**",
-          "why": "not part of the deployable; they never run in production"
-        },
-        {
-          "what": "schema DDL (CREATE TABLE / INDEX / TRIGGER) in src/platform/schema.ts",
-          "why": "defines the store; it writes no rows. Any INSERT/UPDATE/DELETE inside a migration is NOT excluded: it is scanned like any other literal"
-        },
-        {
-          "what": "whole-database restore by the Operator (src/platform/backup.ts)",
-          "why": "replaces the entire database file with a verified backup — every store at once, by the Operator actor; it is not a context writing a store",
-          "match": [
-            {
-              "path": "src/platform/backup.ts",
-              "form": "fs-write"
-            },
-            {
-              "path": "src/platform/backup.ts",
-              "form": "sqlite-backup"
-            }
-          ]
-        },
-        {
-          "what": "the demo seed's reset (src/seed.ts)",
-          "why": "deletes the whole database file before re-seeding a demo; never runs when NODE_ENV=production. The seed's rows are written through the context services, whose SQL is scanned",
-          "match": [
-            {
-              "path": "src/seed.ts",
-              "form": "fs-write",
-              "call": "rmSync"
-            }
-          ]
-        },
-        {
-          "what": "writes to files that are not the database: the server pid file, the token secret, the outbound mail log",
-          "why": "each targets its own file (pidFileFor(dbFile), <data>/token-secret, <data>/mail.jsonl), never the database",
-          "match": [
-            {
-              "path": "src/server.ts",
-              "form": "fs-write"
-            },
-            {
-              "path": "src/platform/auth.ts",
-              "form": "fs-write",
-              "call": "writeFileSync"
-            },
-            {
-              "path": "src/integrations/mail.ts",
-              "form": "fs-write",
-              "call": "appendFileSync"
-            }
-          ]
-        }
-      ]
-    },
-    "scope": {
-      "discovery": "Lex every module under src/; every INSERT / REPLACE / UPDATE … SET / DELETE FROM in a string or template literal is a write site; its table is resolved to a store through continuum/evidence.json (each Resource's schema.ts citation range holds the tables created in it); a site is in scope when its table belongs to ReviewStore. Every non-literal SQL argument and every file/handle mechanism must be resolved or excluded above, else the scope is incomplete.",
-      "conventionPrefix": "rev_"
-    },
-    "assumptions": [
+    {
+     "what": "whole-database restore by the Operator (src/platform/backup.ts)",
+     "why": "replaces the entire database file with a verified backup — every store at once, by the Operator actor; it is not a context writing a store",
+     "match": [
       {
-        "id": "A1-table-store",
-        "statement": "A table belongs to the store whose evidence.json citation range in src/platform/schema.ts contains its CREATE TABLE. The model declares no bindings, so this mapping is evidence, not a model claim; a rev_* table no range covers is reported unresolved."
+       "path": "src/platform/backup.ts",
+       "form": "fs-write"
       },
       {
-        "id": "A2-module-service",
-        "statement": "A write site's writer is the one Service continuum/evidence.json cites for its module (directly or through an element nested in it). A module cited for no Service, or for several, has no attributable writer and its sites are unresolved."
-      },
-      {
-        "id": "A3-sql-channel",
-        "statement": "The database is reached only through better-sqlite3 handles; .prepare is always SQL, and .exec is SQL only on a receiver named db/#db. SQL keywords are matched case-insensitively."
-      },
-      {
-        "id": "A4-static",
-        "statement": "The judgment is about the code at the commit, statically; a write that only exists at runtime through a channel the scanner does not recognise would not be seen. The scanner reports the channels it found and could not follow as unresolved."
+       "path": "src/platform/backup.ts",
+       "form": "sqlite-backup"
       }
+     ]
+    },
+    {
+     "what": "the demo seed's reset (src/seed.ts)",
+     "why": "deletes the whole database file before re-seeding a demo; never runs when NODE_ENV=production. The seed's rows are written through the context services, whose SQL is scanned",
+     "match": [
+      {
+       "path": "src/seed.ts",
+       "form": "fs-write",
+       "call": "rmSync"
+      }
+     ]
+    },
+    {
+     "what": "writes to files that are not the database: the server pid file, the token secret, the outbound mail log",
+     "why": "each targets its own file (pidFileFor(dbFile), <data>/token-secret, <data>/mail.jsonl), never the database",
+     "match": [
+      {
+       "path": "src/server.ts",
+       "form": "fs-write"
+      },
+      {
+       "path": "src/platform/auth.ts",
+       "form": "fs-write",
+       "call": "writeFileSync"
+      },
+      {
+       "path": "src/integrations/mail.ts",
+       "form": "fs-write",
+       "call": "appendFileSync"
+      }
+     ]
+    }
+   ]
+  },
+  "scope": {
+   "discovery": "Lex every module under src/; every INSERT / REPLACE / UPDATE … SET / DELETE FROM in a string or template literal is a write site; its table is resolved to a store through continuum/evidence.json (each Resource's schema.ts citation range holds the tables created in it); a site is in scope when its table belongs to ReviewStore. Every non-literal SQL argument and every file/handle mechanism must be resolved or excluded above, else the scope is incomplete.",
+   "conventionPrefix": "rev_",
+   "concurrency": false
+  },
+  "assumptions": [
+   {
+    "id": "A1-table-store",
+    "statement": "A table belongs to the store whose evidence.json citation range in src/platform/schema.ts contains its CREATE TABLE. The model declares no bindings, so this mapping is evidence, not a model claim; a rev_* table no range covers is reported unresolved."
+   },
+   {
+    "id": "A2-module-service",
+    "statement": "A write site's writer is the one Service continuum/evidence.json cites for its module (directly or through an element nested in it). A module cited for no Service, or for several, has no attributable writer and its sites are unresolved."
+   },
+   {
+    "id": "A3-sql-channel",
+    "statement": "The database is reached only through better-sqlite3 handles; .prepare is always SQL, and .exec is SQL only on a receiver named db/#db. SQL keywords are matched case-insensitively."
+   },
+   {
+    "id": "A4-static",
+    "statement": "The judgment is about the code at the commit, statically; a write that only exists at runtime through a channel the scanner does not recognise would not be seen. The scanner reports the channels it found and could not follow as unresolved."
+   }
+  ],
+  "checks": [
+   {
+    "id": "write-scope",
+    "kind": "scope",
+    "qualifies": [
+     "L2",
+     "L3"
     ],
-    "checks": [
-      {
-        "id": "write-scope",
-        "kind": "scope",
-        "qualifies": [
-          "L2",
-          "L3"
-        ],
-        "statement": "the set of ReviewStore write sites is complete: at least one discovered, no channel unresolved",
-        "criterion": {
-          "scopeComplete": true
-        }
-      },
-      {
-        "id": "writer-declared",
-        "kind": "structural",
-        "qualifies": [
-          "L1",
-          "L2",
-          "L3"
-        ],
-        "statement": "the site's module realises a Service the compiled model declares as a writer of ReviewStore",
-        "criterion": {
-          "writersWithinDeclared": true
-        }
-      }
+    "statement": "the set of ReviewStore write sites is complete: at least one discovered, no channel unresolved",
+    "criterion": {
+     "scopeComplete": true
+    },
+    "method": "static-lexical"
+   },
+   {
+    "id": "writer-declared",
+    "kind": "structural",
+    "qualifies": [
+     "L1",
+     "L2",
+     "L3"
     ],
-    "rubric": "continuum-claim-rubric/2",
-    "challenges": [
-      {
-        "id": "adjudication-writes-review",
-        "kind": "deliberate-fault",
-        "statement": "Adjudication writes a ReviewStore table directly (029 controlled mismatch M1, reused)",
-        "change": {
-          "patch": "architecture/challenges/adjudication-writes-review.patch",
-          "digest": "sha256:616c6e9b68a99676af98920abbca6d62d748611b1736b71ee39f9a00c52f606c",
-          "files": [
-            "src/contexts/adjudication/service.ts"
-          ]
-        },
-        "expect": {
-          "check": "writer-declared",
-          "pathPrefix": "src/contexts/adjudication/service.ts:",
-          "reason": "::Quorum.ResearchFunding.Adjudication.AdjudicationService writes ::Quorum.ResearchFunding.PeerReview.ReviewStore"
-        }
-      }
-    ]
-  }
+    "statement": "the site's module realises a Service the compiled model declares as a writer of ReviewStore",
+    "criterion": {
+     "writersWithinDeclared": true
+    },
+    "method": "static-lexical"
+   }
+  ],
+  "rubric": "continuum-claim-rubric/3",
+  "challenges": [
+   {
+    "id": "adjudication-writes-review",
+    "kind": "deliberate-fault",
+    "statement": "Adjudication writes a ReviewStore table directly (029 controlled mismatch M1, reused)",
+    "change": {
+     "patch": "architecture/challenges/adjudication-writes-review.patch",
+     "digest": "sha256:616c6e9b68a99676af98920abbca6d62d748611b1736b71ee39f9a00c52f606c",
+     "files": [
+      "src/contexts/adjudication/service.ts"
+     ]
+    },
+    "expect": {
+     "check": "writer-declared",
+     "pathPrefix": "src/contexts/adjudication/service.ts:",
+     "reason": "::Quorum.ResearchFunding.Adjudication.AdjudicationService writes ::Quorum.ResearchFunding.PeerReview.ReviewStore"
+    },
+    "class": "undeclared-writer"
+   }
+  ],
+  "violations": [
+   {
+    "class": "undeclared-writer",
+    "statement": "a service the model does not declare as a ReviewStore writer writes one of its tables"
+   }
+  ]
+ }
 }

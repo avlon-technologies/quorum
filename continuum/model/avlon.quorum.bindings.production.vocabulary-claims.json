@@ -1,0 +1,69 @@
+{
+  "adl-json": "adl-json/1.0",
+  "vocabulary-claims": {
+    "vocabulary": "avlon.quorum.bindings.production",
+    "version": "package-1",
+    "technologies": {
+      "node-process": {
+        "claims": [],
+        "configuration": {
+          "runtime": "atom",
+          "language": "atom",
+          "framework": "atom",
+          "ui": "atom",
+          "entry": "atom",
+          "instances": "atom",
+          "environment": "atom"
+        }
+      },
+      "in-process-module": {
+        "claims": [],
+        "configuration": {
+          "module": "atom"
+        }
+      },
+      "sqlite-wal-volume": {
+        "claims": [
+          "PersistenceExpectation.durability/durable",
+          "PersistenceExpectation.consistency/strong",
+          "erasure-capable",
+          "retention-honored",
+          "access-controlled",
+          "auditable"
+        ],
+        "configuration": {
+          "driver": "atom",
+          "file": "atom",
+          "tables": "atom",
+          "backup": "atom"
+        }
+      },
+      "sqlite-outbox": {
+        "claims": [
+          "DeliveryExpectation.ordering/ordered",
+          "DeliveryExpectation.delivery/at-least-once",
+          "DeliveryExpectation.durability/durable"
+        ],
+        "configuration": {
+          "outbox": "atom",
+          "ordering-key": "atom",
+          "redelivery": "atom",
+          "parked-after": "atom"
+        }
+      },
+      "anthropic-messages-api": {
+        "claims": [
+          "ModelRequirement.capabilities/reasoning",
+          "ModelRequirement.capabilities/structured-output"
+        ],
+        "configuration": {
+          "provider": "atom",
+          "module": "atom",
+          "model": "atom",
+          "credential": "atom",
+          "on-failure": "atom"
+        }
+      }
+    }
+  }
+}

@@ -15,7 +15,11 @@ import { CONTINUUM_MESSAGES } from '../contracts/model.generated.ts';
  * - A consumer's effect and its delivery mark commit in ONE transaction, so an interrupted delivery
  *   rolls back whole and is redelivered; a replay is a no-op (at-least-once in, exactly-once effect).
  * - A delivery that throws is retried with backoff; after MAX_ATTEMPTS it is parked as 'failed' and
- *   its partition is held for that consumer until an officer retries it (ordering over liveness).
+ *   its partition is held for that consumer until an operator retries it or, where that is safe, skips
+ *   it with a recorded reason (ordering over liveness; review B6). Parking raises an alert.
+ * - Skipping is refused for consumers whose effects guard an invariant (SKIP_FORBIDDEN): the proposal
+ *   state machine, review completion and adjudication (budget ledger, integrity holds). For those, the
+ *   only recovery is to fix the cause and retry.
  */
 
 export type EventType = keyof typeof CONTINUUM_MESSAGES;
@@ -42,6 +46,11 @@ export type Consumer = {
 };
 
 export const MAX_ATTEMPTS = 5;
+/** Consumers whose deliveries may never be skipped: skipping would silently lose an invariant's input. */
+export const SKIP_FORBIDDEN = /^(submission|peer-review|adjudication)\./;
+/** Statuses that no longer hold a partition. */
+const SETTLED = `('delivered','skipped')`;
+export type DeliveryAlert = { kind: 'delivery_parked'; consumer: string; messageId: string; type: string; attempts: number; lastError: string };
 const backoffMs = (attempt: number) => Math.min(60_000, 500 * 2 ** (attempt - 1));
 
 export class EventBus {
@@ -56,6 +65,8 @@ export class EventBus {
   faultInjector: ((consumer: string, event: StoredEvent) => void) | undefined;
   /** Observers notified after each committed delivery batch (used to kick follow-on work). */
   readonly afterDrain: Array<() => void> = [];
+  /** Observers told when a delivery is parked (alerting). Must not throw. */
+  readonly onAlert: Array<(a: DeliveryAlert) => void> = [];
 
   constructor(db: Db, clock: Clock) {
     this.#db = db;
@@ -164,7 +175,7 @@ export class EventBus {
           WHERE d.status = 'pending' AND d.next_attempt_at <= ?
             AND NOT EXISTS (SELECT 1 FROM evt_delivery e
                              WHERE e.consumer = d.consumer AND e.partition_key = d.partition_key
-                               AND e.seq < d.seq AND e.status <> 'delivered')
+                               AND e.seq < d.seq AND e.status NOT IN ${SETTLED})
           ORDER BY d.seq LIMIT 200`,
       )
       .all(now) as Array<{ consumer: string; message_id: string }>;
@@ -214,6 +225,16 @@ export class EventBus {
         .prepare(`UPDATE evt_delivery SET attempts = ?, last_error = ?, next_attempt_at = ?, status = ? WHERE consumer = ? AND message_id = ?`)
         .run(attempts, message.slice(0, 500), next, parked ? 'failed' : 'pending', consumerName, messageId);
       console.warn(`[dispatcher] ${consumerName} failed on ${event.type} ${messageId} (attempt ${attempts}${parked ? ', parked' : ''}): ${message}`);
+      if (parked) {
+        const alert: DeliveryAlert = { kind: 'delivery_parked', consumer: consumerName, messageId, type: event.type, attempts, lastError: message.slice(0, 500) };
+        for (const f of this.onAlert) {
+          try {
+            f(alert);
+          } catch {
+            /* alerting never breaks delivery */
+          }
+        }
+      }
       return false;
     }
   }
@@ -225,6 +246,48 @@ export class EventBus {
       .run(this.#clock.now().toISOString(), consumer, messageId);
     this.kick();
     return r.changes === 1;
+  }
+
+  /**
+   * Operator action: settle a parked delivery WITHOUT applying it, releasing its partition. Refused for
+   * consumers in SKIP_FORBIDDEN. The caller records who and why (ops_action) in the same transaction.
+   */
+  skip(consumer: string, messageId: string, reason: string): 'skipped' | 'not_parked' | 'forbidden' {
+    if (SKIP_FORBIDDEN.test(consumer)) return 'forbidden';
+    const r = this.#db
+      .prepare(`UPDATE evt_delivery SET status = 'skipped', last_error = ? WHERE consumer = ? AND message_id = ? AND status = 'failed'`)
+      .run(`skipped by operator: ${reason}`.slice(0, 500), consumer, messageId);
+    if (r.changes === 1) this.kick();
+    return r.changes === 1 ? 'skipped' : 'not_parked';
+  }
+
+  /**
+   * Erasure support: replace every occurrence of the given personal values in retained event payloads
+   * with a fixed marker. Runs in the caller's transaction. Returns the number of events rewritten.
+   * The event log stays replayable: projections rebuilt from it carry the marker, as the live ones do.
+   */
+  redact(values: string[], marker = '[erased]'): number {
+    const vals = values.filter((v) => v && v.length >= 3);
+    if (vals.length === 0) return 0;
+    const where = vals.map(() => `payload LIKE ?`).join(' OR ');
+    const rows = this.#db
+      .prepare(`SELECT message_id, payload FROM evt_outbox WHERE ${where}`)
+      .all(...vals.map((v) => `%${v.replace(/[%_]/g, '')}%`)) as Array<{ message_id: string; payload: string }>;
+    const upd = this.#db.prepare(`UPDATE evt_outbox SET payload = ? WHERE message_id = ?`);
+    let n = 0;
+    for (const r of rows) {
+      const scrub = (x: unknown): unknown =>
+        typeof x === 'string' ? vals.reduce((acc, v) => acc.split(v).join(marker), x)
+        : Array.isArray(x) ? x.map(scrub)
+        : x && typeof x === 'object' ? Object.fromEntries(Object.entries(x).map(([k, v]) => [k, scrub(v)]))
+        : x;
+      const next = JSON.stringify(scrub(JSON.parse(r.payload)));
+      if (next !== r.payload) {
+        upd.run(next, r.message_id);
+        n++;
+      }
+    }
+    return n;
   }
 
   /**
@@ -257,14 +320,18 @@ export class EventBus {
 
   /** Delivery health for the operations view. */
   health() {
+    const oldest = this.#db.prepare(`SELECT MIN(o.occurred_at) t FROM evt_delivery d JOIN evt_outbox o ON o.message_id = d.message_id WHERE d.status = 'pending'`).get() as { t: string | null };
     return {
       pending: (this.#db.prepare(`SELECT COUNT(*) n FROM evt_delivery WHERE status = 'pending'`).get() as { n: number }).n,
+      skipped: (this.#db.prepare(`SELECT COUNT(*) n FROM evt_delivery WHERE status = 'skipped'`).get() as { n: number }).n,
+      oldestPendingAgeSeconds: oldest.t ? Math.max(0, Math.round((this.#clock.now().getTime() - new Date(oldest.t).getTime()) / 1000)) : 0,
       failed: this.#db
         .prepare(
           `SELECT d.consumer, d.message_id AS messageId, o.type, d.partition_key AS partitionKey, d.attempts, d.last_error AS lastError, o.occurred_at AS occurredAt
              FROM evt_delivery d JOIN evt_outbox o ON o.message_id = d.message_id WHERE d.status = 'failed' ORDER BY d.seq`,
         )
-        .all(),
+        .all()
+        .map((f: any) => ({ ...f, skippable: !SKIP_FORBIDDEN.test(f.consumer) })),
     };
   }
 }

@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+<title>Quorum: when work stalls or goes wrong</title>
+<desc>Five independent exception situations. Named events flow from their declared publishers to separate notification and audit consumers. Human decisions remain open; the ADR-005 business question is separate from the current integrity hold.</desc>
+<defs>
+<marker id="arrow" orient="auto" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="10" refY="5"><path d="M 0 0 L 10 5 L 0 10 Z" fill="#123C60"/></marker>
+</defs>
+<rect x="0" y="0" width="1536" height="1024" fill="#FFFFFF"/>
+<text x="24" y="51" font-size="43" font-weight="750" fill="#071D40">Quorum: when work stalls or goes wrong</text>
+<text x="26" y="88" font-size="25" fill="#53647A">Current exception handling, human responsibility and audit visibility</text>
+
+<g class="domain" data-label="Overdue review" data-grade="speculative">
+<rect x="20" y="116" width="930" height="166" rx="12" fill="#F1F5F8" stroke="#BCCAD5" stroke-width="1" stroke-dasharray="2 4"/>
+<text x="38" y="177" font-size="25" font-weight="700" fill="#081F43"><tspan x="38">Overdue</tspan><tspan x="38" dy="30">review</tspan></text>
+<g class="service" data-label="ReviewDeadline · overdue" data-grade="declared">
+<rect x="220" y="145" width="380" height="122" rx="8" fill="#103D65" stroke="#103D65" stroke-width="2"/>
+<text x="236" y="171" fill="#FFFFFF" font-size="19" font-weight="700">ReviewDeadline · overdue</text>
+<text x="236" y="195" fill="#FFFFFF" font-size="16"><tspan x="236">Publishes after the review deadline</tspan></text>
+<text x="236" y="217" fill="#FFFFFF" font-size="15"><tspan x="236">21 days without review or revocation;</tspan><tspan x="236" dy="18">late review still accepted</tspan></text>
+<text x="236" y="254" fill="#FFFFFF" font-size="15">AssignmentService marks overdue</text>
+</g>
+<g class="service" data-label="Reviewer + Program officer" data-grade="declared">
+<rect x="640" y="166" width="290" height="86" rx="8" fill="#B9C2CC" stroke="#9EABB9" stroke-width="2"/>
+<text x="655" y="191" font-size="18" font-weight="700" fill="#091F40">Reviewer + Program officer</text>
+<text x="655" y="218" font-size="16" fill="#152D46"><tspan x="655">Told when the review is overdue</tspan></text>
+</g>
+</g>
+
+<g class="domain" data-label="Overdue decision" data-grade="speculative">
+<rect x="20" y="294" width="930" height="125" rx="12" fill="#F1F5F8" stroke="#BCCAD5" stroke-width="1" stroke-dasharray="2 4"/>
+<text x="38" y="344" font-size="25" font-weight="700" fill="#081F43"><tspan x="38">Overdue</tspan><tspan x="38" dy="30">decision</tspan></text>
+<g class="service" data-label="PanelDecision · decide" data-grade="declared">
+<rect x="220" y="308" width="710" height="96" rx="8" fill="#FFF0BF" stroke="#EDA600" stroke-width="2"/>
+<text x="237" y="334" font-size="20" font-weight="700" fill="#102641">PanelDecision · decide</text>
+<text x="237" y="359" font-size="17" fill="#102641"><tspan x="237">Panel chair's task stays open after 14 days</tspan></text>
+<rect x="235" y="370" width="340" height="26" rx="5" fill="#FFC247"/>
+<text x="245" y="389" font-size="18" font-weight="800" fill="#092342">NEVER DECIDED BY TIMEOUT</text>
+</g>
+</g>
+
+<g class="domain" data-label="Envelope exhausted" data-grade="speculative">
+<rect x="20" y="433" width="930" height="160" rx="12" fill="#F1F5F8" stroke="#BCCAD5" stroke-width="1" stroke-dasharray="2 4"/>
+<text x="38" y="489" font-size="25" font-weight="700" fill="#081F43"><tspan x="38">Envelope</tspan><tspan x="38" dy="30">exhausted</tspan></text>
+<g class="service" data-label="PanelDecision · refused" data-grade="declared">
+<rect x="220" y="449" width="340" height="122" rx="8" fill="#103D65" stroke="#103D65" stroke-width="2"/>
+<text x="235" y="476" font-size="20" font-weight="700" fill="#FFFFFF">PanelDecision · refused</text>
+<text x="235" y="501" font-size="16" fill="#FFFFFF"><tspan x="235">Publishes the unfundable award</tspan><tspan x="235" dy="19">refusal</tspan></text>
+<text x="235" y="543" font-size="15" fill="#FFFFFF"><tspan x="235">Nothing committed; case moves</tspan><tspan x="235" dy="18">to reconsider</tspan></text>
+</g>
+<g class="service" data-label="PanelDecision · reconsider" data-grade="declared">
+<rect x="600" y="449" width="330" height="122" rx="8" fill="#B9C2CC" stroke="#9EABB9" stroke-width="2"/>
+<text x="615" y="476" font-size="19" font-weight="700" fill="#091F40">PanelDecision · reconsider</text>
+<text x="615" y="503" font-size="16" fill="#152D46"><tspan x="615">Panel chair acknowledges decline only</tspan></text>
+<text x="615" y="535" font-size="15" fill="#152D46"><tspan x="615">Stays open and escalates to officer</tspan><tspan x="615" dy="19">until recorded</tspan></text>
+</g>
+</g>
+
+<g class="domain" data-label="Conflict after scoring" data-grade="speculative">
+<rect x="20" y="607" width="930" height="208" rx="12" fill="#F1F5F8" stroke="#BCCAD5" stroke-width="1" stroke-dasharray="2 4"/>
+<text x="38" y="635" font-size="23" font-weight="700" fill="#081F43">Conflict after scoring</text>
+<g class="service" data-label="AssignmentService" data-grade="declared">
+<rect x="40" y="657" width="220" height="70" rx="8" fill="#103D65" stroke="#103D65" stroke-width="2"/>
+<text x="55" y="685" font-size="19" font-weight="700" fill="#FFFFFF">AssignmentService</text>
+<text x="55" y="710" font-size="16" fill="#FFFFFF"><tspan x="55">Records the conflict</tspan></text>
+</g>
+<g class="service" data-label="AdjudicationService" data-grade="declared">
+<rect x="440" y="650" width="300" height="86" rx="8" fill="#103D65" stroke="#103D65" stroke-width="2"/>
+<text x="455" y="676" font-size="20" font-weight="700" fill="#FFFFFF">AdjudicationService</text>
+<text x="455" y="700" font-size="15" fill="#FFFFFF"><tspan x="455">Places an integrity hold after scoring</tspan></text>
+<text x="455" y="722" font-size="15" fill="#FFFFFF">Current ADR-005 behaviour</text>
+</g>
+<g class="service" data-label="OPEN OWNER DECISION (ADR-005)" data-grade="declared">
+<rect x="220" y="748" width="710" height="55" rx="7" fill="#FFE19A" stroke="#EAA000" stroke-width="2"/>
+<text x="234" y="768" font-size="16" font-weight="800" fill="#10213A">OPEN OWNER DECISION (ADR-005)</text>
+<text x="590" y="768" font-size="15" fill="#10213A"><tspan x="590">What happens to an already recorded award?</tspan></text>
+<text x="234" y="791" font-size="15" fill="#10213A">Business question remains open · accountable: Program Officer</text>
+</g>
+</g>
+
+<g class="domain" data-label="Operations" data-grade="speculative">
+<rect x="265" y="829" width="685" height="175" rx="12" fill="#F1F5F8" stroke="#BCCAD5" stroke-width="1" stroke-dasharray="2 4"/>
+<text x="281" y="855" font-size="23" font-weight="700" fill="#081F43">Operations</text>
+<g class="service" data-label="EraseAccount" data-grade="declared">
+<rect x="280" y="868" width="310" height="122" rx="8" fill="#103D65" stroke="#103D65" stroke-width="2"/>
+<text x="295" y="892" font-size="19" font-weight="700" fill="#FFFFFF">EraseAccount</text>
+<text x="295" y="915" font-size="15" fill="#FFFFFF"><tspan x="295">Operator-only personal-data erasure</tspan></text>
+<text x="295" y="941" font-size="15" fill="#FFFFFF"><tspan x="295">Pseudonymises account, revokes</tspan><tspan x="295" dy="18">roles, redacts retained event</tspan><tspan x="295" dy="18">identifiers</tspan></text>
+</g>
+<g class="service" data-label="AccountService" data-grade="declared">
+<rect x="740" y="877" width="195" height="105" rx="8" fill="#103D65" stroke="#103D65" stroke-width="2"/>
+<text x="754" y="904" font-size="18" font-weight="700" fill="#FFFFFF">AccountService</text>
+<text x="754" y="931" font-size="15" fill="#FFFFFF"><tspan x="754">Handles erasure and</tspan><tspan x="754" dy="19">publishes its outcome</tspan></text>
+</g>
+</g>
+
+<g class="actor" data-label="Operator" data-grade="declared">
+<rect x="20" y="835" width="230" height="169" rx="8" fill="#B9C2CC" stroke="#9EABB9" stroke-width="2"/>
+<circle cx="44" cy="858" r="7" fill="none" stroke="#142B46" stroke-width="2"/>
+<path d="M 32 881 Q 32 868 44 868 Q 56 868 56 881" fill="none" stroke="#142B46" stroke-width="2"/>
+<text x="69" y="871" font-size="20" font-weight="700" fill="#091F40">Operator</text>
+<text x="35" y="903" font-size="15" fill="#152D46"><tspan x="35">Watches event delivery;</tspan><tspan x="35" dy="19">holds no business role</tspan></text>
+<text x="35" y="950" font-size="15" fill="#152D46"><tspan x="35">Retries or skips failed</tspan><tspan x="35" dy="19">delivery with a recorded</tspan><tspan x="35" dy="19">reason</tspan></text>
+</g>
+
+<g class="service" data-label="NotificationService" data-grade="declared">
+<rect x="1230" y="160" width="285" height="280" rx="10" fill="#00858A" stroke="#00777D" stroke-width="2"/>
+<text x="1247" y="195" font-size="22" font-weight="700" fill="#FFFFFF">NotificationService</text>
+<text x="1247" y="226" font-size="17" fill="#FFFFFF"><tspan x="1247">Notifies affected participants</tspan></text>
+</g>
+<g class="service" data-label="PortfolioProjector" data-grade="declared">
+<rect x="1230" y="650" width="285" height="280" rx="10" fill="#00858A" stroke="#00777D" stroke-width="2"/>
+<text x="1247" y="687" font-size="22" font-weight="700" fill="#FFFFFF">PortfolioProjector</text>
+<text x="1247" y="720" font-size="17" fill="#FFFFFF"><tspan x="1247">Produces the portfolio</tspan><tspan x="1247" dy="23">and audit trail</tspan></text>
+</g>
+
+<g fill="none" stroke="#123C60" stroke-width="2" stroke-linejoin="round">
+<g class="edge" data-from="PanelDecision · decide" data-to="NotificationService" data-grade="declared" data-publisher="AdjudicationService">
+<path d="M 930 340 L 960 340 L 960 285 L 1230 285" marker-end="url(#arrow)"/>
+<text x="1060" y="280" fill="#123C60" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="16">DecisionEscalated</text>
+</g>
+<g class="edge" data-from="PanelDecision · decide" data-to="PortfolioProjector" data-grade="declared" data-publisher="AdjudicationService">
+<path d="M 930 390 L 970 390 L 970 605 L 1205 605 L 1205 745 L 1230 745" marker-end="url(#arrow)"/>
+<text x="1195" y="590" transform="rotate(-90 1195 590)" fill="#123C60" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="16">DecisionEscalated</text>
+</g>
+<g class="edge" data-from="PanelDecision · refused" data-to="PanelDecision · reconsider" data-grade="declared">
+<path d="M 560 510 L 600 510" marker-end="url(#arrow)"/>
+</g>
+<g class="edge" data-from="ReviewDeadline · overdue" data-to="NotificationService">
+<path d="M 600 154 L 610 154 L 610 133 L 970 133 Q 980 133 980 143 L 980 260 L 1230 260" marker-end="url(#arrow)"/>
+<text x="1000" y="250" fill="#123C60" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="16">ReviewOverdue</text>
+</g>
+<g class="edge" data-from="ReviewDeadline · overdue" data-to="PortfolioProjector">
+<path d="M 600 259 L 620 259 L 620 275 L 991 275 Q 1001 275 1001 285 L 1001 770 L 1230 770" marker-end="url(#arrow)"/>
+<text x="991" y="565" transform="rotate(-90 991 565)" fill="#123C60" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="16">ReviewOverdue</text>
+</g>
+<g class="edge" data-from="PanelDecision · refused" data-to="NotificationService">
+<path d="M 540 571 L 540 580 L 1020 580 Q 1030 580 1030 570 L 1030 310 L 1230 310" marker-end="url(#arrow)"/>
+<text x="1060" y="300" fill="#123C60" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="16">AwardRefused</text>
+</g>
+<g class="edge" data-from="PanelDecision · refused" data-to="PortfolioProjector">
+<path d="M 520 571 L 520 588 L 1049 588 Q 1059 588 1059 598 L 1059 815 L 1230 815" marker-end="url(#arrow)"/>
+<text x="1049" y="805" transform="rotate(-90 1049 805)" fill="#123C60" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="16">AwardRefused</text>
+</g>
+<g class="edge" data-from="AssignmentService" data-to="AdjudicationService">
+<path d="M 260 692 L 440 692" marker-end="url(#arrow)"/>
+<text x="272" y="681" fill="#123C60" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="16">ConflictDeclared</text>
+</g>
+<g class="edge" data-from="AdjudicationService" data-to="NotificationService">
+<path d="M 740 675 L 1080 675 Q 1090 675 1090 665 L 1090 360 L 1230 360" marker-end="url(#arrow)"/>
+<text x="1110" y="350" fill="#123C60" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="16">AwardHeld</text>
+</g>
+<g class="edge" data-from="AdjudicationService" data-to="PortfolioProjector">
+<path d="M 740 714 L 1105 714 Q 1115 714 1115 724 L 1115 860 L 1230 860" marker-end="url(#arrow)"/>
+<text x="1105" y="805" transform="rotate(-90 1105 805)" fill="#123C60" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="16">AwardHeld</text>
+</g>
+<g class="edge" data-from="EraseAccount" data-to="AccountService">
+<path d="M 590 929 L 740 929" marker-end="url(#arrow)"/>
+<text x="605" y="917" fill="#123C60" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="16">handled by</text>
+</g>
+<g class="edge" data-from="AccountService" data-to="NotificationService">
+<path d="M 935 900 L 1140 900 Q 1150 900 1150 890 L 1150 410 L 1230 410" marker-end="url(#arrow)"/>
+<text x="1067" y="465" fill="#123C60" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="16">AccountErased</text>
+</g>
+<g class="edge" data-from="AccountService" data-to="PortfolioProjector">
+<path d="M 935 964 L 1170 964 Q 1180 964 1180 954 L 1180 905 L 1230 905" marker-end="url(#arrow)"/>
+<text x="1010" y="952" fill="#123C60" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="16">AccountErased</text>
+</g>
+</g>
+</svg>

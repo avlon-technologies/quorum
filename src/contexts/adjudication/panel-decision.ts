@@ -7,7 +7,7 @@
 import type { Deps } from '../../platform/deps.ts';
 import type { Consumer, StoredEvent } from '../../platform/events.ts';
 import { DAY_MS } from '../../platform/clock.ts';
-import type { ScoredData } from '../../contracts/model.generated.ts';
+import type { ScoredData, DecisionEscalatedData, AwardHeldData } from '../../contracts/model.generated.ts';
 
 /** The PanelDecision workflow's trigger: one instance per scored proposal (unique-by proposalId). */
 export function panelDecisionWorkflow(deps: Deps): Consumer {
@@ -31,17 +31,36 @@ export function panelDecisionWorkflow(deps: Deps): Consumer {
         );
         // a conflict disclosed before the case existed is waiting in adj_pending_hold (architect review A2)
         const held = db.prepare(`SELECT reason FROM adj_pending_hold WHERE proposal_id = ?`).get(e.payload.proposalId) as { reason: string } | undefined;
-        if (held) db.prepare(`UPDATE adj_case SET integrity_hold = ? WHERE proposal_id = ? AND integrity_hold IS NULL`).run(held.reason, e.payload.proposalId);
+        if (held && db.prepare(`UPDATE adj_case SET integrity_hold = ? WHERE proposal_id = ? AND integrity_hold IS NULL`).run(held.reason, e.payload.proposalId).changes === 1) {
+          const p: AwardHeldData = { proposalId: e.payload.proposalId, reason: held.reason, at: e.occurredAt };
+          deps.bus.publish('AwardHeld', `proposal:${e.payload.proposalId}`, p, 'quorum-platform');
+        }
       },
     },
   };
 }
 
-/** The human task's escalation clause: after P14D the officer is told; nothing is decided (ADR-010). */
+/**
+ * The human task's escalation clause: after P14D the program officer is told — DecisionEscalated, at most
+ * once per case (the escalated_at stamp is the guard, written in the same transaction). Nothing is decided
+ * by timeout (ADR-010). Closes review B3.
+ */
 export function sweepEscalations(deps: Deps): number {
   const now = deps.clock.now().toISOString();
   return deps.db
-    .prepare(`UPDATE adj_case SET escalated_at = ? WHERE status IN ('awaitingDecision','reconsider') AND decision_due <= ? AND escalated_at IS NULL`)
-    .run(now, now).changes;
+    .transaction(() => {
+      const due = deps.db
+        .prepare(`SELECT proposal_id, call_id, decision_due FROM adj_case WHERE status IN ('awaitingDecision','reconsider') AND decision_due <= ? AND escalated_at IS NULL`)
+        .all(now) as Array<{ proposal_id: string; call_id: string; decision_due: string }>;
+      let n = 0;
+      for (const c of due) {
+        const r = deps.db.prepare(`UPDATE adj_case SET escalated_at = ? WHERE proposal_id = ? AND escalated_at IS NULL`).run(now, c.proposal_id);
+        if (r.changes !== 1) continue;
+        const payload: DecisionEscalatedData = { proposalId: c.proposal_id, callId: c.call_id, dueAt: c.decision_due, at: now };
+        deps.bus.publish('DecisionEscalated', `proposal:${c.proposal_id}`, payload, 'quorum-platform');
+        n++;
+      }
+      return n;
+    })
+    .immediate();
 }
-

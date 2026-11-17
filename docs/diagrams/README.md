@@ -33,3 +33,88 @@ Each diagram was requested as the polished, verified, editable version, grounded
 4. **Authority boundaries does not show synchronous semantics.** The two cross-context calls are labelled only "invokes". They are synchronous and in-transaction: CallApi.GetCallStatus enforces INV-1 and IdentityApi.GetReviewerStanding enforces INV-12 (ADR-003). The "received by" arrows do not name their events.
 
 Signed viewer links expire about 24 hours after generation. Re-render with `diagram_render` / `diagram_revise` against the snapshot, or push again.
+
+
+---
+
+## Second set (2026-11-17): working model with the production additions
+
+Pinned from the **working model**, not the package-1 attestation above. The package is rebuilt later in this session, so these diagrams are pinned to an intermediate model state:
+
+```
+continuum diagram push continuum/model/quorum.adl-manifest.json --business continuum/model/quorum.bdl --no-bindings
+```
+
+- Snapshot: `snp_c608fba210544770d2e50351e0ac8bc3` (expires 2026-11-18T00:16Z; the signed viewer links expire about an hour after generation)
+- Model attestation: `sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59`, changeState `sha256:434cfdc26bc0503ab8b87c0737759ea0a99fd017baed8c376ec76256cec2ef96`
+- The working model adds the Operator actor, the Production environment, EraseAccount / AccountErased, AwardRefused, AwardHeld, DecisionEscalated and the PanelDecision `refused` step.
+- BDL pinned (valid; "BDL-to-ADL realization: NOT established by this import").
+- **No bindings were pinned.** The push with bindings was refused with `adl/compilation/binding-stale`, because the LocalDevelopment bindings still pin the package-1 attestation, and with `binding-completeness`, because no binding document exists for `::Quorum.Production`. Every technology shown is from element descriptions, not bindings.
+
+All runs were requested as polished and grounded "as it exists". The verdicts below are quoted from the tool. **None of these diagrams is accepted.** The server never assigns acceptance; that is the reviewer's decision.
+
+| Diagram | File | delivery.kind | Grading (quoted) | Communication (quoted) | Use it for |
+|---|---|---|---|---|---|
+| A proposal's life, role by role (revision 2) | `proposal-life-by-role.svg` | verified-editable | "24 of 34 things on this canvas are DECLARED by the pinned model; 10 are INFERRED" | "NOT YET" (0.94 comprehension, 0 misleading; "answers the question" 1 of 2) | Non-technical walkthrough: who acts at each step and which INV guards it |
+| When work stalls or goes wrong | `escalations-and-failures.svg` | verified-editable | "23 of 28 things on this canvas are DECLARED … 5 are SPECULATIVE" | "NOT YET" (0.71, 0 misleading) | Overdue reviews, refused awards, the ADR-005 hold (marked as an open owner decision), the Operator and erasure |
+| The same, after one correction pass | `escalations-and-failures-corrected.svg` | **editable-verification-failed** ("RESULT: FAIL (3 visual)"; "SEMANTIC FIDELITY: SUPPORTED") | as above | not re-graded | Shows DecisionEscalated and refused → reconsider. A diagnostic; see the defects below |
+| Production deployment | `production-deployment.svg` | **editable-verification-failed** ("SEMANTIC FIDELITY: MISGRADED", 1 claim) | "9 of 21 things on this canvas are DECLARED … 3 are INFERRED … 9 are SPECULATIVE" | "NOT YET" (0.56, 0 misleading; "answers the question" 2 of 2) | One process, its proposed volume, backups and monitoring, the external dependencies, and the people who use and operate it |
+| Review workflows (supersedes `review-workflow.svg`) | `review-workflow-v2.svg` | verified-editable ("RESULT: SUPPORTED", "0 misgraded") | "43 of 51 things on this canvas are DECLARED … 8 are SPECULATIVE" | "NOT YET" (0.69, **5 misleading**) | Triage and PanelDecision internals, every transition including `refused` |
+
+### What I checked by looking at each image
+
+**proposal-life-by-role**
+- Revision 1 scored 0.69. Revision 2 closes the gaps a blind reader reported:
+  - submission is draft-only;
+  - submission opens screening automatically;
+  - the triage advice feeds the officer's confirmation;
+  - INV-5 is shown on assignment;
+  - an unaffordable award returns to the chair for a decline only;
+  - Oversight is built from lifecycle events.
+- Remaining issues:
+  - The "If the envelope cannot fund the award" box has no arrow from the decision box.
+  - Every sequence arrow is dashed ("follows from the model, not stated in it"), because the journey compresses several declared reactions into one principal path.
+  - The dashed border on "Confirm eligibility" is not explained in the legend.
+
+**escalations-and-failures** (verified version)
+- **DecisionEscalated is missing.** The generated proposal showed it, but the reconstruction dropped it (the tool reports "Reconstruction preserved meaning: NO — lost 1").
+- refused → reconsider has no arrow.
+- Event labels near PortfolioProjector are crossed by lines.
+- The "Reviewer + Program officer" recipient box is unconnected. The tool notes that the model does not establish exact human recipients for AwardRefused, AwardHeld or AccountErased.
+- The five situation frames are graded speculative: they are groupings, not model elements.
+
+**escalations-and-failures-corrected**
+- The single correction pass added DecisionEscalated and refused → reconsider.
+- It draws DecisionEscalated from the `PanelDecision · decide` box. **That is wrong:** the model's publisher is AdjudicationService (`publishes: AwardHeld, DecisionEscalated`). The checker fails both arrows: "FAIL not a declared dependency".
+- It also fails refused → reconsider as "not a declared dependency". That transition **is** declared (PanelDecision `T10 : refused -> reconsider`; `review-workflow-v2` verifies it as DECLARED). This failure is the checker's limitation, not a defect in the picture.
+
+**production-deployment**
+- The misgraded claim is the people → QuorumServer "Uses Quorum" arrow. The checker says "graded speculative, but the image prompt does not list it as dotted". In the picture it **is** dotted, the weaker style, so nothing is overstated.
+- In the model the actors declare `uses: ::Quorum` (the system), not the deployable. That makes an *inferred* grade more accurate than speculative: an understatement, not an overstatement.
+- Volume, backups and monitoring are correctly amber "Proposed".
+- Missing, per the blind reader:
+  - how triage starts and its advisory-only fallback;
+  - the event → outbound message → drain → SMTP path;
+  - the Operator's delivery-skip and erasure duties.
+
+**review-workflow-v2**
+- Known disagreement 2 (`decline -> declined` missing) is **fixed**.
+- All PanelDecision transitions, including the new `refused` step, are solid and verified declared.
+- Known disagreement 1 **remains**, although the request asked explicitly for those hops to be drawn as declared. The eight service-reaction hops are dotted, under a legend that reads "proposed, not in the model":
+  - ProposalSubmitted → ProposalEnteredScreening;
+  - ConfirmEligibility → Eligible / Ineligible;
+  - AssignReviewer → ReviewersAssigned → ProposalUnderReview;
+  - SubmitReview → ReviewSubmitted → ProposalFullyReviewed → ProposalScored.
+- The model declares each of these as an `on X -> independent Y` / `one-of` reaction on ProposalService, AssignmentService or ReviewCompletion. The composer recorded no evidence for them, and the verifier graded them "SPECULATIVE —" with an empty evidence column. The blind reader was misled 5 times on this point.
+- This is an under-grading by the diagram pipeline, not a model gap. **Read those dotted hops as declared.**
+
+### Status of the four known disagreements from the first set
+
+| # | Disagreement | Status |
+|---|---|---|
+| 1 | Review workflow draws declared reactions as proposed | **Remains** in `review-workflow-v2` (pipeline under-grading; see above) |
+| 2 | Review workflow omits `decline -> declined` | **Fixed** in `review-workflow-v2` |
+| 3 | Async delivery verification failed on a wrapped label; TriageProposed has no publisher | **Not re-run** (run budget). `review-workflow-v2` shows Triage `proposed` publishing TriageProposed |
+| 4 | Authority boundaries omits synchronous semantics | **Not re-run** (run budget) |
+
+The first-set files (`authority-boundaries`, `async-delivery`, `review-workflow`) are kept unchanged, still pinned to the package-1 attestation.

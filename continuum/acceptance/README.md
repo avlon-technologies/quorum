@@ -22,14 +22,16 @@ export function createAdapter({ createFakeProvider, env }) {
 // ctx = { scenario, provider, state, assert, env, log }  — provider is the scenario's fake provider
 ```
 
-### Step vocabulary — 30 distinct keys (derived from the scenarios — bind every key)
+### Step vocabulary — 35 distinct keys (derived from the scenarios — bind every key)
 
 | step | phases | args | used by |
 |---|---|---|---|
+| `account.erased` | when | `account`, `reason` | 1 scenario |
 | `agent.screening.refused` | then | `proposal`, `status` | 1 scenario |
 | `budget.committed` | then | `committed`, `envelope` | 1 scenario |
 | `call.publish.as` | then | `as`, `rule`, `status` | 1 scenario |
-| `clock.advanced` | then, when | `days` | 1 scenario |
+| `case.status` | then | `proposal`, `status` | 1 scenario |
+| `clock.advanced` | then, when | `days` | 2 scenarios |
 | `command.refused` | then | `code`, `rule`, `status` | 8 scenarios |
 | `conflict.declared` | given | `proposal`, `reviewer` | 1 scenario |
 | `consumers.applied.once` | then | `type` | 1 scenario |
@@ -38,15 +40,18 @@ export function createAdapter({ createFakeProvider, env }) {
 | `decision.recorded` | given | `outcome`, `proposal` | 1 scenario |
 | `delivery.interrupted` | when | `consumer`, `proposal` | 1 scenario |
 | `delivery.redelivered` | then | `type` | 1 scenario |
-| `event.count` | then | `count`, `type` | 8 scenarios |
+| `event.count` | then | `count`, `type` | 10 scenarios |
 | `foreign.proposal.read` | when | `as`, `proposal` | 1 scenario |
+| `notification.sent` | then | `count`, `kind`, `recipient` | 1 scenario |
+| `personal.data.absent` | then | — | 1 scenario |
 | `portfolio.shows` | then | `committed`, `proposal`, `status` | 1 scenario |
-| `projection.replays.identically` | then | — | 1 scenario |
+| `projection.replays.identically` | then | — | 2 scenarios |
 | `proposal.prepared` | given | `applicant`, `proposal`, `stage` | 13 scenarios |
-| `proposal.status` | then | `proposal`, `status` | 3 scenarios |
+| `proposal.retained` | then | `proposal`, `status` | 1 scenario |
+| `proposal.status` | then | `proposal`, `status` | 4 scenarios |
 | `proposal.submit` | when | `at`, `proposal` | 2 scenarios |
-| `proposals.scored` | given | `proposals`, `requested` | 2 scenarios |
-| `quorum.running` | given | `envelope`, `maxRequest` | 15 scenarios |
+| `proposals.scored` | given | `proposals`, `requested` | 4 scenarios |
+| `quorum.running` | given | `envelope`, `maxRequest` | 17 scenarios |
 | `response.status` | then | `status` | 1 scenario |
 | `review.submit` | when | `proposal`, `reviewer`, `scores` | 2 scenarios |
 | `review.submit.accepted` | then | `proposal`, `reviewer` | 1 scenario |
@@ -57,10 +62,12 @@ export function createAdapter({ createFakeProvider, env }) {
 | `timeline.has` | then | `events`, `proposal` | 1 scenario |
 | `triage.runs` | when | `proposal` | 1 scenario |
 
+- `account.erased` — "the operator erases alice's account"
 - `agent.screening.refused` — "the agent identity cannot record a screening decision"
 - `budget.committed` — "only 150000 is committed against the 200000 envelope"
 - `call.publish.as` — "an applicant trying to publish a call is refused under INV-11"
-- `clock.advanced` — "21 days pass" / "another day passes"
+- `case.status` — "the case still awaits the chair: nothing was decided by timeout"
+- `clock.advanced` — "15 days pass without a decision" / "21 days pass" / "another day passes" / "ten more days pass"
 - `command.refused` — "the assignment is refused under INV-12" / "the assignment is refused under INV-3" / "the assignment is refused under INV-4" / "the award is refused under INV-9" / "the decision is refused under INV-8" / "the review is refused under INV-6" / "the second submission is refused under INV-2" / "the submission is refused as deadline_passed under INV-1"
 - `conflict.declared` — "reviewer 1 has declared a conflict on p1"
 - `consumers.applied.once` — "each consumer applied ProposalSubmitted exactly once"
@@ -69,15 +76,18 @@ export function createAdapter({ createFakeProvider, env }) {
 - `decision.recorded` — "the chair has awarded p1"
 - `delivery.interrupted` — "p1 is submitted and the notification delivery fails before it is marked, then Quorum restarts"
 - `delivery.redelivered` — "redelivering every ReviewSubmitted changes nothing"
-- `event.count` — "ProposalFullyReviewed was published exactly once" / "exactly one ProposalSubmitted exists" / "no ProposalAwarded is published" / "no ProposalSubmitted is published" / "no ReviewSubmitted is published" / "no ReviewerAssigned is published" / "one TriageProposed is published" / "still exactly one ProposalScored" / "still three ReviewOverdue events" / "three ReviewOverdue events are published"
+- `event.count` — "ProposalFullyReviewed was published exactly once" / "exactly one ProposalSubmitted exists" / "no ProposalAwarded is published" / "no ProposalSubmitted is published" / "no ReviewSubmitted is published" / "no ReviewerAssigned is published" / "one AccountErased event is published" / "one DecisionEscalated event is published" / "one TriageProposed is published" / "still exactly one DecisionEscalated event" / "still exactly one ProposalScored" / "still three ReviewOverdue events" / "three ReviewOverdue events are published"
 - `foreign.proposal.read` — "another applicant requests p1"
+- `notification.sent` — "the program officers are notified once"
+- `personal.data.absent` — "alice's name and email appear nowhere" / "and still no personal data after the rebuild"
 - `portfolio.shows` — "the portfolio shows p1 awarded and 100000 committed"
-- `projection.replays.identically` — "replaying the portfolio projection from the event log reproduces it exactly"
+- `projection.replays.identically` — "rebuilding the projection from the redacted log gives the same projection" / "replaying the portfolio projection from the event log reproduces it exactly"
 - `proposal.prepared` — "proposal p1 has reached draft" / "proposal p1 has reached eligible" / "proposal p1 has reached submitted" / "proposal p1 has reached underReview"
-- `proposal.status` — "p1 is scored" / "p1 is still a draft" / "p1 remains in screening"
+- `proposal.retained` — "p1 is kept as a business record"
+- `proposal.status` — "p1 is scored" / "p1 is still a draft" / "p1 is still scored" / "p1 remains in screening"
 - `proposal.submit` — "the applicant submits p1 again with a new request" / "the applicant submits p1 exactly at the deadline"
-- `proposals.scored` — "p1 and p2 are scored, each requesting 150000" / "p1 is scored"
-- `quorum.running` — "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+- `proposals.scored` — "alice's proposal p1 is scored" / "p1 and p2 are scored, each requesting 150000" / "p1 is scored" / "proposal p1 is scored"
+- `quorum.running` — "Quorum is running with a published call, an officer, a chair, an operator, applicants and verified reviewers" / "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
 - `response.status` — "p1 does not exist for them"
 - `review.submit` — "reviewer 0 submits a review that omits one criterion" / "reviewer 2 submits a complete review"
 - `review.submit.accepted` — "reviewer 0 submits late and is accepted"
@@ -89,6 +99,51 @@ export function createAdapter({ createFakeProvider, env }) {
 - `triage.runs` — "the triage agent assesses p1"
 
 ## Scenarios
+
+### `account-erasure`
+
+An operator erases an applicant on request: no personal identifier remains in accounts, events, notifications, projections or the command log, a rebuilt projection agrees, and the proposal is kept as a business record.
+
+- verifies: `::Quorum.ResearchFunding.AccessControl.PersonalDataErasable` (Requirement), `::Quorum.ResearchFunding.Identity.AccountService` (Service)
+- realizes the declared Test `::Quorum.AccountErasure`
+- environment: `::Quorum.LocalDevelopment`
+
+**given**
+- Quorum is running with a published call, an officer, a chair, an operator, applicants and verified reviewers `[quorum.running]`
+- alice's proposal p1 is scored `[proposals.scored]`
+
+**when**
+- the operator erases alice's account `[account.erased]`
+
+**then**
+- alice's name and email appear nowhere `[personal.data.absent]`
+- rebuilding the projection from the redacted log gives the same projection `[projection.replays.identically]`
+- and still no personal data after the rebuild `[personal.data.absent]`
+- p1 is kept as a business record `[proposal.retained]`
+- one AccountErased event is published `[event.count]`
+
+### `decision-escalated`
+
+J7: a chair decision still pending 14 days after scoring publishes DecisionEscalated exactly once and notifies the program officers; nothing is decided by timeout.
+
+- verifies: `::Quorum.ResearchFunding.PanelAdjudication.DecisionsEscalated` (Requirement), `::Quorum.ResearchFunding.Adjudication.AdjudicationService` (Service), `::Quorum.ResearchFunding.Adjudication.PanelDecision` (Workflow)
+- realizes the declared Test `::Quorum.DecisionEscalation`
+- environment: `::Quorum.LocalDevelopment`
+
+**given**
+- Quorum is running with a published call, an officer, a chair, applicants and verified reviewers `[quorum.running]`
+- proposal p1 is scored `[proposals.scored]`
+
+**when**
+- 15 days pass without a decision `[clock.advanced]`
+
+**then**
+- one DecisionEscalated event is published `[event.count]`
+- the program officers are notified once `[notification.sent]`
+- ten more days pass `[clock.advanced]`
+- still exactly one DecisionEscalated event `[event.count]`
+- the case still awaits the chair: nothing was decided by timeout `[case.status]`
+- p1 is still scored `[proposal.status]`
 
 ### `delivery-survives-interruption`
 
@@ -268,14 +323,19 @@ Two submitted reviews do not score a proposal; the third scores it exactly once 
         ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed
           → ::Quorum.ResearchFunding.Submission.ProposalService [subscribes; correlated, authored-reaction, independent]
             ::Quorum.ResearchFunding.Submission.ProposalScored
-              → ::Quorum.ResearchFunding.Adjudication.PanelDecision [triggers; correlated, workflow-derived, one-of]
+              → ::Quorum.ResearchFunding.Adjudication.PanelDecision [triggers; correlated, workflow-derived, independent]
+                ::Quorum.ResearchFunding.Adjudication.AwardRefused
+                  → ::Quorum.ResearchFunding.Notification.NotificationService [declared sink: -> none]
+                  → ::Quorum.ResearchFunding.Oversight.PortfolioProjector [declared sink: -> none]
+                  → ::Quorum.ResearchFunding.Oversight.PortfolioProjector projects ::Quorum.ResearchFunding.Oversight.AuditTrail [declared production]
+              → ::Quorum.ResearchFunding.Adjudication.PanelDecision [triggers; correlated, workflow-derived, independent]
                 ::Quorum.ResearchFunding.Adjudication.ProposalDeclined
                   → ::Quorum.ResearchFunding.Submission.ProposalService [declared sink: -> none]
                   → ::Quorum.ResearchFunding.Notification.NotificationService [declared sink: -> none]
                   → ::Quorum.ResearchFunding.Oversight.PortfolioProjector [declared sink: -> none]
                   → ::Quorum.ResearchFunding.Oversight.PortfolioProjector projects ::Quorum.ResearchFunding.Oversight.Portfolio [declared production]
                   → ::Quorum.ResearchFunding.Oversight.PortfolioProjector projects ::Quorum.ResearchFunding.Oversight.AuditTrail [declared production]
-              → ::Quorum.ResearchFunding.Adjudication.PanelDecision [triggers; correlated, workflow-derived, one-of]
+              → ::Quorum.ResearchFunding.Adjudication.PanelDecision [triggers; correlated, workflow-derived, independent]
                 ::Quorum.ResearchFunding.Adjudication.ProposalAwarded
                   → ::Quorum.ResearchFunding.Submission.ProposalService [declared sink: -> none]
                   → ::Quorum.ResearchFunding.Notification.NotificationService [declared sink: -> none]
@@ -472,12 +532,14 @@ A proposal followed from submission to award appears in the portfolio and its au
 
 | requirement | scenarios |
 |---|---|
+| `::Quorum.ResearchFunding.AccessControl.PersonalDataErasable` | `account-erasure` |
 | `::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority` | `inv11-role-scoped-authority` |
 | `::Quorum.ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted` | `inv07-blind-until-own-submitted` |
 | `::Quorum.ResearchFunding.BlindPeerReview.CompleteScoring` | `inv06-complete-scoring` |
 | `::Quorum.ResearchFunding.CallAdministration.SubmissionWindow` | `inv01-submission-window` |
 | `::Quorum.ResearchFunding.EligibilityScreening.AgentNeverDecides` | `inv10-agent-never-decides` |
 | `::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly` | `inv08-chair-decides-scored-only` |
+| `::Quorum.ResearchFunding.PanelAdjudication.DecisionsEscalated` | `decision-escalated` |
 | `::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded` | `inv09-envelope-never-exceeded` |
 | `::Quorum.ResearchFunding.ParticipantNotification.NotificationsDurable` | `delivery-survives-interruption` |
 | `::Quorum.ResearchFunding.PortfolioReporting.PortfolioFromProjection` | `portfolio-from-projection` |

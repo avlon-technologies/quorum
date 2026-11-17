@@ -30,22 +30,27 @@ checks() { # $1 = label
   } 2>&1 | tee -a "$OUT/$L.txt"
 }
 
+# mutate <file> <anchor> <replacement>: fails loudly if the anchor is gone, so a regression can never be silently empty
+mutate() {
+  node -e "const fs=require('fs');const [p,a,b]=process.argv.slice(1);const s=fs.readFileSync(p,'utf8');if(!s.includes(a)){console.error('regression anchor missing in '+p+': '+a);process.exit(1)}fs.writeFileSync(p,s.replace(a,b))" "$@" || exit 1
+}
+
 checks 0-baseline
 
 # R1 — behavioural: the blind-review guard (INV-7) is silently removed
-node -e "const fs=require('fs');const p='src/contexts/peer-review/service.ts';let s=fs.readFileSync(p,'utf8');s=s.replace(\"if (mine.status !== 'completed') {\",\"if (false && mine.status !== 'completed') {\");fs.writeFileSync(p,s)"
+mutate src/contexts/peer-review/service.ts "if (mine.status !== 'completed') {" "if (false && mine.status !== 'completed') {"
 $G commit -qam "R1: show peer reviews before the reviewer submits (deliberate regression)" --no-verify
 checks 1-inv07-blind-review-removed
 $G revert -q --no-edit HEAD --no-verify 2>/dev/null || $G revert --no-edit HEAD
 
 # R2 — structural: Adjudication reaches into PeerReview's module (ADR-006: never reads review tables)
-node -e "const fs=require('fs');const p='src/contexts/adjudication/service.ts';let s=fs.readFileSync(p,'utf8');s=s.replace(\"import type { Deps } from '../../platform/deps.ts';\",\"import type { Deps } from '../../platform/deps.ts';\nimport { countedReviews } from '../peer-review/completion.ts';\nexport const reviewCountFor = (deps: Deps, proposalId: string) => countedReviews(deps.db, proposalId);\");fs.writeFileSync(p,s)"
+node -e "const fs=require('fs');const p='src/contexts/adjudication/service.ts';let s=fs.readFileSync(p,'utf8');s=s.replace(\"import type { Deps } from '../../platform/deps.ts';\",\"import type { Deps } from '../../platform/deps.ts';\nimport { countedReviews } from '../peer-review/completion.ts';\nexport const reviewCountFor = (deps: Deps, proposalId: string) => countedReviews(deps, proposalId);\");fs.writeFileSync(p,s)"
 $G commit -qam "R2: adjudication reads peer-review internals (deliberate regression)" --no-verify
 checks 2-adjudication-imports-peer-review
 $G revert -q --no-edit HEAD --no-verify 2>/dev/null || $G revert --no-edit HEAD
 
 # R3 — model drift: the semantic model is edited but the package is not rebuilt
-node -e "const fs=require('fs');const p='continuum/model/quorum.adl';let s=fs.readFileSync(p,'utf8');s=s.replace('INV-9 — The sum of all awarded amounts','INV-9 — Roughly, the sum of awarded amounts');fs.writeFileSync(p,s)"
+mutate continuum/model/quorum.adl "INV-9 — The sum of all awarded amounts" "INV-9 — Roughly, the sum of awarded amounts"
 $G commit -qam "R3: model edited without rebuilding the package (deliberate regression)" --no-verify
 checks 3-model-edited-not-rebuilt
 $G revert -q --no-edit HEAD --no-verify 2>/dev/null || $G revert --no-edit HEAD

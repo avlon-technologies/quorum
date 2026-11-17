@@ -53,6 +53,7 @@ export const PROJECTED: EventType[] = [
   'CallPublished', 'CallClosed', 'OrcidVerified', 'ProposalSubmitted', 'ProposalEnteredScreening', 'TriageProposed', 'ProposalEligible', 'ProposalIneligible',
   'ProposalUnderReview', 'ProposalScored', 'ProposalWithdrawn', 'ConflictDeclared', 'ReviewerAssigned', 'AssignmentAccepted', 'AssignmentRevoked',
   'ReviewSubmitted', 'ReviewOverdue', 'ProposalFullyReviewed', 'ProposalAwarded', 'ProposalDeclined',
+  'AwardRefused', 'AwardHeld', 'DecisionEscalated', 'AccountErased',
 ];
 
 export function projectorConsumer(_deps: Deps): Consumer {
@@ -110,6 +111,20 @@ export function projectorConsumer(_deps: Deps): Consumer {
         audit(db, e, `Awarded ${cad(e.payload.amount)} by the panel chair`, e.payload.rationale);
       },
       ProposalDeclined: status('declined', () => 'Declined by the panel chair', (e) => e.payload.rationale),
+      // review B4: transitions that were previously unaudited
+      AwardRefused: (db, e) => audit(db, e, `Award of ${cad(e.payload.requested)} refused: the envelope cannot fund it. Only a decline remains.`),
+      AwardHeld: (db, e) => audit(db, e, 'Award placed on integrity hold', e.payload.reason),
+      DecisionEscalated: (db, e) => audit(db, e, `Panel decision overdue (due ${String(e.payload.dueAt).slice(0, 10)}); program officers notified`),
+      // Erasure: the projection carries the same marker a replay of the redacted log would produce
+      AccountErased: (db, e) => {
+        const id = e.payload.accountId;
+        db.prepare(`UPDATE ovs_proposal SET applicant_name = '[erased]' WHERE proposal_id IN (SELECT proposal_id FROM ovs_audit WHERE event = 'ProposalSubmitted' AND actor_id = ?)`).run(id);
+        db.prepare(
+          `UPDATE ovs_audit SET summary = 'Submitted by [erased]' || substr(summary, instr(summary, ', requesting')) WHERE event = 'ProposalSubmitted' AND actor_id = ? AND instr(summary, ', requesting') > 0`,
+        ).run(id);
+        db.prepare(`UPDATE ovs_audit SET summary = 'ORCID iD [erased] verified' WHERE event = 'OrcidVerified' AND subject_id = ?`).run(id);
+        audit(db, e, 'Personal data erased on request');
+      },
     },
   };
 }

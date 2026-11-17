@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+<title>Quorum Production — one process for one funding body</title>
+<desc>One QuorumServer process, human participants, and three external dependencies. Logical data is established; physical storage, backups and monitoring are proposed. No Production technology bindings exist yet.</desc>
+<defs>
+<marker id="navy" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M 0 1 L 10 6 L 0 11" fill="#173F64"/></marker>
+<marker id="muted" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M 0 1 L 10 6 L 0 11" fill="#91A3B1"/></marker>
+<marker id="amber" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M 0 1 L 10 6 L 0 11" fill="#C39B59"/></marker>
+</defs>
+<rect x="0" y="0" width="1536" height="1024" fill="#FFFFFF"/>
+<text x="768" y="53" text-anchor="middle" font-size="36" font-weight="750" fill="#092344">Quorum Production — one process for one funding body</text>
+<text x="768" y="94" text-anchor="middle" font-size="25" fill="#173F64">No Production technology bindings exist yet.</text>
+
+<g class="domain" data-label="Production deployment scope" data-grade="declared">
+<rect x="450" y="135" width="740" height="800" rx="12" fill="#F2F7FA" stroke="#B6C8D4" stroke-width="1.5"/>
+<text x="470" y="165" font-size="22" font-weight="700" fill="#173F64">Production deployment scope</text>
+<text x="470" y="188" font-size="14" fill="#385571">Solid: application and named dependencies · Amber dashed: proposed infrastructure</text>
+
+<g class="service" data-label="QuorumServer" data-grade="declared">
+<rect x="550" y="220" width="500" height="300" rx="9" fill="#E0EFFC" stroke="#103F66" stroke-width="4"/>
+<text x="800" y="272" text-anchor="middle" font-size="34" font-weight="750" fill="#103F66">QuorumServer</text>
+<text x="800" y="304" text-anchor="middle" font-size="22" font-weight="700" fill="#103F66">One process</text>
+<text x="800" y="351" text-anchor="middle" font-size="21" fill="#173451"><tspan x="800">HTTP API · Static UI</tspan><tspan x="800" dy="29">Event dispatcher · Overdue sweeper</tspan><tspan x="800" dy="29">Outbound-message drain</tspan></text>
+<text x="800" y="466" text-anchor="middle" font-size="17" fill="#173451"><tspan x="800">Production configuration:</tspan><tspan x="800" dy="24">secrets from the environment</tspan></text>
+</g>
+
+<g class="service" data-label="Proposed persistent volume" data-grade="speculative">
+<rect x="475" y="680" width="500" height="235" rx="10" fill="#FFFBF2" stroke="#D9A74D" stroke-width="1.6" stroke-dasharray="2 4"/>
+<text x="725" y="710" text-anchor="middle" font-size="22" font-weight="700" fill="#A5630D">Proposed persistent volume</text>
+<text x="725" y="738" text-anchor="middle" font-size="19" fill="#284763">SQLite file · WAL mode</text>
+<text x="725" y="765" text-anchor="middle" font-size="15" fill="#284763">Proposed physical placement of the logical stores below</text>
+</g>
+
+<g class="service" data-label="Logical stores and read-side data" data-grade="declared">
+<rect x="491" y="781" width="468" height="117" rx="7" fill="#FFFFFF" stroke="#173F64" stroke-width="2"/>
+<text x="725" y="806" text-anchor="middle" font-size="19" font-weight="700" fill="#173F64">Logical stores and read-side data</text>
+<text x="725" y="832" text-anchor="middle" font-size="15" fill="#284763"><tspan x="725">Accounts · Calls · Proposals · Reviews</tspan><tspan x="725" dy="23">Completion ledger · Adjudication and budget ledger</tspan><tspan x="725" dy="23">Outbound messages and inbox · Audit trail · Portfolio</tspan></text>
+</g>
+
+<g class="service" data-label="Proposed online backups" data-grade="speculative">
+<rect x="995" y="795" width="175" height="120" rx="9" fill="#FFFBF2" stroke="#D9A74D" stroke-width="1.6" stroke-dasharray="2 4"/>
+<text x="1010" y="822" font-size="19" font-weight="700" fill="#A5630D"><tspan x="1010">Proposed online</tspan><tspan x="1010" dy="23">backups</tspan></text>
+<text x="1010" y="869" font-size="15" fill="#284763"><tspan x="1010">Schedule and</tspan><tspan x="1010" dy="19">destination to be chosen</tspan></text>
+</g>
+
+<g class="service" data-label="Proposed monitoring and alerting" data-grade="speculative">
+<rect x="800" y="560" width="370" height="95" rx="9" fill="#FFFBF2" stroke="#D9A74D" stroke-width="1.6" stroke-dasharray="2 4"/>
+<text x="818" y="590" font-size="20" font-weight="700" fill="#A5630D">Proposed monitoring and alerting</text>
+<text x="818" y="617" font-size="17" fill="#284763"><tspan x="818">Delivery-health visibility for the</tspan><tspan x="818" dy="22">Operator</tspan></text>
+</g>
+</g>
+
+<g class="actor" data-label="Applicant · Reviewer&#10;Program Officer · Panel Chair" data-grade="declared">
+<rect x="25" y="210" width="320" height="190" rx="8" fill="#FFFFFF" stroke="#8B99A4" stroke-width="2"/>
+<circle cx="65" cy="240" r="12" fill="#8093A1"/><path d="M 44 275 Q 44 253 65 253 Q 86 253 86 275 Z" fill="#8093A1"/>
+<text x="44" y="305" font-size="20" font-weight="700" fill="#173451"><tspan x="44">Applicant · Reviewer</tspan><tspan x="44" dy="25">Program Officer · Panel Chair</tspan></text>
+<text x="44" y="358" font-size="18" fill="#385571"><tspan x="44">Submit, review and administer</tspan><tspan x="44" dy="23">funding decisions</tspan></text>
+</g>
+<g class="actor" data-label="Operator" data-grade="declared">
+<rect x="25" y="445" width="320" height="175" rx="8" fill="#FFFFFF" stroke="#778B9B" stroke-width="2.3"/>
+<circle cx="65" cy="475" r="12" fill="#8093A1"/><path d="M 44 510 Q 44 488 65 488 Q 86 488 86 510 Z" fill="#8093A1"/>
+<text x="100" y="492" font-size="25" font-weight="700" fill="#173451">Operator</text>
+<text x="44" y="542" font-size="19" fill="#385571"><tspan x="44">Backups, restores and</tspan><tspan x="44" dy="24">delivery health</tspan></text>
+<text x="44" y="598" font-size="18" font-style="italic" fill="#385571">No business role</text>
+</g>
+<g class="actor" data-label="Funding Operations" data-grade="declared">
+<rect x="25" y="690" width="320" height="160" rx="8" fill="#FFFFFF" stroke="#8B99A4" stroke-width="2"/>
+<circle cx="65" cy="720" r="12" fill="#8093A1"/><path d="M 44 755 Q 44 733 65 733 Q 86 733 86 755 Z" fill="#8093A1"/>
+<text x="44" y="783" font-size="23" font-weight="700" fill="#173451">Funding Operations</text>
+<text x="44" y="812" font-size="18" fill="#385571"><tspan x="44">Accountable for operating Quorum</tspan></text>
+</g>
+
+<g class="service" data-label="ORCID registry" data-grade="declared">
+<rect x="1220" y="225" width="290" height="90" rx="8" fill="#EDF9F8" stroke="#008B8A" stroke-width="2.5"/>
+<text x="1365" y="260" text-anchor="middle" font-size="23" font-weight="700" fill="#103F56">ORCID registry</text>
+<text x="1365" y="290" text-anchor="middle" font-size="18" fill="#284763">Real public HTTP API</text>
+</g>
+<g class="service" data-label="Hosted triage model provider" data-grade="declared">
+<rect x="1220" y="355" width="290" height="100" rx="8" fill="#EDF9F8" stroke="#008B8A" stroke-width="2.5"/>
+<text x="1365" y="387" text-anchor="middle" font-size="19" font-weight="700" fill="#103F56"><tspan x="1365">Hosted triage model provider</tspan></text>
+<text x="1365" y="424" text-anchor="middle" font-size="18" fill="#284763">External model dependency</text>
+</g>
+<g class="service" data-label="SMTP relay" data-grade="declared">
+<rect x="1220" y="495" width="290" height="90" rx="8" fill="#EDF9F8" stroke="#008B8A" stroke-width="2.5"/>
+<text x="1365" y="530" text-anchor="middle" font-size="23" font-weight="700" fill="#103F56">SMTP relay</text>
+<text x="1365" y="560" text-anchor="middle" font-size="18" fill="#284763">External mail dependency</text>
+</g>
+
+<g class="edge" data-kind="derived" data-from="Applicant · Reviewer&#10;Program Officer · Panel Chair" data-to="QuorumServer">
+<path d="M 345 290 L 550 290" fill="none" stroke="#91A3B1" stroke-width="1.6" stroke-dasharray="2 4" marker-end="url(#muted)"/>
+<text x="391" y="276" font-size="16" fill="#385571" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">Uses Quorum</text>
+</g>
+<g class="edge" data-kind="derived" data-from="Operator" data-to="QuorumServer">
+<path d="M 345 480 L 550 480" fill="none" stroke="#91A3B1" stroke-width="1.6" stroke-dasharray="2 4" marker-end="url(#muted)"/>
+<text x="365" y="465" font-size="16" fill="#385571" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">Operates Quorum</text>
+</g>
+<g class="edge" data-kind="derived" data-from="QuorumServer" data-to="ORCID registry">
+<path d="M 1050 270 L 1220 270" fill="none" stroke="#173F64" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#navy)"/>
+<text x="1060" y="254" font-size="16" fill="#173F64" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">Identity verification</text>
+</g>
+<g class="edge" data-kind="derived" data-from="QuorumServer" data-to="Hosted triage model provider">
+<path d="M 1050 390 L 1220 390" fill="none" stroke="#173F64" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#navy)"/>
+<text x="1110" y="375" font-size="16" fill="#173F64" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">Triage</text>
+</g>
+<g class="edge" data-kind="derived" data-from="QuorumServer" data-to="SMTP relay">
+<path d="M 1050 470 L 1200 470 L 1200 540 L 1220 540" fill="none" stroke="#173F64" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#navy)"/>
+<text x="1068" y="455" font-size="16" fill="#173F64" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">Mail delivery</text>
+</g>
+<g class="edge" data-kind="derived" data-from="QuorumServer" data-to="Proposed persistent volume">
+<path d="M 650 520 L 650 680" fill="none" stroke="#C39B59" stroke-width="1.6" stroke-dasharray="2 4" marker-end="url(#amber)"/>
+<text x="666" y="593" font-size="16" fill="#8E641E" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">Proposed storage</text>
+</g>
+<g class="edge" data-kind="derived" data-from="QuorumServer" data-to="Proposed monitoring and alerting">
+<path d="M 985 520 L 985 560" fill="none" stroke="#C39B59" stroke-width="1.6" stroke-dasharray="2 4" marker-end="url(#amber)"/>
+<text x="998" y="543" font-size="15" fill="#8E641E" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">Proposed health signals</text>
+</g>
+<g class="edge" data-kind="derived" data-from="Proposed monitoring and alerting" data-to="Operator">
+<path d="M 800 635 L 390 635 Q 375 635 375 620 L 375 585 Q 375 575 365 575 L 345 575" fill="none" stroke="#C39B59" stroke-width="1.6" stroke-dasharray="2 4" marker-end="url(#amber)"/>
+<text x="477" y="625" font-size="16" fill="#8E641E" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">Proposed alerts</text>
+</g>
+<g class="edge" data-kind="derived" data-from="Proposed persistent volume" data-to="Proposed online backups">
+<path d="M 975 780 L 1080 780 L 1080 795" fill="none" stroke="#C39B59" stroke-width="1.6" stroke-dasharray="2 4" marker-end="url(#amber)"/>
+<text x="992" y="737" font-size="15" fill="#8E641E" paint-order="stroke" stroke="#FFFFFF" stroke-width="6"><tspan x="992">Proposed scheduled</tspan><tspan x="992" dy="20">backup</tspan></text>
+</g>
+
+<g class="legend" data-label="Arrows">
+<text x="30" y="918" font-size="20" font-weight="700" fill="#173451">Arrows</text>
+<path d="M 30 945 L 100 945" fill="none" stroke="#173F64" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#navy)"/>
+<text x="116" y="950" font-size="14" fill="#385571">Dashed: follows from the model, not stated in it</text>
+<path d="M 30 975 L 100 975" fill="none" stroke="#91A3B1" stroke-width="1.6" stroke-dasharray="2 4" marker-end="url(#muted)"/>
+<text x="116" y="980" font-size="14" fill="#385571">Dotted: proposed, not in the model</text>
+</g>
+</svg>

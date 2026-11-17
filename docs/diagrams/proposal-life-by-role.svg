@@ -1,0 +1,191 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+<title>A proposal's life in Quorum</title>
+<desc>A role-lane proposal journey. People control eligibility and funding decisions, the agent provides optional advice, and three independent reviews support the chair's decision. Dashed connectors show inferred progression; solid connectors show stated event-fed oversight.</desc>
+<defs>
+<marker id="arrow" orient="auto" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="9" refY="5"><path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#53677F" stroke-width="1.8"/></marker>
+<marker id="tealArrow" orient="auto" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="9" refY="5"><path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#087F8C" stroke-width="2"/></marker>
+</defs>
+<rect x="0" y="0" width="1536" height="1024" fill="#FFFFFF"/>
+<text x="24" y="45" font-size="42" font-weight="750" fill="#0C2053">A proposal's life in Quorum</text>
+<text x="24" y="76" font-size="23" fill="#415671">People decide. The agent advises. Three independent reviews support the funding decision.</text>
+
+<g class="domain" data-label="Applicant" data-grade="declared">
+<rect x="8" y="94" width="580" height="143" rx="5" fill="#EFF7FE" stroke="#DCEAF7"/>
+<text x="20" y="166" font-size="22" font-weight="700" fill="#102E60">Applicant</text>
+<g class="service" data-label="Draft proposal" data-grade="declared">
+<rect x="160" y="103" width="168" height="88" rx="5" fill="#E3F1FF" stroke="#1762C4"/>
+<text x="173" y="128" font-size="16" font-weight="700" fill="#102E60">Draft proposal</text>
+<text x="173" y="149" font-size="13" fill="#172F49"><tspan x="173">Save a draft of your</tspan><tspan x="173" dy="17">proposal</tspan></text>
+</g>
+<g class="service" data-label="Submit proposal" data-grade="declared">
+<rect x="364" y="101" width="210" height="128" rx="5" fill="#E3F1FF" stroke="#1762C4" stroke-width="1.5"/>
+<text x="377" y="122" font-size="16" font-weight="700" fill="#102E60">Submit proposal</text>
+<text x="377" y="139" font-size="12" fill="#172F49"><tspan x="377">Only while still a draft:</tspan><tspan x="377" dy="15">Draft → Submitted</tspan></text>
+<rect x="376" y="160" width="186" height="19" rx="4" fill="#CEE7FF"/>
+<text x="381" y="173" font-size="11" fill="#143963">INV-1 · Call open; before deadline</text>
+<rect x="376" y="182" width="186" height="18" rx="4" fill="#CEE7FF"/>
+<text x="381" y="195" font-size="11" fill="#143963">INV-2 · Submit once</text>
+<text x="377" y="213" font-size="11" fill="#172F49"><tspan x="377">Withdrawal remains possible</tspan><tspan x="377" dy="13">before a final outcome.</tspan></text>
+</g>
+</g>
+
+<g class="service" data-label="Screening opens automatically" data-grade="declared">
+<rect x="612" y="103" width="220" height="127" rx="5" fill="#F0F2F5" stroke="#63748A" stroke-width="1.4"/>
+<text x="625" y="125" font-size="16" font-weight="700" fill="#233A54"><tspan x="625">Screening opens</tspan><tspan x="625" dy="18">automatically</tspan></text>
+<text x="625" y="164" font-size="12" fill="#233A54"><tspan x="625">Platform records</tspan><tspan x="625" dy="16">Submitted → Screening</tspan></text>
+<text x="625" y="202" font-size="11.5" fill="#233A54"><tspan x="625">Every submission; independent</tspan><tspan x="625" dy="15">of agent success.</tspan></text>
+</g>
+
+<g class="domain" data-label="Triage agent" data-grade="declared">
+<rect x="8" y="245" width="1282" height="129" rx="5" fill="#FFF8EC" stroke="#F6EAD5"/>
+<text x="20" y="299" font-size="22" font-weight="700" fill="#102E60">Triage agent</text>
+<text x="20" y="324" font-size="16" font-weight="600" fill="#925000">Advisory only</text>
+<g class="service" data-label="Suggest eligibility" data-grade="declared">
+<rect x="231" y="252" width="226" height="114" rx="5" fill="#FFF0D4" stroke="#D88B16"/>
+<text x="244" y="274" font-size="16" font-weight="700" fill="#67400D">Suggest eligibility</text>
+<text x="244" y="293" font-size="12" fill="#463B2B"><tspan x="244">Advice only; no proposal</tspan><tspan x="244" dy="15">state change</tspan></text>
+<rect x="243" y="314" width="202" height="19" rx="4" fill="#FFE1A6"/>
+<text x="248" y="327" font-size="11.5" fill="#67400D">INV-10 · Agent never decides</text>
+<text x="244" y="347" font-size="11.5" fill="#463B2B"><tspan x="244">Screening continues even if</tspan><tspan x="244" dy="14">advice fails.</tspan></text>
+</g>
+</g>
+
+<g class="domain" data-label="Program Officer" data-grade="declared">
+<rect x="8" y="382" width="1282" height="174" rx="5" fill="#EBF5FF" stroke="#DCEAF7"/>
+<text x="20" y="460" font-size="22" font-weight="700" fill="#102E60"><tspan x="20">Program</tspan><tspan x="20" dy="25">Officer</tspan></text>
+<g class="service" data-label="Confirm eligibility" data-grade="inferred">
+<rect x="398" y="390" width="218" height="158" rx="5" fill="#E3F1FF" stroke="#1762C4" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="411" y="412" font-size="16" font-weight="700" fill="#102E60">Confirm eligibility</text>
+<text x="411" y="431" font-size="12" fill="#172F49"><tspan x="411">Screening → Eligible or Ineligible</tspan></text>
+<rect x="410" y="440" width="194" height="20" rx="4" fill="#CEE7FF"/>
+<text x="416" y="454" font-size="11.5" fill="#143963">INV-10 · Human decision</text>
+<text x="411" y="477" font-size="11.5" fill="#172F49"><tspan x="411">Confirm or override advice;</tspan><tspan x="411" dy="15">decide without it if absent.</tspan></text>
+<text x="411" y="515" font-size="11.5" fill="#172F49"><tspan x="411">Ineligible ends screening;</tspan><tspan x="411" dy="15">it is not a panel decline.</tspan></text>
+</g>
+<g class="service" data-label="Assign three reviewers" data-grade="declared">
+<rect x="678" y="390" width="260" height="158" rx="5" fill="#E3F1FF" stroke="#1762C4" stroke-width="1.5"/>
+<text x="691" y="412" font-size="16" font-weight="700" fill="#102E60">Assign three reviewers</text>
+<text x="691" y="430" font-size="12" fill="#172F49">Distinct reviewers for an eligible proposal</text>
+<rect x="690" y="439" width="236" height="82" rx="4" fill="#CEE7FF"/>
+<text x="696" y="454" font-size="11.5" fill="#143963"><tspan x="696">INV-3 · No declared conflict</tspan><tspan x="696" dy="20">INV-4 · Never the applicant</tspan><tspan x="696" dy="20">INV-5 · At most three active assignments</tspan><tspan x="696" dy="20">INV-12 · Verified ORCID</tspan></text>
+<text x="691" y="539" font-size="11.5" fill="#172F49">Third assignment opens review.</text>
+</g>
+</g>
+
+<g class="domain" data-label="Reviewers" data-grade="declared">
+<rect x="8" y="564" width="984" height="145" rx="5" fill="#EFF7FE" stroke="#DCEAF7"/>
+<text x="20" y="622" font-size="22" font-weight="700" fill="#102E60">Reviewers</text>
+<text x="20" y="644" font-size="14" fill="#233A54"><tspan x="20">Three independent</tspan><tspan x="20" dy="18">reviewers</tspan></text>
+<g class="service" data-label="Accept assignment" data-grade="declared">
+<rect x="505" y="577" width="205" height="112" rx="5" fill="#E3F1FF" stroke="#1762C4"/>
+<text x="518" y="600" font-size="16" font-weight="700" fill="#102E60">Accept assignment</text>
+<text x="518" y="621" font-size="12" fill="#172F49"><tspan x="518">Each reviewer accepts</tspan><tspan x="518" dy="16">their assignment</tspan></text>
+<rect x="517" y="651" width="181" height="23" rx="4" fill="#CEE7FF"/>
+<text x="522" y="667" font-size="11.5" fill="#143963">INV-11 · Own assignment</text>
+</g>
+<g class="service" data-label="Score and submit review" data-grade="declared">
+<rect x="752" y="573" width="228" height="128" rx="5" fill="#E3F1FF" stroke="#1762C4" stroke-width="1.5"/>
+<text x="765" y="596" font-size="16" font-weight="700" fill="#102E60">Score and submit review</text>
+<text x="765" y="616" font-size="12" fill="#172F49"><tspan x="765">Each reviewer supplies an</tspan><tspan x="765" dy="15">independent review</tspan></text>
+<rect x="764" y="640" width="204" height="50" rx="4" fill="#CEE7FF"/>
+<text x="770" y="655" font-size="11.5" fill="#143963"><tspan x="770">INV-6 · Score every criterion, 1–5</tspan><tspan x="770" dy="17">INV-7 · Other reviews hidden</tspan><tspan x="770" dy="14">until own submission</tspan></text>
+</g>
+</g>
+
+<g class="service" data-label="Proposal becomes Scored" data-grade="declared">
+<rect x="1020" y="569" width="260" height="132" rx="5" fill="#F0F2F5" stroke="#63748A" stroke-width="1.4"/>
+<text x="1033" y="592" font-size="16" font-weight="700" fill="#233A54">Proposal becomes Scored</text>
+<text x="1033" y="613" font-size="12" fill="#233A54">Platform records review completion</text>
+<rect x="1032" y="625" width="236" height="35" rx="4" fill="#E0E7EF"/>
+<text x="1038" y="640" font-size="11.5" fill="#233A54"><tspan x="1038">INV-5 · Exactly three submitted reviews</tspan></text>
+<text x="1033" y="681" font-size="11.5" fill="#233A54">Only non-revoked assignments count.</text>
+</g>
+
+<g class="domain" data-label="Panel Chair" data-grade="declared">
+<rect x="8" y="717" width="1282" height="155" rx="5" fill="#EBF5FF" stroke="#DCEAF7"/>
+<text x="20" y="797" font-size="22" font-weight="700" fill="#102E60">Panel Chair</text>
+<g class="service" data-label="Award or decline" data-grade="declared">
+<rect x="709" y="725" width="269" height="139" rx="5" fill="#E3F1FF" stroke="#1762C4" stroke-width="1.5"/>
+<text x="722" y="747" font-size="16" font-weight="700" fill="#102E60">Award or decline</text>
+<text x="722" y="767" font-size="12" fill="#172F49">Scored → Awarded or Declined</text>
+<rect x="721" y="776" width="245" height="43" rx="4" fill="#CEE7FF"/>
+<text x="727" y="792" font-size="11.5" fill="#143963"><tspan x="727">INV-8 · Chair only; Scored proposals only</tspan><tspan x="727" dy="19">INV-9 · Never exceed the call's envelope</tspan></text>
+<text x="722" y="839" font-size="11.5" fill="#172F49"><tspan x="722">Award the full requested amount,</tspan><tspan x="722" dy="15">never a partial award.</tspan></text>
+</g>
+<g class="service" data-label="If the envelope cannot fund the award" data-grade="declared">
+<rect x="992" y="725" width="288" height="139" rx="5" fill="#FFF4F5" stroke="#CB6673" stroke-width="1.4"/>
+<text x="1005" y="746" font-size="13" font-weight="700" fill="#9B2942">If the envelope cannot fund the award</text>
+<text x="1005" y="765" font-size="12" fill="#3F3441">Return to the chair: acknowledge decline</text>
+<rect x="1004" y="773" width="264" height="21" rx="4" fill="#F9DEE3"/>
+<text x="1009" y="788" font-size="11.5" fill="#7B3043">INV-9 · No unaffordable commitment</text>
+<text x="1005" y="810" font-size="11.5" fill="#3F3441"><tspan x="1005">Only an acknowledged decline is allowed;</tspan><tspan x="1005" dy="14">no award retry.</tspan></text>
+<text x="1005" y="842" font-size="11" fill="#3F3441"><tspan x="1005">Case stays open until the chair records it;</tspan><tspan x="1005" dy="14">escalates to the officer.</tspan></text>
+</g>
+</g>
+
+<g class="domain" data-label="Oversight" data-grade="declared">
+<rect x="1305" y="94" width="222" height="778" rx="5" fill="#E4F7F6" stroke="#0AA3AA" stroke-width="1.5"/>
+<text x="1318" y="132" font-size="28" font-weight="700" fill="#103B4A">Oversight</text>
+<text x="1318" y="156" font-size="12.5" font-weight="600" fill="#087076">Visibility throughout the journey</text>
+<g class="service" data-label="Build the views from events" data-grade="declared">
+<rect x="1318" y="196" width="196" height="84" rx="5" fill="#F2FFFF" stroke="#079BA3" stroke-width="1.4"/>
+<text x="1331" y="221" font-size="14" font-weight="700" fill="#133B55"><tspan x="1331">Build the views</tspan><tspan x="1331" dy="18">from events</tspan></text>
+<text x="1331" y="263" font-size="13" fill="#233A54">Not edited directly</text>
+</g>
+<g class="service" data-label="Portfolio" data-grade="declared">
+<rect x="1318" y="365" width="196" height="137" rx="5" fill="#F2FFFF" stroke="#079BA3" stroke-width="1.4"/>
+<text x="1331" y="391" font-size="17" font-weight="700" fill="#133B55">Portfolio</text>
+<text x="1331" y="414" font-size="12" fill="#233A54"><tspan x="1331">Status, review progress,</tspan><tspan x="1331" dy="17">mean score and award</tspan></text>
+<text x="1331" y="459" font-size="12" fill="#233A54"><tspan x="1331">Call budget: envelope,</tspan><tspan x="1331" dy="17">committed and remaining.</tspan></text>
+</g>
+<g class="service" data-label="Audit trail" data-grade="declared">
+<rect x="1318" y="577" width="196" height="99" rx="5" fill="#F2FFFF" stroke="#079BA3" stroke-width="1.4"/>
+<text x="1331" y="603" font-size="17" font-weight="700" fill="#133B55">Audit trail</text>
+<text x="1331" y="626" font-size="12" fill="#233A54"><tspan x="1331">Transitions with actor,</tspan><tspan x="1331" dy="17">timestamp and reason</tspan></text>
+</g>
+</g>
+
+<g class="service" data-label="Lifecycle events throughout the journey" data-grade="declared">
+<rect x="10" y="883" width="1268" height="54" rx="5" fill="#DDF5F3" stroke="#0AA3AA" stroke-width="1.4"/>
+<text x="644" y="905" text-anchor="middle" font-size="18" font-weight="700" fill="#12516A">Lifecycle events throughout the journey</text>
+<text x="644" y="925" text-anchor="middle" font-size="13" fill="#15516A">Submission · screening · advice · assignments · reviews · scoring · decisions</text>
+</g>
+<g class="service" data-label="INV-11 · Role-scoped access throughout" data-grade="declared">
+<rect x="10" y="950" width="1105" height="64" rx="5" fill="#E9E5FC" stroke="#D4CDF5"/>
+<text x="28" y="971" font-size="16" font-weight="700" fill="#342B7B">INV-11 · Role-scoped access throughout</text>
+<text x="28" y="990" font-size="13" fill="#484171">Applicants: own proposals · Reviewers: own assignments · Officers and chairs: programme scope</text>
+<text x="28" y="1006" font-size="12" fill="#484171">Deny by default.</text>
+</g>
+
+<g fill="none" stroke="#53677F" stroke-width="1.6">
+<g class="edge" data-from="Draft proposal" data-to="Submit proposal" data-kind="derived"><path d="M 328 139 L 364 139" stroke-dasharray="6 5" marker-end="url(#arrow)"/></g>
+<g class="edge" data-from="Submit proposal" data-to="Screening opens automatically" data-kind="derived"><path d="M 574 139 L 612 139" stroke-dasharray="6 5" marker-end="url(#arrow)"/></g>
+<g class="edge" data-from="Screening opens automatically" data-to="Confirm eligibility" data-kind="derived"><path d="M 832 169 L 851 169 Q 861 169 861 179 L 861 231 Q 861 239 851 239 L 634 239 Q 625 239 625 249 L 625 366 Q 625 376 615 376 L 573 376 Q 563 376 563 386 L 563 390" stroke-dasharray="6 5" marker-end="url(#arrow)"/></g>
+<g class="edge" data-from="Suggest eligibility" data-to="Confirm eligibility" data-kind="derived"><path d="M 457 305 L 505 305 Q 515 305 515 315 L 515 390" stroke="#B48638" stroke-dasharray="6 5" marker-end="url(#arrow)"/><text x="526" y="323" fill="#805511" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="13">Optional advice</text></g>
+<g class="edge" data-from="Confirm eligibility" data-to="Assign three reviewers" data-kind="derived"><path d="M 616 466 L 678 466" stroke-dasharray="6 5" marker-end="url(#arrow)"/><text x="624" y="453" fill="#233A54" stroke="#FFFFFF" stroke-width="6" paint-order="stroke" font-size="13">Eligible</text></g>
+<g class="edge" data-from="Assign three reviewers" data-to="Accept assignment" data-kind="derived"><path d="M 808 548 L 808 559 L 608 559 L 608 577" stroke-dasharray="6 5" marker-end="url(#arrow)"/></g>
+<g class="edge" data-from="Accept assignment" data-to="Score and submit review" data-kind="derived"><path d="M 710 615 L 752 615" stroke-dasharray="6 5" marker-end="url(#arrow)"/></g>
+<g class="edge" data-from="Score and submit review" data-to="Proposal becomes Scored" data-kind="derived"><path d="M 980 615 L 1020 615" stroke-dasharray="6 5" marker-end="url(#arrow)"/></g>
+<g class="edge" data-from="Proposal becomes Scored" data-to="Award or decline" data-kind="derived"><path d="M 1150 701 L 1150 707 Q 1150 713 1140 713 L 900 713 Q 890 713 890 723 L 890 725" stroke-dasharray="6 5" marker-end="url(#arrow)"/></g>
+</g>
+<g class="edge" data-from="Lifecycle events throughout the journey" data-to="Build the views from events">
+<path d="M 1278 910 L 1290 910 Q 1298 910 1298 900 L 1298 247 Q 1298 238 1307 238 L 1318 238" fill="none" stroke="#087F8C" stroke-width="2" marker-end="url(#tealArrow)"/>
+<text x="1320" y="907" font-size="12" fill="#087076" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">received by</text>
+</g>
+<g class="edge" data-from="Build the views from events" data-to="Portfolio">
+<path d="M 1416 280 L 1416 365" fill="none" stroke="#087F8C" stroke-width="2" marker-end="url(#tealArrow)"/>
+<text x="1328" y="329" font-size="12" fill="#087076" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">reads + projects</text>
+</g>
+<g class="edge" data-from="Build the views from events" data-to="Audit trail">
+<path d="M 1514 240 L 1520 240 L 1520 553 Q 1520 564 1510 564 L 1416 564 L 1416 577" fill="none" stroke="#087F8C" stroke-width="2" marker-end="url(#tealArrow)"/>
+<text x="1331" y="550" font-size="12" fill="#087076" paint-order="stroke" stroke="#FFFFFF" stroke-width="6">reads + projects</text>
+</g>
+
+<g class="legend" data-label="Arrows">
+<text x="1135" y="959" font-size="14" font-weight="700" fill="#233A54">Arrows</text>
+<path d="M 1136 976 L 1178 976" fill="none" stroke="#53677F" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="1189" y="980" font-size="11" fill="#233A54">Solid: stated in the model</text>
+<path d="M 1136 999 L 1178 999" fill="none" stroke="#53677F" stroke-width="1.6" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+<text x="1189" y="1003" font-size="11" fill="#233A54">Dashed: follows from the model, not stated in it</text>
+</g>
+</svg>

@@ -1,0 +1,87 @@
+{
+  "acceptance-scenario": "1",
+  "name": "decision-escalated",
+  "purpose": "J7: a chair decision still pending 14 days after scoring publishes DecisionEscalated exactly once and notifies the program officers; nothing is decided by timeout.",
+  "verifies": [
+    "::Quorum.ResearchFunding.PanelAdjudication.DecisionsEscalated",
+    "::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+    "::Quorum.ResearchFunding.Adjudication.PanelDecision"
+  ],
+  "test": "::Quorum.DecisionEscalation",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposals.scored",
+      "args": {
+        "proposals": [
+          "p1"
+        ],
+        "requested": 100000
+      },
+      "text": "proposal p1 is scored"
+    }
+  ],
+  "when": [
+    {
+      "step": "clock.advanced",
+      "args": {
+        "days": 15
+      },
+      "text": "15 days pass without a decision"
+    }
+  ],
+  "then": [
+    {
+      "step": "event.count",
+      "args": {
+        "type": "DecisionEscalated",
+        "count": 1
+      },
+      "text": "one DecisionEscalated event is published"
+    },
+    {
+      "step": "notification.sent",
+      "args": {
+        "kind": "decision-overdue",
+        "recipient": "role:programOfficer",
+        "count": 1
+      },
+      "text": "the program officers are notified once"
+    },
+    {
+      "step": "clock.advanced",
+      "args": {
+        "days": 10
+      },
+      "text": "ten more days pass"
+    },
+    {
+      "step": "event.count",
+      "args": {
+        "type": "DecisionEscalated",
+        "count": 1
+      },
+      "text": "still exactly one DecisionEscalated event"
+    },
+    {
+      "step": "case.status",
+      "args": {
+        "proposal": "p1",
+        "status": "awaitingDecision"
+      },
+      "text": "the case still awaits the chair: nothing was decided by timeout"
+    },
+    {
+      "step": "proposal.status",
+      "args": {
+        "proposal": "p1",
+        "status": "scored"
+      },
+      "text": "p1 is still scored"
+    }
+  ]
+}

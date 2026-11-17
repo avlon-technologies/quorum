@@ -80,10 +80,10 @@ Open **Portfolio**, then a proposal's **History**. Every transition records who 
 
 ## 4:45 How the architecture is kept (15 s)
 
-Quorum ships its architecture next to its code. `continuum/` holds the business model, the ADL model, technology bindings, 16 proposed decisions and 15 acceptance scenarios that run against this code. To close, show:
+Quorum ships its architecture next to its code. `continuum/` holds the business model, the ADL model, technology bindings for local development and production, 22 proposed decisions and 17 acceptance scenarios that run against this code. To close, show:
 
 ```
-continuum package run continuum        # 15 passed, 0 failed
+continuum package run continuum        # 17 passed, 0 failed
 continuum conformance check continuum  # CONFORMS
 ```
 
@@ -93,8 +93,11 @@ The architecture checks catch a deliberate regression, and the release report ex
 
 ### If you have extra time
 
-- **Demo clock:** as the officer, use the demo strip to advance time 7 days. Reviews become overdue, and decisions past their due date are flagged; nothing is ever decided automatically. Sessions use wall-clock time, so moving the demo clock doesn't sign anyone out.
+- **Demo clock:** as the officer, use the demo strip to advance time 7 days. Reviews become overdue, and the program officers are notified of each decision past its due date; nothing is ever decided automatically. Sessions use wall-clock time, so moving the demo clock doesn't sign anyone out.
 
   ![After clock](screenshots/31-officer-after-clock-desktop.png)
+- **Operator:** sign in as `operator@quorum.test`. **System health** shows event delivery, parked deliveries (retry, or skip with a reason where that is safe), backups (**Back up now**) and personal-data erasure. Every operator act is logged with a reason.
+
+  ![Operator](screenshots/33-operator-health-desktop.png)
 - **Mobile:** every screenshot has a `-mobile.png` twin. On a phone, tables become stacked cards, and the reviewer sees the proposal before the scoring form.
-- **Open question for the audience:** what should happen when a reviewer discloses a conflict *after* a proposal is scored? Today the award is held, and only a decline remains. The owner hasn't decided yet (release report §6).
+- **Open question for the audience:** what should happen when a reviewer discloses a conflict *after* a proposal is scored? Today the award is held, and only a decline remains. A resolution (void the review, recompute, re-review; after a decision, an officer's integrity review) is proposed as ADR-017 and awaits the owner.

@@ -42,11 +42,22 @@
     {
       "consumed": "::Quorum.ResearchFunding.Submission.ProposalScored",
       "participant": "::Quorum.ResearchFunding.Adjudication.PanelDecision",
+      "consequence": "::Quorum.ResearchFunding.Adjudication.AwardRefused",
+      "receiveKind": "triggers",
+      "strength": "correlated",
+      "provenance": "workflow-derived",
+      "exclusivity": "independent",
+      "boundary": null,
+      "crossings": 1
+    },
+    {
+      "consumed": "::Quorum.ResearchFunding.Submission.ProposalScored",
+      "participant": "::Quorum.ResearchFunding.Adjudication.PanelDecision",
       "consequence": "::Quorum.ResearchFunding.Adjudication.ProposalDeclined",
       "receiveKind": "triggers",
       "strength": "correlated",
       "provenance": "workflow-derived",
-      "exclusivity": "one-of",
+      "exclusivity": "independent",
       "boundary": null,
       "crossings": 1
     },
@@ -57,7 +68,7 @@
       "receiveKind": "triggers",
       "strength": "correlated",
       "provenance": "workflow-derived",
-      "exclusivity": "one-of",
+      "exclusivity": "independent",
       "boundary": null,
       "crossings": 1
     },
@@ -77,6 +88,14 @@
     {
       "participant": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
       "consumed": "::Quorum.ResearchFunding.PeerReview.ReviewSubmitted"
+    },
+    {
+      "participant": "::Quorum.ResearchFunding.Notification.NotificationService",
+      "consumed": "::Quorum.ResearchFunding.Adjudication.AwardRefused"
+    },
+    {
+      "participant": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "consumed": "::Quorum.ResearchFunding.Adjudication.AwardRefused"
     },
     {
       "participant": "::Quorum.ResearchFunding.Submission.ProposalService",
@@ -136,6 +155,11 @@
       "readModel": "::Quorum.ResearchFunding.Oversight.AuditTrail"
     },
     {
+      "message": "::Quorum.ResearchFunding.Adjudication.AwardRefused",
+      "producer": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "readModel": "::Quorum.ResearchFunding.Oversight.AuditTrail"
+    },
+    {
       "message": "::Quorum.ResearchFunding.Adjudication.ProposalDeclined",
       "producer": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
       "readModel": "::Quorum.ResearchFunding.Oversight.Portfolio"
@@ -179,6 +203,7 @@
   "cycles": [],
   "messagesReached": [
     "::Quorum.ResearchFunding.PeerReview.ReviewSubmitted",
+    "::Quorum.ResearchFunding.Adjudication.AwardRefused",
     "::Quorum.ResearchFunding.Adjudication.ProposalDeclined",
     "::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed",
     "::Quorum.ResearchFunding.Submission.ProposalScored",

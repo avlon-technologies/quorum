@@ -4,6 +4,7 @@
  * Unique (event_id, recipient) makes a redelivered event a no-op. NoScoresToReviewers: no message
  * built here ever carries scores or review comments.
  */
+import { raise } from '../../platform/alerts.ts';
 import type { Deps } from '../../platform/deps.ts';
 import type { Consumer, Handler, StoredEvent } from '../../platform/events.ts';
 import { newId } from '../../platform/ids.ts';
@@ -75,6 +76,33 @@ export function notificationConsumer(deps: Deps): Consumer {
         const p = proposal(deps, e.payload.proposalId);
         if (p) enqueue(deps, e, [{ account: p.applicant_id }], 'declined', 'Panel decision', `The panel did not fund “${p.title}”. ${e.payload.rationale}`, `#/proposals/${p.proposal_id}`);
       }),
+      // J7 escalation (review B3): the program officers are told; nothing is decided by timeout
+      DecisionEscalated: on((e) => {
+        const p = proposal(deps, e.payload.proposalId);
+        enqueue(deps, e, [{ role: 'programOfficer' }], 'decision-overdue', `Decision overdue: ${p?.title ?? 'a proposal'}`, `The panel decision on “${p?.title ?? 'a proposal'}” was due ${e.payload.dueAt.slice(0, 10)} and has not been recorded. Follow up with the panel chair. Quorum never decides by timeout.`, `#/officer/proposals/${e.payload.proposalId}`);
+      }),
+      AwardRefused: on((e) => {
+        const p = proposal(deps, e.payload.proposalId);
+        enqueue(deps, e, [{ role: 'programOfficer' }], 'award-refused', `Award refused: ${p?.title ?? 'a proposal'}`, `An award of ${e.payload.requested} on “${p?.title ?? 'a proposal'}” was refused because the call's envelope cannot fund it. Nothing was committed; the chair can only record a decline.`, `#/officer/proposals/${e.payload.proposalId}`);
+      }),
+      AwardHeld: on((e) => {
+        const p = proposal(deps, e.payload.proposalId);
+        enqueue(deps, e, [{ role: 'programOfficer' }, { role: 'panelChair' }], 'award-held', `Award on hold: ${p?.title ?? 'a proposal'}`, `The award on “${p?.title ?? 'a proposal'}” is on hold: ${e.payload.reason}.`, `#/chair/decisions/${e.payload.proposalId}`);
+      }),
+      // Erasure: messages addressed to the account are deleted (one-year retention, not a business record),
+      // its queued mail is never sent, and its name is scrubbed from officers' submission notices.
+      AccountErased: on((e) => {
+        const id = e.payload.accountId;
+        deps.db.prepare(`DELETE FROM ntf_read WHERE account_id = ? OR message_id IN (SELECT id FROM ntf_message WHERE recipient = ?)`).run(id, id);
+        deps.db.prepare(`DELETE FROM ntf_message WHERE recipient = ?`).run(id);
+        deps.db
+          .prepare(
+            `UPDATE ntf_message SET body = substr(body, 1, instr(body, ' was submitted by ') - 1) || ' was submitted by [erased].'
+              WHERE kind = 'submitted' AND recipient LIKE 'role:%' AND instr(body, ' was submitted by ') > 0
+                AND link IN (SELECT '#/officer/proposals/' || proposal_id FROM ntf_proposal WHERE applicant_id = ?)`,
+          )
+          .run(id);
+      }),
     },
   };
 }
@@ -101,6 +129,7 @@ export async function drainOutbound(deps: Deps, recipientEmail: (recipient: stri
       deps.db
         .prepare(`UPDATE ntf_message SET attempts = ?, last_error = ?, next_attempt_at = ?, status = ? WHERE id = ?`)
         .run(attempts, e instanceof Error ? e.message : String(e), next, attempts >= MAX_ATTEMPTS ? 'failed' : 'queued', m.id);
+      if (attempts >= MAX_ATTEMPTS) raise({ kind: 'mail_failed', messageId: m.id, attempts, lastError: (e instanceof Error ? e.message : String(e)).slice(0, 300) });
     }
   }
   return delivered;
@@ -110,15 +139,22 @@ export function inbox(deps: Deps, accountId: string, roles: Role[], limit = 50) 
   const keys = [accountId, ...roles.map((r) => `role:${r}`)];
   return deps.db
     .prepare(
-      `SELECT id, kind, subject, body, link, created_at AS createdAt, read_at AS readAt, status FROM ntf_message
-        WHERE recipient IN (${keys.map(() => '?').join(',')}) ORDER BY created_at DESC LIMIT ?`,
+      `SELECT m.id, m.kind, m.subject, m.body, m.link, m.created_at AS createdAt, r.read_at AS readAt, m.status FROM ntf_message m
+         LEFT JOIN ntf_read r ON r.message_id = m.id AND r.account_id = ?
+        WHERE m.recipient IN (${keys.map(() => '?').join(',')}) ORDER BY m.created_at DESC LIMIT ?`,
     )
-    .all(...keys, limit);
+    .all(accountId, ...keys, limit);
 }
 
 export function markRead(deps: Deps, accountId: string, roles: Role[]): number {
   const keys = [accountId, ...roles.map((r) => `role:${r}`)];
-  return deps.db.prepare(`UPDATE ntf_message SET read_at = ? WHERE read_at IS NULL AND recipient IN (${keys.map(() => '?').join(',')})`).run(deps.clock.now().toISOString(), ...keys).changes;
+  // per-account read state (review B5): reading a role-addressed message marks it read for this account only
+  return deps.db
+    .prepare(
+      `INSERT OR IGNORE INTO ntf_read (message_id, account_id, read_at)
+       SELECT id, ?, ? FROM ntf_message WHERE recipient IN (${keys.map(() => '?').join(',')})`,
+    )
+    .run(accountId, deps.clock.now().toISOString(), ...keys).changes;
 }
 
 export function outboundHealth(deps: Deps) {

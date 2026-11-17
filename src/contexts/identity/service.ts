@@ -8,7 +8,7 @@ import { hashPassword, verifyPassword } from '../../platform/auth.ts';
 import { newId } from '../../platform/ids.ts';
 import { DomainError, conflict, unprocessable, badRequest, notFound } from '../../platform/errors.ts';
 import { isWellFormedOrcid, type OrcidRecord } from '../../integrations/orcid.ts';
-import type { Role, OrcidVerifiedData, ReviewerStanding } from '../../contracts/model.generated.ts';
+import type { Role, OrcidVerifiedData, ReviewerStanding, AccountErasedData } from '../../contracts/model.generated.ts';
 
 type AccountRow = {
   id: string;
@@ -28,8 +28,8 @@ export function rolesOf(deps: Deps, accountId: string): Role[] {
 }
 
 export function loadPrincipal(deps: Deps, accountId: string): Principal | null {
-  const a = deps.db.prepare(`SELECT * FROM idn_account WHERE id = ?`).get(accountId) as AccountRow | undefined;
-  if (!a) return null;
+  const a = deps.db.prepare(`SELECT * FROM idn_account WHERE id = ?`).get(accountId) as (AccountRow & { erased_at: string | null }) | undefined;
+  if (!a || a.erased_at) return null; // an erased account's live sessions end at once
   return {
     accountId: a.id,
     kind: a.kind,
@@ -184,4 +184,56 @@ export function provisionAccount(
 
 export function revokeRole(deps: Deps, accountId: string, role: Role): void {
   deps.db.prepare(`DELETE FROM idn_role_grant WHERE account_id = ? AND role = ?`).run(accountId, role);
+}
+
+/**
+ * Command EraseAccount (operator only): pseudonymise the account and redact its personal identifiers from
+ * the retained event log and the command log, in the caller's transaction, then publish AccountErased so
+ * every context holding a copy scrubs it. Business records (proposals, reviews, decisions, budget) are kept
+ * under business-record retention; they reference the account by id only. Idempotent.
+ *
+ * Out of reach: mail already handed to the transport, and backups taken before the erasure (they age out
+ * under the backup retention window; see docs/OPERATIONS.md).
+ */
+export function eraseAccount(deps: Deps, operatorId: string, accountId: string, reason: string): { erased: boolean; eventsRedacted: number } {
+  const a = deps.db.prepare(`SELECT *, erased_at FROM idn_account WHERE id = ?`).get(accountId) as (AccountRow & { erased_at: string | null }) | undefined;
+  if (!a) throw notFound('Account');
+  if (a.kind !== 'person') throw conflict('not_a_person', 'Only a person’s account holds personal data to erase.');
+  if (accountId === operatorId) throw conflict('self_erasure', 'An operator cannot erase their own account. Ask another operator.');
+  if (a.erased_at) return { erased: false, eventsRedacted: 0 };
+  const now = deps.clock.now().toISOString();
+  const personal = [a.name, a.email, a.institution, a.orcid_id ?? ''].filter((v) => v.trim().length >= 3);
+  const eventsRedacted = deps.bus.redact(personal);
+  scrubCommandLog(deps, accountId, personal);
+  deps.db
+    .prepare(
+      `UPDATE idn_account SET email = ?, name = '[erased]', institution = '[erased]', password_hash = NULL, orcid_id = NULL,
+              orcid_status = 'unverified', orcid_verified_at = NULL, erased_at = ? WHERE id = ?`,
+    )
+    .run(`erased+${accountId}@invalid`, now, accountId);
+  deps.db.prepare(`DELETE FROM idn_role_grant WHERE account_id = ?`).run(accountId);
+  deps.db.prepare(`INSERT INTO ops_action (at, actor_id, action, subject, reason) VALUES (?, ?, 'erase-account', ?, ?)`).run(now, operatorId, accountId, reason);
+  const payload: AccountErasedData = { accountId, at: now };
+  deps.bus.publish('AccountErased', `account:${accountId}`, payload, operatorId);
+  return { erased: true, eventsRedacted };
+}
+
+/** The idempotency log keeps replayable responses; the erased account's are dropped, others redacted. */
+function scrubCommandLog(deps: Deps, accountId: string, values: string[]) {
+  deps.db.prepare(`DELETE FROM cmd_log WHERE actor_id = ?`).run(accountId);
+  for (const v of values) {
+    deps.db.prepare(`UPDATE cmd_log SET response = replace(response, ?, '[erased]') WHERE instr(response, ?) > 0`).run(v, v);
+  }
+}
+
+/** Operator lookup for erasure: by exact id, or by email/name fragment. Erased accounts are listed as such. */
+export function findAccounts(deps: Deps, q: string) {
+  const like = `%${q.trim().replace(/[%_]/g, '')}%`;
+  const rows = deps.db
+    .prepare(
+      `SELECT id, kind, email, name, institution, erased_at AS erasedAt FROM idn_account
+        WHERE id = ? OR email LIKE ? OR name LIKE ? ORDER BY name LIMIT 20`,
+    )
+    .all(q.trim(), like, like) as Array<{ id: string; kind: string; email: string; name: string; institution: string; erasedAt: string | null }>;
+  return rows.map((r) => ({ ...r, roles: rolesOf(deps, r.id) }));
 }

@@ -25,6 +25,7 @@ export const DEMO_PASSWORD = 'quorum-demo-2026';
 
 export const DEMO_ACCOUNTS = {
   officer: { email: 'officer@quorum.test', name: 'Dr. Amara Okafor', institution: 'Northern Research Council' },
+  operator: { email: 'operator@quorum.test', name: 'Jordan Reyes', institution: 'Quorum Operations' },
   chair: { email: 'chair@quorum.test', name: 'Prof. Henrik Lindqvist', institution: 'Northern Research Council (Panel)' },
   priya: { email: 'priya.raman@quorum.test', name: 'Dr. Priya Raman', institution: 'University of Toronto' },
   mateo: { email: 'mateo.alvarez@quorum.test', name: 'Dr. Mateo Alvarez', institution: 'McGill University' },
@@ -86,7 +87,7 @@ export async function seed(deps: Deps, clock: ManualClock): Promise<void> {
   tx(() => {
     for (const [key, a] of Object.entries(DEMO_ACCOUNTS) as Array<[keyof typeof DEMO_ACCOUNTS, (typeof DEMO_ACCOUNTS)[keyof typeof DEMO_ACCOUNTS]]>) {
       const roles =
-        key === 'officer' ? (['programOfficer'] as const) : key === 'chair' ? (['panelChair'] as const) : 'orcid' in a ? (['reviewer'] as const) : key === 'sarah' ? (['applicant', 'reviewer'] as const) : (['applicant'] as const);
+        key === 'officer' ? (['programOfficer'] as const) : key === 'operator' ? (['operator'] as const) : key === 'chair' ? (['panelChair'] as const) : 'orcid' in a ? (['reviewer'] as const) : key === 'sarah' ? (['applicant', 'reviewer'] as const) : (['applicant'] as const);
       ids[key] = provisionAccount(deps, { email: a.email, name: a.name, institution: a.institution, password: DEMO_PASSWORD, roles: [...roles] });
     }
     provisionAccount(deps, { id: AGENT_ACTOR, kind: 'agent', email: 'eligibility-triage@agents.quorum.local', name: 'Eligibility triage agent', institution: 'Quorum', roles: [] });

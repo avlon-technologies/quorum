@@ -5,7 +5,7 @@
     "base": {
       "package": "avlon.quorum",
       "version": "package-1",
-      "canonicalModel": "sha256:f75646711920628a45e67531ba5fdee8eb85c2efeeea8068ecf268664cee4c12"
+      "canonicalModel": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59"
     },
     "vocabularies": [
       {
@@ -50,7 +50,7 @@
           "vocabulary": "avlon.quorum.bindings.localdevelopment",
           "technology": "in-process-module",
           "configuration": {
-            "module": "undefined/service.ts"
+            "module": "src/contexts/adjudication/service.ts"
           }
         },
         "relationships": {
@@ -71,7 +71,7 @@
           "configuration": {
             "driver": "better-sqlite3",
             "file": "data/quorum.sqlite",
-            "tables": "undefined*"
+            "tables": "adj_case, adj_pending_hold, adj_decision, adj_budget"
           }
         },
         "relationships": {
@@ -178,7 +178,7 @@
           "vocabulary": "avlon.quorum.bindings.localdevelopment",
           "technology": "in-process-module",
           "configuration": {
-            "module": "undefined/service.ts"
+            "module": "src/contexts/calls/service.ts"
           }
         },
         "relationships": {
@@ -199,7 +199,7 @@
           "configuration": {
             "driver": "better-sqlite3",
             "file": "data/quorum.sqlite",
-            "tables": "undefined*"
+            "tables": "cal_*"
           }
         },
         "relationships": {
@@ -218,7 +218,7 @@
           "vocabulary": "avlon.quorum.bindings.localdevelopment",
           "technology": "in-process-module",
           "configuration": {
-            "module": "undefined/service.ts"
+            "module": "src/contexts/identity/service.ts"
           }
         },
         "relationships": {
@@ -239,7 +239,7 @@
           "configuration": {
             "driver": "better-sqlite3",
             "file": "data/quorum.sqlite",
-            "tables": "undefined*"
+            "tables": "idn_account, idn_role_grant"
           }
         },
         "relationships": {
@@ -280,7 +280,7 @@
           "vocabulary": "avlon.quorum.bindings.localdevelopment",
           "technology": "in-process-module",
           "configuration": {
-            "module": "undefined/service.ts"
+            "module": "src/contexts/notification/service.ts"
           }
         },
         "relationships": {
@@ -301,7 +301,7 @@
           "configuration": {
             "driver": "better-sqlite3",
             "file": "data/quorum.sqlite",
-            "tables": "undefined*"
+            "tables": "ntf_proposal, ntf_message, ntf_read"
           }
         },
         "relationships": {
@@ -320,7 +320,7 @@
           "vocabulary": "avlon.quorum.bindings.localdevelopment",
           "technology": "in-process-module",
           "configuration": {
-            "module": "undefined/service.ts"
+            "module": "src/contexts/oversight/service.ts"
           }
         },
         "relationships": {
@@ -383,7 +383,7 @@
           "vocabulary": "avlon.quorum.bindings.localdevelopment",
           "technology": "in-process-module",
           "configuration": {
-            "module": "undefined/service.ts"
+            "module": "src/contexts/peer-review/service.ts"
           }
         },
         "relationships": {
@@ -404,7 +404,7 @@
           "configuration": {
             "driver": "better-sqlite3",
             "file": "data/quorum.sqlite",
-            "tables": "undefined*"
+            "tables": "rev_completion"
           }
         },
         "relationships": {
@@ -467,7 +467,7 @@
           "vocabulary": "avlon.quorum.bindings.localdevelopment",
           "technology": "in-process-module",
           "configuration": {
-            "module": "undefined/service.ts"
+            "module": "src/contexts/peer-review/completion.ts"
           }
         },
         "relationships": {
@@ -510,7 +510,7 @@
           "configuration": {
             "driver": "better-sqlite3",
             "file": "data/quorum.sqlite",
-            "tables": "undefined*"
+            "tables": "rev_* except rev_completion"
           }
         },
         "relationships": {
@@ -704,7 +704,7 @@
           "vocabulary": "avlon.quorum.bindings.localdevelopment",
           "technology": "in-process-module",
           "configuration": {
-            "module": "undefined/service.ts"
+            "module": "src/contexts/submission/service.ts"
           }
         },
         "relationships": {
@@ -725,7 +725,7 @@
           "configuration": {
             "driver": "better-sqlite3",
             "file": "data/quorum.sqlite",
-            "tables": "undefined*"
+            "tables": "sub_*"
           }
         },
         "relationships": {
@@ -820,6 +820,94 @@
           "binds": {
             "ref": "5f44a031-1d07-42a1-8f47-97457cb87678",
             "hint": "Quorum.ResearchFunding.Submission.TriageProposed"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "d26add8f-b5c8-4944-af52-e75390500b1c",
+        "name": "B39",
+        "description": "Event ::Quorum.ResearchFunding.Adjudication.AwardRefused",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.localdevelopment",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id> | account:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "093f47c4-475b-448c-96b2-ef9839c6bac6",
+            "hint": "Quorum.ResearchFunding.Adjudication.AwardRefused"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "394d43fa-5c5e-4ce3-9fb2-807a3880ac4e",
+        "name": "B40",
+        "description": "Event ::Quorum.ResearchFunding.Adjudication.AwardHeld",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.localdevelopment",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id> | account:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "a0cc68d6-9d30-4a94-90aa-77f2c6d4e0ab",
+            "hint": "Quorum.ResearchFunding.Adjudication.AwardHeld"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "e64c793b-cd6b-44dc-9e9d-d79c2524859a",
+        "name": "B41",
+        "description": "Event ::Quorum.ResearchFunding.Adjudication.DecisionEscalated",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.localdevelopment",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id> | account:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "99eb042a-b630-4a2d-bc65-ecb845fd96ef",
+            "hint": "Quorum.ResearchFunding.Adjudication.DecisionEscalated"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "7680e0d0-2e03-41af-b22f-2ba8c7d25a7f",
+        "name": "B42",
+        "description": "Event ::Quorum.ResearchFunding.Identity.AccountErased",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.localdevelopment",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id> | account:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "99104d45-ce16-489c-876a-6aec7440cc8d",
+            "hint": "Quorum.ResearchFunding.Identity.AccountErased"
           }
         }
       }

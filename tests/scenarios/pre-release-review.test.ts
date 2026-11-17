@@ -38,7 +38,7 @@ describe('Pre-release review regressions', () => {
     expect(call.committedMinor).toBe(15_000_000);
 
     // and a full rebuild reproduces it
-    expect((await h.post('/api/operations/rebuild-projections', w.officer, {})).status).toBe(200);
+    expect((await h.post('/api/operations/rebuild-projections', w.operator, {})).status).toBe(200);
     await h.settle();
     expect(h.one(`SELECT awarded_minor FROM ovs_call WHERE call_id = ?`, w.callId).awarded_minor).toBe(15_000_000);
   });

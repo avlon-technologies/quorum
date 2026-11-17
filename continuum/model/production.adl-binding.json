@@ -1,0 +1,927 @@
+{
+  "adl-json": "adl-json/1.0",
+  "document": {
+    "universe": "binding",
+    "base": {
+      "package": "avlon.quorum",
+      "version": "package-1",
+      "canonicalModel": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59"
+    },
+    "vocabularies": [
+      {
+        "name": "avlon.quorum.bindings.production",
+        "version": "package-1"
+      }
+    ],
+    "environment": {
+      "ref": "4f05850c-889e-44c5-8901-e94883ccba41",
+      "hint": "Quorum.Production"
+    },
+    "bindings": [
+      {
+        "kind": "Binding",
+        "id": "6c59b2ad-6e06-4b67-a41b-a23e62cded5d",
+        "name": "P1",
+        "description": "Deployable ::Quorum.QuorumServer",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "node-process",
+          "configuration": {
+            "runtime": "node-24",
+            "language": "typescript-type-stripping",
+            "framework": "fastify-5",
+            "ui": "vanilla-es-modules",
+            "entry": "src/server.ts",
+            "instances": "exactly-one",
+            "environment": "NODE_ENV=production"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "f872482d-f437-4310-a1b7-88136850da8e",
+            "hint": "Quorum.QuorumServer"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "12dbc8b1-ec00-4e0b-87b5-31e91c3b473f",
+        "name": "P2",
+        "description": "Service ::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "in-process-module",
+          "configuration": {
+            "module": "src/contexts/adjudication/service.ts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "6bbc3747-a1d4-4477-a882-1147d2ab0618",
+            "hint": "Quorum.ResearchFunding.Adjudication.AdjudicationService"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "4d80c729-bb05-403b-8bb3-988a7c9464e0",
+        "name": "P3",
+        "description": "Resource ::Quorum.ResearchFunding.Adjudication.AdjudicationStore",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-wal-volume",
+          "configuration": {
+            "driver": "better-sqlite3",
+            "file": "${QUORUM_DATA_DIR}/quorum.sqlite on a persistent volume",
+            "tables": "adj_case, adj_pending_hold, adj_decision, adj_budget",
+            "backup": "online db.backup(), verified, QUORUM_BACKUP_INTERVAL_HOURS, retention QUORUM_BACKUP_KEEP"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "2007f0ea-408f-402c-ad8d-1d6553a8d95f",
+            "hint": "Quorum.ResearchFunding.Adjudication.AdjudicationStore"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "360a7a60-8eae-4f76-ac2e-3b752a54e53d",
+        "name": "P4",
+        "description": "Event ::Quorum.ResearchFunding.Adjudication.ProposalAwarded",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "bbb140a4-d299-411d-b669-41adfd538e45",
+            "hint": "Quorum.ResearchFunding.Adjudication.ProposalAwarded"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "22e9b1fd-81d1-40cd-873a-ccbf1ce3bafd",
+        "name": "P5",
+        "description": "Event ::Quorum.ResearchFunding.Adjudication.ProposalDeclined",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "27e6ca77-3ca5-4878-9ee0-0a8680a66f8c",
+            "hint": "Quorum.ResearchFunding.Adjudication.ProposalDeclined"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "258ab486-7a49-43fb-9eca-a495ead00ddb",
+        "name": "P6",
+        "description": "Event ::Quorum.ResearchFunding.Calls.CallClosed",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "c28f7e24-1e70-4a18-a227-788131854b0e",
+            "hint": "Quorum.ResearchFunding.Calls.CallClosed"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "ba16c9a3-36b0-4a6d-a071-4d7a40528c85",
+        "name": "P7",
+        "description": "Event ::Quorum.ResearchFunding.Calls.CallPublished",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "01c8e173-b33d-48c3-9acf-0e53eaceb087",
+            "hint": "Quorum.ResearchFunding.Calls.CallPublished"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "5edcb526-7529-4544-8eaa-ee787231a054",
+        "name": "P8",
+        "description": "Service ::Quorum.ResearchFunding.Calls.CallService",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "in-process-module",
+          "configuration": {
+            "module": "src/contexts/calls/service.ts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "5cb21bef-2f92-499c-b8ff-8f8040c4dc3c",
+            "hint": "Quorum.ResearchFunding.Calls.CallService"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "dc79a1cc-2172-4668-a254-7fe39da9cb3c",
+        "name": "P9",
+        "description": "Resource ::Quorum.ResearchFunding.Calls.CallStore",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-wal-volume",
+          "configuration": {
+            "driver": "better-sqlite3",
+            "file": "${QUORUM_DATA_DIR}/quorum.sqlite on a persistent volume",
+            "tables": "cal_*",
+            "backup": "online db.backup(), verified, QUORUM_BACKUP_INTERVAL_HOURS, retention QUORUM_BACKUP_KEEP"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "092a8d95-5015-4e1e-ae72-7ccee4c30d78",
+            "hint": "Quorum.ResearchFunding.Calls.CallStore"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "718c4d7c-8e75-493b-83de-84daf478e8f5",
+        "name": "P10",
+        "description": "Service ::Quorum.ResearchFunding.Identity.AccountService",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "in-process-module",
+          "configuration": {
+            "module": "src/contexts/identity/service.ts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "a4504f75-f50e-4ef5-b6e1-0737af838a6e",
+            "hint": "Quorum.ResearchFunding.Identity.AccountService"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "036b0764-21ae-43b3-ac6d-83a3839fc1e0",
+        "name": "P11",
+        "description": "Resource ::Quorum.ResearchFunding.Identity.AccountStore",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-wal-volume",
+          "configuration": {
+            "driver": "better-sqlite3",
+            "file": "${QUORUM_DATA_DIR}/quorum.sqlite on a persistent volume",
+            "tables": "idn_account, idn_role_grant",
+            "backup": "online db.backup(), verified, QUORUM_BACKUP_INTERVAL_HOURS, retention QUORUM_BACKUP_KEEP"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "92094160-de9a-4c30-8376-c0baecf4bc30",
+            "hint": "Quorum.ResearchFunding.Identity.AccountStore"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "2e0e9947-086b-40e4-8b4a-de82a8d2c0f9",
+        "name": "P12",
+        "description": "Event ::Quorum.ResearchFunding.Identity.OrcidVerified",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "dbba1645-cff7-43b2-8f44-11f5d83b6549",
+            "hint": "Quorum.ResearchFunding.Identity.OrcidVerified"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "024b92d8-7b85-4520-a697-13f4e3e36232",
+        "name": "P13",
+        "description": "Service ::Quorum.ResearchFunding.Notification.NotificationService",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "in-process-module",
+          "configuration": {
+            "module": "src/contexts/notification/service.ts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "870cfc1f-ea8a-4562-a0f0-8e9d126b1342",
+            "hint": "Quorum.ResearchFunding.Notification.NotificationService"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "fd3af5d0-7f6f-4b10-a9e3-49fcbd96f5de",
+        "name": "P14",
+        "description": "Resource ::Quorum.ResearchFunding.Notification.OutboundMessageStore",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-wal-volume",
+          "configuration": {
+            "driver": "better-sqlite3",
+            "file": "${QUORUM_DATA_DIR}/quorum.sqlite on a persistent volume",
+            "tables": "ntf_proposal, ntf_message, ntf_read",
+            "backup": "online db.backup(), verified, QUORUM_BACKUP_INTERVAL_HOURS, retention QUORUM_BACKUP_KEEP"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "e5088200-1f20-48a5-8edc-2818945718cf",
+            "hint": "Quorum.ResearchFunding.Notification.OutboundMessageStore"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "c375f1e1-3167-4dfd-840f-920544f82175",
+        "name": "P15",
+        "description": "Service ::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "in-process-module",
+          "configuration": {
+            "module": "src/contexts/oversight/service.ts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "b65240e8-b01b-461c-8bb2-fc09d15f4bda",
+            "hint": "Quorum.ResearchFunding.Oversight.PortfolioProjector"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "564e5506-9067-4af2-8972-efecafbb8450",
+        "name": "P16",
+        "description": "Event ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "d9c1329d-26f8-4eb5-a335-11a33f4d0c5c",
+            "hint": "Quorum.ResearchFunding.PeerReview.AssignmentAccepted"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "6ac72cd2-fb21-4a6a-ae1c-84bcc0e23eee",
+        "name": "P17",
+        "description": "Event ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "5e2dd903-c01f-46d7-b443-33226df17297",
+            "hint": "Quorum.ResearchFunding.PeerReview.AssignmentRevoked"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "72d18c24-f0f5-4d76-8e60-763a334a6f6b",
+        "name": "P18",
+        "description": "Service ::Quorum.ResearchFunding.PeerReview.AssignmentService",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "in-process-module",
+          "configuration": {
+            "module": "src/contexts/peer-review/service.ts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+            "hint": "Quorum.ResearchFunding.PeerReview.AssignmentService"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "769639a9-b2ec-49c3-bf6a-21c497a25417",
+        "name": "P19",
+        "description": "Resource ::Quorum.ResearchFunding.PeerReview.CompletionLedger",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-wal-volume",
+          "configuration": {
+            "driver": "better-sqlite3",
+            "file": "${QUORUM_DATA_DIR}/quorum.sqlite on a persistent volume",
+            "tables": "rev_completion",
+            "backup": "online db.backup(), verified, QUORUM_BACKUP_INTERVAL_HOURS, retention QUORUM_BACKUP_KEEP"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "8fb590a6-95da-4a4d-b5f8-be69be6cc097",
+            "hint": "Quorum.ResearchFunding.PeerReview.CompletionLedger"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "ea298ca9-8f04-40a1-a3c9-e96982e4cf0b",
+        "name": "P20",
+        "description": "Event ::Quorum.ResearchFunding.PeerReview.ConflictDeclared",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "1cc4c504-edee-4da6-a2ca-3a2962d33f73",
+            "hint": "Quorum.ResearchFunding.PeerReview.ConflictDeclared"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "88cfcaa5-0f12-4b0f-9ac1-6b02c712fda9",
+        "name": "P21",
+        "description": "Event ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "30b800fa-e581-48fb-9a77-c9aff0ace927",
+            "hint": "Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "ea4c8b3c-9318-4aa7-821c-703a93bf7d58",
+        "name": "P22",
+        "description": "Service ::Quorum.ResearchFunding.PeerReview.ReviewCompletion",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "in-process-module",
+          "configuration": {
+            "module": "src/contexts/peer-review/completion.ts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "7e9ffd9e-4f58-4754-a0da-2140ddd22984",
+            "hint": "Quorum.ResearchFunding.PeerReview.ReviewCompletion"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "57fd86a2-d84a-4dd8-9287-5975dd54b446",
+        "name": "P23",
+        "description": "Event ::Quorum.ResearchFunding.PeerReview.ReviewOverdue",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "b54e7889-5c3c-48c1-96b1-152f5e629ff8",
+            "hint": "Quorum.ResearchFunding.PeerReview.ReviewOverdue"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "f03499d1-9ef2-4212-8dc4-d75a3ef539fa",
+        "name": "P24",
+        "description": "Resource ::Quorum.ResearchFunding.PeerReview.ReviewStore",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-wal-volume",
+          "configuration": {
+            "driver": "better-sqlite3",
+            "file": "${QUORUM_DATA_DIR}/quorum.sqlite on a persistent volume",
+            "tables": "rev_* except rev_completion",
+            "backup": "online db.backup(), verified, QUORUM_BACKUP_INTERVAL_HOURS, retention QUORUM_BACKUP_KEEP"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "7cbfd5c5-60f5-4af5-bcba-aa0359aaaf4e",
+            "hint": "Quorum.ResearchFunding.PeerReview.ReviewStore"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "18e0960c-7762-4db8-bc47-2e3535e180e2",
+        "name": "P25",
+        "description": "Event ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "0756ce3c-a074-4c25-ab33-86bfbe1dd91b",
+            "hint": "Quorum.ResearchFunding.PeerReview.ReviewSubmitted"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "ad81437a-4748-45e8-9fb9-20b698a96c2c",
+        "name": "P26",
+        "description": "Event ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "904ca791-4626-413d-9f1b-074d89415707",
+            "hint": "Quorum.ResearchFunding.PeerReview.ReviewerAssigned"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "feabce63-b505-4cb7-a70e-4132ec108080",
+        "name": "P27",
+        "description": "Event ::Quorum.ResearchFunding.PeerReview.ReviewersAssigned",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "3109dc15-3cf2-4c1d-ac3b-93280b0d1791",
+            "hint": "Quorum.ResearchFunding.PeerReview.ReviewersAssigned"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "0f221765-2fb6-4cc2-80c7-737e74dd887b",
+        "name": "P28",
+        "description": "Agent ::Quorum.ResearchFunding.Submission.EligibilityTriage",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "anthropic-messages-api",
+          "configuration": {
+            "provider": "anthropic",
+            "module": "src/integrations/triage-anthropic.ts",
+            "model": "${QUORUM_TRIAGE_MODEL}",
+            "credential": "env://ANTHROPIC_API_KEY",
+            "on-failure": "continue-without-verdict"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "dcbe8ea9-b92b-4ecc-aebc-54ddbcc6f17b",
+            "hint": "Quorum.ResearchFunding.Submission.EligibilityTriage"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "93f853e7-337d-4070-993d-27cd1244ee64",
+        "name": "P29",
+        "description": "Event ::Quorum.ResearchFunding.Submission.ProposalEligible",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "ac9fcfaa-e0fa-4694-b112-4e3a0adbd481",
+            "hint": "Quorum.ResearchFunding.Submission.ProposalEligible"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "50b9e170-67a2-4b75-abe7-75179d56b7d7",
+        "name": "P30",
+        "description": "Event ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "074d0196-bb96-4cb8-9f37-b1eae47f24ff",
+            "hint": "Quorum.ResearchFunding.Submission.ProposalEnteredScreening"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "184324f5-a005-4f4f-88bf-57bd9fc6fb1f",
+        "name": "P31",
+        "description": "Event ::Quorum.ResearchFunding.Submission.ProposalIneligible",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "d1ed94b2-0305-4d67-93d6-2f30a76c2a75",
+            "hint": "Quorum.ResearchFunding.Submission.ProposalIneligible"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "f76d115a-890d-4d73-b5b8-961da9b29b16",
+        "name": "P32",
+        "description": "Event ::Quorum.ResearchFunding.Submission.ProposalScored",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "a4413f5b-b24a-4c30-b513-755228a7c89c",
+            "hint": "Quorum.ResearchFunding.Submission.ProposalScored"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "8617e533-cd20-41c6-b8f2-3b1501505f01",
+        "name": "P33",
+        "description": "Service ::Quorum.ResearchFunding.Submission.ProposalService",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "in-process-module",
+          "configuration": {
+            "module": "src/contexts/submission/service.ts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "0d09ec42-5b02-46f6-969f-d65bc15aef6c",
+            "hint": "Quorum.ResearchFunding.Submission.ProposalService"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "cf3dd698-f2b5-48f8-b1a8-b8257e46cd6e",
+        "name": "P34",
+        "description": "Resource ::Quorum.ResearchFunding.Submission.ProposalStore",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-wal-volume",
+          "configuration": {
+            "driver": "better-sqlite3",
+            "file": "${QUORUM_DATA_DIR}/quorum.sqlite on a persistent volume",
+            "tables": "sub_*",
+            "backup": "online db.backup(), verified, QUORUM_BACKUP_INTERVAL_HOURS, retention QUORUM_BACKUP_KEEP"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "804598a6-60a1-40a1-9f3f-5229e9f90d5f",
+            "hint": "Quorum.ResearchFunding.Submission.ProposalStore"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "e7a95c33-be15-4135-9d9e-f00a68c08739",
+        "name": "P35",
+        "description": "Event ::Quorum.ResearchFunding.Submission.ProposalSubmitted",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "c7bc81e6-5912-4c4c-a7ff-c44db2ba7d97",
+            "hint": "Quorum.ResearchFunding.Submission.ProposalSubmitted"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "81bc1c71-5952-4629-8523-7eb9504fefb8",
+        "name": "P36",
+        "description": "Event ::Quorum.ResearchFunding.Submission.ProposalUnderReview",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "1da5fa46-9bb1-4072-9596-861a69788323",
+            "hint": "Quorum.ResearchFunding.Submission.ProposalUnderReview"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "5705d5d5-5ec2-43ef-84df-ac7e6c94df61",
+        "name": "P37",
+        "description": "Event ::Quorum.ResearchFunding.Submission.ProposalWithdrawn",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "5a9ef11c-5881-406c-96ba-2f68a42a590f",
+            "hint": "Quorum.ResearchFunding.Submission.ProposalWithdrawn"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "11ccb4cb-1c1d-4a19-927e-bfb19ce0245e",
+        "name": "P38",
+        "description": "Event ::Quorum.ResearchFunding.Submission.TriageProposed",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "5f44a031-1d07-42a1-8f47-97457cb87678",
+            "hint": "Quorum.ResearchFunding.Submission.TriageProposed"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "b61036dd-ed83-44dd-8cbd-0c090279ba02",
+        "name": "P39",
+        "description": "Event ::Quorum.ResearchFunding.Adjudication.AwardRefused",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id> | account:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "093f47c4-475b-448c-96b2-ef9839c6bac6",
+            "hint": "Quorum.ResearchFunding.Adjudication.AwardRefused"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "ddc43937-342f-4a9b-a2a9-3a8261adfa48",
+        "name": "P40",
+        "description": "Event ::Quorum.ResearchFunding.Adjudication.AwardHeld",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id> | account:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "a0cc68d6-9d30-4a94-90aa-77f2c6d4e0ab",
+            "hint": "Quorum.ResearchFunding.Adjudication.AwardHeld"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "117bd7e0-741c-4884-9a9b-0dd89208b1b3",
+        "name": "P41",
+        "description": "Event ::Quorum.ResearchFunding.Adjudication.DecisionEscalated",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id> | account:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "99eb042a-b630-4a2d-bc65-ecb845fd96ef",
+            "hint": "Quorum.ResearchFunding.Adjudication.DecisionEscalated"
+          }
+        }
+      },
+      {
+        "kind": "Binding",
+        "id": "975bf8ee-ddd7-47a3-9d83-c49c2ad820ac",
+        "name": "P42",
+        "description": "Event ::Quorum.ResearchFunding.Identity.AccountErased",
+        "attributes": {
+          "vocabulary": "avlon.quorum.bindings.production",
+          "technology": "sqlite-outbox",
+          "configuration": {
+            "outbox": "evt_outbox+evt_delivery",
+            "ordering-key": "partition_key (proposal:<id> | account:<id>)",
+            "redelivery": "exponential-backoff",
+            "parked-after": "5-attempts"
+          }
+        },
+        "relationships": {
+          "binds": {
+            "ref": "99104d45-ce16-489c-876a-6aec7440cc8d",
+            "hint": "Quorum.ResearchFunding.Identity.AccountErased"
+          }
+        }
+      }
+    ]
+  }
+}

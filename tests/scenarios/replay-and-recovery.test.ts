@@ -87,7 +87,7 @@ describe('Event replay after interruption', () => {
 
     // the officer retries through the operations API once the cause is fixed
     failing = false;
-    const r = await h.post('/api/operations/deliveries/retry', w.officer, { consumer, messageId: msg });
+    const r = await h.post('/api/operations/deliveries/retry', w.operator, { consumer, messageId: msg });
     expect(r.status).toBe(200);
     expect(r.body.retried).toBe(true);
     await h.settle();
@@ -112,7 +112,7 @@ describe('Event replay after interruption', () => {
     expect(projection()).toEqual(before);
 
     // and via the operations API
-    const r = await h.post('/api/operations/rebuild-projections', w.officer, {});
+    const r = await h.post('/api/operations/rebuild-projections', w.operator, {});
     expect(r.status).toBe(200);
     await h.settle();
     expect(projection()).toEqual(before);

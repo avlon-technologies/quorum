@@ -187,7 +187,9 @@ export function declareConflict(
     | AssignmentRow
     | undefined;
   if (!actor.isOfficer && !pair) throw notFound('Assignment');
-  if (!actor.isOfficer && !getCase(deps, input.proposalId)) throw notFound('Proposal');
+  // review B5: an officer can no longer record a conflict against a proposal or reviewer that does not exist
+  if (!getCase(deps, input.proposalId)) throw notFound('Proposal');
+  if (actor.isOfficer && !getReviewerStanding(deps, input.reviewerId).exists) throw notFound('Reviewer');
   const now = deps.clock.now().toISOString();
   const existing = deps.db.prepare(`SELECT 1 FROM rev_conflict WHERE reviewer_id = ? AND proposal_id = ?`).get(input.reviewerId, input.proposalId);
   if (!existing) {

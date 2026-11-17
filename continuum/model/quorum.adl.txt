@@ -1,10 +1,11 @@
 adl-text/0.2
 model avlon.quorum package-1 core adl/1.7
-source sha256:f75646711920628a45e67531ba5fdee8eb85c2efeeea8068ecf268664cee4c12 (canonical-model attestation)
+source sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59 (canonical-model attestation)
 
 system Quorum — "Runs a research funding call from publication through submission, eligibility screening, blind peer review and panel adjudication against a fixed budget envelope, and reports where every proposal stands."
   actor Applicant [person] | uses: ::Quorum — "Principal investigator. Drafts, submits and withdraws their own proposals; sees only their own."
   actor FundingOperations [team] | owns: ::Quorum, ResearchFunding, ResearchFunding.Adjudication, ResearchFunding.Calls, ResearchFunding.Identity, ResearchFunding.Notification, ResearchFunding.Oversight, ResearchFunding.PeerReview, ResearchFunding.Submission — "The team accountable for operating Quorum."
+  actor Operator [person] | uses: ::Quorum — "Platform operator. Runs backups and restores, watches delivery health, retries or skips a failed delivery with a recorded reason, and executes account erasure. Holds no business role."
   actor PanelChair [person] | uses: ::Quorum — "Panel lead. The only participant who records an award or a decline, and only for a scored proposal."
   actor ProgramOfficer [person] | uses: ::Quorum — "Funding body staff. Publishes and closes calls, confirms eligibility, assigns reviewers and chases overdue reviews."
   actor Reviewer [person] | uses: ::Quorum — "Domain expert. Verifies an ORCID identity, declares conflicts, accepts assignments and scores proposals blind."
@@ -13,22 +14,31 @@ system Quorum — "Runs a research funding call from publication through submiss
     bounded-context Adjudication | realizes: ResearchFunding.PanelAdjudication — "Panel adjudication against the call's budget envelope. Owns adjudication cases, panel decisions and the per-call budget ledger; never reads review or proposal tables."
       business-rule ChairOnScoredOnly "A panel decision is recorded only by an account holding the panel_chair role, only for a proposal with an open adjudication case (which exists only once the proposal is scored), only once, and an award only when no integrity hold is on the case."
       business-rule EnvelopeNotExceeded "An award commits its amount only by a single conditional write on the call's ledger row that succeeds only if committed + amount <= envelope; otherwise nothing is recorded and the case returns to the chair."
+      event AwardHeld payload=AwardHeldData — "An integrity hold was placed on a scored proposal's award because a reviewer declared a conflict after scoring (ADR-005)."
+        delivery[ordered, at-least-once, durable]
+      event AwardRefused payload=AwardRefusedData — "An award was refused because the envelope cannot fund it; nothing was committed and the case moved to reconsider (decline only)."
+        delivery[ordered, at-least-once, durable]
+      event DecisionEscalated payload=DecisionEscalatedData — "A chair decision passed its 14-day due date undecided; the program officer is notified. Published at most once per case; nothing is decided."
+        delivery[ordered, at-least-once, durable]
       event ProposalAwarded payload=DecisionData
         delivery[ordered, at-least-once, durable]
       event ProposalDeclined payload=DecisionData
         delivery[ordered, at-least-once, durable]
       resource AdjudicationStore [data-store] — "Adjudication cases (with integrity holds), panel decisions (one per proposal, terminal) and the per-call budget ledger (envelope, committed) with a CHECK committed <= envelope."
         persistence[durable; strong; retention=business-record]
-      service AdjudicationService | applies: ChairOnScoredOnly, EnvelopeNotExceeded; deployedAs: ::Quorum.QuorumServer; governedBy: ResearchFunding.HumansDecide, ResearchFunding.RoleScopedAccess; reads: AdjudicationStore; realizes: ResearchFunding.PanelAdjudication; satisfies: ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly, ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded; subscribesTo: ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared; writes: AdjudicationStore — "Opens an adjudication case on ProposalScored, keeps the budget ledger from CallPublished, places an integrity hold on ConflictDeclared after scoring, and commits awards and declines atomically."
+      service AdjudicationService | applies: ChairOnScoredOnly, EnvelopeNotExceeded; deployedAs: ::Quorum.QuorumServer; governedBy: ResearchFunding.HumansDecide, ResearchFunding.RoleScopedAccess; publishes: AwardHeld, DecisionEscalated; reads: AdjudicationStore; realizes: ResearchFunding.PanelAdjudication; satisfies: ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly, ResearchFunding.PanelAdjudication.DecisionsEscalated, ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded; subscribesTo: ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared; writes: AdjudicationStore — "Opens an adjudication case on ProposalScored, keeps the budget ledger from CallPublished, places an integrity hold on ConflictDeclared after scoring, and commits awards and declines atomically."
         on ::Quorum.ResearchFunding.Calls.CallPublished -> none
         on ::Quorum.ResearchFunding.PeerReview.ConflictDeclared -> none
         api DecisionApi
           operation CommitAward in=AwardRequest out=AwardResult
           operation RecordDecline in=DeclineRequest out=DeclineResult
       record AdjudicationState v1 { callId: text, meanScore: decimal(4,2), proposalId: text, requested: ::Quorum.ResearchFunding.Calls.Money }
+      record AwardHeldData v1 { at: instant, proposalId: text, reason: text }
+      record AwardRefusedData v1 { actorId: text, at: instant, callId: text, proposalId: text, requested: ::Quorum.ResearchFunding.Calls.Money }
       record AwardRequest v1 { amount: ::Quorum.ResearchFunding.Calls.Money, callId: text, proposalId: text }
       record AwardResult v1 { committed: boolean, remaining: ::Quorum.ResearchFunding.Calls.Money }
       record DecisionData v1 { actorId: text, amount: ::Quorum.ResearchFunding.Calls.Money, at: instant, callId: text, outcome: PanelOutcome, proposalId: text, rationale: text }
+      record DecisionEscalatedData v1 { at: instant, callId: text, dueAt: instant, proposalId: text }
       record DecisionRequest v1 { callId: text, meanScore: decimal(4,2), proposalId: text, requested: ::Quorum.ResearchFunding.Calls.Money }
       record DeclineAcknowledgement v1 { actorId: text, at: instant, rationale: text }
       record DeclineRequest v1 { callId: text, proposalId: text }
@@ -60,12 +70,14 @@ system Quorum — "Runs a research funding call from publication through submiss
         publish awarded -> ProposalAwarded payload=DecisionData{ actorId: match verdict { none -> ""; some v -> v.actorId }, amount: requested, at: match verdict { none -> instant 1970-01-01T00:00:00Z; some v -> v.at }, callId: callId, outcome: PanelOutcome "award", proposalId: proposalId, rationale: match verdict { none -> ""; some v -> v.rationale } }
         publish declined -> ProposalDeclined payload=DecisionData{ actorId: match verdict { none -> ""; some v -> v.actorId }, amount: decimal(14,2) 0.00, at: match verdict { none -> instant 1970-01-01T00:00:00Z; some v -> v.at }, callId: callId, outcome: PanelOutcome "decline", proposalId: proposalId, rationale: match verdict { none -> ""; some v -> v.rationale } }
         publish declinedRefused -> ProposalDeclined payload=DecisionData{ actorId: match acknowledgement { none -> ""; some a -> a.actorId }, amount: decimal(14,2) 0.00, at: match acknowledgement { none -> instant 1970-01-01T00:00:00Z; some a -> a.at }, callId: callId, outcome: PanelOutcome "decline", proposalId: proposalId, rationale: match acknowledgement { none -> ""; some a -> a.rationale } }
+        publish refused -> AwardRefused payload=AwardRefusedData{ actorId: match verdict { none -> ""; some v -> v.actorId }, at: match verdict { none -> instant 1970-01-01T00:00:00Z; some v -> v.at }, callId: callId, proposalId: proposalId, requested: requested }
         T1: decide -> isAward
+        T10: refused -> reconsider
         T2: isAward -> commit when result
         T3: isAward -> decline default
         T4: commit -> committed
         T5: committed -> awarded when result
-        T6: committed -> reconsider default
+        T6: committed -> refused default
         T7: reconsider -> declineRefused
         T8: decline -> declined
         T9: declineRefused -> declinedRefused
@@ -96,36 +108,47 @@ system Quorum — "Runs a research funding call from publication through submiss
       record Criterion v1 { criterionId: text, name: text }
       alias Money v1 = decimal(14,2)
     bounded-context Identity | realizes: ResearchFunding.AccessControl — "Accounts, granted roles and ORCID verification. The single writer of accounts and role grants."
+      command EraseAccount payload=EraseAccountData — "Operator-only. Pseudonymises the account (name, email, institution, ORCID iD), revokes its roles and redacts its personal identifiers from retained event payloads, in one transaction."
+        occurrence-identity: payload.accountId
       command RegisterApplicant payload=RegistrationData
         occurrence-identity: payload.email
       command VerifyOrcid payload=VerifyOrcidData
         occurrence-identity: payload.accountId
+      event AccountErased payload=AccountErasedData — "An account's personal data was erased. Carries no personal data; every context that holds a copy pseudonymises it."
+        delivery[ordered, at-least-once, durable]
       event OrcidVerified payload=OrcidVerifiedData — "A reviewer's ORCID iD was confirmed by the registry. unverified -> verified is the only ORCID transition."
         delivery[ordered, at-least-once, durable]
       resource AccountStore [data-store] — "Accounts, password hashes, role grants and ORCID status."
         persistence[durable; strong; retention=business-record]
-      service AccountService | deployedAs: ::Quorum.QuorumServer; governedBy: ResearchFunding.RoleScopedAccess; handles: RegisterApplicant, VerifyOrcid; invokes: ::Quorum.ORCID.OrcidPublicApi.LookupRecord; publishes: OrcidVerified; reads: AccountStore; realizes: ResearchFunding.AccessControl; satisfies: ResearchFunding.AccessControl.RoleScopedAuthority, ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly; writes: AccountStore — "Registers applicants, authenticates sign-in, loads roles per request (never trusting token claims for roles), verifies ORCID iDs through the ORCID adapter and answers reviewer-standing queries for assignment checks."
+      service AccountService | deployedAs: ::Quorum.QuorumServer; governedBy: ResearchFunding.RoleScopedAccess; handles: EraseAccount, RegisterApplicant, VerifyOrcid; invokes: ::Quorum.ORCID.OrcidPublicApi.LookupRecord; publishes: AccountErased, OrcidVerified; reads: AccountStore; realizes: ResearchFunding.AccessControl; satisfies: ResearchFunding.AccessControl.PersonalDataErasable, ResearchFunding.AccessControl.RoleScopedAuthority, ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly; writes: AccountStore — "Registers applicants, authenticates sign-in, loads roles per request (never trusting token claims for roles), verifies ORCID iDs through the ORCID adapter and answers reviewer-standing queries for assignment checks."
+        on EraseAccount -> independent AccountErased correlate AccountErased payload.accountId = payload.accountId
         on RegisterApplicant -> none
         on VerifyOrcid -> independent OrcidVerified correlate OrcidVerified payload.accountId = payload.accountId
         api IdentityApi
           operation GetReviewerStanding in=StandingQuery out=ReviewerStanding
+      record AccountErasedData v1 { accountId: AccountId, at: instant }
       alias AccountId v1 = text !identity
+      record EraseAccountData v1 { accountId: AccountId, reason: text }
       record OrcidQuery v1 { orcidId: text }
       record OrcidRecord v1 { exists: boolean, name: optional(text), orcidId: text }
       enum OrcidStatus v1 = unverified | verified
       record OrcidVerifiedData v1 { accountId: AccountId, at: instant, orcidId: text }
       record RegistrationData v1 { accountId: AccountId, email: text ~sensitive, institution: text, name: text }
       record ReviewerStanding v1 { accountId: AccountId, institution: text, isReviewer: boolean, orcid: OrcidStatus }
-      enum Role v1 = applicant | panelChair | programOfficer | reviewer
+      enum Role v1 = applicant | operator | panelChair | programOfficer | reviewer
       record StandingQuery v1 { accountId: AccountId }
       record VerifyOrcidData v1 { accountId: AccountId, orcidId: text }
     bounded-context Notification | realizes: ResearchFunding.ParticipantNotification — "Tells participants what happened. Writes an in-app notification and an outbound message (queued -> delivered | failed) per recipient; a drain job hands outbound messages to the mail transport (a stub locally)."
       business-rule NoScoresToReviewers "A notification addressed to a reviewer never carries another reviewer's scores or comments."
       resource OutboundMessageStore [data-store] — "The brief's OutboxMessage: one row per (event, recipient), unique on that pair, with attempts and last error. Also the in-app inbox."
         persistence[durable; strong; retention=one-year]
-      service NotificationService | applies: NoScoresToReviewers; deployedAs: ::Quorum.QuorumServer; governedBy: ResearchFunding.BlindReview; reads: OutboundMessageStore; realizes: ResearchFunding.ParticipantNotification; satisfies: ResearchFunding.ParticipantNotification.NotificationsDurable; subscribesTo: ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.TriageProposed; writes: OutboundMessageStore — "Turns domain events into notifications for the affected participants and drains outbound messages with retry; unique (event, recipient) makes redelivery a no-op."
+      service NotificationService | applies: NoScoresToReviewers; deployedAs: ::Quorum.QuorumServer; governedBy: ResearchFunding.BlindReview; reads: OutboundMessageStore; realizes: ResearchFunding.ParticipantNotification; satisfies: ResearchFunding.ParticipantNotification.NotificationsDurable; subscribesTo: ::Quorum.ResearchFunding.Adjudication.AwardHeld, ::Quorum.ResearchFunding.Adjudication.AwardRefused, ::Quorum.ResearchFunding.Adjudication.DecisionEscalated, ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined, ::Quorum.ResearchFunding.Identity.AccountErased, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.TriageProposed; writes: OutboundMessageStore — "Turns domain events into notifications for the affected participants and drains outbound messages with retry; unique (event, recipient) makes redelivery a no-op."
+        on ::Quorum.ResearchFunding.Adjudication.AwardHeld -> none
+        on ::Quorum.ResearchFunding.Adjudication.AwardRefused -> none
+        on ::Quorum.ResearchFunding.Adjudication.DecisionEscalated -> none
         on ::Quorum.ResearchFunding.Adjudication.ProposalAwarded -> none
         on ::Quorum.ResearchFunding.Adjudication.ProposalDeclined -> none
+        on ::Quorum.ResearchFunding.Identity.AccountErased -> none
         on ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked -> none
         on ::Quorum.ResearchFunding.PeerReview.ReviewOverdue -> none
         on ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned -> none
@@ -135,13 +158,17 @@ system Quorum — "Runs a research funding call from publication through submiss
         on ::Quorum.ResearchFunding.Submission.ProposalSubmitted -> none
         on ::Quorum.ResearchFunding.Submission.TriageProposed -> none
     bounded-context Oversight | realizes: ResearchFunding.PortfolioReporting — "The read side: the portfolio and every proposal's audit timeline, projected from events only. Never reads a write-side store."
-      read-model AuditTrail | projectsFrom: ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined, ::Quorum.ResearchFunding.Calls.CallClosed, ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.Identity.OrcidVerified, ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared, ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.ProposalUnderReview, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn, ::Quorum.ResearchFunding.Submission.TriageProposed — "The audit trail: every transition of every call, account, proposal and assignment, with actor, timestamp and reason. Filtered per proposal it is the proposal timeline."
+      read-model AuditTrail | projectsFrom: ::Quorum.ResearchFunding.Adjudication.AwardHeld, ::Quorum.ResearchFunding.Adjudication.AwardRefused, ::Quorum.ResearchFunding.Adjudication.DecisionEscalated, ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined, ::Quorum.ResearchFunding.Calls.CallClosed, ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.Identity.AccountErased, ::Quorum.ResearchFunding.Identity.OrcidVerified, ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared, ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.ProposalUnderReview, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn, ::Quorum.ResearchFunding.Submission.TriageProposed — "The audit trail: every transition of every call, account, proposal and assignment, with actor, timestamp and reason. Filtered per proposal it is the proposal timeline."
       read-model Portfolio | projectsFrom: ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined, ::Quorum.ResearchFunding.Calls.CallClosed, ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.ProposalUnderReview, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn — "Every proposal with its status, review progress (x of 3), mean score and award, and each call's envelope, committed and remaining amounts."
-      service PortfolioProjector | deployedAs: ::Quorum.QuorumServer; governedBy: ResearchFunding.BlindReview, ResearchFunding.RoleScopedAccess; projects: AuditTrail, Portfolio; reads: AuditTrail, Portfolio; realizes: ResearchFunding.PortfolioReporting; satisfies: ResearchFunding.PortfolioReporting.PortfolioFromProjection, ResearchFunding.PortfolioReporting.TransitionsAudited; subscribesTo: ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined, ::Quorum.ResearchFunding.Calls.CallClosed, ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.Identity.OrcidVerified, ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared, ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.ProposalUnderReview, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn, ::Quorum.ResearchFunding.Submission.TriageProposed — "The only producer of the portfolio and the timeline. Consumes events idempotently (per-consumer progress committed with the projection write) and can rebuild both views by replaying the retained event log."
+      service PortfolioProjector | deployedAs: ::Quorum.QuorumServer; governedBy: ResearchFunding.BlindReview, ResearchFunding.RoleScopedAccess; projects: AuditTrail, Portfolio; reads: AuditTrail, Portfolio; realizes: ResearchFunding.PortfolioReporting; satisfies: ResearchFunding.PortfolioReporting.PortfolioFromProjection, ResearchFunding.PortfolioReporting.TransitionsAudited; subscribesTo: ::Quorum.ResearchFunding.Adjudication.AwardHeld, ::Quorum.ResearchFunding.Adjudication.AwardRefused, ::Quorum.ResearchFunding.Adjudication.DecisionEscalated, ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined, ::Quorum.ResearchFunding.Calls.CallClosed, ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.Identity.AccountErased, ::Quorum.ResearchFunding.Identity.OrcidVerified, ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared, ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.ProposalUnderReview, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn, ::Quorum.ResearchFunding.Submission.TriageProposed — "The only producer of the portfolio and the timeline. Consumes events idempotently (per-consumer progress committed with the projection write) and can rebuild both views by replaying the retained event log."
+        on ::Quorum.ResearchFunding.Adjudication.AwardHeld -> none
+        on ::Quorum.ResearchFunding.Adjudication.AwardRefused -> none
+        on ::Quorum.ResearchFunding.Adjudication.DecisionEscalated -> none
         on ::Quorum.ResearchFunding.Adjudication.ProposalAwarded -> none
         on ::Quorum.ResearchFunding.Adjudication.ProposalDeclined -> none
         on ::Quorum.ResearchFunding.Calls.CallClosed -> none
         on ::Quorum.ResearchFunding.Calls.CallPublished -> none
+        on ::Quorum.ResearchFunding.Identity.AccountErased -> none
         on ::Quorum.ResearchFunding.Identity.OrcidVerified -> none
         on ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted -> none
         on ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked -> none
@@ -318,6 +345,7 @@ system Quorum — "Runs a research funding call from publication through submiss
         T1: assess -> record
         T2: record -> proposed
     capability AccessControl — "Authentication and role-scoped authorization at every operation."
+      requirement PersonalDataErasable — "An account's personal data can be erased on request by an operator: identifiers are pseudonymised everywhere they are held, while business records (proposals, reviews, decisions, budget) are retained under business-record retention."
       requirement RoleScopedAuthority — "INV-11 — An account may act only in a role it has been granted, and only on resources its role scopes it to. Deny by default."
     capability BlindPeerReview — "Reviewers score independently, seeing nothing of each other until their own review is submitted."
       requirement BlindUntilOwnSubmitted — "INV-7 — A reviewer may not read any other review of a proposal until their own review for it is submitted."
@@ -328,6 +356,7 @@ system Quorum — "Runs a research funding call from publication through submiss
       requirement AgentNeverDecides — "INV-10 — The eligibility triage agent may propose a verdict but may never move a proposal out of screening."
     capability PanelAdjudication — "The chair awards or declines a scored proposal under the call's budget envelope."
       requirement ChairDecidesScoredOnly — "INV-8 — Only a PanelChair may record a panel decision, and only for a proposal in scored."
+      requirement DecisionsEscalated — "J7 — A chair decision still pending after 14 days notifies the program officer exactly once; nothing is decided by timeout."
       requirement EnvelopeNeverExceeded — "INV-9 — The sum of all awarded amounts for a call may never exceed the call's budget envelope."
     capability ParticipantNotification — "Participants are told what happened, through a durable outbound message store."
       requirement NotificationsDurable — "NFR-5 — Notifications are queued durably and delivered at least once; a failed delivery is visible and retryable."
@@ -347,9 +376,12 @@ system Quorum — "Runs a research funding call from publication through submiss
     policy HumansDecide — "Eligibility, assignment and award are human decisions. Automation proposes, detects and escalates; it never decides."
     policy RoleScopedAccess — "Deny by default. Every operation names the roles that may call it and the resources each role is scoped to: applicants their own proposals, reviewers their own assignments, officers and chairs the whole funding programme. Roles are read from the account store on every request."
   environment LocalDevelopment — "One machine, no paid infrastructure: a SQLite file, a stub ORCID registry, a stub triage provider and a stub mail transport."
+  environment Production — "One funding body's single-instance deployment: one QuorumServer process on a persistent volume holding the SQLite file (WAL), with scheduled online backups, the real ORCID public API, a hosted triage model provider and an SMTP relay. Secrets come from the environment."
   external-system ORCID — "The researcher identity registry. Confirms that a claimed ORCID iD exists. A deterministic stub locally; real HTTP in production — the swap is a binding of the adapter service, not a model change."
     api OrcidPublicApi
       operation LookupRecord in=::Quorum.ResearchFunding.Identity.OrcidQuery out=::Quorum.ResearchFunding.Identity.OrcidRecord
+  test AccountErasure | verifies: ResearchFunding.AccessControl.PersonalDataErasable, ResearchFunding.Identity.AccountService — "An operator erases an account: no personal identifier remains in accounts, notifications, projections or event payloads; business records remain."
+  test DecisionEscalation | verifies: ResearchFunding.Adjudication.AdjudicationService, ResearchFunding.PanelAdjudication.DecisionsEscalated — "J7: a decision pending past its due date publishes DecisionEscalated exactly once and notifies the program officers; it is never decided."
   test DeliveryAndReplay | verifies: ResearchFunding.Notification.NotificationService, ResearchFunding.Oversight.PortfolioProjector, ResearchFunding.ParticipantNotification.NotificationsDurable — "NFR-5/6: an interrupted dispatch is redelivered with no duplicate effect; replaying the whole log rebuilds an identical portfolio; a poisoned message is parked and retryable."
   test Inv01SubmissionWindow | verifies: ResearchFunding.CallAdministration.SubmissionWindow, ResearchFunding.Submission.ProposalService — "INV-1: submission is refused when the call is closed, at the deadline and after it; accepted one millisecond before."
   test Inv02SubmitOnce | verifies: ResearchFunding.ProposalSubmission.SubmitOnce, ResearchFunding.Submission.ProposalService — "INV-2: a second submission of the same proposal is refused; a replayed request with the same idempotency key returns the original response."

@@ -58,7 +58,7 @@ const matrix: Row[] = [
     body: { scores: { c1: 3 }, comment: 'x', attestsNoConflict: true },
     expect: { anon: 401, applicant: 403, reviewer: 404, officer: 403, chair: 403 },
   },
-  { name: 'retry a parked delivery', method: 'POST', url: () => '/api/operations/deliveries/retry', body: { consumer: 'abc', messageId: '00000000-0000' }, expect: { anon: 401, applicant: 403, reviewer: 403, officer: 200, chair: 403 } },
+  { name: 'retry a parked delivery', method: 'POST', url: () => '/api/operations/deliveries/retry', body: { consumer: 'abc', messageId: '00000000-0000' }, expect: { anon: 401, applicant: 403, reviewer: 403, officer: 403, chair: 403 } }, // operator-only since review B5; operator: production-readiness.test.ts
 ];
 
 describe('Cross-role access matrix (INV-11)', () => {

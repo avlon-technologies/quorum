@@ -401,6 +401,28 @@ async function journeys(browser: Browser, base: string) {
     await shot(page, '32-notifications');
     await page.context().close();
   }
+
+  // ---------------------------------------------------------------- operator: health, backup, erasure
+  step = 'operator';
+  console.log('[e2e] operator backs up and erases an account');
+  {
+    const page = await session(browser, base, 'operator@quorum.test');
+    await page.getByRole('heading', { name: 'System health' }).waitFor();
+    await page.getByRole('button', { name: 'Back up now' }).click();
+    await visibleText(page, 'Backup verified');
+    check(true, 'an on-demand backup is taken and verified');
+    await shot(page, '33-operator-health');
+    await page.getByLabel('Find the account (name, email or id)').fill('marc.dubois');
+    await page.getByRole('button', { name: 'Find', exact: true }).click();
+    await page.getByRole('button', { name: 'Erase…' }).click();
+    await page.getByLabel('Request reference and reason').fill('Data subject request DSR-2026-031, verified by phone.');
+    await page.getByLabel('I have verified this request and understand it cannot be undone.').check();
+    await shot(page, '34-operator-erase-confirm');
+    await page.getByRole('button', { name: 'Erase personal data' }).click();
+    await visibleText(page, 'Erased.');
+    check(await page.getByText('erase-account').first().isVisible(), 'the erasure is recorded in the operator log');
+    await page.context().close();
+  }
 }
 
 main()

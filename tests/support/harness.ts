@@ -44,6 +44,7 @@ export type User = { id: string; email: string; name: string };
 
 export type World = {
   officer: User;
+  operator: User; // platform operator: no business role
   chair: User;
   alice: User; // applicant
   bob: User; // applicant
@@ -191,6 +192,7 @@ export class Harness {
   world(opts: { envelope?: number; maxRequest?: number; criteria?: number; deadlineDays?: number } = {}): World {
     const officer = this.account('Olivia Officer', ['programOfficer']);
     const chair = this.account('Chris Chair', ['panelChair']);
+    const operator = this.account('Owen Operator', ['operator']);
     const alice = this.account('Alice Applicant', ['applicant']);
     const bob = this.account('Bob Applicant', ['applicant']);
     const sam = this.account('Sam Both', ['applicant', 'reviewer'], { verified: true });
@@ -208,7 +210,7 @@ export class Harness {
         criteria: Array.from({ length: n }, (_, i) => ({ name: `Criterion ${i + 1}`, guidance: `Guidance ${i + 1}` })),
       }),
     );
-    return { officer, chair, alice, bob, sam, r, unverified, callId: call.id, deadline };
+    return { officer, operator, chair, alice, bob, sam, r, unverified, callId: call.id, deadline };
   }
 
   draft(w: World, applicant: User, opts: { requested?: number; abstract?: string; title?: string } = {}): string {

@@ -15,7 +15,7 @@ import { toDecimal } from '../../platform/deps.ts';
 import type { Consumer, StoredEvent } from '../../platform/events.ts';
 import { CommittedRefusal } from '../../platform/http.ts';
 import { conflict, notFound, unprocessable } from '../../platform/errors.ts';
-import type { CallPublishedData, ConflictDeclaredData, DecisionData, AwardResult } from '../../contracts/model.generated.ts';
+import type { CallPublishedData, ConflictDeclaredData, DecisionData, AwardResult, AwardRefusedData, AwardHeldData } from '../../contracts/model.generated.ts';
 
 export type CaseRow = {
   proposal_id: string;
@@ -85,6 +85,9 @@ export function recordDecision(
     if (!result.committed) {
       // decision committed -> default: human-task reconsider. The state change is committed with the refusal.
       deps.db.prepare(`UPDATE adj_case SET status = 'reconsider' WHERE proposal_id = ? AND status = 'awaitingDecision'`).run(proposalId);
+      // publish refused -> reconsider (review B4): the refusal is an audited transition
+      const refused: AwardRefusedData = { proposalId, callId: c.call_id, requested: toDecimal(c.requested_minor), actorId: chairId, at: now };
+      deps.bus.publish('AwardRefused', `proposal:${proposalId}`, refused, chairId);
       const b = budgetOf(deps, c.call_id)!;
       return new CommittedRefusal(
         conflict(
@@ -128,10 +131,12 @@ export function adjudicationConsumer(deps: Deps): Consumer {
         if (!e.payload.heldAward) return;
         // remembered even if the case does not exist yet (architect review A2: the hold could be lost)
         db.prepare(`INSERT OR IGNORE INTO adj_pending_hold (proposal_id, reason) VALUES (?, ?)`).run(e.payload.proposalId, `a reviewer declared a conflict after scoring (${e.payload.reason})`);
-        db.prepare(`UPDATE adj_case SET integrity_hold = ? WHERE proposal_id = ? AND status <> 'decided' AND integrity_hold IS NULL`).run(
-          `a reviewer declared a conflict after scoring (${e.payload.reason})`,
-          e.payload.proposalId,
-        );
+        const reason = `a reviewer declared a conflict after scoring (${e.payload.reason})`;
+        const placed = db.prepare(`UPDATE adj_case SET integrity_hold = ? WHERE proposal_id = ? AND status <> 'decided' AND integrity_hold IS NULL`).run(reason, e.payload.proposalId);
+        if (placed.changes === 1) {
+          const p: AwardHeldData = { proposalId: e.payload.proposalId, reason, at: e.occurredAt };
+          deps.bus.publish('AwardHeld', `proposal:${e.payload.proposalId}`, p, 'quorum-platform');
+        }
       },
     },
   };

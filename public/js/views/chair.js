@@ -101,7 +101,7 @@ export async function decision(el, id) {
       h('div', { class: 'crumbs' }, h('a', { href: '#/chair' }, 'Decisions'), ' / ', c.proposal?.reference ?? ''),
       h('div', { class: 'page-head' }, h('div', null, h('div', { class: 'eyebrow' }, c.proposal?.reference ?? ''), h('h1', null, c.title)), statusPill(c.status === 'decided' ? (c.decision.outcome === 'award' ? 'awarded' : 'declined') : 'scored')),
       c.integrityHold ? alertBox('bad', 'Integrity hold — this award cannot be made', h('p', null, `${c.integrityHold}. You may decline; an award needs the program officer to resolve the hold first. `, ruleRef('INV-3'))) : null,
-      c.overdue ? alertBox('warn', 'This decision is past its due date', h('p', null, `It was due ${dateTime(c.decisionDue)}. It is flagged on the program officer’s work queue. Quorum never decides on the panel’s behalf.`)) : null,
+      c.overdue ? alertBox('warn', 'This decision is past its due date', h('p', null, `It was due ${dateTime(c.decisionDue)}. The program officers have been notified and see it on their work queue. Quorum never decides on the panel’s behalf.`)) : null,
       h(
         'div',
         { class: 'grid grid-2', style: 'margin-top:14px' },

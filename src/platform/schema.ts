@@ -310,4 +310,69 @@ export const MIGRATIONS: string[] = [
   );
   CREATE INDEX ovs_audit_proposal ON ovs_audit(proposal_id, seq);
   `,
+  /* 2 — production readiness: operator role, delivery skip, INV-5 trigger, erasure, operator audit */ `
+  -- Identity: the operator role (model: Identity.Role gains 'operator'); a CHECK cannot be altered, so rebuild
+  CREATE TABLE idn_role_grant_v2 (
+    account_id TEXT NOT NULL REFERENCES idn_account(id),
+    role       TEXT NOT NULL CHECK (role IN ('applicant','reviewer','programOfficer','panelChair','operator')),
+    granted_at TEXT NOT NULL,
+    granted_by TEXT NOT NULL,
+    PRIMARY KEY (account_id, role)
+  );
+  INSERT INTO idn_role_grant_v2 SELECT account_id, role, granted_at, granted_by FROM idn_role_grant;
+  DROP TABLE idn_role_grant;
+  ALTER TABLE idn_role_grant_v2 RENAME TO idn_role_grant;
+  ALTER TABLE idn_account ADD COLUMN erased_at TEXT;
+
+  -- platform: a parked delivery can be skipped by an operator, with a recorded reason (review B6)
+  CREATE TABLE evt_delivery_v2 (
+    consumer        TEXT NOT NULL,
+    message_id      TEXT NOT NULL REFERENCES evt_outbox(message_id),
+    seq             INTEGER NOT NULL,
+    partition_key   TEXT NOT NULL,
+    status          TEXT NOT NULL CHECK (status IN ('pending','delivered','failed','skipped')),
+    attempts        INTEGER NOT NULL DEFAULT 0,
+    next_attempt_at TEXT NOT NULL,
+    last_error      TEXT,
+    delivered_at    TEXT,
+    PRIMARY KEY (consumer, message_id)
+  );
+  INSERT INTO evt_delivery_v2 SELECT consumer, message_id, seq, partition_key, status, attempts, next_attempt_at, last_error, delivered_at FROM evt_delivery;
+  DROP TABLE evt_delivery;
+  ALTER TABLE evt_delivery_v2 RENAME TO evt_delivery;
+  CREATE INDEX evt_delivery_due ON evt_delivery(status, next_attempt_at, seq);
+  CREATE INDEX evt_delivery_partition ON evt_delivery(consumer, partition_key, seq);
+
+  -- platform: every operator action (retry, skip, erase, backup, restore, rebuild), append-only
+  CREATE TABLE ops_action (
+    seq       INTEGER PRIMARY KEY AUTOINCREMENT,
+    at        TEXT NOT NULL,
+    actor_id  TEXT NOT NULL,
+    action    TEXT NOT NULL,
+    subject   TEXT NOT NULL,
+    reason    TEXT NOT NULL
+  );
+  CREATE TRIGGER ops_action_append_only_u BEFORE UPDATE ON ops_action BEGIN SELECT RAISE(ABORT, 'ops_action is append-only'); END;
+  CREATE TRIGGER ops_action_append_only_d BEFORE DELETE ON ops_action BEGIN SELECT RAISE(ABORT, 'ops_action is append-only'); END;
+
+  -- Notification: read state per account, so one officer reading a role-addressed message does not
+  -- mark it read for every officer (review B5)
+  CREATE TABLE ntf_read (
+    message_id TEXT NOT NULL REFERENCES ntf_message(id),
+    account_id TEXT NOT NULL,
+    read_at    TEXT NOT NULL,
+    PRIMARY KEY (message_id, account_id)
+  );
+  INSERT INTO ntf_read (message_id, account_id, read_at) SELECT id, recipient, read_at FROM ntf_message WHERE read_at IS NOT NULL AND recipient NOT LIKE 'role:%';
+
+  -- INV-5 defence in depth (review B7): never more than three live assignments per proposal,
+  -- enforced by the database itself rather than by the service check plus SQLite's single writer
+  CREATE TRIGGER rev_assignment_at_most_three BEFORE INSERT ON rev_assignment
+  WHEN NEW.status <> 'revoked'
+   AND (SELECT COUNT(*) FROM rev_assignment a WHERE a.proposal_id = NEW.proposal_id AND a.status <> 'revoked') >= 3
+  BEGIN SELECT RAISE(ABORT, 'INV-5: this proposal already has three active reviewers'); END;
+  CREATE TRIGGER rev_assignment_at_most_three_u BEFORE UPDATE OF status ON rev_assignment
+  WHEN OLD.status = 'revoked' AND NEW.status <> 'revoked'
+  BEGIN SELECT RAISE(ABORT, 'INV-5: a revoked assignment cannot be reinstated'); END;
+  `,
 ];

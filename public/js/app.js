@@ -6,15 +6,17 @@ import * as officer from './views/officer.js';
 import * as reviewer from './views/reviewer.js';
 import * as chair from './views/chair.js';
 import * as portfolio from './views/portfolio.js';
+import * as operator from './views/operator.js';
 
-const ROLE_LABEL = { applicant: 'Applicant', reviewer: 'Reviewer', programOfficer: 'Program officer', panelChair: 'Panel chair' };
-const ROLE_HOME = { programOfficer: '#/officer', panelChair: '#/chair', reviewer: '#/reviewer', applicant: '#/applicant' };
-const ROLE_ORDER = ['programOfficer', 'panelChair', 'reviewer', 'applicant'];
+const ROLE_LABEL = { applicant: 'Applicant', reviewer: 'Reviewer', programOfficer: 'Program officer', panelChair: 'Panel chair', operator: 'Operator' };
+const ROLE_HOME = { programOfficer: '#/officer', panelChair: '#/chair', reviewer: '#/reviewer', applicant: '#/applicant', operator: '#/operator' };
+const ROLE_ORDER = ['programOfficer', 'panelChair', 'reviewer', 'applicant', 'operator'];
 const NAV = {
   applicant: [['#/applicant', 'My proposals'], ['#/calls', 'Open calls']],
   reviewer: [['#/reviewer', 'My reviews']],
   programOfficer: [['#/officer', 'Work queue'], ['#/officer/calls', 'Calls'], ['#/portfolio', 'Portfolio'], ['#/officer/activity', 'Audit log']],
   panelChair: [['#/chair', 'Decisions'], ['#/portfolio', 'Portfolio']],
+  operator: [['#/operator', 'System health']],
 };
 
 let health = null;
@@ -35,6 +37,7 @@ const ROUTES = [
   [/^#\/officer\/activity$/, (m, el) => officer.activity(el), { role: 'programOfficer' }],
   [/^#\/chair$/, (m, el) => chair.home(el), { role: 'panelChair' }],
   [/^#\/chair\/decisions\/([\w-]+)$/, (m, el) => chair.decision(el, m[1]), { role: 'panelChair' }],
+  [/^#\/operator$/, (m, el) => operator.home(el), { role: 'operator' }],
   [/^#\/portfolio$/, (m, el) => portfolio.view(el), { role: ['programOfficer', 'panelChair'] }],
   [/^#\/notifications$/, (m, el) => notifications(el), {}],
 ];

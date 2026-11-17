@@ -1,0 +1,67 @@
+{
+  "acceptance-scenario": "1",
+  "name": "account-erasure",
+  "purpose": "An operator erases an applicant on request: no personal identifier remains in accounts, events, notifications, projections or the command log, a rebuilt projection agrees, and the proposal is kept as a business record.",
+  "verifies": [
+    "::Quorum.ResearchFunding.AccessControl.PersonalDataErasable",
+    "::Quorum.ResearchFunding.Identity.AccountService"
+  ],
+  "test": "::Quorum.AccountErasure",
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, an operator, applicants and verified reviewers"
+    },
+    {
+      "step": "proposals.scored",
+      "args": {
+        "proposals": [
+          "p1"
+        ],
+        "requested": 100000
+      },
+      "text": "alice's proposal p1 is scored"
+    }
+  ],
+  "when": [
+    {
+      "step": "account.erased",
+      "args": {
+        "account": "alice",
+        "reason": "Data subject request DSR-2026-014."
+      },
+      "text": "the operator erases alice's account"
+    }
+  ],
+  "then": [
+    {
+      "step": "personal.data.absent",
+      "text": "alice's name and email appear nowhere"
+    },
+    {
+      "step": "projection.replays.identically",
+      "text": "rebuilding the projection from the redacted log gives the same projection"
+    },
+    {
+      "step": "personal.data.absent",
+      "text": "and still no personal data after the rebuild"
+    },
+    {
+      "step": "proposal.retained",
+      "args": {
+        "proposal": "p1",
+        "status": "scored"
+      },
+      "text": "p1 is kept as a business record"
+    },
+    {
+      "step": "event.count",
+      "args": {
+        "type": "AccountErased",
+        "count": 1
+      },
+      "text": "one AccountErased event is published"
+    }
+  ]
+}

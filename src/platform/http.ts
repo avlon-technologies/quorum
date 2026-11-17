@@ -5,6 +5,8 @@ import type { Db } from './db.ts';
 import type { Clock } from './clock.ts';
 import type { TokenService } from './auth.ts';
 import type { Role } from '../contracts/model.generated.ts';
+import type { RateLimiter } from './rate-limit.ts';
+import { recordRequest } from './metrics.ts';
 
 export type Principal = {
   accountId: string;
@@ -76,8 +78,11 @@ declare module 'fastify' {
 
 export type PrincipalLoader = (accountId: string) => Principal | null;
 
-export function installHttp(app: FastifyInstance, deps: { db: Db; clock: Clock; tokens: TokenService; loadPrincipal: PrincipalLoader }): Http {
-  const { db, clock, tokens, loadPrincipal } = deps;
+export function installHttp(
+  app: FastifyInstance,
+  deps: { db: Db; clock: Clock; tokens: TokenService; loadPrincipal: PrincipalLoader; limiter: RateLimiter },
+): Http {
+  const { db, clock, tokens, loadPrincipal, limiter } = deps;
 
   app.decorateRequest('principal', null);
 
@@ -103,6 +108,25 @@ export function installHttp(app: FastifyInstance, deps: { db: Db; clock: Clock; 
     if (!access.some((r) => principal.roles.includes(r))) {
       throw forbidden(`This action needs the ${access.map(roleLabel).join(' or ')} role, which your account has not been granted.`);
     }
+  });
+
+  // Rate limiting, after authentication so a signed-in account is limited as itself, not by its address.
+  app.addHook('onRequest', async (req, reply) => {
+    if (!req.url.startsWith('/api/')) return;
+    const write = req.method !== 'GET' && req.method !== 'HEAD';
+    const who = req.principal ? `acct:${req.principal.accountId}` : `ip:${req.ip}`;
+    const c = limiter.config;
+    const wait = write ? limiter.hit(`w:${who}`, c.writesPerMin, 60_000) : limiter.hit(`r:${who}`, c.readsPerMin, 60_000);
+    if (wait > 0) {
+      reply.header('Retry-After', String(wait));
+      throw new DomainError(429, 'rate_limited', `Too many requests. Wait ${wait} seconds and try again.`);
+    }
+  });
+
+  // Metrics: route pattern, never the raw URL.
+  app.addHook('onResponse', async (req, reply) => {
+    const route = req.routeOptions.url ?? (req.url.startsWith('/api/') ? 'unmatched' : 'static');
+    recordRequest(req.method, route, reply.statusCode, reply.elapsedTime / 1000);
   });
 
   app.setErrorHandler((err: unknown, req: FastifyRequest, reply: FastifyReply) => {
@@ -211,7 +235,7 @@ function lookup(db: Db, actor: string, key: string, hash: string): { status: num
 }
 
 export function roleLabel(r: Role): string {
-  return { applicant: 'Applicant', reviewer: 'Reviewer', programOfficer: 'Program Officer', panelChair: 'Panel Chair' }[r];
+  return { applicant: 'Applicant', reviewer: 'Reviewer', programOfficer: 'Program Officer', panelChair: 'Panel Chair', operator: 'Operator' }[r];
 }
 
 function toDomainError(err: unknown): DomainError {

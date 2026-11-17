@@ -15,7 +15,8 @@
     "test": "vitest run",
     "test:invariants": "vitest run tests/invariants",
     "test:e2e": "node tests/e2e/run-browser-journey.ts",
-    "check": "npm run typecheck && npm test"
+    "check": "npm run typecheck && npm test",
+    "ops": "node src/ops.ts"
   },
   "dependencies": {
     "@fastify/static": "^10.1.11",

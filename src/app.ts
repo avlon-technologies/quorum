@@ -31,6 +31,9 @@ import { panelDecisionWorkflow, sweepEscalations } from './contexts/adjudication
 import { notificationConsumer, drainOutbound } from './contexts/notification/service.ts';
 import { projectorConsumer } from './contexts/oversight/service.ts';
 import { registerRoutes } from './api/routes.ts';
+import { RateLimiter, rateLimitConfigFromEnv, type RateLimitConfig } from './platform/rate-limit.ts';
+import { raise } from './platform/alerts.ts';
+import { backupTo, listBackups } from './platform/backup.ts';
 
 export type AppOptions = {
   dbFile?: string;
@@ -45,7 +48,25 @@ export type AppOptions = {
   logger?: boolean;
   /** Start background workers (dispatcher poll, triage, sweeps, drain). Tests drive them by hand. */
   workers?: boolean;
+  /** Rate limits; defaults from the environment (QUORUM_RATE_LIMIT, QUORUM_RL_*). */
+  rateLimit?: RateLimitConfig;
+  /** Where online backups go (default <dataDir>/backups); a scheduled backup runs when backupIntervalHours > 0. */
+  backupDir?: string;
+  backupIntervalHours?: number;
+  backupKeep?: number;
+  /** Mailbox per role for role-addressed notifications (QUORUM_ROLE_EMAIL_<ROLE>); demo default <role>@quorum.local. */
+  roleMailboxes?: Partial<Record<string, string>>;
 };
+
+/** Role mailboxes from the environment, e.g. QUORUM_ROLE_EMAIL_PROGRAMOFFICER=grants-office@example.org. */
+export function roleMailboxesFromEnv(env: NodeJS.ProcessEnv = process.env): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const r of ['applicant', 'reviewer', 'programOfficer', 'panelChair', 'operator']) {
+    const v = env[`QUORUM_ROLE_EMAIL_${r.toUpperCase()}`];
+    if (v) out[r] = v;
+  }
+  return out;
+}
 
 export type App = {
   http: FastifyInstance;
@@ -95,7 +116,9 @@ export async function createApp(o: AppOptions = {}): Promise<App> {
     genReqId: () => `req_${Math.random().toString(36).slice(2, 10)}`,
     ajv: { customOptions: { allErrors: true, removeAdditional: false, coerceTypes: false } },
   });
-  const h = installHttp(http, { db: deps.db, clock: deps.clock, tokens, loadPrincipal: (id) => loadPrincipal(deps, id) });
+  const limiter = new RateLimiter(o.rateLimit ?? rateLimitConfigFromEnv());
+  const h = installHttp(http, { db: deps.db, clock: deps.clock, tokens, loadPrincipal: (id) => loadPrincipal(deps, id), limiter });
+  deps.bus.onAlert.push((a) => raise(a));
   await http.register(fastifyStatic, { root: join(fileURLToPath(new URL('.', import.meta.url)), '..', 'public'), wildcard: false });
   http.addHook('onSend', async (_req, reply, payload) => {
     reply.header('X-Content-Type-Options', 'nosniff');
@@ -109,8 +132,20 @@ export async function createApp(o: AppOptions = {}): Promise<App> {
   });
 
   const triageRunner = new TriageRunner(deps);
+  const roleMailboxes = { ...roleMailboxesFromEnv(), ...(o.roleMailboxes ?? {}) } as Record<string, string>;
+  const backupDir = o.backupDir ?? process.env.QUORUM_BACKUP_DIR ?? join(dataDir, 'backups');
+  const backupKeep = o.backupKeep ?? Number(process.env.QUORUM_BACKUP_KEEP ?? 14);
+  const backupNow = async (actorId: string, reason: string) => {
+    const r = await backupTo(deps.db, backupDir, new Date(), backupKeep);
+    deps.db.prepare(`INSERT INTO ops_action (at, actor_id, action, subject, reason) VALUES (?, ?, 'backup', ?, ?)`).run(new Date().toISOString(), actorId, r.file, reason);
+    return r;
+  };
+  const lastBackupAt = () => {
+    const b = listBackups(backupDir).at(-1);
+    return b ? b.at : null;
+  };
   const emailOf = (recipient: string) => {
-    if (recipient.startsWith('role:')) return `${recipient.slice(5)}@quorum.local`;
+    if (recipient.startsWith('role:')) return roleMailboxes[recipient.slice(5)] ?? `${recipient.slice(5)}@quorum.local`;
     const r = deps.db.prepare(`SELECT email FROM idn_account WHERE id = ?`).get(recipient) as { email: string } | undefined;
     return r?.email ?? `${recipient}@quorum.local`;
   };
@@ -127,7 +162,7 @@ export async function createApp(o: AppOptions = {}): Promise<App> {
     }
   };
 
-  registerRoutes(h, deps, tokens, { settle, triageRunner });
+  registerRoutes(h, deps, tokens, { settle, triageRunner, limiter, backupNow, backupDir, lastBackupAt, dbFile: deps.db.name });
 
   const timers: NodeJS.Timeout[] = [];
   if (o.workers !== false) {
@@ -146,6 +181,17 @@ export async function createApp(o: AppOptions = {}): Promise<App> {
     }, 5000);
     sweep.unref();
     timers.push(sweep);
+    const housekeeping = setInterval(() => limiter.sweep(), 60_000);
+    housekeeping.unref();
+    timers.push(housekeeping);
+    const hours = o.backupIntervalHours ?? Number(process.env.QUORUM_BACKUP_INTERVAL_HOURS ?? 0);
+    if (hours > 0) {
+      const t = setInterval(() => {
+        backupNow('quorum-platform', 'scheduled backup').catch((e) => raise({ kind: 'backup_failed', error: String(e instanceof Error ? e.message : e) }));
+      }, hours * 3_600_000);
+      t.unref();
+      timers.push(t);
+    }
   }
 
   return {

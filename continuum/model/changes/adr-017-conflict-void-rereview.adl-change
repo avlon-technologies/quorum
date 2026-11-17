@@ -1,0 +1,316 @@
+// PROPOSAL ONLY (ADR-017, proposed). Not applied to continuum/model/quorum.adl; not adopted.
+// Record: docs/proposals/adr-017-conflict-resolution.md
+//
+// Resolves ADR-005 vs INV-3: a declared conflict voids the conflicted review and revokes the
+// assignment in EVERY phase (INV-3 literally); the completion ledger becomes per review round; a
+// voided counted review reopens the round, and Submission returns a Scored proposal to UnderReview
+// so a replacement reviewer can be assigned. After a decision (phase 5) this change encodes policy
+// option (c), RECOMMENDED: the decision is suspended and a Program Officer's IntegrityReview
+// either upholds it or rescinds it (releasing the budget only when nothing was disbursed), after
+// which the proposal returns to review. If the owner chooses (a) or (b), Part 4 is replaced;
+// Parts 0-3 stand on their own.
+//
+// PINNED to the working-tree state of 2026-11-16 (includes the owner's in-flight edits: Operator,
+// AwardHeld, AwardRefused, DecisionEscalated, AccountErased). If continuum/model/quorum.adl moves,
+// this change is stale and must be re-based: recompile, re-pin, and re-derive the whole-set
+// `attributes.reactions` values, which restate every reaction of ProposalService,
+// AssignmentService, ReviewCompletion and AdjudicationService.
+//
+//   continuum compile continuum/model/quorum.adl-manifest.json --apply continuum/model/changes/adr-017-conflict-void-rereview.adl-change
+
+change ConflictVoidsReviewAndReopensRound core adl/1.7 {
+  desc "INV-3 holds in every phase: a declared conflict revokes the reviewer's assignment and voids their review; a voided counted review reopens the review round and returns the proposal to review; a decision already taken on that round is suspended for a program officer's integrity review that upholds or rescinds it."
+
+  base package avlon.quorum version "package-1" state "sha256:434cfdc26bc0503ab8b87c0737759ea0a99fd017baed8c376ec76256cec2ef96"
+
+  // ================================================================ Part 0 — pre-existing defect
+  // The base state (and HEAD) fails apply's result validation with three
+  // adl/semantic/reaction-correlation errors that `continuum compile` does not report: PeerReview
+  // correlates proposals as `text` where Submission's events carry the ProposalId alias. No change
+  // can apply until this is repaired. Repair: PeerReview's proposal-keyed records use ProposalId.
+  modify #4e3f8989-f95c-4edf-bfbb-abc1b6d43096 attributes.fields = { conflictKey: text, reviewerId: text, proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, reason: text, actorId: text }
+  modify #4e3f8989-f95c-4edf-bfbb-abc1b6d43096 version = v2
+  modify #566f7d95-f6f3-4047-b39b-b1bdc540a94e attributes.fields = { assignmentId: #4fb38ee0-e195-4eb5-b05b-1452eda90cd9, proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, reviewerId: text, actorId: text }
+  modify #566f7d95-f6f3-4047-b39b-b1bdc540a94e version = v2
+  modify #375b566f-45d4-4fd3-8f7c-8f1e53b36839 attributes.fields = { assignmentId: #4fb38ee0-e195-4eb5-b05b-1452eda90cd9, proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, reviewerId: text, dueAt: instant, actorId: text, reason: text, at: instant }
+  modify #375b566f-45d4-4fd3-8f7c-8f1e53b36839 version = v2
+  modify #6b0ccc5d-e8e2-4b1e-9fe6-12134c71f461 attributes.fields = { proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, callId: text, reviewerCount: int32, at: instant }
+  modify #6b0ccc5d-e8e2-4b1e-9fe6-12134c71f461 version = v2
+  modify #164cf5a6-3912-4aa3-8633-dd5c603aad5e attributes.fields = { reviewId: #f3af0716-b9fb-4d89-88b3-857b4a936eb1, assignmentId: #4fb38ee0-e195-4eb5-b05b-1452eda90cd9, proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, reviewerId: text, at: instant }
+  modify #164cf5a6-3912-4aa3-8633-dd5c603aad5e version = v2
+  modify #e759e8cb-8631-466e-baeb-10e607069e4c attributes.fields = { assignmentId: #4fb38ee0-e195-4eb5-b05b-1452eda90cd9, proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, reviewerId: text, dueAt: instant }
+  modify #e759e8cb-8631-466e-baeb-10e607069e4c version = v2
+  modify #0433462f-c93a-4dfd-881f-ff3f448512df attributes.StateContract = { assignmentId: #4fb38ee0-e195-4eb5-b05b-1452eda90cd9, proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, reviewerId: text, dueAt: instant, submitted: optional(boolean) } retention "instance-audit"
+  modify #0433462f-c93a-4dfd-881f-ff3f448512df version = v2
+  modify #08865139-ce99-4fc5-aa4b-24d2d422ad05 version = v2
+    hint "PeerReviewView embeds ReviewSubmittedData: version cascade."
+
+  // ================================================================ Part 1 — intent
+  add into #904167b8-121f-49a6-b085-074c6c3742bc {
+    requirement ConflictedEvidenceVoided #0e1bb1de-82fe-4e08-90ce-987a89ede21e {
+      desc "INV-3 consequence — A conflicted review is void in every phase and never counts toward a mean score; a panel decision taken on a round that loses a counted review to a conflict is suspended until a program officer upholds or rescinds it."
+    }
+  }
+  modify #02ed1da2-9aca-4f66-baec-70f786d2f9aa description = "INV-5 — A proposal requires exactly three submitted, non-voided reviews (on non-revoked assignments) in its current review round before it may enter scored."
+
+  // ================================================================ Part 2 — PeerReview: void in every phase, per-round completion
+  modify #8658b2f1-76f8-45ab-bcf6-f49671c17dec attributes.fields = { reviewerId: text, proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, reason: text, actorId: text, revokedAssignment: optional(#4fb38ee0-e195-4eb5-b05b-1452eda90cd9), voidedReview: optional(#f3af0716-b9fb-4d89-88b3-857b4a936eb1), countedInRound: optional(int32), at: instant }
+    hint "heldAward is retired: the conflict no longer holds an award, it voids the review. countedInRound names the closed round the voided review counted in, if any."
+  modify #8658b2f1-76f8-45ab-bcf6-f49671c17dec version = v2
+  modify #e2879ea8-bfb5-403e-b895-f4ed60b8b0a9 attributes.fields = { proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, round: int32, meanScore: decimal(4,2), reviewIds: list(#f3af0716-b9fb-4d89-88b3-857b4a936eb1), at: instant }
+  modify #e2879ea8-bfb5-403e-b895-f4ed60b8b0a9 version = v2
+
+  add into #da072bdd-0a9f-4a43-8b44-42c9ce1c9e80 {
+    record ReviewReopenedData v1 #cf7f2ffe-8ffb-457a-951a-4c0a54182cc9 { proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, round: int32, voidedReviewId: #f3af0716-b9fb-4d89-88b3-857b4a936eb1, remainingReviewIds: list(#f3af0716-b9fb-4d89-88b3-857b4a936eb1), actorId: text, reason: text, at: instant }
+  }
+  add into #da072bdd-0a9f-4a43-8b44-42c9ce1c9e80 {
+    event ProposalReviewReopened #62c847e7-3333-4d1e-b700-a707146ae186 {
+      desc "A review counted in a closed round was voided by a conflict: that round no longer stands and its mean score is withdrawn. Published at most once per round, by ReviewCompletion."
+      payload = #cf7f2ffe-8ffb-457a-951a-4c0a54182cc9
+      delivery[ordered; at-least-once; durable]
+    }
+  }
+  add into #da072bdd-0a9f-4a43-8b44-42c9ce1c9e80 {
+    business-rule ConflictVoidsReview #86c33b9a-468e-4c7e-a082-d25b5a6da5a0 {
+      statement "Declaring a conflict between a reviewer and a proposal, in any phase, revokes that reviewer's assignment to it (assigned, accepted, overdue or completed) and voids their review in the same transaction. A voided review never counts toward completion or a mean score."
+    }
+  }
+
+  modify #1fa89159-9a00-4344-9f60-3b91d31813a4 description = "Reviewer (for themself) or ProgramOfficer (on a reviewer's behalf). In any phase, revokes the reviewer's assignment to the proposal and voids their review in the same transaction (INV-3)."
+  modify #30b800fa-e581-48fb-9a77-c9aff0ace927 description = "Exactly three submitted, non-voided reviews on non-revoked assignments exist in a new review round. Carries the round and its mean score so adjudication never reads review tables."
+  modify #8fb590a6-95da-4a4d-b5f8-be69be6cc097 description = "One row per review round of a proposal: the three counted reviews, the mean score and, if a counted review is later voided, when the round was superseded. Unique (proposal, round) makes ProposalFullyReviewed publish at most once per round; at most one round per proposal is current."
+  modify #c2b0b97a-8216-460b-8644-3c684e945183 attributes.statement = "ProposalFullyReviewed is published once per review round, when the count of submitted, non-voided reviews on non-revoked assignments of the proposal reaches exactly three and no current round exists. A round is superseded, once, when a review it counted is voided."
+
+  modify #1a2bf939-5081-451d-b2f9-e64695741bf5 description = "Single writer of conflicts, assignments and reviews. Every refusal names the rule that refused it. Declaring a conflict revokes and voids in every phase (INV-3); reads the completion ledger to say whether the voided review counted in a closed round. A proposal is assignable while open and not scored."
+  link #1a2bf939-5081-451d-b2f9-e64695741bf5 applies #86c33b9a-468e-4c7e-a082-d25b5a6da5a0
+  link #1a2bf939-5081-451d-b2f9-e64695741bf5 satisfies #0e1bb1de-82fe-4e08-90ce-987a89ede21e
+  link #1a2bf939-5081-451d-b2f9-e64695741bf5 reads #8fb590a6-95da-4a4d-b5f8-be69be6cc097
+    hint "Already done by the code (declareConflict reads rev_completion); declared here."
+
+  modify #7e9ffd9e-4f58-4754-a0da-2140ddd22984 description = "The aggregation service. On each ReviewSubmitted it counts submitted, non-voided reviews on non-revoked assignments and, when no current round exists, opens a round and publishes ProposalFullyReviewed at three. On a ConflictDeclared whose voided review counted in the current round it supersedes that round and publishes ProposalReviewReopened."
+  link #7e9ffd9e-4f58-4754-a0da-2140ddd22984 subscribesTo #1cc4c504-edee-4da6-a2ca-3a2962d33f73
+  link #7e9ffd9e-4f58-4754-a0da-2140ddd22984 publishes #62c847e7-3333-4d1e-b700-a707146ae186
+  link #7e9ffd9e-4f58-4754-a0da-2140ddd22984 satisfies #0e1bb1de-82fe-4e08-90ce-987a89ede21e
+  modify #7e9ffd9e-4f58-4754-a0da-2140ddd22984 attributes.reactions = [
+    #0756ce3c-a074-4c25-ab33-86bfbe1dd91b -> independent #30b800fa-e581-48fb-9a77-c9aff0ace927 correlate #30b800fa-e581-48fb-9a77-c9aff0ace927 payload.proposalId = payload.proposalId ;
+    #1cc4c504-edee-4da6-a2ca-3a2962d33f73 -> independent #62c847e7-3333-4d1e-b700-a707146ae186 correlate #62c847e7-3333-4d1e-b700-a707146ae186 payload.proposalId = payload.proposalId
+  ]
+
+  // ================================================================ Part 3 — Submission: Scored -> UnderReview
+  modify #3128b4f6-7d7d-4733-82cd-89d88ecdf28b attributes.fields = { proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, callId: #a0e5e566-1e79-4c07-a88b-4ed8b53383e3, round: int32, caseKey: text, title: text, requested: #e5c742af-99db-489f-88e6-e71379949e18, meanScore: decimal(4,2), at: instant }
+    hint "caseKey = proposalId + ':' + round; it is the PanelDecision instance identity."
+  modify #3128b4f6-7d7d-4733-82cd-89d88ecdf28b version = v2
+  add into #56b9b8b0-e4ca-41fc-8769-3f92e3056766 {
+    event ProposalReturnedToReview #c506b6ff-534c-4500-a483-c4b51a687be3 {
+      desc "A scored, awarded or declined proposal went back to UnderReview because a counted review was voided (from Scored, on ProposalReviewReopened) or a decision was rescinded (from Awarded or Declined, on DecisionRescinded). A replacement reviewer may now be assigned."
+      payload = #af5f48e1-b848-4652-808f-3450a827ba58
+      delivery[ordered; at-least-once; durable]
+    }
+  }
+  modify #0d09ec42-5b02-46f6-969f-d65bc15aef6c description = "The single writer of proposals. Handles applicant and officer commands, and reacts to review and adjudication events by moving status on a conditional update; a late event against a status that has moved on is a recorded no-op. Returns a Scored proposal to UnderReview when its review round is reopened, and an Awarded or Declined one when its decision is rescinded."
+  link #0d09ec42-5b02-46f6-969f-d65bc15aef6c publishes #c506b6ff-534c-4500-a483-c4b51a687be3
+  link #0d09ec42-5b02-46f6-969f-d65bc15aef6c subscribesTo #62c847e7-3333-4d1e-b700-a707146ae186
+
+  // AssignmentService learns when the proposal stops / resumes being assignable.
+  link #1a2bf939-5081-451d-b2f9-e64695741bf5 subscribesTo #a4413f5b-b24a-4c30-b513-755228a7c89c
+  link #1a2bf939-5081-451d-b2f9-e64695741bf5 subscribesTo #c506b6ff-534c-4500-a483-c4b51a687be3
+  modify #1a2bf939-5081-451d-b2f9-e64695741bf5 attributes.reactions = [
+    #1fa89159-9a00-4344-9f60-3b91d31813a4 -> #1cc4c504-edee-4da6-a2ca-3a2962d33f73, #5e2dd903-c01f-46d7-b443-33226df17297 correlate #1cc4c504-edee-4da6-a2ca-3a2962d33f73 payload.proposalId = payload.proposalId correlate #5e2dd903-c01f-46d7-b443-33226df17297 payload.proposalId = payload.proposalId ;
+    #d4085214-591d-411b-9fa9-3aa47e75db18 -> #904ca791-4626-413d-9f1b-074d89415707, #3109dc15-3cf2-4c1d-ac3b-93280b0d1791 correlate #904ca791-4626-413d-9f1b-074d89415707 payload.assignmentId = payload.assignmentId correlate #3109dc15-3cf2-4c1d-ac3b-93280b0d1791 payload.proposalId = payload.proposalId ;
+    #833d64ac-3cd0-458e-a287-4365d0901ed3 -> independent #d9c1329d-26f8-4eb5-a335-11a33f4d0c5c correlate #d9c1329d-26f8-4eb5-a335-11a33f4d0c5c payload.assignmentId = payload.assignmentId ;
+    #559c9a24-8abc-4e7c-b63d-56571da9f613 -> independent #5e2dd903-c01f-46d7-b443-33226df17297 correlate #5e2dd903-c01f-46d7-b443-33226df17297 payload.assignmentId = payload.assignmentId ;
+    #ba347d7b-a490-4dc7-a7e1-a5b3a8e85689 -> independent #0756ce3c-a074-4c25-ab33-86bfbe1dd91b correlate #0756ce3c-a074-4c25-ab33-86bfbe1dd91b payload.reviewId = payload.reviewId ;
+    #ac9fcfaa-e0fa-4694-b112-4e3a0adbd481 -> none ;
+    #5a9ef11c-5881-406c-96ba-2f68a42a590f -> #5e2dd903-c01f-46d7-b443-33226df17297 correlate #5e2dd903-c01f-46d7-b443-33226df17297 payload.proposalId = payload.proposalId ;
+    #01c8e173-b33d-48c3-9acf-0e53eaceb087 -> none ;
+    #a4413f5b-b24a-4c30-b513-755228a7c89c -> none ;
+    #c506b6ff-534c-4500-a483-c4b51a687be3 -> none
+  ]
+
+  // ================================================================ Part 4 — Adjudication: per-round cases; suspension and integrity review (option c)
+  modify #9d491b10-51c4-43b9-82e7-60ec7e806546 attributes.fields = { proposalId: text, callId: text, round: int32, requested: #e5c742af-99db-489f-88e6-e71379949e18, meanScore: decimal(4,2) }
+  modify #9d491b10-51c4-43b9-82e7-60ec7e806546 version = v2
+
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    enum IntegrityVerdict v1 #232f03ba-a4ec-4649-aa4a-c48c0c569ee0 = uphold | rescind
+  }
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    record SuspensionData v1 #bffdffc1-4f90-4035-b4b1-40963fe0ffe7 { proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, callId: text, round: int32, caseKey: text, decisionOutcome: #7fd5b3f8-e948-4722-ae22-7d14eee5f08b, amount: #e5c742af-99db-489f-88e6-e71379949e18, reason: text, at: instant }
+  }
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    record IntegrityState v1 #b64619a6-b501-4eca-87e6-785a4408696d { proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, callId: text, round: int32, decisionOutcome: #7fd5b3f8-e948-4722-ae22-7d14eee5f08b }
+  }
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    record IntegrityOutcome v1 #110f6712-6475-481c-a38f-ae23bc811ed5 { verdict: #232f03ba-a4ec-4649-aa4a-c48c0c569ee0, fundsDisbursed: boolean, rationale: text, actorId: text, at: instant }
+  }
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    record IntegrityResolvedData v1 #5b5641a9-0585-4a68-9e0c-d7a67a814b91 { proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, callId: text, round: int32, verdict: #232f03ba-a4ec-4649-aa4a-c48c0c569ee0, releaseRequested: boolean, actorId: text, rationale: text, at: instant }
+  }
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    record RescindRequest v1 #a03b21bb-1c3a-4579-9899-603d66d8511f { proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, round: int32, release: boolean }
+  }
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    record RescindResult v1 #5721360e-2260-4a1d-a651-64f24fe317e6 { released: #e5c742af-99db-489f-88e6-e71379949e18 }
+  }
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    record UpholdRequest v1 #5f6629fd-8b31-4555-94bd-5c9ad9080a76 { proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, round: int32 }
+  }
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    record UpholdResult v1 #8af5d8e3-7424-4dcd-bce1-1d59aa5d052c { recorded: boolean }
+  }
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    record CaseSupersededData v1 #439f687f-6cd1-455c-be17-6657f70d14c4 { proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, round: int32, reason: text, at: instant }
+  }
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    event DecisionSuspended #cc199c5b-6916-4a8b-9a77-3f66401231da {
+      desc "A panel decision (award or decline) was taken on a review round that has since lost a counted review to a conflict. The decision stands on record but is suspended; committed budget stays committed until the integrity review ends. Published at most once per (proposal, round)."
+      payload = #bffdffc1-4f90-4035-b4b1-40963fe0ffe7
+      delivery[ordered; at-least-once; durable]
+    }
+  }
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    event DecisionRescinded #0973f86c-4a46-4ccd-bfbb-9d4f7bd886a2 {
+      desc "A program officer rescinded a suspended decision. An award's amount is released to the envelope only if no funds were disbursed. The proposal returns to review."
+      payload = #5b5641a9-0585-4a68-9e0c-d7a67a814b91
+      delivery[ordered; at-least-once; durable]
+    }
+  }
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    event DecisionUpheld #d4b74106-7eb1-45f7-9a98-ab296c519d74 {
+      desc "A program officer upheld a suspended decision with a recorded integrity finding; the suspension is lifted."
+      payload = #5b5641a9-0585-4a68-9e0c-d7a67a814b91
+      delivery[ordered; at-least-once; durable]
+    }
+  }
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    event CaseSuperseded #72f8ee20-276f-4839-b462-dd9c32493e33 {
+      desc "An open adjudication case (awaiting a decision or in reconsider) was closed without a decision because its proposal returned to review; its human task is closed. A new case opens when the next round is scored."
+      payload = #439f687f-6cd1-455c-be17-6657f70d14c4
+      delivery[ordered; at-least-once; durable]
+    }
+  }
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    business-rule DecisionRestsOnStandingReviews #96e40dd9-0620-46c8-9440-c183ff3eac6f {
+      statement "A panel decision is recorded only for the current round of a proposal, only while no conflict has voided a review that round counted. From the moment such a conflict is declared until the proposal returns to review, any decision (award or decline) is refused. A decision already recorded on that round is suspended until a program officer upholds or rescinds it; a rescinded award releases its amount only when no funds were disbursed."
+    }
+  }
+  add into #be98d1b7-7583-4a21-8fa3-598c04b71e44 {
+    operation RescindDecision #66890c84-dd18-4d41-9915-feeae9814428 { in = #a03b21bb-1c3a-4579-9899-603d66d8511f out = #5721360e-2260-4a1d-a651-64f24fe317e6 }
+  }
+  add into #be98d1b7-7583-4a21-8fa3-598c04b71e44 {
+    operation UpholdDecision #53f79a66-7301-4613-aa2f-7e1f01ed545b { in = #5f6629fd-8b31-4555-94bd-5c9ad9080a76 out = #8af5d8e3-7424-4dcd-bce1-1d59aa5d052c }
+  }
+
+  modify #2007f0ea-408f-402c-ad8d-1d6553a8d95f description = "Adjudication cases and panel decisions, one per (proposal, review round), with integrity holds; at most one standing (non-rescinded) decision per proposal; suspensions and integrity outcomes; and the per-call budget ledger (envelope, committed) with a CHECK committed <= envelope. A rescission releases at most once per decision."
+  modify #6ab58159-755c-4901-a1c0-788b9794ca30 attributes.statement = "A panel decision is recorded only by an account holding the panel_chair role, only for a proposal with an open adjudication case for its current round (which exists only once that round is scored), only once per round, and neither an award nor a decline while an integrity hold is on the case."
+  modify #6bbc3747-a1d4-4477-a882-1147d2ab0618 description = "Opens an adjudication case per scored round, keeps the budget ledger from CallPublished, and commits awards and declines atomically. On a ConflictDeclared that voided a counted review it holds the open case (fail closed) or, if the round is decided, suspends the decision; on ProposalReturnedToReview it supersedes the open case. Rescinds or upholds a suspended decision for the IntegrityReview workflow."
+  link #6bbc3747-a1d4-4477-a882-1147d2ab0618 subscribesTo #c506b6ff-534c-4500-a483-c4b51a687be3
+  link #6bbc3747-a1d4-4477-a882-1147d2ab0618 publishes #cc199c5b-6916-4a8b-9a77-3f66401231da
+  link #6bbc3747-a1d4-4477-a882-1147d2ab0618 publishes #72f8ee20-276f-4839-b462-dd9c32493e33
+  link #6bbc3747-a1d4-4477-a882-1147d2ab0618 applies #96e40dd9-0620-46c8-9440-c183ff3eac6f
+  link #6bbc3747-a1d4-4477-a882-1147d2ab0618 satisfies #0e1bb1de-82fe-4e08-90ce-987a89ede21e
+  modify #6bbc3747-a1d4-4477-a882-1147d2ab0618 attributes.reactions = [
+    #01c8e173-b33d-48c3-9acf-0e53eaceb087 -> none ;
+    #1cc4c504-edee-4da6-a2ca-3a2962d33f73 -> independent #cc199c5b-6916-4a8b-9a77-3f66401231da correlate #cc199c5b-6916-4a8b-9a77-3f66401231da payload.proposalId = payload.proposalId ;
+    #c506b6ff-534c-4500-a483-c4b51a687be3 -> independent #72f8ee20-276f-4839-b462-dd9c32493e33 correlate #72f8ee20-276f-4839-b462-dd9c32493e33 payload.proposalId = payload.proposalId
+  ]
+
+  modify #aa87850c-c0f9-4a87-9a13-e807fb13c981 description = "Started by ProposalScored, one instance per (proposal, review round). Waits on the chair's decision (escalating to the officer after 14 days, never deciding by timeout); on award commits against the envelope and returns to the chair if the envelope would be exceeded; publishes ProposalAwarded or ProposalDeclined. Closed without a decision (CaseSuperseded) if the proposal returns to review first."
+  modify #aa87850c-c0f9-4a87-9a13-e807fb13c981 attributes.StateContract = { proposalId: text, callId: text, round: int32, requested: #e5c742af-99db-489f-88e6-e71379949e18, meanScore: decimal(4,2), verdict: optional(#1dbdf7f0-470c-44aa-9ecb-017865d81fb8), acknowledgement: optional(#38802dd2-afd5-42fd-96d6-ad4303195d90), withinEnvelope: optional(boolean) } retention "instance-audit"
+  modify #aa87850c-c0f9-4a87-9a13-e807fb13c981 attributes.trigger = #9d491b10-51c4-43b9-82e7-60ec7e806546{ proposalId: payload.proposalId, callId: payload.callId, round: payload.round, requested: payload.requested, meanScore: payload.meanScore } unique-by payload.caseKey
+  modify #aa87850c-c0f9-4a87-9a13-e807fb13c981 version = v2
+
+  add into #69ba4172-7586-46f0-91df-62340683f561 {
+    workflow IntegrityReview v1 #be951c9b-20d9-478c-b93b-6e59cf0201f2 {
+      desc "Started by DecisionSuspended. A program officer reviews a decision taken on a round that lost a counted review to a conflict, and records an explicit outcome: uphold (the decision stands with a recorded finding) or rescind (the decision is rescinded, an award's amount is released only if nothing was disbursed, and the proposal returns to review). Escalates; never decides by timeout."
+      state { proposalId: #761d8b58-71fc-44a3-9cf4-b98a0c2c6a5c, callId: text, round: int32, decisionOutcome: #7fd5b3f8-e948-4722-ae22-7d14eee5f08b, integrity: optional(#110f6712-6475-481c-a38f-ae23bc811ed5) } retention "instance-audit"
+      trigger = #b64619a6-b501-4eca-87e6-785a4408696d{ proposalId: payload.proposalId, callId: payload.callId, round: payload.round, decisionOutcome: payload.decisionOutcome } unique-by payload.caseKey
+      triggeredBy: #cc199c5b-6916-4a8b-9a77-3f66401231da
+      realizes: #04693827-6a72-4e25-8258-780b19c9ef5e
+      satisfies: #0e1bb1de-82fe-4e08-90ce-987a89ede21e
+      governedBy: #d5f5a5ad-ea05-41c7-9161-1165fe63d3a1
+      deployedAs: #f872482d-f437-4310-a1b7-88136850da8e
+
+      human-task review #ea130c05-c64a-4add-a850-f08f98ea970e {
+        assign #6941c304-5ce8-478c-a354-e6ce19fdeee1
+        escalation "after P14D without an outcome the panel chair is notified; the task stays open, the decision stays suspended and nothing is decided by timeout"
+        cancellation "close-on-instance-termination"
+        payload = #b64619a6-b501-4eca-87e6-785a4408696d{ proposalId: proposalId, callId: callId, round: round, decisionOutcome: decisionOutcome }
+        outcome #110f6712-6475-481c-a38f-ae23bc811ed5 = result -> integrity = some(result)
+        retention "task-audit"
+      }
+      decision isRescind #a1fef6a8-4dd5-47e2-b6be-e5dfa3cd1a57 = match integrity { none -> false; some o -> o.verdict == #232f03ba-a4ec-4649-aa4a-c48c0c569ee0 "rescind" }
+      invoke rescind #edec420e-dfd7-48bb-99a4-77518d673201
+        -> #66890c84-dd18-4d41-9915-feeae9814428
+        in = #a03b21bb-1c3a-4579-9899-603d66d8511f{ proposalId: proposalId, round: round, release: match integrity { none -> false; some o -> o.fundsDisbursed == false } } policy[retry "bounded"; on-fail=retry]
+      publish rescinded #8ad8a18b-e5eb-4f00-b9ed-80b12f413cd1
+        -> #0973f86c-4a46-4ccd-bfbb-9d4f7bd886a2 payload = #5b5641a9-0585-4a68-9e0c-d7a67a814b91{ proposalId: proposalId, callId: callId, round: round, verdict: #232f03ba-a4ec-4649-aa4a-c48c0c569ee0 "rescind", releaseRequested: match integrity { none -> false; some o -> o.fundsDisbursed == false }, actorId: match integrity { none -> ""; some o -> o.actorId }, rationale: match integrity { none -> ""; some o -> o.rationale }, at: match integrity { none -> instant "1970-01-01T00:00:00Z"; some o -> o.at } }
+      invoke uphold #1d8d2b1f-402b-4231-8334-d4143ac8b961
+        -> #53f79a66-7301-4613-aa2f-7e1f01ed545b
+        in = #5f6629fd-8b31-4555-94bd-5c9ad9080a76{ proposalId: proposalId, round: round } policy[retry "bounded"; on-fail=retry]
+      publish upheld #7530f051-3f0d-402e-a515-c770c6bfa4f9
+        -> #d4b74106-7eb1-45f7-9a98-ab296c519d74 payload = #5b5641a9-0585-4a68-9e0c-d7a67a814b91{ proposalId: proposalId, callId: callId, round: round, verdict: #232f03ba-a4ec-4649-aa4a-c48c0c569ee0 "uphold", releaseRequested: false, actorId: match integrity { none -> ""; some o -> o.actorId }, rationale: match integrity { none -> ""; some o -> o.rationale }, at: match integrity { none -> instant "1970-01-01T00:00:00Z"; some o -> o.at } }
+      transition T1 #bd8156f7-5187-4557-bcfb-86c591789c23 : #ea130c05-c64a-4add-a850-f08f98ea970e -> #a1fef6a8-4dd5-47e2-b6be-e5dfa3cd1a57
+      transition T2 #a52cf231-7139-441a-92cd-21ccbad14b96 : #a1fef6a8-4dd5-47e2-b6be-e5dfa3cd1a57 -> #edec420e-dfd7-48bb-99a4-77518d673201 when result
+      transition T3 #cd3cb741-2bdb-48b1-8522-2e673b6b3502 : #a1fef6a8-4dd5-47e2-b6be-e5dfa3cd1a57 -> #1d8d2b1f-402b-4231-8334-d4143ac8b961 default
+      transition T4 #20b5617c-3443-4d4d-85eb-d307f51a9935 : #edec420e-dfd7-48bb-99a4-77518d673201 -> #8ad8a18b-e5eb-4f00-b9ed-80b12f413cd1
+      transition T5 #32f4997c-e264-4300-8cec-fcd47445b885 : #1d8d2b1f-402b-4231-8334-d4143ac8b961 -> #7530f051-3f0d-402e-a515-c770c6bfa4f9
+    }
+  }
+
+  // Submission returns a rescinded proposal to review.
+  link #0d09ec42-5b02-46f6-969f-d65bc15aef6c subscribesTo #0973f86c-4a46-4ccd-bfbb-9d4f7bd886a2
+  modify #0d09ec42-5b02-46f6-969f-d65bc15aef6c attributes.reactions = [
+    #f8c71008-2ddf-41f1-a03b-51c2c284c615 -> none ;
+    #2003004f-31c9-462f-aa41-b822a0b51bac -> independent #c7bc81e6-5912-4c4c-a7ff-c44db2ba7d97 correlate #c7bc81e6-5912-4c4c-a7ff-c44db2ba7d97 payload.proposalId = payload.proposalId ;
+    #8eec6230-98f6-4999-8258-c32a893c1674 -> independent #5a9ef11c-5881-406c-96ba-2f68a42a590f correlate #5a9ef11c-5881-406c-96ba-2f68a42a590f payload.proposalId = payload.proposalId ;
+    #a6ffb30c-13b3-4292-84d4-1ad210a61778 -> one-of #ac9fcfaa-e0fa-4694-b112-4e3a0adbd481, #d1ed94b2-0305-4d67-93d6-2f30a76c2a75 correlate #ac9fcfaa-e0fa-4694-b112-4e3a0adbd481 payload.proposalId = payload.proposalId correlate #d1ed94b2-0305-4d67-93d6-2f30a76c2a75 payload.proposalId = payload.proposalId ;
+    #c7bc81e6-5912-4c4c-a7ff-c44db2ba7d97 -> independent #074d0196-bb96-4cb8-9f37-b1eae47f24ff correlate #074d0196-bb96-4cb8-9f37-b1eae47f24ff payload.proposalId = payload.proposalId ;
+    #3109dc15-3cf2-4c1d-ac3b-93280b0d1791 -> independent #1da5fa46-9bb1-4072-9596-861a69788323 correlate #1da5fa46-9bb1-4072-9596-861a69788323 payload.proposalId = payload.proposalId ;
+    #30b800fa-e581-48fb-9a77-c9aff0ace927 -> independent #a4413f5b-b24a-4c30-b513-755228a7c89c correlate #a4413f5b-b24a-4c30-b513-755228a7c89c payload.proposalId = payload.proposalId ;
+    #bbb140a4-d299-411d-b669-41adfd538e45 -> none ;
+    #27e6ca77-3ca5-4878-9ee0-0a8680a66f8c -> none ;
+    #62c847e7-3333-4d1e-b700-a707146ae186 -> independent #c506b6ff-534c-4500-a483-c4b51a687be3 correlate #c506b6ff-534c-4500-a483-c4b51a687be3 payload.proposalId = payload.proposalId ;
+    #0973f86c-4a46-4ccd-bfbb-9d4f7bd886a2 -> independent #c506b6ff-534c-4500-a483-c4b51a687be3 correlate #c506b6ff-534c-4500-a483-c4b51a687be3 payload.proposalId = payload.proposalId
+  ]
+
+  // ================================================================ Part 5 — notification and audit (NFR-8)
+  link #870cfc1f-ea8a-4562-a0f0-8e9d126b1342 subscribesTo #c506b6ff-534c-4500-a483-c4b51a687be3
+  link #870cfc1f-ea8a-4562-a0f0-8e9d126b1342 subscribesTo #cc199c5b-6916-4a8b-9a77-3f66401231da
+  link #870cfc1f-ea8a-4562-a0f0-8e9d126b1342 subscribesTo #0973f86c-4a46-4ccd-bfbb-9d4f7bd886a2
+  link #870cfc1f-ea8a-4562-a0f0-8e9d126b1342 subscribesTo #d4b74106-7eb1-45f7-9a98-ab296c519d74
+  link #2b9b2be5-c974-4f1e-b589-ed121e25c906 projectsFrom #c506b6ff-534c-4500-a483-c4b51a687be3
+  link #2b9b2be5-c974-4f1e-b589-ed121e25c906 projectsFrom #62c847e7-3333-4d1e-b700-a707146ae186
+  link #2b9b2be5-c974-4f1e-b589-ed121e25c906 projectsFrom #cc199c5b-6916-4a8b-9a77-3f66401231da
+  link #2b9b2be5-c974-4f1e-b589-ed121e25c906 projectsFrom #0973f86c-4a46-4ccd-bfbb-9d4f7bd886a2
+  link #2b9b2be5-c974-4f1e-b589-ed121e25c906 projectsFrom #d4b74106-7eb1-45f7-9a98-ab296c519d74
+  link #c8574ef8-71b4-43a9-8a81-8d9082519489 projectsFrom #c506b6ff-534c-4500-a483-c4b51a687be3
+  link #c8574ef8-71b4-43a9-8a81-8d9082519489 projectsFrom #62c847e7-3333-4d1e-b700-a707146ae186
+  link #c8574ef8-71b4-43a9-8a81-8d9082519489 projectsFrom #72f8ee20-276f-4839-b462-dd9c32493e33
+  link #c8574ef8-71b4-43a9-8a81-8d9082519489 projectsFrom #cc199c5b-6916-4a8b-9a77-3f66401231da
+  link #c8574ef8-71b4-43a9-8a81-8d9082519489 projectsFrom #0973f86c-4a46-4ccd-bfbb-9d4f7bd886a2
+  link #c8574ef8-71b4-43a9-8a81-8d9082519489 projectsFrom #d4b74106-7eb1-45f7-9a98-ab296c519d74
+  link #b65240e8-b01b-461c-8bb2-fc09d15f4bda subscribesTo #c506b6ff-534c-4500-a483-c4b51a687be3
+  link #b65240e8-b01b-461c-8bb2-fc09d15f4bda subscribesTo #62c847e7-3333-4d1e-b700-a707146ae186
+  link #b65240e8-b01b-461c-8bb2-fc09d15f4bda subscribesTo #72f8ee20-276f-4839-b462-dd9c32493e33
+  link #b65240e8-b01b-461c-8bb2-fc09d15f4bda subscribesTo #cc199c5b-6916-4a8b-9a77-3f66401231da
+  link #b65240e8-b01b-461c-8bb2-fc09d15f4bda subscribesTo #0973f86c-4a46-4ccd-bfbb-9d4f7bd886a2
+  link #b65240e8-b01b-461c-8bb2-fc09d15f4bda subscribesTo #d4b74106-7eb1-45f7-9a98-ab296c519d74
+
+  // ================================================================ Part 6 — verification
+  modify #56ed25b9-9935-4b9c-b9a2-f074dd9f9213 description = "INV-3: assigning a conflicted reviewer is refused; declaring a conflict revokes the reviewer's assignment in the same transaction in every state, including completed."
+  modify #005d1ac1-f9af-4907-9304-e4dae1d23e2d description = "INV-5: two submitted reviews leave the proposal under review; the third moves it to scored exactly once per round; a revoked assignment's or voided review does not count; a replacement's review closes a new round."
+  modify #4e09e956-dc08-4447-9dc0-a232eb38cdf2 description = "INV-8: an officer recording a decision is refused; a chair recording one for an unscored proposal is refused; a second decision in the same round is refused; a decision while an integrity hold is on the case is refused."
+  add into #88e48015-97bf-4375-b558-fb8ba04e97fe {
+    test Inv03ConflictVoidsReviewAtEveryPhase #fa434955-2d88-4ded-871d-67fb9fd72173 {
+      desc "INV-3 consequence, phases 1-4: a conflict before assignment refuses it; on a live assignment revokes it; on a submitted review before scoring voids it and the count drops; after scoring voids the counted review, supersedes the round, returns the proposal to UnderReview, supersedes the open case (also from reconsider and from a hold), and a replacement's review closes round 2 with a mean that excludes the voided review. Races: conflict vs third review, conflict vs chair decision."
+      verifies: #70b1cfaf-b8de-49a9-ac51-86938e7aaf2b, #0e1bb1de-82fe-4e08-90ce-987a89ede21e, #1a2bf939-5081-451d-b2f9-e64695741bf5, #7e9ffd9e-4f58-4754-a0da-2140ddd22984, #0d09ec42-5b02-46f6-969f-d65bc15aef6c
+    }
+  }
+  add into #88e48015-97bf-4375-b558-fb8ba04e97fe {
+    test ConflictAfterDecisionIntegrityReview #70d4b958-f02e-4160-bf97-0cd6f6251b44 {
+      desc "INV-3 consequence, phase 5: a conflict after an award or a decline suspends the decision once; uphold lifts it with a finding and changes no budget; rescind of an undisbursed award releases its amount exactly once and returns the proposal to review; rescind with funds disbursed releases nothing; the re-decision is a new round's decision."
+      verifies: #0e1bb1de-82fe-4e08-90ce-987a89ede21e, #be951c9b-20d9-478c-b93b-6e59cf0201f2, #6bbc3747-a1d4-4477-a882-1147d2ab0618
+    }
+  }
+}

@@ -3,15 +3,15 @@
   "normative": false,
   "package": "avlon.quorum",
   "anchored": {
-    "commit": null,
-    "attestation": "sha256:f75646711920628a45e67531ba5fdee8eb85c2efeeea8068ecf268664cee4c12",
+    "commit": "6912f6c8de9522dd1de5f2ff020a526a3b87079a",
+    "attestation": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59",
     "commitCovers": false
   },
   "subject": {
     "form": "continuum-evidence-subject/1",
     "algorithm": "sha256",
     "encoding": "path\\0bytes\\n/raw/1",
-    "digest": "sha256:ea3488eae9d75a0dabe09757ccfe081085cc1f8bc6063e693bb62b6d55b6ae51",
+    "digest": "sha256:d751b25eff6f496b24e2ee8a3a158fbf7be939fce4c65d96e4bac44b3cf2b25b",
     "surface": {
       "include": [
         "src/**",
@@ -46,10 +46,16 @@
       "src/contracts/model.generated.ts",
       "src/contracts/review-rules.ts",
       "src/contracts/triage-port.ts",
+      "src/integrations/factory.ts",
       "src/integrations/mail.ts",
       "src/integrations/orcid.ts",
+      "src/integrations/smtp.ts",
+      "src/integrations/triage-anthropic.ts",
       "src/integrations/triage-provider.ts",
+      "src/ops.ts",
+      "src/platform/alerts.ts",
       "src/platform/auth.ts",
+      "src/platform/backup.ts",
       "src/platform/clock.ts",
       "src/platform/db.ts",
       "src/platform/deps.ts",
@@ -57,11 +63,20 @@
       "src/platform/events.ts",
       "src/platform/http.ts",
       "src/platform/ids.ts",
+      "src/platform/metrics.ts",
       "src/platform/money.ts",
+      "src/platform/rate-limit.ts",
       "src/platform/schema.ts",
       "src/seed.ts",
       "src/server.ts",
       "tests/e2e/run-browser-journey.ts",
+      "tests/integrations/factory.test.ts",
+      "tests/integrations/fakes.ts",
+      "tests/integrations/fixtures/smtp-test-cert.pem",
+      "tests/integrations/fixtures/smtp-test-key.pem",
+      "tests/integrations/orcid-http.test.ts",
+      "tests/integrations/smtp.test.ts",
+      "tests/integrations/triage-anthropic.test.ts",
       "tests/invariants/inv-01-submission-window.test.ts",
       "tests/invariants/inv-02-submit-once.test.ts",
       "tests/invariants/inv-03-conflict.test.ts",
@@ -84,13 +99,14 @@
       "tests/scenarios/duplicate-submission.test.ts",
       "tests/scenarios/overdue-escalation.test.ts",
       "tests/scenarios/pre-release-review.test.ts",
+      "tests/scenarios/production-readiness.test.ts",
       "tests/scenarios/replay-and-recovery.test.ts",
       "tests/scenarios/two-of-three-readiness.test.ts",
       "tests/support/award-child.ts",
       "tests/support/crash-child.ts",
       "tests/support/harness.ts"
     ],
-    "fileCount": 64
+    "fileCount": 80
   },
   "elements": {
     "88e48015-97bf-4375-b558-fb8ba04e97fe": {
@@ -135,11 +151,11 @@
       "citations": [
         {
           "ref": "src/server.ts",
-          "digest": "sha256:1a5ced1d30b62512270512a344d6b987ef6a2476f12da366f09e99155fdb1e7e"
+          "digest": "sha256:49560773d4bcbc0e6e4689d00878b9fa6134c6cb7016dbecc1d0b7c32215e84b"
         },
         {
           "ref": "src/app.ts",
-          "digest": "sha256:17079cf2d4a146e565cb065e10d6e6e6c7c8d235d0667382089188737b55d7c7"
+          "digest": "sha256:0131831b80b7414b30dfbd8c82b913bc3fd37d54388d920dc3590fcc012d6cb7"
         }
       ],
       "status": "verified"
@@ -156,11 +172,11 @@
       "citations": [
         {
           "ref": "src/contexts/adjudication/service.ts",
-          "digest": "sha256:68e3720d195d85924e5f73d22dc7acaf01ba50562c7d088e2a0deac194811ca3"
+          "digest": "sha256:06c0cf461f970129c60bb89a0007a0acafee2341a43b5a2479390ad3af3e2a5e"
         },
         {
           "ref": "src/contexts/adjudication/panel-decision.ts",
-          "digest": "sha256:3f0ece1f6e89ba46b2847a119e62e995f312da5d485ffd195032cc7c99bbfe94"
+          "digest": "sha256:cf34216c3fe970b2c0b5b0daebbcaaf735468b2e4bae7b1a2944b13a5a3a1b68"
         },
         {
           "ref": "src/contexts/adjudication/api.ts",
@@ -210,7 +226,7 @@
       "citations": [
         {
           "ref": "src/contexts/adjudication/service.ts",
-          "digest": "sha256:68e3720d195d85924e5f73d22dc7acaf01ba50562c7d088e2a0deac194811ca3"
+          "digest": "sha256:06c0cf461f970129c60bb89a0007a0acafee2341a43b5a2479390ad3af3e2a5e"
         }
       ],
       "status": "verified"
@@ -304,7 +320,7 @@
       "citations": [
         {
           "ref": "src/contexts/adjudication/panel-decision.ts",
-          "digest": "sha256:3f0ece1f6e89ba46b2847a119e62e995f312da5d485ffd195032cc7c99bbfe94"
+          "digest": "sha256:cf34216c3fe970b2c0b5b0daebbcaaf735468b2e4bae7b1a2944b13a5a3a1b68"
         }
       ],
       "status": "verified"
@@ -567,7 +583,7 @@
       "citations": [
         {
           "ref": "src/contexts/identity/service.ts",
-          "digest": "sha256:0353059ee648a97501775650bbcf81cda41584a2ef0da824d21f09f83f536b2e"
+          "digest": "sha256:513ce397c9f37768f3f0fd5d9df551fd686bb1dd100a5b0aa7d22040b70062b5"
         },
         {
           "ref": "src/contexts/identity/api.ts",
@@ -611,7 +627,7 @@
       "citations": [
         {
           "ref": "src/contexts/identity/service.ts",
-          "digest": "sha256:0353059ee648a97501775650bbcf81cda41584a2ef0da824d21f09f83f536b2e"
+          "digest": "sha256:513ce397c9f37768f3f0fd5d9df551fd686bb1dd100a5b0aa7d22040b70062b5"
         }
       ],
       "status": "verified"
@@ -699,7 +715,7 @@
       "citations": [
         {
           "ref": "src/contexts/notification/service.ts",
-          "digest": "sha256:9fd9984508f80c8c4ea76f1486fb69417513a614cb6b24808ec8a4b27aab4c10"
+          "digest": "sha256:0f9c6764186e3ab201ed66015435ad8f03c05b6519feef5fac1bc848afb06479"
         }
       ],
       "status": "verified"
@@ -727,7 +743,7 @@
       "citations": [
         {
           "ref": "src/contexts/notification/service.ts",
-          "digest": "sha256:9fd9984508f80c8c4ea76f1486fb69417513a614cb6b24808ec8a4b27aab4c10"
+          "digest": "sha256:0f9c6764186e3ab201ed66015435ad8f03c05b6519feef5fac1bc848afb06479"
         }
       ],
       "status": "verified"
@@ -738,7 +754,7 @@
       "citations": [
         {
           "ref": "src/contexts/oversight/service.ts",
-          "digest": "sha256:4da213a60b4026e09d67076f63c00f980e07b044d34b2664c0506b59ec1e9190"
+          "digest": "sha256:28fcc1ff800329e2d054a9055c3973d3f2e8739bca1f478a8444beb066a3a49b"
         }
       ],
       "status": "verified"
@@ -761,7 +777,7 @@
       "citations": [
         {
           "ref": "src/contexts/oversight/service.ts",
-          "digest": "sha256:4da213a60b4026e09d67076f63c00f980e07b044d34b2664c0506b59ec1e9190"
+          "digest": "sha256:28fcc1ff800329e2d054a9055c3973d3f2e8739bca1f478a8444beb066a3a49b"
         }
       ],
       "status": "verified"
@@ -826,7 +842,7 @@
       "citations": [
         {
           "ref": "src/contexts/peer-review/service.ts",
-          "digest": "sha256:2ab51ea33b289715385d6c85ba2570d2e25bbb42b63a42113a42bf4bc98c5769"
+          "digest": "sha256:483d5c4fb69f1524329141a00182f6cadbf9f25e2d8fd57f731e12d7524b2f1b"
         },
         {
           "ref": "src/contexts/peer-review/review-deadline.ts",
@@ -973,7 +989,7 @@
       "citations": [
         {
           "ref": "src/contexts/peer-review/service.ts",
-          "digest": "sha256:2ab51ea33b289715385d6c85ba2570d2e25bbb42b63a42113a42bf4bc98c5769"
+          "digest": "sha256:483d5c4fb69f1524329141a00182f6cadbf9f25e2d8fd57f731e12d7524b2f1b"
         }
       ],
       "status": "verified"
@@ -1661,7 +1677,7 @@
       "citations": [
         {
           "ref": "src/integrations/orcid.ts",
-          "digest": "sha256:8b8adc3b97f660500324293e7f306aee8ea59a7a8c64cceb4b7b1d7c6049f2ed"
+          "digest": "sha256:7010ad5dbdd91e75d42ad27f8591e96df3beb2e2aa515c9c71644ff4db6056c2"
         }
       ],
       "status": "verified"
@@ -1684,7 +1700,7 @@
       "citations": [
         {
           "ref": "tests/scenarios/replay-and-recovery.test.ts",
-          "digest": "sha256:1476997d542cfa0b997c8b051a552f345c40304a0fd8bf2b0294aadb1ac0f349"
+          "digest": "sha256:aa9475be982cbe320a371de478373a5ec8bf59d51d48b0a288ad09200c3c708e"
         }
       ],
       "status": "verified"
@@ -1813,7 +1829,7 @@
         },
         {
           "ref": "tests/scenarios/cross-role-access.test.ts",
-          "digest": "sha256:3aa800d18fb415c199265a8054c2c47caf836385d60b920c1ab518cc31ed2f22"
+          "digest": "sha256:1ba5e8b364ebe8cd75febd01cd8b0323eeb637fd10e2cb50f2be0b98f441caaf"
         }
       ],
       "status": "verified"

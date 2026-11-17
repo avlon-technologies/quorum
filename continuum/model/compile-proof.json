@@ -11,8 +11,8 @@
     ]
   },
   "ok": true,
-  "attestation": "sha256:f75646711920628a45e67531ba5fdee8eb85c2efeeea8068ecf268664cee4c12",
-  "changeState": "sha256:e9c76035f0e316fe41e96df7578d2a5043f82e38f99907545af21c2ec0ec1d68",
+  "attestation": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59",
+  "changeState": "sha256:434cfdc26bc0503ab8b87c0737759ea0a99fd017baed8c376ec76256cec2ef96",
   "ledger": {
     "passed": 78,
     "failed": 0,
@@ -32,11 +32,11 @@
     "documents": [
       {
         "path": "quorum.adl",
-        "digest": "sha256:98b7dee3b5b20dc1e1a818d416044d1b870932af00ae7937470d81f22530cbfe",
-        "bytes": 66419
+        "digest": "sha256:e5636b188dde9c8ad27cda44e218ac6f17185a091ace0bbb6138369a03db3059",
+        "bytes": 72370
       }
     ],
-    "inputSet": "sha256:0ffb8373db576277e5ab42b439cab3b301a4d3bc8de930876c06f57f69dbe1d3",
+    "inputSet": "sha256:146531fcbc1abe0b73aa5146aa6d316353789a8d7674f8a2d7a96f49cfe3562d",
     "note": "digests over the AUTHORED input bytes, distinct from the attestation (the engine's digest over canonical content)."
   },
   "verifier": {
@@ -72,7 +72,15 @@
         "id": "ea2208e8-034a-4de7-9068-731ab6b7af9e",
         "document": "model/local-development.adl-binding.json",
         "completeness": "passed",
-        "bindingDigest": "sha256:0a1a92c1647024f56962e6d2f61b4c0b577285d1ec0865678b84887e59997de3",
+        "bindingDigest": "sha256:42d9f8be695063b0f2884a85a4936638a497aa87adc8d4d503c65ef498caf08b",
+        "notEvaluated": []
+      },
+      {
+        "name": "Production",
+        "id": "4f05850c-889e-44c5-8901-e94883ccba41",
+        "document": "model/production.adl-binding.json",
+        "completeness": "passed",
+        "bindingDigest": "sha256:7512e28412ca1b6c6327f2f571b7105ff90ecd60f11a2e1320dbbfb015dd82a9",
         "notEvaluated": []
       }
     ],
@@ -80,6 +88,10 @@
       {
         "vocabulary": "avlon.quorum.bindings.localdevelopment package-1",
         "digest": "sha256:f1b4ba477c3778eb0c37f0816830f4e4b2f710ee062708bfff593f79c31f89e4"
+      },
+      {
+        "vocabulary": "avlon.quorum.bindings.production package-1",
+        "digest": "sha256:d0a0a57a2a3244301e6324a650970467222c8121122aae24b0bf0cc9dbdac609"
       }
     ],
     "secretMaterial": {

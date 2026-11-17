@@ -1,7 +1,7 @@
 import { appendFileSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 
-/** Outbound mail transport. Locally a stub that appends to a JSON-lines file (no SMTP — MVP scope). */
+/** Outbound mail transport. The file transport is the local stub; SmtpMailTransport (./smtp.ts) is the production one. */
 export type OutboundMail = { id: string; to: string; subject: string; body: string };
 export interface MailTransport {
   readonly kind: string;

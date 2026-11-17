@@ -18,8 +18,8 @@
 | | |
 |---|---|
 | package | `avlon.quorum` version `package-1` (core `adl/1.7`) |
-| attestation (canonical model) | `sha256:f75646711920628a45e67531ba5fdee8eb85c2efeeea8068ecf268664cee4c12` |
-| changeState (the digest a `.adl-change` base pin must name) | `sha256:e9c76035f0e316fe41e96df7578d2a5043f82e38f99907545af21c2ec0ec1d68` |
+| attestation (canonical model) | `sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59` |
+| changeState (the digest a `.adl-change` base pin must name) | `sha256:434cfdc26bc0503ab8b87c0737759ea0a99fd017baed8c376ec76256cec2ef96` |
 | environment | `::Quorum.LocalDevelopment` (`model/local-development.adl-binding.json`) |
 
 A copy of the tool's compile result is `model/compile-proof.json`. Do not edit the semantic files: a byte changed there changes the attestation, every binding goes stale, and the package must be rebuilt.
@@ -40,7 +40,7 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 
 > Runs a research funding call from publication through submission, eligibility screening, blind peer review and panel adjudication against a fixed budget envelope, and reports where every proposal stands.
 
-### Actors (5)
+### Actors (6)
 
 #### `::Quorum.Applicant` — Actor [person]
 
@@ -53,6 +53,12 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 > The team accountable for operating Quorum.
 
 - owns: `::Quorum`, `::Quorum.ResearchFunding`, `::Quorum.ResearchFunding.Adjudication`, `::Quorum.ResearchFunding.Calls`, `::Quorum.ResearchFunding.Identity`, `::Quorum.ResearchFunding.Notification`, `::Quorum.ResearchFunding.Oversight`, `::Quorum.ResearchFunding.PeerReview`, `::Quorum.ResearchFunding.Submission`
+
+#### `::Quorum.Operator` — Actor [person]
+
+> Platform operator. Runs backups and restores, watches delivery health, retries or skips a failed delivery with a recorded reason, and executes account erasure. Holds no business role.
+
+- uses: `::Quorum`
 
 #### `::Quorum.PanelChair` — Actor [person]
 
@@ -128,7 +134,11 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 
 > Assign three reviewers per proposal with conflicts mechanically impossible to assign through.
 
-### Requirements (16)
+### Requirements (18)
+
+#### `::Quorum.ResearchFunding.AccessControl.PersonalDataErasable` — Requirement
+
+> An account's personal data can be erased on request by an operator: identifiers are pseudonymised everywhere they are held, while business records (proposals, reviews, decisions, budget) are retained under business-record retention.
 
 #### `::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority` — Requirement
 
@@ -153,6 +163,10 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 #### `::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly` — Requirement
 
 > INV-8 — Only a PanelChair may record a panel decision, and only for a proposal in scored.
+
+#### `::Quorum.ResearchFunding.PanelAdjudication.DecisionsEscalated` — Requirement
+
+> J7 — A chair decision still pending after 14 days notifies the program officer exactly once; nothing is decided by timeout.
 
 #### `::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded` — Requirement
 
@@ -302,7 +316,7 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 - enforcement = action
 - realizes: `::Quorum.ResearchFunding.HumansDecide`
 
-### Commands (13)
+### Commands (14)
 
 #### `::Quorum.ResearchFunding.Calls.CloseCall` — Command
 
@@ -313,6 +327,13 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 
 - payload = CallDraft
 - OccurrenceIdentity = payload.callId
+
+#### `::Quorum.ResearchFunding.Identity.EraseAccount` — Command
+
+> Operator-only. Pseudonymises the account (name, email, institution, ORCID iD), revokes its roles and redacts its personal identifiers from retained event payloads, in one transaction.
+
+- payload = EraseAccountData
+- OccurrenceIdentity = payload.accountId
 
 #### `::Quorum.ResearchFunding.Identity.RegisterApplicant` — Command
 
@@ -385,7 +406,28 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 - payload = ProposalRef
 - OccurrenceIdentity = payload.proposalId
 
-### Events (21)
+### Events (25)
+
+#### `::Quorum.ResearchFunding.Adjudication.AwardHeld` — Event
+
+> An integrity hold was placed on a scored proposal's award because a reviewer declared a conflict after scoring (ADR-005).
+
+- payload = AwardHeldData
+- DeliveryExpectation[ordering=ordered; delivery=at-least-once; durability=durable]
+
+#### `::Quorum.ResearchFunding.Adjudication.AwardRefused` — Event
+
+> An award was refused because the envelope cannot fund it; nothing was committed and the case moved to reconsider (decline only).
+
+- payload = AwardRefusedData
+- DeliveryExpectation[ordering=ordered; delivery=at-least-once; durability=durable]
+
+#### `::Quorum.ResearchFunding.Adjudication.DecisionEscalated` — Event
+
+> A chair decision passed its 14-day due date undecided; the program officer is notified. Published at most once per case; nothing is decided.
+
+- payload = DecisionEscalatedData
+- DeliveryExpectation[ordering=ordered; delivery=at-least-once; durability=durable]
 
 #### `::Quorum.ResearchFunding.Adjudication.ProposalAwarded` — Event
 
@@ -407,6 +449,13 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 > A call opened. Carries the envelope and criteria that are fixed from now on.
 
 - payload = CallPublishedData
+- DeliveryExpectation[ordering=ordered; delivery=at-least-once; durability=durable]
+
+#### `::Quorum.ResearchFunding.Identity.AccountErased` — Event
+
+> An account's personal data was erased. Carries no personal data; every context that holds a copy pseudonymises it.
+
+- payload = AccountErasedData
 - DeliveryExpectation[ordering=ordered; delivery=at-least-once; durability=durable]
 
 #### `::Quorum.ResearchFunding.Identity.OrcidVerified` — Event
@@ -552,7 +601,7 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 
 > The audit trail: every transition of every call, account, proposal and assignment, with actor, timestamp and reason. Filtered per proposal it is the proposal timeline.
 
-- projectsFrom: `::Quorum.ResearchFunding.Adjudication.ProposalAwarded`, `::Quorum.ResearchFunding.Adjudication.ProposalDeclined`, `::Quorum.ResearchFunding.Calls.CallClosed`, `::Quorum.ResearchFunding.Calls.CallPublished`, `::Quorum.ResearchFunding.Identity.OrcidVerified`, `::Quorum.ResearchFunding.PeerReview.AssignmentAccepted`, `::Quorum.ResearchFunding.PeerReview.AssignmentRevoked`, `::Quorum.ResearchFunding.PeerReview.ConflictDeclared`, `::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed`, `::Quorum.ResearchFunding.PeerReview.ReviewOverdue`, `::Quorum.ResearchFunding.PeerReview.ReviewSubmitted`, `::Quorum.ResearchFunding.PeerReview.ReviewerAssigned`, `::Quorum.ResearchFunding.Submission.ProposalEligible`, `::Quorum.ResearchFunding.Submission.ProposalEnteredScreening`, `::Quorum.ResearchFunding.Submission.ProposalIneligible`, `::Quorum.ResearchFunding.Submission.ProposalScored`, `::Quorum.ResearchFunding.Submission.ProposalSubmitted`, `::Quorum.ResearchFunding.Submission.ProposalUnderReview`, `::Quorum.ResearchFunding.Submission.ProposalWithdrawn`, `::Quorum.ResearchFunding.Submission.TriageProposed`
+- projectsFrom: `::Quorum.ResearchFunding.Adjudication.AwardHeld`, `::Quorum.ResearchFunding.Adjudication.AwardRefused`, `::Quorum.ResearchFunding.Adjudication.DecisionEscalated`, `::Quorum.ResearchFunding.Adjudication.ProposalAwarded`, `::Quorum.ResearchFunding.Adjudication.ProposalDeclined`, `::Quorum.ResearchFunding.Calls.CallClosed`, `::Quorum.ResearchFunding.Calls.CallPublished`, `::Quorum.ResearchFunding.Identity.AccountErased`, `::Quorum.ResearchFunding.Identity.OrcidVerified`, `::Quorum.ResearchFunding.PeerReview.AssignmentAccepted`, `::Quorum.ResearchFunding.PeerReview.AssignmentRevoked`, `::Quorum.ResearchFunding.PeerReview.ConflictDeclared`, `::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed`, `::Quorum.ResearchFunding.PeerReview.ReviewOverdue`, `::Quorum.ResearchFunding.PeerReview.ReviewSubmitted`, `::Quorum.ResearchFunding.PeerReview.ReviewerAssigned`, `::Quorum.ResearchFunding.Submission.ProposalEligible`, `::Quorum.ResearchFunding.Submission.ProposalEnteredScreening`, `::Quorum.ResearchFunding.Submission.ProposalIneligible`, `::Quorum.ResearchFunding.Submission.ProposalScored`, `::Quorum.ResearchFunding.Submission.ProposalSubmitted`, `::Quorum.ResearchFunding.Submission.ProposalUnderReview`, `::Quorum.ResearchFunding.Submission.ProposalWithdrawn`, `::Quorum.ResearchFunding.Submission.TriageProposed`
 
 #### `::Quorum.ResearchFunding.Oversight.Portfolio` — ReadModel
 
@@ -570,9 +619,10 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 - applies: `::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly`, `::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded`
 - deployedAs: `::Quorum.QuorumServer`
 - governedBy: `::Quorum.ResearchFunding.HumansDecide`, `::Quorum.ResearchFunding.RoleScopedAccess`
+- publishes: `::Quorum.ResearchFunding.Adjudication.AwardHeld`, `::Quorum.ResearchFunding.Adjudication.DecisionEscalated`
 - reads: `::Quorum.ResearchFunding.Adjudication.AdjudicationStore`
 - realizes: `::Quorum.ResearchFunding.PanelAdjudication`
-- satisfies: `::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly`, `::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded`
+- satisfies: `::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly`, `::Quorum.ResearchFunding.PanelAdjudication.DecisionsEscalated`, `::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded`
 - subscribesTo: `::Quorum.ResearchFunding.Calls.CallPublished`, `::Quorum.ResearchFunding.PeerReview.ConflictDeclared`
 - writes: `::Quorum.ResearchFunding.Adjudication.AdjudicationStore`
 
@@ -593,43 +643,43 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 
 > Registers applicants, authenticates sign-in, loads roles per request (never trusting token claims for roles), verifies ORCID iDs through the ORCID adapter and answers reviewer-standing queries for assignment checks.
 
-- `on RegisterApplicant -> none`; `on VerifyOrcid -> independent OrcidVerified correlate OrcidVerified payload.accountId = payload.accountId`
+- `on RegisterApplicant -> none`; `on VerifyOrcid -> independent OrcidVerified correlate OrcidVerified payload.accountId = payload.accountId`; `on EraseAccount -> independent AccountErased correlate AccountErased payload.accountId = payload.accountId`
 - deployedAs: `::Quorum.QuorumServer`
 - governedBy: `::Quorum.ResearchFunding.RoleScopedAccess`
-- handles: `::Quorum.ResearchFunding.Identity.RegisterApplicant`, `::Quorum.ResearchFunding.Identity.VerifyOrcid`
+- handles: `::Quorum.ResearchFunding.Identity.EraseAccount`, `::Quorum.ResearchFunding.Identity.RegisterApplicant`, `::Quorum.ResearchFunding.Identity.VerifyOrcid`
 - invokes: `::Quorum.ORCID.OrcidPublicApi.LookupRecord`
-- publishes: `::Quorum.ResearchFunding.Identity.OrcidVerified`
+- publishes: `::Quorum.ResearchFunding.Identity.AccountErased`, `::Quorum.ResearchFunding.Identity.OrcidVerified`
 - reads: `::Quorum.ResearchFunding.Identity.AccountStore`
 - realizes: `::Quorum.ResearchFunding.AccessControl`
-- satisfies: `::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority`, `::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly`
+- satisfies: `::Quorum.ResearchFunding.AccessControl.PersonalDataErasable`, `::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority`, `::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly`
 - writes: `::Quorum.ResearchFunding.Identity.AccountStore`
 
 #### `::Quorum.ResearchFunding.Notification.NotificationService` — Service
 
 > Turns domain events into notifications for the affected participants and drains outbound messages with retry; unique (event, recipient) makes redelivery a no-op.
 
-- `on ::Quorum.ResearchFunding.Submission.ProposalSubmitted -> none`; `on ::Quorum.ResearchFunding.Submission.TriageProposed -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalEligible -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalIneligible -> none`; `on ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned -> none`; `on ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked -> none`; `on ::Quorum.ResearchFunding.PeerReview.ReviewOverdue -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalScored -> none`; `on ::Quorum.ResearchFunding.Adjudication.ProposalAwarded -> none`; `on ::Quorum.ResearchFunding.Adjudication.ProposalDeclined -> none`
+- `on ::Quorum.ResearchFunding.Submission.ProposalSubmitted -> none`; `on ::Quorum.ResearchFunding.Submission.TriageProposed -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalEligible -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalIneligible -> none`; `on ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned -> none`; `on ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked -> none`; `on ::Quorum.ResearchFunding.PeerReview.ReviewOverdue -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalScored -> none`; `on ::Quorum.ResearchFunding.Adjudication.ProposalAwarded -> none`; `on ::Quorum.ResearchFunding.Adjudication.ProposalDeclined -> none`; `on ::Quorum.ResearchFunding.Adjudication.AwardRefused -> none`; `on ::Quorum.ResearchFunding.Adjudication.AwardHeld -> none`; `on ::Quorum.ResearchFunding.Adjudication.DecisionEscalated -> none`; `on ::Quorum.ResearchFunding.Identity.AccountErased -> none`
 - applies: `::Quorum.ResearchFunding.Notification.NoScoresToReviewers`
 - deployedAs: `::Quorum.QuorumServer`
 - governedBy: `::Quorum.ResearchFunding.BlindReview`
 - reads: `::Quorum.ResearchFunding.Notification.OutboundMessageStore`
 - realizes: `::Quorum.ResearchFunding.ParticipantNotification`
 - satisfies: `::Quorum.ResearchFunding.ParticipantNotification.NotificationsDurable`
-- subscribesTo: `::Quorum.ResearchFunding.Adjudication.ProposalAwarded`, `::Quorum.ResearchFunding.Adjudication.ProposalDeclined`, `::Quorum.ResearchFunding.PeerReview.AssignmentRevoked`, `::Quorum.ResearchFunding.PeerReview.ReviewOverdue`, `::Quorum.ResearchFunding.PeerReview.ReviewerAssigned`, `::Quorum.ResearchFunding.Submission.ProposalEligible`, `::Quorum.ResearchFunding.Submission.ProposalIneligible`, `::Quorum.ResearchFunding.Submission.ProposalScored`, `::Quorum.ResearchFunding.Submission.ProposalSubmitted`, `::Quorum.ResearchFunding.Submission.TriageProposed`
+- subscribesTo: `::Quorum.ResearchFunding.Adjudication.AwardHeld`, `::Quorum.ResearchFunding.Adjudication.AwardRefused`, `::Quorum.ResearchFunding.Adjudication.DecisionEscalated`, `::Quorum.ResearchFunding.Adjudication.ProposalAwarded`, `::Quorum.ResearchFunding.Adjudication.ProposalDeclined`, `::Quorum.ResearchFunding.Identity.AccountErased`, `::Quorum.ResearchFunding.PeerReview.AssignmentRevoked`, `::Quorum.ResearchFunding.PeerReview.ReviewOverdue`, `::Quorum.ResearchFunding.PeerReview.ReviewerAssigned`, `::Quorum.ResearchFunding.Submission.ProposalEligible`, `::Quorum.ResearchFunding.Submission.ProposalIneligible`, `::Quorum.ResearchFunding.Submission.ProposalScored`, `::Quorum.ResearchFunding.Submission.ProposalSubmitted`, `::Quorum.ResearchFunding.Submission.TriageProposed`
 - writes: `::Quorum.ResearchFunding.Notification.OutboundMessageStore`
 
 #### `::Quorum.ResearchFunding.Oversight.PortfolioProjector` — Service
 
 > The only producer of the portfolio and the timeline. Consumes events idempotently (per-consumer progress committed with the projection write) and can rebuild both views by replaying the retained event log.
 
-- `on ::Quorum.ResearchFunding.Identity.OrcidVerified -> none`; `on ::Quorum.ResearchFunding.Calls.CallPublished -> none`; `on ::Quorum.ResearchFunding.Calls.CallClosed -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalSubmitted -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening -> none`; `on ::Quorum.ResearchFunding.Submission.TriageProposed -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalEligible -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalIneligible -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalUnderReview -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalScored -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalWithdrawn -> none`; `on ::Quorum.ResearchFunding.PeerReview.ConflictDeclared -> none`; `on ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned -> none`; `on ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted -> none`; `on ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked -> none`; `on ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted -> none`; `on ::Quorum.ResearchFunding.PeerReview.ReviewOverdue -> none`; `on ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed -> none`; `on ::Quorum.ResearchFunding.Adjudication.ProposalAwarded -> none`; `on ::Quorum.ResearchFunding.Adjudication.ProposalDeclined -> none`
+- `on ::Quorum.ResearchFunding.Identity.OrcidVerified -> none`; `on ::Quorum.ResearchFunding.Calls.CallPublished -> none`; `on ::Quorum.ResearchFunding.Calls.CallClosed -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalSubmitted -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening -> none`; `on ::Quorum.ResearchFunding.Submission.TriageProposed -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalEligible -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalIneligible -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalUnderReview -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalScored -> none`; `on ::Quorum.ResearchFunding.Submission.ProposalWithdrawn -> none`; `on ::Quorum.ResearchFunding.PeerReview.ConflictDeclared -> none`; `on ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned -> none`; `on ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted -> none`; `on ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked -> none`; `on ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted -> none`; `on ::Quorum.ResearchFunding.PeerReview.ReviewOverdue -> none`; `on ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed -> none`; `on ::Quorum.ResearchFunding.Adjudication.ProposalAwarded -> none`; `on ::Quorum.ResearchFunding.Adjudication.ProposalDeclined -> none`; `on ::Quorum.ResearchFunding.Adjudication.AwardRefused -> none`; `on ::Quorum.ResearchFunding.Adjudication.AwardHeld -> none`; `on ::Quorum.ResearchFunding.Adjudication.DecisionEscalated -> none`; `on ::Quorum.ResearchFunding.Identity.AccountErased -> none`
 - deployedAs: `::Quorum.QuorumServer`
 - governedBy: `::Quorum.ResearchFunding.BlindReview`, `::Quorum.ResearchFunding.RoleScopedAccess`
 - projects: `::Quorum.ResearchFunding.Oversight.AuditTrail`, `::Quorum.ResearchFunding.Oversight.Portfolio`
 - reads: `::Quorum.ResearchFunding.Oversight.AuditTrail`, `::Quorum.ResearchFunding.Oversight.Portfolio`
 - realizes: `::Quorum.ResearchFunding.PortfolioReporting`
 - satisfies: `::Quorum.ResearchFunding.PortfolioReporting.PortfolioFromProjection`, `::Quorum.ResearchFunding.PortfolioReporting.TransitionsAudited`
-- subscribesTo: `::Quorum.ResearchFunding.Adjudication.ProposalAwarded`, `::Quorum.ResearchFunding.Adjudication.ProposalDeclined`, `::Quorum.ResearchFunding.Calls.CallClosed`, `::Quorum.ResearchFunding.Calls.CallPublished`, `::Quorum.ResearchFunding.Identity.OrcidVerified`, `::Quorum.ResearchFunding.PeerReview.AssignmentAccepted`, `::Quorum.ResearchFunding.PeerReview.AssignmentRevoked`, `::Quorum.ResearchFunding.PeerReview.ConflictDeclared`, `::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed`, `::Quorum.ResearchFunding.PeerReview.ReviewOverdue`, `::Quorum.ResearchFunding.PeerReview.ReviewSubmitted`, `::Quorum.ResearchFunding.PeerReview.ReviewerAssigned`, `::Quorum.ResearchFunding.Submission.ProposalEligible`, `::Quorum.ResearchFunding.Submission.ProposalEnteredScreening`, `::Quorum.ResearchFunding.Submission.ProposalIneligible`, `::Quorum.ResearchFunding.Submission.ProposalScored`, `::Quorum.ResearchFunding.Submission.ProposalSubmitted`, `::Quorum.ResearchFunding.Submission.ProposalUnderReview`, `::Quorum.ResearchFunding.Submission.ProposalWithdrawn`, `::Quorum.ResearchFunding.Submission.TriageProposed`
+- subscribesTo: `::Quorum.ResearchFunding.Adjudication.AwardHeld`, `::Quorum.ResearchFunding.Adjudication.AwardRefused`, `::Quorum.ResearchFunding.Adjudication.DecisionEscalated`, `::Quorum.ResearchFunding.Adjudication.ProposalAwarded`, `::Quorum.ResearchFunding.Adjudication.ProposalDeclined`, `::Quorum.ResearchFunding.Calls.CallClosed`, `::Quorum.ResearchFunding.Calls.CallPublished`, `::Quorum.ResearchFunding.Identity.AccountErased`, `::Quorum.ResearchFunding.Identity.OrcidVerified`, `::Quorum.ResearchFunding.PeerReview.AssignmentAccepted`, `::Quorum.ResearchFunding.PeerReview.AssignmentRevoked`, `::Quorum.ResearchFunding.PeerReview.ConflictDeclared`, `::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed`, `::Quorum.ResearchFunding.PeerReview.ReviewOverdue`, `::Quorum.ResearchFunding.PeerReview.ReviewSubmitted`, `::Quorum.ResearchFunding.PeerReview.ReviewerAssigned`, `::Quorum.ResearchFunding.Submission.ProposalEligible`, `::Quorum.ResearchFunding.Submission.ProposalEnteredScreening`, `::Quorum.ResearchFunding.Submission.ProposalIneligible`, `::Quorum.ResearchFunding.Submission.ProposalScored`, `::Quorum.ResearchFunding.Submission.ProposalSubmitted`, `::Quorum.ResearchFunding.Submission.ProposalUnderReview`, `::Quorum.ResearchFunding.Submission.ProposalWithdrawn`, `::Quorum.ResearchFunding.Submission.TriageProposed`
 
 #### `::Quorum.ResearchFunding.PeerReview.AssignmentService` — Service
 
@@ -783,8 +833,8 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 - realizes: `::Quorum.ResearchFunding.PanelAdjudication`
 - satisfies: `::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly`, `::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded`
 - triggeredBy: `::Quorum.ResearchFunding.Submission.ProposalScored`
-- steps: `decide` (HumanTask), `isAward` (Decision), `commit` (Invoke), `committed` (Decision), `reconsider` (HumanTask), `decline` (Invoke), `declineRefused` (Invoke), `awarded` (Publish), `declined` (Publish), `declinedRefused` (Publish)
-- transitions: decide → isAward; isAward → commit; isAward → decline; commit → committed; committed → awarded; committed → reconsider; reconsider → declineRefused; decline → declined; declineRefused → declinedRefused
+- steps: `decide` (HumanTask), `isAward` (Decision), `commit` (Invoke), `committed` (Decision), `reconsider` (HumanTask), `decline` (Invoke), `declineRefused` (Invoke), `awarded` (Publish), `declined` (Publish), `refused` (Publish), `declinedRefused` (Publish)
+- transitions: decide → isAward; isAward → commit; isAward → decline; commit → committed; committed → awarded; committed → refused; reconsider → declineRefused; decline → declined; declineRefused → declinedRefused; refused → reconsider
 - the state contract, trigger derivation, step mappings and guards are in the `.adl` source — implement them as written, never approximately
 
 #### `::Quorum.ResearchFunding.PeerReview.ReviewDeadline` — Workflow v1
@@ -822,13 +872,29 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 
 > One process: the HTTP API, the static UI, the event dispatcher, the overdue sweeper and the outbound-message drain.
 
-### Environment (1)
+### Environments (2)
 
 #### `::Quorum.LocalDevelopment` — Environment
 
 > One machine, no paid infrastructure: a SQLite file, a stub ORCID registry, a stub triage provider and a stub mail transport.
 
-### Tests (15)
+#### `::Quorum.Production` — Environment
+
+> One funding body's single-instance deployment: one QuorumServer process on a persistent volume holding the SQLite file (WAL), with scheduled online backups, the real ORCID public API, a hosted triage model provider and an SMTP relay. Secrets come from the environment.
+
+### Tests (17)
+
+#### `::Quorum.AccountErasure` — Test
+
+> An operator erases an account: no personal identifier remains in accounts, notifications, projections or event payloads; business records remain.
+
+- verifies: `::Quorum.ResearchFunding.AccessControl.PersonalDataErasable`, `::Quorum.ResearchFunding.Identity.AccountService`
+
+#### `::Quorum.DecisionEscalation` — Test
+
+> J7: a decision pending past its due date publishes DecisionEscalated exactly once and notifies the program officers; it is never decided.
+
+- verifies: `::Quorum.ResearchFunding.Adjudication.AdjudicationService`, `::Quorum.ResearchFunding.PanelAdjudication.DecisionsEscalated`
 
 #### `::Quorum.DeliveryAndReplay` — Test
 
@@ -920,12 +986,22 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 
 - verifies: `::Quorum.ResearchFunding.Oversight.PortfolioProjector`, `::Quorum.ResearchFunding.PortfolioReporting.PortfolioFromProjection`, `::Quorum.ResearchFunding.PortfolioReporting.TransitionsAudited`
 
-### TypeDefinitions (71)
+### TypeDefinitions (76)
 
 #### `::Quorum.ResearchFunding.Adjudication.AdjudicationState` — TypeDefinition v1
 
 - form = record
 - fields[proposalId=text; callId=text; requested=::Quorum.ResearchFunding.Calls.Money; meanScore=decimal(4,2)]
+
+#### `::Quorum.ResearchFunding.Adjudication.AwardHeldData` — TypeDefinition v1
+
+- form = record
+- fields[proposalId=text; reason=text; at=instant]
+
+#### `::Quorum.ResearchFunding.Adjudication.AwardRefusedData` — TypeDefinition v1
+
+- form = record
+- fields[proposalId=text; callId=text; requested=::Quorum.ResearchFunding.Calls.Money; actorId=text; at=instant]
 
 #### `::Quorum.ResearchFunding.Adjudication.AwardRequest` — TypeDefinition v1
 
@@ -941,6 +1017,11 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 
 - form = record
 - fields[proposalId=text; callId=text; outcome=PanelOutcome; amount=::Quorum.ResearchFunding.Calls.Money; actorId=text; rationale=text; at=instant]
+
+#### `::Quorum.ResearchFunding.Adjudication.DecisionEscalatedData` — TypeDefinition v1
+
+- form = record
+- fields[proposalId=text; callId=text; dueAt=instant; at=instant]
 
 #### `::Quorum.ResearchFunding.Adjudication.DecisionRequest` — TypeDefinition v1
 
@@ -1023,11 +1104,21 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 - form = alias
 - underlying = decimal(14,2)
 
+#### `::Quorum.ResearchFunding.Identity.AccountErasedData` — TypeDefinition v1
+
+- form = record
+- fields[accountId=AccountId; at=instant]
+
 #### `::Quorum.ResearchFunding.Identity.AccountId` — TypeDefinition v1
 
 - form = alias
 - underlying = text
 - identityBearing = true
+
+#### `::Quorum.ResearchFunding.Identity.EraseAccountData` — TypeDefinition v1
+
+- form = record
+- fields[accountId=AccountId; reason=text]
 
 #### `::Quorum.ResearchFunding.Identity.OrcidQuery` — TypeDefinition v1
 
@@ -1063,7 +1154,7 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 #### `::Quorum.ResearchFunding.Identity.Role` — TypeDefinition v1
 
 - form = enumeration
-- cases = applicant, reviewer, programOfficer, panelChair
+- cases = applicant, reviewer, programOfficer, panelChair, operator
 
 #### `::Quorum.ResearchFunding.Identity.StandingQuery` — TypeDefinition v1
 
@@ -1287,11 +1378,11 @@ Every element below is DECLARED by the model, cited by its root-anchored qualifi
 
 Derived from the model's declarations, in the order a reader needs. Each line names its source.
 
-- **`::Quorum.ResearchFunding.Adjudication.AdjudicationService`** subscribes to `::Quorum.ResearchFunding.Calls.CallPublished`, `::Quorum.ResearchFunding.PeerReview.ConflictDeclared`; writes `::Quorum.ResearchFunding.Adjudication.AdjudicationStore`; reads `::Quorum.ResearchFunding.Adjudication.AdjudicationStore`; applies `::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly`, `::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded`. Its Reactions (`on X -> …`) are closed-world causal contracts: on consuming X it emits exactly the named consequences (`one-of`: exactly one; `-> none`: nothing).
+- **`::Quorum.ResearchFunding.Adjudication.AdjudicationService`** subscribes to `::Quorum.ResearchFunding.Calls.CallPublished`, `::Quorum.ResearchFunding.PeerReview.ConflictDeclared`; publishes `::Quorum.ResearchFunding.Adjudication.AwardHeld`, `::Quorum.ResearchFunding.Adjudication.DecisionEscalated`; writes `::Quorum.ResearchFunding.Adjudication.AdjudicationStore`; reads `::Quorum.ResearchFunding.Adjudication.AdjudicationStore`; applies `::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly`, `::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded`. Its Reactions (`on X -> …`) are closed-world causal contracts: on consuming X it emits exactly the named consequences (`one-of`: exactly one; `-> none`: nothing).
 - **`::Quorum.ResearchFunding.Calls.CallService`** handles `::Quorum.ResearchFunding.Calls.CloseCall`, `::Quorum.ResearchFunding.Calls.PublishCall`; publishes `::Quorum.ResearchFunding.Calls.CallClosed`, `::Quorum.ResearchFunding.Calls.CallPublished`; writes `::Quorum.ResearchFunding.Calls.CallStore`; reads `::Quorum.ResearchFunding.Calls.CallStore`. Its Reactions (`on X -> …`) are closed-world causal contracts: on consuming X it emits exactly the named consequences (`one-of`: exactly one; `-> none`: nothing).
-- **`::Quorum.ResearchFunding.Identity.AccountService`** handles `::Quorum.ResearchFunding.Identity.RegisterApplicant`, `::Quorum.ResearchFunding.Identity.VerifyOrcid`; publishes `::Quorum.ResearchFunding.Identity.OrcidVerified`; writes `::Quorum.ResearchFunding.Identity.AccountStore`; reads `::Quorum.ResearchFunding.Identity.AccountStore`. Its Reactions (`on X -> …`) are closed-world causal contracts: on consuming X it emits exactly the named consequences (`one-of`: exactly one; `-> none`: nothing).
-- **`::Quorum.ResearchFunding.Notification.NotificationService`** subscribes to `::Quorum.ResearchFunding.Adjudication.ProposalAwarded`, `::Quorum.ResearchFunding.Adjudication.ProposalDeclined`, `::Quorum.ResearchFunding.PeerReview.AssignmentRevoked`, `::Quorum.ResearchFunding.PeerReview.ReviewOverdue`, `::Quorum.ResearchFunding.PeerReview.ReviewerAssigned`, `::Quorum.ResearchFunding.Submission.ProposalEligible`, `::Quorum.ResearchFunding.Submission.ProposalIneligible`, `::Quorum.ResearchFunding.Submission.ProposalScored`, `::Quorum.ResearchFunding.Submission.ProposalSubmitted`, `::Quorum.ResearchFunding.Submission.TriageProposed`; writes `::Quorum.ResearchFunding.Notification.OutboundMessageStore`; reads `::Quorum.ResearchFunding.Notification.OutboundMessageStore`; applies `::Quorum.ResearchFunding.Notification.NoScoresToReviewers`. Its Reactions (`on X -> …`) are closed-world causal contracts: on consuming X it emits exactly the named consequences (`one-of`: exactly one; `-> none`: nothing).
-- **`::Quorum.ResearchFunding.Oversight.PortfolioProjector`** subscribes to `::Quorum.ResearchFunding.Adjudication.ProposalAwarded`, `::Quorum.ResearchFunding.Adjudication.ProposalDeclined`, `::Quorum.ResearchFunding.Calls.CallClosed`, `::Quorum.ResearchFunding.Calls.CallPublished`, `::Quorum.ResearchFunding.Identity.OrcidVerified`, `::Quorum.ResearchFunding.PeerReview.AssignmentAccepted`, `::Quorum.ResearchFunding.PeerReview.AssignmentRevoked`, `::Quorum.ResearchFunding.PeerReview.ConflictDeclared`, `::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed`, `::Quorum.ResearchFunding.PeerReview.ReviewOverdue`, `::Quorum.ResearchFunding.PeerReview.ReviewSubmitted`, `::Quorum.ResearchFunding.PeerReview.ReviewerAssigned`, `::Quorum.ResearchFunding.Submission.ProposalEligible`, `::Quorum.ResearchFunding.Submission.ProposalEnteredScreening`, `::Quorum.ResearchFunding.Submission.ProposalIneligible`, `::Quorum.ResearchFunding.Submission.ProposalScored`, `::Quorum.ResearchFunding.Submission.ProposalSubmitted`, `::Quorum.ResearchFunding.Submission.ProposalUnderReview`, `::Quorum.ResearchFunding.Submission.ProposalWithdrawn`, `::Quorum.ResearchFunding.Submission.TriageProposed`; reads `::Quorum.ResearchFunding.Oversight.AuditTrail`, `::Quorum.ResearchFunding.Oversight.Portfolio`; produces the view `::Quorum.ResearchFunding.Oversight.AuditTrail`, `::Quorum.ResearchFunding.Oversight.Portfolio`. Its Reactions (`on X -> …`) are closed-world causal contracts: on consuming X it emits exactly the named consequences (`one-of`: exactly one; `-> none`: nothing).
+- **`::Quorum.ResearchFunding.Identity.AccountService`** handles `::Quorum.ResearchFunding.Identity.EraseAccount`, `::Quorum.ResearchFunding.Identity.RegisterApplicant`, `::Quorum.ResearchFunding.Identity.VerifyOrcid`; publishes `::Quorum.ResearchFunding.Identity.AccountErased`, `::Quorum.ResearchFunding.Identity.OrcidVerified`; writes `::Quorum.ResearchFunding.Identity.AccountStore`; reads `::Quorum.ResearchFunding.Identity.AccountStore`. Its Reactions (`on X -> …`) are closed-world causal contracts: on consuming X it emits exactly the named consequences (`one-of`: exactly one; `-> none`: nothing).
+- **`::Quorum.ResearchFunding.Notification.NotificationService`** subscribes to `::Quorum.ResearchFunding.Adjudication.AwardHeld`, `::Quorum.ResearchFunding.Adjudication.AwardRefused`, `::Quorum.ResearchFunding.Adjudication.DecisionEscalated`, `::Quorum.ResearchFunding.Adjudication.ProposalAwarded`, `::Quorum.ResearchFunding.Adjudication.ProposalDeclined`, `::Quorum.ResearchFunding.Identity.AccountErased`, `::Quorum.ResearchFunding.PeerReview.AssignmentRevoked`, `::Quorum.ResearchFunding.PeerReview.ReviewOverdue`, `::Quorum.ResearchFunding.PeerReview.ReviewerAssigned`, `::Quorum.ResearchFunding.Submission.ProposalEligible`, `::Quorum.ResearchFunding.Submission.ProposalIneligible`, `::Quorum.ResearchFunding.Submission.ProposalScored`, `::Quorum.ResearchFunding.Submission.ProposalSubmitted`, `::Quorum.ResearchFunding.Submission.TriageProposed`; writes `::Quorum.ResearchFunding.Notification.OutboundMessageStore`; reads `::Quorum.ResearchFunding.Notification.OutboundMessageStore`; applies `::Quorum.ResearchFunding.Notification.NoScoresToReviewers`. Its Reactions (`on X -> …`) are closed-world causal contracts: on consuming X it emits exactly the named consequences (`one-of`: exactly one; `-> none`: nothing).
+- **`::Quorum.ResearchFunding.Oversight.PortfolioProjector`** subscribes to `::Quorum.ResearchFunding.Adjudication.AwardHeld`, `::Quorum.ResearchFunding.Adjudication.AwardRefused`, `::Quorum.ResearchFunding.Adjudication.DecisionEscalated`, `::Quorum.ResearchFunding.Adjudication.ProposalAwarded`, `::Quorum.ResearchFunding.Adjudication.ProposalDeclined`, `::Quorum.ResearchFunding.Calls.CallClosed`, `::Quorum.ResearchFunding.Calls.CallPublished`, `::Quorum.ResearchFunding.Identity.AccountErased`, `::Quorum.ResearchFunding.Identity.OrcidVerified`, `::Quorum.ResearchFunding.PeerReview.AssignmentAccepted`, `::Quorum.ResearchFunding.PeerReview.AssignmentRevoked`, `::Quorum.ResearchFunding.PeerReview.ConflictDeclared`, `::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed`, `::Quorum.ResearchFunding.PeerReview.ReviewOverdue`, `::Quorum.ResearchFunding.PeerReview.ReviewSubmitted`, `::Quorum.ResearchFunding.PeerReview.ReviewerAssigned`, `::Quorum.ResearchFunding.Submission.ProposalEligible`, `::Quorum.ResearchFunding.Submission.ProposalEnteredScreening`, `::Quorum.ResearchFunding.Submission.ProposalIneligible`, `::Quorum.ResearchFunding.Submission.ProposalScored`, `::Quorum.ResearchFunding.Submission.ProposalSubmitted`, `::Quorum.ResearchFunding.Submission.ProposalUnderReview`, `::Quorum.ResearchFunding.Submission.ProposalWithdrawn`, `::Quorum.ResearchFunding.Submission.TriageProposed`; reads `::Quorum.ResearchFunding.Oversight.AuditTrail`, `::Quorum.ResearchFunding.Oversight.Portfolio`; produces the view `::Quorum.ResearchFunding.Oversight.AuditTrail`, `::Quorum.ResearchFunding.Oversight.Portfolio`. Its Reactions (`on X -> …`) are closed-world causal contracts: on consuming X it emits exactly the named consequences (`one-of`: exactly one; `-> none`: nothing).
 - **`::Quorum.ResearchFunding.PeerReview.AssignmentService`** handles `::Quorum.ResearchFunding.PeerReview.AcceptAssignment`, `::Quorum.ResearchFunding.PeerReview.AssignReviewer`, `::Quorum.ResearchFunding.PeerReview.DeclareConflict`, `::Quorum.ResearchFunding.PeerReview.RevokeAssignment`, `::Quorum.ResearchFunding.PeerReview.SubmitReview`; subscribes to `::Quorum.ResearchFunding.Calls.CallPublished`, `::Quorum.ResearchFunding.Submission.ProposalEligible`, `::Quorum.ResearchFunding.Submission.ProposalWithdrawn`; publishes `::Quorum.ResearchFunding.PeerReview.AssignmentAccepted`, `::Quorum.ResearchFunding.PeerReview.AssignmentRevoked`, `::Quorum.ResearchFunding.PeerReview.ConflictDeclared`, `::Quorum.ResearchFunding.PeerReview.ReviewSubmitted`, `::Quorum.ResearchFunding.PeerReview.ReviewerAssigned`, `::Quorum.ResearchFunding.PeerReview.ReviewersAssigned`; writes `::Quorum.ResearchFunding.PeerReview.ReviewStore`; reads `::Quorum.ResearchFunding.PeerReview.ReviewStore`; applies `::Quorum.ResearchFunding.PeerReview.AssignmentValidity`, `::Quorum.ResearchFunding.PeerReview.EveryCriterionScored`, `::Quorum.ResearchFunding.PeerReview.PeerReviewsHiddenUntilOwnSubmitted`. Its Reactions (`on X -> …`) are closed-world causal contracts: on consuming X it emits exactly the named consequences (`one-of`: exactly one; `-> none`: nothing).
 - **`::Quorum.ResearchFunding.PeerReview.ReviewCompletion`** subscribes to `::Quorum.ResearchFunding.PeerReview.ReviewSubmitted`; publishes `::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed`; writes `::Quorum.ResearchFunding.PeerReview.CompletionLedger`; reads `::Quorum.ResearchFunding.PeerReview.CompletionLedger`, `::Quorum.ResearchFunding.PeerReview.ReviewStore`; applies `::Quorum.ResearchFunding.PeerReview.ThreeSubmittedReviews`. Its Reactions (`on X -> …`) are closed-world causal contracts: on consuming X it emits exactly the named consequences (`one-of`: exactly one; `-> none`: nothing).
 - **`::Quorum.ResearchFunding.Submission.ProposalService`** handles `::Quorum.ResearchFunding.Submission.ConfirmEligibility`, `::Quorum.ResearchFunding.Submission.SaveDraft`, `::Quorum.ResearchFunding.Submission.SubmitProposal`, `::Quorum.ResearchFunding.Submission.WithdrawProposal`; subscribes to `::Quorum.ResearchFunding.Adjudication.ProposalAwarded`, `::Quorum.ResearchFunding.Adjudication.ProposalDeclined`, `::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed`, `::Quorum.ResearchFunding.PeerReview.ReviewersAssigned`, `::Quorum.ResearchFunding.Submission.ProposalSubmitted`; publishes `::Quorum.ResearchFunding.Submission.ProposalEligible`, `::Quorum.ResearchFunding.Submission.ProposalEnteredScreening`, `::Quorum.ResearchFunding.Submission.ProposalIneligible`, `::Quorum.ResearchFunding.Submission.ProposalScored`, `::Quorum.ResearchFunding.Submission.ProposalSubmitted`, `::Quorum.ResearchFunding.Submission.ProposalUnderReview`, `::Quorum.ResearchFunding.Submission.ProposalWithdrawn`; writes `::Quorum.ResearchFunding.Submission.ProposalStore`; reads `::Quorum.ResearchFunding.Submission.ProposalStore`; applies `::Quorum.ResearchFunding.Submission.ApplicantScope`, `::Quorum.ResearchFunding.Submission.SubmissionWindowOpen`, `::Quorum.ResearchFunding.Submission.SubmittedOnce`. Its Reactions (`on X -> …`) are closed-world causal contracts: on consuming X it emits exactly the named consequences (`one-of`: exactly one; `-> none`: nothing).
@@ -1315,34 +1406,38 @@ Derived from the model's declarations, in the order a reader needs. Each line na
 
 ## 4. Technology realization — environment `LocalDevelopment`
 
-Source: `model/local-development.adl-binding.json` (applies to attestation `sha256:f75646711920628a45e67531ba5fdee8eb85c2efeeea8068ecf268664cee4c12`; environment completeness passed; binding digest `sha256:0a1a92c1647024f56962e6d2f61b4c0b577285d1ec0865678b84887e59997de3`).
+Source: `model/local-development.adl-binding.json` (applies to attestation `sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59`; environment completeness passed; binding digest `sha256:42d9f8be695063b0f2884a85a4936638a497aa87adc8d4d503c65ef498caf08b`).
 
 | element | kind | technology | configuration |
 |---|---|---|---|
 | `::Quorum.QuorumServer` | Deployable | `avlon.quorum.bindings.localdevelopment` / **node-process** | `{"runtime":"node-24","language":"typescript-type-stripping","framework":"fastify-5","ui":"vanilla-es-modules","entry":"src/server.ts"}` |
-| `::Quorum.ResearchFunding.Adjudication.AdjudicationService` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"undefined/service.ts"}` |
-| `::Quorum.ResearchFunding.Adjudication.AdjudicationStore` | Resource | `avlon.quorum.bindings.localdevelopment` / **sqlite-wal** | `{"driver":"better-sqlite3","file":"data/quorum.sqlite","tables":"undefined*"}` |
+| `::Quorum.ResearchFunding.Adjudication.AdjudicationService` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"src/contexts/adjudication/service.ts"}` |
+| `::Quorum.ResearchFunding.Adjudication.AdjudicationStore` | Resource | `avlon.quorum.bindings.localdevelopment` / **sqlite-wal** | `{"driver":"better-sqlite3","file":"data/quorum.sqlite","tables":"adj_case, adj_pending_hold, adj_decision, adj_budget"}` |
+| `::Quorum.ResearchFunding.Adjudication.AwardHeld` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id> \| account:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
+| `::Quorum.ResearchFunding.Adjudication.AwardRefused` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id> \| account:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
+| `::Quorum.ResearchFunding.Adjudication.DecisionEscalated` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id> \| account:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
 | `::Quorum.ResearchFunding.Adjudication.ProposalAwarded` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
 | `::Quorum.ResearchFunding.Adjudication.ProposalDeclined` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
 | `::Quorum.ResearchFunding.Calls.CallClosed` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
 | `::Quorum.ResearchFunding.Calls.CallPublished` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
-| `::Quorum.ResearchFunding.Calls.CallService` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"undefined/service.ts"}` |
-| `::Quorum.ResearchFunding.Calls.CallStore` | Resource | `avlon.quorum.bindings.localdevelopment` / **sqlite-wal** | `{"driver":"better-sqlite3","file":"data/quorum.sqlite","tables":"undefined*"}` |
-| `::Quorum.ResearchFunding.Identity.AccountService` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"undefined/service.ts"}` |
-| `::Quorum.ResearchFunding.Identity.AccountStore` | Resource | `avlon.quorum.bindings.localdevelopment` / **sqlite-wal** | `{"driver":"better-sqlite3","file":"data/quorum.sqlite","tables":"undefined*"}` |
+| `::Quorum.ResearchFunding.Calls.CallService` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"src/contexts/calls/service.ts"}` |
+| `::Quorum.ResearchFunding.Calls.CallStore` | Resource | `avlon.quorum.bindings.localdevelopment` / **sqlite-wal** | `{"driver":"better-sqlite3","file":"data/quorum.sqlite","tables":"cal_*"}` |
+| `::Quorum.ResearchFunding.Identity.AccountErased` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id> \| account:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
+| `::Quorum.ResearchFunding.Identity.AccountService` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"src/contexts/identity/service.ts"}` |
+| `::Quorum.ResearchFunding.Identity.AccountStore` | Resource | `avlon.quorum.bindings.localdevelopment` / **sqlite-wal** | `{"driver":"better-sqlite3","file":"data/quorum.sqlite","tables":"idn_account, idn_role_grant"}` |
 | `::Quorum.ResearchFunding.Identity.OrcidVerified` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
-| `::Quorum.ResearchFunding.Notification.NotificationService` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"undefined/service.ts"}` |
-| `::Quorum.ResearchFunding.Notification.OutboundMessageStore` | Resource | `avlon.quorum.bindings.localdevelopment` / **sqlite-wal** | `{"driver":"better-sqlite3","file":"data/quorum.sqlite","tables":"undefined*"}` |
-| `::Quorum.ResearchFunding.Oversight.PortfolioProjector` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"undefined/service.ts"}` |
+| `::Quorum.ResearchFunding.Notification.NotificationService` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"src/contexts/notification/service.ts"}` |
+| `::Quorum.ResearchFunding.Notification.OutboundMessageStore` | Resource | `avlon.quorum.bindings.localdevelopment` / **sqlite-wal** | `{"driver":"better-sqlite3","file":"data/quorum.sqlite","tables":"ntf_proposal, ntf_message, ntf_read"}` |
+| `::Quorum.ResearchFunding.Oversight.PortfolioProjector` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"src/contexts/oversight/service.ts"}` |
 | `::Quorum.ResearchFunding.PeerReview.AssignmentAccepted` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
 | `::Quorum.ResearchFunding.PeerReview.AssignmentRevoked` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
-| `::Quorum.ResearchFunding.PeerReview.AssignmentService` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"undefined/service.ts"}` |
-| `::Quorum.ResearchFunding.PeerReview.CompletionLedger` | Resource | `avlon.quorum.bindings.localdevelopment` / **sqlite-wal** | `{"driver":"better-sqlite3","file":"data/quorum.sqlite","tables":"undefined*"}` |
+| `::Quorum.ResearchFunding.PeerReview.AssignmentService` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"src/contexts/peer-review/service.ts"}` |
+| `::Quorum.ResearchFunding.PeerReview.CompletionLedger` | Resource | `avlon.quorum.bindings.localdevelopment` / **sqlite-wal** | `{"driver":"better-sqlite3","file":"data/quorum.sqlite","tables":"rev_completion"}` |
 | `::Quorum.ResearchFunding.PeerReview.ConflictDeclared` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
 | `::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
-| `::Quorum.ResearchFunding.PeerReview.ReviewCompletion` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"undefined/service.ts"}` |
+| `::Quorum.ResearchFunding.PeerReview.ReviewCompletion` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"src/contexts/peer-review/completion.ts"}` |
 | `::Quorum.ResearchFunding.PeerReview.ReviewOverdue` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
-| `::Quorum.ResearchFunding.PeerReview.ReviewStore` | Resource | `avlon.quorum.bindings.localdevelopment` / **sqlite-wal** | `{"driver":"better-sqlite3","file":"data/quorum.sqlite","tables":"undefined*"}` |
+| `::Quorum.ResearchFunding.PeerReview.ReviewStore` | Resource | `avlon.quorum.bindings.localdevelopment` / **sqlite-wal** | `{"driver":"better-sqlite3","file":"data/quorum.sqlite","tables":"rev_* except rev_completion"}` |
 | `::Quorum.ResearchFunding.PeerReview.ReviewSubmitted` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
 | `::Quorum.ResearchFunding.PeerReview.ReviewerAssigned` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
 | `::Quorum.ResearchFunding.PeerReview.ReviewersAssigned` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
@@ -1351,12 +1446,18 @@ Source: `model/local-development.adl-binding.json` (applies to attestation `sha2
 | `::Quorum.ResearchFunding.Submission.ProposalEnteredScreening` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
 | `::Quorum.ResearchFunding.Submission.ProposalIneligible` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
 | `::Quorum.ResearchFunding.Submission.ProposalScored` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
-| `::Quorum.ResearchFunding.Submission.ProposalService` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"undefined/service.ts"}` |
-| `::Quorum.ResearchFunding.Submission.ProposalStore` | Resource | `avlon.quorum.bindings.localdevelopment` / **sqlite-wal** | `{"driver":"better-sqlite3","file":"data/quorum.sqlite","tables":"undefined*"}` |
+| `::Quorum.ResearchFunding.Submission.ProposalService` | Service | `avlon.quorum.bindings.localdevelopment` / **in-process-module** | `{"module":"src/contexts/submission/service.ts"}` |
+| `::Quorum.ResearchFunding.Submission.ProposalStore` | Resource | `avlon.quorum.bindings.localdevelopment` / **sqlite-wal** | `{"driver":"better-sqlite3","file":"data/quorum.sqlite","tables":"sub_*"}` |
 | `::Quorum.ResearchFunding.Submission.ProposalSubmitted` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
 | `::Quorum.ResearchFunding.Submission.ProposalUnderReview` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
 | `::Quorum.ResearchFunding.Submission.ProposalWithdrawn` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
 | `::Quorum.ResearchFunding.Submission.TriageProposed` | Event | `avlon.quorum.bindings.localdevelopment` / **sqlite-outbox** | `{"outbox":"evt_outbox+evt_delivery","ordering-key":"partition_key (proposal:<id>)","redelivery":"exponential-backoff","parked-after":"5-attempts"}` |
+
+### Alternative environments in this package
+
+- `::Quorum.Production` — `model/production.adl-binding.json` (completeness passed; digest `sha256:7512e28412ca1b6c6327f2f571b7105ff90ecd60f11a2e1320dbbfb015dd82a9`): QuorumServer → node-process, AdjudicationService → in-process-module, AdjudicationStore → sqlite-wal-volume, AwardHeld → sqlite-outbox, AwardRefused → sqlite-outbox, DecisionEscalated → sqlite-outbox, ProposalAwarded → sqlite-outbox, ProposalDeclined → sqlite-outbox, CallClosed → sqlite-outbox, CallPublished → sqlite-outbox, CallService → in-process-module, CallStore → sqlite-wal-volume, AccountErased → sqlite-outbox, AccountService → in-process-module, AccountStore → sqlite-wal-volume, OrcidVerified → sqlite-outbox, NotificationService → in-process-module, OutboundMessageStore → sqlite-wal-volume, PortfolioProjector → in-process-module, AssignmentAccepted → sqlite-outbox, AssignmentRevoked → sqlite-outbox, AssignmentService → in-process-module, CompletionLedger → sqlite-wal-volume, ConflictDeclared → sqlite-outbox, ProposalFullyReviewed → sqlite-outbox, ReviewCompletion → in-process-module, ReviewOverdue → sqlite-outbox, ReviewStore → sqlite-wal-volume, ReviewSubmitted → sqlite-outbox, ReviewerAssigned → sqlite-outbox, ReviewersAssigned → sqlite-outbox, EligibilityTriage → anthropic-messages-api, ProposalEligible → sqlite-outbox, ProposalEnteredScreening → sqlite-outbox, ProposalIneligible → sqlite-outbox, ProposalScored → sqlite-outbox, ProposalService → in-process-module, ProposalStore → sqlite-wal-volume, ProposalSubmitted → sqlite-outbox, ProposalUnderReview → sqlite-outbox, ProposalWithdrawn → sqlite-outbox, TriageProposed → sqlite-outbox
+
+Switching environments changes binding documents only. The semantic attestation above is the same for every environment; a provider or store change that needs a semantic edit is an architecture change, not a binding change.
 
 ## 5. Acceptance — how the implementation proves itself
 
@@ -1368,6 +1469,8 @@ Run the scenarios first against deterministic fakes, and only then against a met
 
 | scenario | verifies |
 |---|---|
+| `account-erasure` | `::Quorum.ResearchFunding.AccessControl.PersonalDataErasable`, `::Quorum.ResearchFunding.Identity.AccountService` |
+| `decision-escalated` | `::Quorum.ResearchFunding.PanelAdjudication.DecisionsEscalated`, `::Quorum.ResearchFunding.Adjudication.AdjudicationService`, `::Quorum.ResearchFunding.Adjudication.PanelDecision` |
 | `delivery-survives-interruption` | `::Quorum.ResearchFunding.ParticipantNotification.NotificationsDurable`, `::Quorum.ResearchFunding.Oversight.PortfolioProjector`, `::Quorum.ResearchFunding.Notification.NotificationService` |
 | `inv01-submission-window` | `::Quorum.ResearchFunding.CallAdministration.SubmissionWindow`, `::Quorum.ResearchFunding.Submission.ProposalService` |
 | `inv02-submit-once` | `::Quorum.ResearchFunding.ProposalSubmission.SubmitOnce`, `::Quorum.ResearchFunding.Submission.ProposalService` |
@@ -1395,7 +1498,7 @@ The traces in `acceptance/traces/` are the compiler's DERIVED process graph from
 
 ### The behavioural projection — `BEHAVIOUR.md`
 
-`BEHAVIOUR.md` is the same knowledge drawn for a reader: from each scenario's starting message, the trace as a tree, every Workflow it passes through expanded into its steps with the static order relation the definition establishes (which steps a transition path orders, which it leaves UNORDERED — potentially concurrent, statically, WORKFLOW-SEMANTICS §9.7 C4 — and where joins, exclusive decisions and waits synchronize), and the underspecified-causality findings: 0 along these traces. Every line says whether it is DECLARED, DERIVED or UNSPECIFIED. "Unordered" is the model's silence about order, never a scheduling claim: you choose whether unordered steps run concurrently, and you record the choice as an implementation policy, not as architecture. Each finding is a decision you would otherwise make silently — declare it (a Reaction, a correlation, a sink) or record it as a gap.
+`BEHAVIOUR.md` is the same knowledge drawn for a reader: from each scenario's starting message, the trace as a tree, every Workflow it passes through expanded into its steps with the static order relation the definition establishes (which steps a transition path orders, which it leaves UNORDERED — potentially concurrent, statically, WORKFLOW-SEMANTICS §9.7 C4 — and where joins, exclusive decisions and waits synchronize), and the underspecified-causality findings: 1 along these traces. Every line says whether it is DECLARED, DERIVED or UNSPECIFIED. "Unordered" is the model's silence about order, never a scheduling claim: you choose whether unordered steps run concurrently, and you record the choice as an implementation policy, not as architecture. Each finding is a decision you would otherwise make silently — declare it (a Reaction, a correlation, a sink) or record it as a gap.
 
 ## 6. Semantic gaps — when the architecture is silent
 
@@ -1406,7 +1509,7 @@ If implementing requires a behaviour, message, store, consumer, ordering or rule
 3. Request an architecture change: a `.adl-change` whose `base` pins this package's state —
 
 ```
-base package avlon.quorum version "package-1" state "sha256:e9c76035f0e316fe41e96df7578d2a5043f82e38f99907545af21c2ec0ec1d68"
+base package avlon.quorum version "package-1" state "sha256:434cfdc26bc0503ab8b87c0737759ea0a99fd017baed8c376ec76256cec2ef96"
 ```
 
 4. When the change is accepted, the next package is built from the applied state (`node tools/development-package.mjs build … ` with `semantic.change`), and `node tools/development-package.mjs check <package> --change <file>` proves `package.changeState == change.base.state` before any work continues.

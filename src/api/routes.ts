@@ -17,7 +17,13 @@ import * as review from '../contexts/peer-review/service.ts';
 import * as adjudication from '../contexts/adjudication/service.ts';
 import * as notification from '../contexts/notification/service.ts';
 import * as oversight from '../contexts/oversight/service.ts';
-import { CONTINUUM_MODEL } from '../contracts/model.generated.ts';
+import { CONTINUUM_MODEL, type Role } from '../contracts/model.generated.ts';
+import type { RateLimiter } from '../platform/rate-limit.ts';
+import type { BackupResult } from '../platform/backup.ts';
+import { MIGRATIONS } from '../platform/schema.ts';
+import { renderPrometheus } from '../platform/metrics.ts';
+import { alertCounts } from '../platform/alerts.ts';
+import { statSync } from 'node:fs';
 
 const Q = '::Quorum.ResearchFunding';
 const uuidParam = { type: 'object', required: ['id'], properties: { id: { type: 'string', minLength: 8, maxLength: 64 } } };
@@ -26,7 +32,17 @@ const body = (required: string[], properties: Record<string, object>) => ({ type
 
 const isStaff = (p: Principal | null) => !!p && (p.roles.includes('programOfficer') || p.roles.includes('panelChair'));
 
-export function registerRoutes(h: Http, deps: Deps, tokens: TokenService, ops: { settle: () => Promise<void>; triageRunner: TriageRunner }) {
+export type OpsHooks = {
+  settle: () => Promise<void>;
+  triageRunner: TriageRunner;
+  limiter: RateLimiter;
+  backupNow: (actorId: string, reason: string) => Promise<BackupResult>;
+  backupDir: string;
+  lastBackupAt: () => string | null;
+  dbFile: string;
+};
+
+export function registerRoutes(h: Http, deps: Deps, tokens: TokenService, ops: OpsHooks) {
   const names = (ids: string[]) => identity.accountNames(deps, ids);
 
   // ================================================================ platform
@@ -45,8 +61,21 @@ export function registerRoutes(h: Http, deps: Deps, tokens: TokenService, ops: {
   h.query(
     { method: 'POST', url: '/api/session', access: 'public', body: body(['email', 'password'], { email: str(3, 200), password: str(1, 200) }) },
     async (req) => {
+      // Sign-in throttling: failures only, per (address, email) and per address. While a window is
+      // exhausted the password is not even checked; the caller is told how long to wait.
+      const c = ops.limiter.config;
+      const idKey = `signin:${req.ip}:${String(req.body.email).trim().toLowerCase()}`;
+      const ipKey = `signin-ip:${req.ip}`;
+      const wait = Math.max(ops.limiter.blocked(idKey, c.signinPerIdentity, c.signinWindowMs), ops.limiter.blocked(ipKey, c.signinPerIp, c.signinWindowMs));
+      if (wait > 0) {
+        throw new DomainError(429, 'too_many_attempts', `Too many failed sign-in attempts. Wait ${Math.ceil(wait / 60)} minute(s) and try again.`);
+      }
       const id = identity.authenticate(deps, req.body.email, req.body.password);
-      if (!id) throw unauthenticated('That email and password do not match an account.');
+      if (!id) {
+        ops.limiter.hit(idKey, c.signinPerIdentity, c.signinWindowMs);
+        ops.limiter.hit(ipKey, c.signinPerIp, c.signinWindowMs);
+        throw unauthenticated('That email and password do not match an account.');
+      }
       const { token, expiresAt } = await tokens.issue(id);
       return { token, expiresAt, me: identity.loadPrincipal(deps, id) };
     },
@@ -350,15 +379,104 @@ export function registerRoutes(h: Http, deps: Deps, tokens: TokenService, ops: {
     };
   });
 
-  // ================================================================ Operations (recovery)
-  h.query({ method: 'GET', url: '/api/operations/health', access: ['programOfficer'] }, () => ({ delivery: deps.bus.health(), outbound: notification.outboundHealth(deps) }));
+  // ================================================================ Operations (operator role; review B5, B6)
+  const OPS: Role[] = ['operator'];
+  const opsAudit = (actorId: string, action: string, subject: string, reason: string) =>
+    deps.db.prepare(`INSERT INTO ops_action (at, actor_id, action, subject, reason) VALUES (?, ?, ?, ?, ?)`).run(deps.clock.now().toISOString(), actorId, action, subject, reason);
+  const operationalHealth = () => ({
+    delivery: deps.bus.health(),
+    outbound: notification.outboundHealth(deps),
+    backup: { dir: ops.backupDir, lastAt: ops.lastBackupAt() },
+    rateLimit: { enabled: ops.limiter.config.enabled, limited: ops.limiter.limited },
+    alerts: alertCounts(),
+  });
+  h.query({ method: 'GET', url: '/api/operations/health', access: OPS }, () => operationalHealth());
   h.command(
-    { method: 'POST', url: '/api/operations/deliveries/retry', access: ['programOfficer'], body: body(['consumer', 'messageId'], { consumer: str(3, 100), messageId: str(8, 64) }) },
-    (req, ctx) => ctx.tx(() => ({ retried: deps.bus.retry(req.body.consumer, req.body.messageId) })),
+    { method: 'POST', url: '/api/operations/deliveries/retry', access: OPS, body: body(['consumer', 'messageId'], { consumer: str(3, 100), messageId: str(8, 64), reason: str(0, 500) }) },
+    (req, ctx) =>
+      ctx.tx(() => {
+        const retried = deps.bus.retry(req.body.consumer, req.body.messageId);
+        if (retried) opsAudit(ctx.principal.accountId, 'retry-delivery', `${req.body.consumer}/${req.body.messageId}`, req.body.reason || 'retry after fixing the cause');
+        return { retried };
+      }),
   );
-  h.command({ method: 'POST', url: '/api/operations/rebuild-projections', access: ['programOfficer'] }, (_req, ctx) => {
-    ctx.tx(() => null); // log the request; the replay runs its own transaction
+  h.command(
+    { method: 'POST', url: '/api/operations/deliveries/skip', access: OPS, body: body(['consumer', 'messageId', 'reason'], { consumer: str(3, 100), messageId: str(8, 64), reason: str(10, 500) }) },
+    (req, ctx) =>
+      ctx.tx(() => {
+        const r = deps.bus.skip(req.body.consumer, req.body.messageId, req.body.reason);
+        if (r === 'forbidden') {
+          throw new DomainError(409, 'skip_forbidden', `Deliveries to ${req.body.consumer} cannot be skipped because its effects guard an invariant. Fix the cause and retry instead.`);
+        }
+        if (r === 'not_parked') throw new DomainError(409, 'not_parked', 'That delivery is not parked. Only a parked (failed) delivery can be skipped.');
+        opsAudit(ctx.principal.accountId, 'skip-delivery', `${req.body.consumer}/${req.body.messageId}`, req.body.reason);
+        return { skipped: true };
+      }),
+  );
+  h.command({ method: 'POST', url: '/api/operations/rebuild-projections', access: OPS }, (_req, ctx) => {
+    ctx.tx(() => opsAudit(ctx.principal.accountId, 'rebuild-projections', 'oversight.portfolio-projector', 'rebuild from the retained event log'));
     return { replayed: deps.bus.replay('oversight.portfolio-projector', oversight.resetProjection) };
+  });
+  h.command({ method: 'POST', url: '/api/operations/backup', access: OPS }, async (_req, ctx) => {
+    ctx.tx(() => null); // the command is logged; the backup itself runs outside the write lock
+    const r = await ops.backupNow(ctx.principal.accountId, 'on-demand backup');
+    return { file: r.file, bytes: r.bytes, sha256: r.sha256, tookMs: r.tookMs };
+  });
+  h.query({ method: 'GET', url: '/api/operations/actions', access: OPS }, () =>
+    deps.db.prepare(`SELECT seq, at, actor_id AS actorId, action, subject, reason FROM ops_action ORDER BY seq DESC LIMIT 200`).all(),
+  );
+  h.query(
+    { method: 'GET', url: '/api/operations/accounts', access: OPS, querystring: { type: 'object', additionalProperties: false, required: ['q'], properties: { q: str(2, 200) } } },
+    (req) => identity.findAccounts(deps, (req.query as { q: string }).q),
+  );
+  h.command(
+    {
+      method: 'POST',
+      url: '/api/operations/accounts/:id/erase',
+      access: OPS,
+      realizes: `${Q}.Identity.EraseAccount`,
+      params: uuidParam,
+      body: body(['reason'], { reason: str(10, 500) }),
+    },
+    (req, ctx) => ctx.tx(() => identity.eraseAccount(deps, ctx.principal.accountId, req.params.id, req.body.reason)),
+  );
+
+  // ================================================================ Monitoring (outside /api: no session, no rate limit)
+  h.query({ method: 'GET', url: '/healthz', access: 'public' }, () => ({ status: 'alive' }));
+  h.query({ method: 'GET', url: '/readyz', access: 'public' }, () => {
+    const v = deps.db.pragma('user_version', { simple: true }) as number;
+    deps.db.prepare('SELECT 1 FROM evt_outbox LIMIT 1').get();
+    if (v !== MIGRATIONS.length) throw new DomainError(503, 'not_ready', `schema version ${v}, expected ${MIGRATIONS.length}`);
+    const d = deps.bus.health();
+    return { status: 'ready', schemaVersion: v, deliveriesPending: d.pending, deliveriesParked: d.failed.length };
+  });
+  h.query({ method: 'GET', url: '/metrics', access: 'public' }, (req) => {
+    const token = process.env.QUORUM_METRICS_TOKEN;
+    const local = req.ip === '127.0.0.1' || req.ip === '::1' || req.ip === '::ffff:127.0.0.1';
+    if (token ? req.headers.authorization !== `Bearer ${token}` : !local) throw new DomainError(403, 'forbidden', 'Metrics need the QUORUM_METRICS_TOKEN bearer token.');
+    const o = operationalHealth();
+    const n = (sql: string) => (deps.db.prepare(sql).get() as { n: number }).n;
+    let dbBytes = 0;
+    for (const ext of ['', '-wal']) {
+      try {
+        dbBytes += statSync(ops.dbFile + ext).size;
+      } catch {
+        /* in-memory database, or no WAL yet */
+      }
+    }
+    const lastBackup = o.backup.lastAt ? (Date.now() - new Date(o.backup.lastAt).getTime()) / 1000 : -1;
+    return renderPrometheus([
+      { name: 'quorum_deliveries_pending', help: 'Event deliveries waiting for a consumer.', samples: [{ value: o.delivery.pending }] },
+      { name: 'quorum_deliveries_parked', help: 'Deliveries parked after repeated failure (alert when > 0).', samples: [{ value: o.delivery.failed.length }] },
+      { name: 'quorum_deliveries_skipped', help: 'Deliveries an operator skipped with a recorded reason.', samples: [{ value: o.delivery.skipped }] },
+      { name: 'quorum_delivery_oldest_pending_age_seconds', help: 'Age of the oldest undelivered event (alert when it keeps growing).', samples: [{ value: o.delivery.oldestPendingAgeSeconds }] },
+      { name: 'quorum_outbound_messages', help: 'Outbound mail by status.', samples: o.outbound.map((r) => ({ labels: { status: r.status }, value: r.n })) },
+      { name: 'quorum_decisions_escalated_open', help: 'Open adjudication cases escalated past their due date.', samples: [{ value: n(`SELECT COUNT(*) n FROM adj_case WHERE status <> 'decided' AND escalated_at IS NOT NULL`) }] },
+      { name: 'quorum_db_bytes', help: 'Database file plus WAL size.', samples: [{ value: dbBytes }] },
+      { name: 'quorum_last_backup_age_seconds', help: 'Seconds since the newest backup (-1 when none; alert above twice the interval).', samples: [{ value: Math.round(lastBackup) }] },
+      { name: 'quorum_rate_limited_total', help: 'Requests refused by the rate limiter.', type: 'counter', samples: [{ value: ops.limiter.limited }] },
+      { name: 'quorum_alerts_total', help: 'Alerts raised since start, by kind.', type: 'counter', samples: Object.entries(o.alerts).map(([k, v]) => ({ labels: { kind: k }, value: v })) },
+    ]);
   });
 
   // ================================================================ Demo controls (QUORUM_DEMO=1 only)

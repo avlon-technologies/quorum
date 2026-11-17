@@ -22,6 +22,10 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
     desc "Panel lead. The only participant who records an award or a decline, and only for a scored proposal."
     uses: ::Quorum
   }
+  actor Operator #7010cc3d-8e2b-4a7d-9378-f0c03505c936 [person] {
+    desc "Platform operator. Runs backups and restores, watches delivery health, retries or skips a failed delivery with a recorded reason, and executes account erasure. Holds no business role."
+    uses: ::Quorum
+  }
   actor FundingOperations #ac06bb54-6ba7-4467-8949-8556db840b80 [team] {
     desc "The team accountable for operating Quorum."
     owns: ::Quorum, ResearchFunding, ResearchFunding.Identity, ResearchFunding.Calls, ResearchFunding.Submission, ResearchFunding.PeerReview, ResearchFunding.Adjudication, ResearchFunding.Notification, ResearchFunding.Oversight
@@ -70,6 +74,7 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
     capability PanelAdjudication #04693827-6a72-4e25-8258-780b19c9ef5e {
       desc "The chair awards or declines a scored proposal under the call's budget envelope."
       requirement ChairDecidesScoredOnly #6e2238b1-f6a7-4d4c-a5e9-0a3f10e8840d { desc "INV-8 — Only a PanelChair may record a panel decision, and only for a proposal in scored." }
+      requirement DecisionsEscalated #e143d437-019b-45d4-8bf8-dbb4515df9d0 { desc "J7 — A chair decision still pending after 14 days notifies the program officer exactly once; nothing is decided by timeout." }
       requirement EnvelopeNeverExceeded #689c2fed-1a50-4f0a-a853-10d269b0356c { desc "INV-9 — The sum of all awarded amounts for a call may never exceed the call's budget envelope." }
     }
     capability ParticipantNotification #99d74a61-b256-4ba7-8463-14afdbad8b4d {
@@ -83,6 +88,7 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
     }
     capability AccessControl #452887a1-d219-406f-960d-8a3ab441a7aa {
       desc "Authentication and role-scoped authorization at every operation."
+      requirement PersonalDataErasable #228f0feb-662b-4bc0-9906-b454a1889083 { desc "An account's personal data can be erased on request by an operator: identifiers are pseudonymised everywhere they are held, while business records (proposals, reviews, decisions, budget) are retained under business-record retention." }
       requirement RoleScopedAuthority #32b91633-4014-4fbf-bc74-f392d2b86d61 { desc "INV-11 — An account may act only in a role it has been granted, and only on resources its role scopes it to. Deny by default." }
     }
 
@@ -102,7 +108,7 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
       realizes: ResearchFunding.AccessControl
 
       alias AccountId v1 #be4edc13-4d73-4401-ba2c-38ee98608b6d = text !identity
-      enum Role v1 #c272b062-8449-4436-8318-c39931d3c854 = applicant | reviewer | programOfficer | panelChair
+      enum Role v1 #c272b062-8449-4436-8318-c39931d3c854 = applicant | reviewer | programOfficer | panelChair | operator
       enum OrcidStatus v1 #7bac7f9d-6ec7-462f-b9d6-bd423cc8f911 = unverified | verified
       record RegistrationData v1 #2d6b4ff1-a748-4bd8-adb9-432f7b9b2771 { accountId: AccountId, email: text ~sensitive, name: text, institution: text }
       record OrcidQuery v1 #4cd09901-00d8-4ac7-99bf-95b93f35c5ba { orcidId: text }
@@ -110,6 +116,8 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
       record VerifyOrcidData v1 #5963ed5f-6029-48a0-b1b6-7b52c693b930 { accountId: AccountId, orcidId: text }
       record OrcidVerifiedData v1 #62476e75-704c-4a5d-b790-103efb2fcc8f { accountId: AccountId, orcidId: text, at: instant }
       record StandingQuery v1 #76647107-294c-4695-b2c8-1dfc65d122c1 { accountId: AccountId }
+      record EraseAccountData v1 #34a920e9-5c94-47ec-a814-9c477f36a8a6 { accountId: AccountId, reason: text }
+      record AccountErasedData v1 #b7cc47a0-70a8-448d-ae7a-8fd3d24d4dca { accountId: AccountId, at: instant }
       record ReviewerStanding v1 #5245b070-3ff7-48fe-811f-8319dbe17a36 { accountId: AccountId, isReviewer: boolean, orcid: OrcidStatus, institution: text }
 
       command RegisterApplicant #1dc73300-83ec-4613-bdb8-c5abcc33823d {
@@ -119,6 +127,16 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
       command VerifyOrcid #a94a3fb5-b144-4e4d-b39b-d34ca72d7090 {
         payload = VerifyOrcidData
         occurrence-identity = payload.accountId
+      }
+      command EraseAccount #2f772397-8fe8-4afc-bbb7-4257dfd2eaf8 {
+        desc "Operator-only. Pseudonymises the account (name, email, institution, ORCID iD), revokes its roles and redacts its personal identifiers from retained event payloads, in one transaction."
+        payload = EraseAccountData
+        occurrence-identity = payload.accountId
+      }
+      event AccountErased #99104d45-ce16-489c-876a-6aec7440cc8d {
+        desc "An account's personal data was erased. Carries no personal data; every context that holds a copy pseudonymises it."
+        payload = AccountErasedData
+        delivery[ordered; at-least-once; durable]
       }
       event OrcidVerified #dbba1645-cff7-43b2-8f44-11f5d83b6549 {
         desc "A reviewer's ORCID iD was confirmed by the registry. unverified -> verified is the only ORCID transition."
@@ -134,10 +152,10 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
       service AccountService #a4504f75-f50e-4ef5-b6e1-0737af838a6e {
         desc "Registers applicants, authenticates sign-in, loads roles per request (never trusting token claims for roles), verifies ORCID iDs through the ORCID adapter and answers reviewer-standing queries for assignment checks."
         realizes: ResearchFunding.AccessControl
-        satisfies: ResearchFunding.AccessControl.RoleScopedAuthority, ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly
+        satisfies: ResearchFunding.AccessControl.RoleScopedAuthority, ResearchFunding.AccessControl.PersonalDataErasable, ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly
         governedBy: ResearchFunding.RoleScopedAccess
-        handles: RegisterApplicant, VerifyOrcid
-        publishes: OrcidVerified
+        handles: RegisterApplicant, VerifyOrcid, EraseAccount
+        publishes: OrcidVerified, AccountErased
         writes: AccountStore
         reads: AccountStore
         invokes: ::Quorum.ORCID.OrcidPublicApi.LookupRecord
@@ -145,6 +163,8 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
         on RegisterApplicant -> none
         on VerifyOrcid -> independent OrcidVerified
           correlate OrcidVerified payload.accountId = payload.accountId
+        on EraseAccount -> independent AccountErased
+          correlate AccountErased payload.accountId = payload.accountId
         api IdentityApi #bbc9acb3-f541-44de-a98e-63fba0f2596a {
           operation GetReviewerStanding #7be131b5-34da-46e3-9f26-8191581cfd1a { in = StandingQuery out = ReviewerStanding }
         }
@@ -578,6 +598,9 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
       record DeclineRequest v1 #d7b0e0ac-729b-489a-a34f-3b86a44f3918 { proposalId: text, callId: text }
       record DeclineResult v1 #421c4a0f-bde3-4267-b1e5-56cc070e101a { recorded: boolean }
       record DecisionData v1 #693d0f89-45d6-4f50-bc7f-31ee0ba80eb8 { proposalId: text, callId: text, outcome: PanelOutcome, amount: ::Quorum.ResearchFunding.Calls.Money, actorId: text, rationale: text, at: instant }
+      record AwardRefusedData v1 #68a38bfc-d02c-477d-a1fe-876473dc8f72 { proposalId: text, callId: text, requested: ::Quorum.ResearchFunding.Calls.Money, actorId: text, at: instant }
+      record AwardHeldData v1 #fc2654ce-b2cd-42a0-a356-887bd9c904f6 { proposalId: text, reason: text, at: instant }
+      record DecisionEscalatedData v1 #4d900d0d-bad0-4d00-a993-7da1c4754148 { proposalId: text, callId: text, dueAt: instant, at: instant }
       record AdjudicationState v1 #9d491b10-51c4-43b9-82e7-60ec7e806546 { proposalId: text, callId: text, requested: ::Quorum.ResearchFunding.Calls.Money, meanScore: decimal(4,2) }
 
       event ProposalAwarded #bbb140a4-d299-411d-b669-41adfd538e45 {
@@ -586,6 +609,22 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
       }
       event ProposalDeclined #27e6ca77-3ca5-4878-9ee0-0a8680a66f8c {
         payload = DecisionData
+        delivery[ordered; at-least-once; durable]
+      }
+
+      event AwardRefused #093f47c4-475b-448c-96b2-ef9839c6bac6 {
+        desc "An award was refused because the envelope cannot fund it; nothing was committed and the case moved to reconsider (decline only)."
+        payload = AwardRefusedData
+        delivery[ordered; at-least-once; durable]
+      }
+      event AwardHeld #a0cc68d6-9d30-4a94-90aa-77f2c6d4e0ab {
+        desc "An integrity hold was placed on a scored proposal's award because a reviewer declared a conflict after scoring (ADR-005)."
+        payload = AwardHeldData
+        delivery[ordered; at-least-once; durable]
+      }
+      event DecisionEscalated #99eb042a-b630-4a2d-bc65-ecb845fd96ef {
+        desc "A chair decision passed its 14-day due date undecided; the program officer is notified. Published at most once per case; nothing is decided."
+        payload = DecisionEscalatedData
         delivery[ordered; at-least-once; durable]
       }
 
@@ -604,10 +643,11 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
       service AdjudicationService #6bbc3747-a1d4-4477-a882-1147d2ab0618 {
         desc "Opens an adjudication case on ProposalScored, keeps the budget ledger from CallPublished, places an integrity hold on ConflictDeclared after scoring, and commits awards and declines atomically."
         realizes: ResearchFunding.PanelAdjudication
-        satisfies: ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly, ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded
+        satisfies: ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly, ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded, ResearchFunding.PanelAdjudication.DecisionsEscalated
         governedBy: ResearchFunding.RoleScopedAccess, ResearchFunding.HumansDecide
         applies: EnvelopeNotExceeded, ChairOnScoredOnly
         subscribesTo: ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared
+        publishes: AwardHeld, DecisionEscalated
         writes: AdjudicationStore
         reads: AdjudicationStore
         deployedAs: ::Quorum.QuorumServer
@@ -661,6 +701,8 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
           -> ProposalAwarded payload = DecisionData{ proposalId: proposalId, callId: callId, outcome: PanelOutcome "award", amount: requested, actorId: match verdict { none -> ""; some v -> v.actorId }, rationale: match verdict { none -> ""; some v -> v.rationale }, at: match verdict { none -> instant "1970-01-01T00:00:00Z"; some v -> v.at } }
         publish declined #8aca3ec4-977b-4900-8bf9-b0249a2ba15d
           -> ProposalDeclined payload = DecisionData{ proposalId: proposalId, callId: callId, outcome: PanelOutcome "decline", amount: decimal(14,2) 0.00, actorId: match verdict { none -> ""; some v -> v.actorId }, rationale: match verdict { none -> ""; some v -> v.rationale }, at: match verdict { none -> instant "1970-01-01T00:00:00Z"; some v -> v.at } }
+        publish refused #eda9bb11-eeb6-41ff-a631-b66d4700ba13
+          -> AwardRefused payload = AwardRefusedData{ proposalId: proposalId, callId: callId, requested: requested, actorId: match verdict { none -> ""; some v -> v.actorId }, at: match verdict { none -> instant "1970-01-01T00:00:00Z"; some v -> v.at } }
         publish declinedRefused #d781b736-ed42-4944-b2cb-80e4e47ae0ba
           -> ProposalDeclined payload = DecisionData{ proposalId: proposalId, callId: callId, outcome: PanelOutcome "decline", amount: decimal(14,2) 0.00, actorId: match acknowledgement { none -> ""; some a -> a.actorId }, rationale: match acknowledgement { none -> ""; some a -> a.rationale }, at: match acknowledgement { none -> instant "1970-01-01T00:00:00Z"; some a -> a.at } }
         transition T1 #270a385d-9900-4c6a-a7d5-de23f19ceee3 : decide -> isAward
@@ -668,10 +710,11 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
         transition T3 #daa6b890-607c-472e-b7dd-995ea5a1f340 : isAward -> decline default
         transition T4 #e1e00bd4-ea71-46a5-811d-3931491f9159 : commit -> committed
         transition T5 #474c8758-c53a-4b44-9018-2156a714e016 : committed -> awarded when result
-        transition T6 #0a2099af-f571-4d97-ba7e-8fdb7abd6ea5 : committed -> reconsider default
+        transition T6 #0a2099af-f571-4d97-ba7e-8fdb7abd6ea5 : committed -> refused default
         transition T7 #40896bdd-754c-4ac0-8c2a-5cac51f0ab45 : reconsider -> declineRefused
         transition T8 #0ac5f6d3-e70a-4b70-9e91-57604c3968be : decline -> declined
         transition T9 #5e1ab870-8cf4-401e-a099-87baf5295b60 : declineRefused -> declinedRefused
+        transition T10 #7dd9b00f-f722-4238-82bc-3872539cf3bc : refused -> reconsider
       }
     }
 
@@ -695,7 +738,7 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
         satisfies: ResearchFunding.ParticipantNotification.NotificationsDurable
         governedBy: ResearchFunding.BlindReview
         applies: NoScoresToReviewers
-        subscribesTo: ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.TriageProposed, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined
+        subscribesTo: ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.TriageProposed, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined, ::Quorum.ResearchFunding.Adjudication.AwardRefused, ::Quorum.ResearchFunding.Adjudication.AwardHeld, ::Quorum.ResearchFunding.Adjudication.DecisionEscalated, ::Quorum.ResearchFunding.Identity.AccountErased
         writes: OutboundMessageStore
         reads: OutboundMessageStore
         deployedAs: ::Quorum.QuorumServer
@@ -709,6 +752,10 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
         on ::Quorum.ResearchFunding.Submission.ProposalScored -> none
         on ::Quorum.ResearchFunding.Adjudication.ProposalAwarded -> none
         on ::Quorum.ResearchFunding.Adjudication.ProposalDeclined -> none
+        on ::Quorum.ResearchFunding.Adjudication.AwardRefused -> none
+        on ::Quorum.ResearchFunding.Adjudication.AwardHeld -> none
+        on ::Quorum.ResearchFunding.Adjudication.DecisionEscalated -> none
+        on ::Quorum.ResearchFunding.Identity.AccountErased -> none
       }
     }
 
@@ -730,7 +777,7 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
       }
       read-model AuditTrail #c8574ef8-71b4-43a9-8a81-8d9082519489 {
         desc "The audit trail: every transition of every call, account, proposal and assignment, with actor, timestamp and reason. Filtered per proposal it is the proposal timeline."
-        projectsFrom: ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.Calls.CallClosed, ::Quorum.ResearchFunding.Identity.OrcidVerified, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening, ::Quorum.ResearchFunding.Submission.TriageProposed, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalUnderReview, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed, ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined
+        projectsFrom: ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.Calls.CallClosed, ::Quorum.ResearchFunding.Identity.OrcidVerified, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening, ::Quorum.ResearchFunding.Submission.TriageProposed, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalUnderReview, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed, ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined, ::Quorum.ResearchFunding.Adjudication.AwardRefused, ::Quorum.ResearchFunding.Adjudication.AwardHeld, ::Quorum.ResearchFunding.Adjudication.DecisionEscalated, ::Quorum.ResearchFunding.Identity.AccountErased
       }
 
       service PortfolioProjector #b65240e8-b01b-461c-8bb2-fc09d15f4bda {
@@ -740,7 +787,7 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
         governedBy: ResearchFunding.BlindReview, ResearchFunding.RoleScopedAccess
         projects: Portfolio, AuditTrail
         reads: Portfolio, AuditTrail
-        subscribesTo: ::Quorum.ResearchFunding.Identity.OrcidVerified, ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.Calls.CallClosed, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening, ::Quorum.ResearchFunding.Submission.TriageProposed, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalUnderReview, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed, ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined
+        subscribesTo: ::Quorum.ResearchFunding.Identity.OrcidVerified, ::Quorum.ResearchFunding.Calls.CallPublished, ::Quorum.ResearchFunding.Calls.CallClosed, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening, ::Quorum.ResearchFunding.Submission.TriageProposed, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalUnderReview, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned, ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted, ::Quorum.ResearchFunding.PeerReview.ReviewOverdue, ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed, ::Quorum.ResearchFunding.Adjudication.ProposalAwarded, ::Quorum.ResearchFunding.Adjudication.ProposalDeclined, ::Quorum.ResearchFunding.Adjudication.AwardRefused, ::Quorum.ResearchFunding.Adjudication.AwardHeld, ::Quorum.ResearchFunding.Adjudication.DecisionEscalated, ::Quorum.ResearchFunding.Identity.AccountErased
         on ::Quorum.ResearchFunding.Identity.OrcidVerified -> none
         on ::Quorum.ResearchFunding.Calls.CallPublished -> none
         on ::Quorum.ResearchFunding.Calls.CallClosed -> none
@@ -761,6 +808,10 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
         on ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed -> none
         on ::Quorum.ResearchFunding.Adjudication.ProposalAwarded -> none
         on ::Quorum.ResearchFunding.Adjudication.ProposalDeclined -> none
+        on ::Quorum.ResearchFunding.Adjudication.AwardRefused -> none
+        on ::Quorum.ResearchFunding.Adjudication.AwardHeld -> none
+        on ::Quorum.ResearchFunding.Adjudication.DecisionEscalated -> none
+        on ::Quorum.ResearchFunding.Identity.AccountErased -> none
         deployedAs: ::Quorum.QuorumServer
         api PortfolioApi #0d49966f-d5ad-4787-b503-692397ef423f {
           operation GetPortfolio #9b98310e-a0c5-4467-bb4e-4d89a8bf8f8d { in = PortfolioQuery out = PortfolioView }
@@ -776,6 +827,10 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
   }
   environment LocalDevelopment #ea2208e8-034a-4de7-9068-731ab6b7af9e {
     desc "One machine, no paid infrastructure: a SQLite file, a stub ORCID registry, a stub triage provider and a stub mail transport."
+  }
+
+  environment Production #4f05850c-889e-44c5-8901-e94883ccba41 {
+    desc "One funding body's single-instance deployment: one QuorumServer process on a persistent volume holding the SQLite file (WAL), with scheduled online backups, the real ORCID public API, a hosted triage model provider and an SMTP relay. Secrets come from the environment."
   }
 
   // ---------------------------------------------------------------- verification (one per invariant)
@@ -838,6 +893,14 @@ system Quorum #88e48015-97bf-4375-b558-fb8ba04e97fe {
   test PortfolioJourney #94be2458-22f4-4e3d-b88b-cd99824a263f {
     desc "J1–J8 end to end through the HTTP API and the browser: publication to award, then the portfolio shows the outcome and remaining envelope, and the timeline shows every transition."
     verifies: ResearchFunding.PortfolioReporting.PortfolioFromProjection, ResearchFunding.PortfolioReporting.TransitionsAudited, ResearchFunding.Oversight.PortfolioProjector
+  }
+  test DecisionEscalation #6394e5b2-23df-4d9a-b850-713b4f97351e {
+    desc "J7: a decision pending past its due date publishes DecisionEscalated exactly once and notifies the program officers; it is never decided."
+    verifies: ResearchFunding.PanelAdjudication.DecisionsEscalated, ResearchFunding.Adjudication.AdjudicationService
+  }
+  test AccountErasure #14a9024b-2b10-434d-88a3-bfa11ee7bc7b {
+    desc "An operator erases an account: no personal identifier remains in accounts, notifications, projections or event payloads; business records remain."
+    verifies: ResearchFunding.AccessControl.PersonalDataErasable, ResearchFunding.Identity.AccountService
   }
 }
 }

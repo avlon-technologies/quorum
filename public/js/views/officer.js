@@ -53,7 +53,7 @@ export async function queue(el, { onClock } = {}) {
           ? h('ul', { class: 'queue' }, ws.decisionsOverdue.map((c) => h('li', null, h('div', null, h('span', { class: 'q-title' }, c.title), h('div', { class: 'q-meta' }, h('span', null, `Mean ${c.meanScore.toFixed(2)}`), h('span', { class: 'pill bad' }, `Due ${date(c.decisionDue)}`))), h('a', { class: 'btn btn-sm', href: `#/officer/proposals/${c.proposalId}` }, 'View'))))
           : empty('check', 'No overdue decisions', null),
       ),
-      section('q-health', 'System health', null, 'Background processing: events, notifications.', healthPanel(ws, () => queue(el, { onClock }))),
+      section('q-health', 'System health', null, 'Background processing: events, notifications.', healthPanel(ws)),
       health.demo ? demoClock(el, onClock) : null,
     );
   });
@@ -65,34 +65,14 @@ const section = (id, title, count, sub, body) =>
 const queueItem = (p, meta, action) =>
   h('li', null, h('div', null, h('a', { class: 'q-title', href: `#/officer/proposals/${p.id}` }, p.title), h('div', { class: 'q-meta' }, h('span', { class: 'mono' }, p.reference), ...meta)), h('a', { class: 'btn btn-primary btn-sm', href: `#/officer/proposals/${p.id}` }, action));
 
-function healthPanel(ws, reload) {
+function healthPanel(ws) {
   const failed = ws.delivery.failed ?? [];
   const out = Object.fromEntries((ws.outbound ?? []).map((r) => [r.status, r.n]));
   return h(
     'div',
     { class: 'card-body' },
     h('dl', { class: 'facts' }, h('dt', null, 'Events waiting'), h('dd', null, String(ws.delivery.pending)), h('dt', null, 'Failed deliveries'), h('dd', null, String(failed.length)), h('dt', null, 'Emails'), h('dd', null, `${out.delivered ?? 0} sent · ${out.queued ?? 0} queued · ${out.failed ?? 0} failed`)),
-    failed.length
-      ? h(
-          'ul',
-          { class: 'queue', style: 'margin-top:10px' },
-          failed.map((f) => {
-            const btn = h('button', { class: 'btn btn-sm', type: 'button' }, 'Retry');
-            btn.addEventListener('click', async () => {
-              btn.disabled = true;
-              try {
-                await post('/api/operations/deliveries/retry', { consumer: f.consumer, messageId: f.messageId });
-                toast('Retry scheduled.');
-                setTimeout(reload, 800);
-              } catch (e) {
-                btn.disabled = false;
-                toast(e.message, 'bad');
-              }
-            });
-            return h('li', null, h('div', null, h('span', { class: 'q-title' }, `${f.type} → ${f.consumer}`), h('div', { class: 'q-meta' }, h('span', null, `${f.attempts} attempts`), h('span', { class: 'mono' }, f.lastError ?? ''))), btn);
-          }),
-        )
-      : null,
+    failed.length ? alertBox('warn', `${failed.length === 1 ? 'A delivery is' : `${failed.length} deliveries are`} parked`, h('p', null, 'The platform operator has been alerted and will retry it once the cause is fixed. Work on the affected proposal may lag until then.')) : null,
   );
 }
 

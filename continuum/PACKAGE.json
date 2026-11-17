@@ -10,8 +10,8 @@
     "package": "avlon.quorum",
     "version": "package-1",
     "core": "adl/1.7",
-    "attestation": "sha256:f75646711920628a45e67531ba5fdee8eb85c2efeeea8068ecf268664cee4c12",
-    "changeState": "sha256:e9c76035f0e316fe41e96df7578d2a5043f82e38f99907545af21c2ec0ec1d68",
+    "attestation": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59",
+    "changeState": "sha256:434cfdc26bc0503ab8b87c0737759ea0a99fd017baed8c376ec76256cec2ef96",
     "manifest": "model/quorum.adl-manifest.json",
     "documents": [
       "model/quorum.adl"
@@ -26,29 +26,39 @@
     "name": "LocalDevelopment",
     "id": "ea2208e8-034a-4de7-9068-731ab6b7af9e",
     "document": "model/local-development.adl-binding.json",
-    "bindingDigest": "sha256:0a1a92c1647024f56962e6d2f61b4c0b577285d1ec0865678b84887e59997de3"
+    "bindingDigest": "sha256:42d9f8be695063b0f2884a85a4936638a497aa87adc8d4d503c65ef498caf08b"
   },
   "environments": [
     {
       "name": "LocalDevelopment",
       "id": "ea2208e8-034a-4de7-9068-731ab6b7af9e",
       "document": "model/local-development.adl-binding.json",
-      "bindingDigest": "sha256:0a1a92c1647024f56962e6d2f61b4c0b577285d1ec0865678b84887e59997de3"
+      "bindingDigest": "sha256:42d9f8be695063b0f2884a85a4936638a497aa87adc8d4d503c65ef498caf08b"
+    },
+    {
+      "name": "Production",
+      "id": "4f05850c-889e-44c5-8901-e94883ccba41",
+      "document": "model/production.adl-binding.json",
+      "bindingDigest": "sha256:7512e28412ca1b6c6327f2f571b7105ff90ecd60f11a2e1320dbbfb015dd82a9"
     }
   ],
   "bindings": [
-    "model/local-development.adl-binding.json"
+    "model/local-development.adl-binding.json",
+    "model/production.adl-binding.json"
   ],
   "vocabularies": [
-    "model/avlon.quorum.bindings.localdevelopment.vocabulary-claims.json"
+    "model/avlon.quorum.bindings.localdevelopment.vocabulary-claims.json",
+    "model/avlon.quorum.bindings.production.vocabulary-claims.json"
   ],
   "acceptance": {
     "scenarios": "acceptance/scenarios",
     "runner": "acceptance/run.mjs",
     "fakeProvider": "acceptance/fake-model-provider.mjs",
     "adapter": "acceptance/adapter.mjs",
-    "count": 15,
+    "count": 17,
     "names": [
+      "account-erasure",
+      "decision-escalated",
       "delivery-survives-interruption",
       "inv01-submission-window",
       "inv02-submit-once",
@@ -78,7 +88,7 @@
   "behaviour": {
     "document": "BEHAVIOUR.md",
     "starts": 3,
-    "underspecified": 0
+    "underspecified": 1
   },
   "readme": "README.md",
   "controls": [],
@@ -96,14 +106,16 @@
     "model/quorum.adl.txt"
   ],
   "files": {
-    "BEHAVIOUR.md": "sha256:95830b40d498353cedbff4b2313619ad1863cb9c6fbc0a8f2a25c8a3425e617f",
+    "BEHAVIOUR.md": "sha256:93ac1c33bed25aec220080ad8085ba67185d9a041ae5d296675ce7b17f336f88",
     "GOAL.md": "sha256:77e4ffb5e343f13bb8550b900316c313037b032f96db2689f405d273ba234124",
-    "IMPLEMENTATION.md": "sha256:3584787fa3838a164c4a9bc901d0e7f35fc38ebbf9c09e0ad65bfa8d97e1753d",
-    "README.md": "sha256:2b30bd374385ebd68e0e489592521792985065eaeaf9766e81fb58f416d06f05",
-    "acceptance/README.md": "sha256:0318c90c3fc8453105661abc83d48d6fb2c9b64de28991954245092153ce0d1c",
-    "acceptance/adapter.mjs": "sha256:50587251e11b507ee906321d99c100cf5bf1dd8cb0625fdbc8f94471bc8de9e2",
+    "IMPLEMENTATION.md": "sha256:656c0ca0059819a0044a7d185ab9081a7683798f2f6fe3fd5f68b33f70603af7",
+    "README.md": "sha256:9e526f2b1f1672f382669ae861d49581e0a6210096455e2ac8b37f5fb288afa2",
+    "acceptance/README.md": "sha256:2c215e065629059c00064b10a01c1ad750e08248522f266ed063bc101a28eb1c",
+    "acceptance/adapter.mjs": "sha256:d9367e5fcb9a034fb08c0351d3b05e4b66821f5f2ad2396706fca0b464998095",
     "acceptance/fake-model-provider.mjs": "sha256:d2ec0ce524ca996865beef2c339c205deb9d7ad2610a1e7ff72a1b7732781b69",
     "acceptance/run.mjs": "sha256:447dac8db77b8e1d93382e778b52ebd4fead29f0ef62b05e3a924717dea01370",
+    "acceptance/scenarios/account-erasure.scenario.json": "sha256:204d58e620083a556ea08dbb7402269cff8963c9b4fc09a24d1acda0e2ee27de",
+    "acceptance/scenarios/decision-escalated.scenario.json": "sha256:b2fd61f26199f88a5aa950d4aba91b6658dc5eda81da313285aebecf91a50d4f",
     "acceptance/scenarios/delivery-survives-interruption.scenario.json": "sha256:fc2b29c8774d83bb351388756be9fff266a0fc0b99242806d649973fd222f700",
     "acceptance/scenarios/inv01-submission-window.scenario.json": "sha256:cad1e510788a6c4bcc7e35eab36bac6c516afe1a28caa77b8ba9e09d9a46f8a5",
     "acceptance/scenarios/inv02-submit-once.scenario.json": "sha256:d5522cb217318b4eb91496ed501f726c9fb307cd3dd5f7e15da5658dc5f0c1f6",
@@ -121,14 +133,16 @@
     "acceptance/scenarios/portfolio-from-projection.scenario.json": "sha256:4b8c01b8be3460a90df76e83382b8db0ebf9e492d3e59ad1877cc8d151910ddd",
     "acceptance/traces/inv01-submission-window.trace.json": "sha256:5478fc0f6d5480d2302021d4d5e4e637c3b33268a95bdc8c8c50f9cd8747ab3a",
     "acceptance/traces/inv03-no-conflicted-assignment.trace.json": "sha256:f4a3c5bff3927eb6880663fb1aa2bcb75674c11626cbd9409d6e5e72a7c8165c",
-    "acceptance/traces/inv05-three-reviews.trace.json": "sha256:60e55accbf783a34e76ccec875629d290938ca29e5c7f8d9f3c1f866cf640e3b",
+    "acceptance/traces/inv05-three-reviews.trace.json": "sha256:a708ba817aa6048799cb17b0a37339263e42246d1610383487bd4a1f2a738f17",
     "development-package.json": "sha256:150520ff1f543292bb79ba86967237de002a5ce643bb1ab3a31f00670a9fd5bb",
     "model/avlon.quorum.bindings.localdevelopment.vocabulary-claims.json": "sha256:e9832dfbf287713f1638ee130909ffd27a906cda379684fdefadd2db375e56d8",
-    "model/compile-proof.json": "sha256:c006d7a2075225c6c6ac29b52f8f8f263e767b4e21d6eda1d91e98d776ea4da6",
-    "model/local-development.adl-binding.json": "sha256:e01b94f93701180dc5661550d01363b3f8aec5474ce9ca8886c0fde902967ab9",
-    "model/quorum.adl": "sha256:98b7dee3b5b20dc1e1a818d416044d1b870932af00ae7937470d81f22530cbfe",
+    "model/avlon.quorum.bindings.production.vocabulary-claims.json": "sha256:72e3982d2faca6d37179f736986c56d10dfb4514c820d47db885988e9bd6c473",
+    "model/compile-proof.json": "sha256:83a94377972757feabaf16d45b778df477e4cddc4953a9866202c605aba17d58",
+    "model/local-development.adl-binding.json": "sha256:c61b5120f4fd8b8b78123800c6f4b5f0c83f6edce00865fee54c46ecf6cad9ad",
+    "model/production.adl-binding.json": "sha256:01564680dca2110b25ca300517fc771beb0ce37f69edd43ed37a872fdf7fedbb",
+    "model/quorum.adl": "sha256:e5636b188dde9c8ad27cda44e218ac6f17185a091ace0bbb6138369a03db3059",
     "model/quorum.adl-manifest.json": "sha256:3f2a36aa8e8d55725592b8c9ddcfd4bfcdf1728a41e92ea271f9fff3b8016711",
-    "model/quorum.adl.txt": "sha256:6a74c359a775919ca48bdfc8b135a8e732fb89b90e4feec3284242ff8e7f65de",
+    "model/quorum.adl.txt": "sha256:e7b2ecc24926ce12294b8918aa3b1c72e1ce1c47a29c48e708e0f59b0aceff58",
     "model/quorum.bdl": "sha256:f9a002ebb1ffbb1bbc3962204cd717a57cc6048ddd67b45443b152e8f0cd79cc"
   }
 }

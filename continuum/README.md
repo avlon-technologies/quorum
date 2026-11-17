@@ -31,10 +31,10 @@ The implementation realizes all of the above — and is not in this package.
 | | |
 |---|---|
 | semantic package | `avlon.quorum` `package-1` (`adl/1.7`) |
-| attestation | `sha256:f75646711920628a45e67531ba5fdee8eb85c2efeeea8068ecf268664cee4c12` |
-| changeState | `sha256:e9c76035f0e316fe41e96df7578d2a5043f82e38f99907545af21c2ec0ec1d68` |
-| environment | `LocalDevelopment` |
-| scenarios | 15, resolved against the model; execute them with `package run` (adapter `acceptance/adapter.mjs`) |
+| attestation | `sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59` |
+| changeState | `sha256:434cfdc26bc0503ab8b87c0737759ea0a99fd017baed8c376ec76256cec2ef96` |
+| environment | `LocalDevelopment` (also bound: `Production`) |
+| scenarios | 17, resolved against the model; execute them with `package run` (adapter `acceptance/adapter.mjs`) |
 | compiler warnings | 1 |
 
 Start with `GOAL.md`, then `IMPLEMENTATION.md`. Verify the package before trusting it:

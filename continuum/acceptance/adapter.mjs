@@ -227,7 +227,7 @@ export function createAdapter() {
       'projection.replays.identically': async (ctx) => {
         const { h, w } = ctx.state;
         const before = JSON.stringify(projection(h));
-        const r = await h.post('/api/operations/rebuild-projections', w.officer, {});
+        const r = await h.post('/api/operations/rebuild-projections', w.operator, {});
         expectEq(r.status, 200, 'rebuild');
         await h.settle();
         if (JSON.stringify(projection(h)) !== before) fail('the replayed projection differs from the live one');
@@ -242,6 +242,36 @@ export function createAdapter() {
         expectEq(p?.status, status, 'portfolio status');
         expectEq(call.committedMinor, committed * 100, 'portfolio committed');
       },
+      'notification.sent': async (ctx, { kind, recipient, count }) => {
+        const n = ctx.state.h.one(`SELECT COUNT(*) n FROM ntf_message WHERE kind = ? AND recipient = ?`, kind, recipient).n;
+        expectEq(n, count, `${kind} notifications to ${recipient}`);
+      },
+      'case.status': async (ctx, { proposal, status }) =>
+        expectEq(ctx.state.h.one(`SELECT status FROM adj_case WHERE proposal_id = ?`, pid(ctx, proposal)).status, status, `${proposal} adjudication case status`),
+      'account.erased': async (ctx, { account, reason }) => {
+        const { h, w } = ctx.state;
+        const u = who(ctx, account);
+        ctx.state.erased = { ...u };
+        ctx.state.last = await h.post(`/api/operations/accounts/${u.id}/erase`, w.operator, { reason });
+        if (ctx.state.last.status !== 200) fail('erasing the account', ctx.state.last);
+        await h.settle();
+      },
+      'personal.data.absent': async (ctx) => {
+        const { h } = ctx.state;
+        const u = ctx.state.erased ?? fail('no account was erased');
+        const probes = {
+          idn_account: `SELECT COUNT(*) n FROM idn_account WHERE name = ?1 OR email = ?1`,
+          evt_outbox: `SELECT COUNT(*) n FROM evt_outbox WHERE instr(payload, ?1) > 0`,
+          ntf_message: `SELECT COUNT(*) n FROM ntf_message WHERE instr(body, ?1) > 0 OR instr(subject, ?1) > 0`,
+          ovs_proposal: `SELECT COUNT(*) n FROM ovs_proposal WHERE instr(applicant_name, ?1) > 0`,
+          ovs_audit: `SELECT COUNT(*) n FROM ovs_audit WHERE instr(summary, ?1) > 0`,
+          cmd_log: `SELECT COUNT(*) n FROM cmd_log WHERE instr(response, ?1) > 0`,
+        };
+        const leaks = [];
+        for (const v of [u.name, u.email]) for (const [t, sql] of Object.entries(probes)) if (h.one(sql.replaceAll('?1', '?'), ...Array((sql.match(/\?1/g) ?? []).length).fill(v)).n > 0) leaks.push(`${t}`);
+        if (leaks.length) fail('personal data still present', leaks);
+      },
+      'proposal.retained': async (ctx, { proposal, status }) => expectEq(ctx.state.h.status(pid(ctx, proposal)), status, `${proposal} kept as a business record`),
       'timeline.has': async (ctx, { proposal, events }) => {
         const { h, w } = ctx.state;
         const r = await h.get(`/api/proposals/${pid(ctx, proposal)}/timeline`, w.officer);

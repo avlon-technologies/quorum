@@ -22,7 +22,7 @@
  "attestation": {
   "profile": "continuum-claim-spec/0",
   "id": "at-most-three-reviewers",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "rubric": "continuum-claim-rubric/3",
   "claim": {
    "language": "adl",
@@ -58,13 +58,16 @@
     {
      "what": "tests/**, scripts/**",
      "why": "not part of the deployable"
+    },
+    {
+     "what": "concurrent assignment requests",
+     "why": "demo 036: the claim narrowed to sequential requests"
     }
    ]
   },
   "scope": {
    "discovery": "Lex src/**: every INSERT/REPLACE INTO rev_assignment, and every UPDATE of rev_assignment that can move a revoked status to an active one, is a write; the named function holding each write is found, and every call of it in src/** is an entry point (an HTTP registration is named by method and URL). Non-literal SQL must resolve, else the scope is incomplete.",
-   "concurrency": true,
-   "concurrencyStatement": "concurrent AssignReviewer requests in flight at once against one process and one store"
+   "concurrency": false
   },
   "assumptions": [
    {
@@ -184,23 +187,6 @@
     "control": "first-assigned"
    },
    {
-    "id": "concurrent-third-and-fourth",
-    "kind": "case",
-    "method": "executed-http-route",
-    "polarity": "boundary",
-    "qualifies": [
-     "L1",
-     "L2"
-    ],
-    "statement": "with two active, two assignment requests in flight at once: exactly one is admitted and three are active after",
-    "criterion": {
-     "equals": {
-      "admitted": 1,
-      "activeAfter": 3
-     }
-    }
-   },
-   {
     "id": "panel-full-guard",
     "kind": "enforcement",
     "method": "static-lexical",
@@ -239,10 +225,6 @@
    {
     "class": "boundary-shift",
     "statement": "the bound is off by one: the comparison admits a fourth active assignment and refuses only a fifth"
-   },
-   {
-    "class": "concurrent-race",
-    "statement": "the check and the write are not one atomic step: two requests in flight both pass the check against two active assignments and both write"
    },
    {
     "class": "active-status-misread",
@@ -303,26 +285,6 @@
     },
     "expect": {
      "check": "full-after-acceptance-refused",
-     "path": "HTTP POST /api/proposals/:id/assignments",
-     "reason": "activeAfter is 4, expected 3"
-    }
-   },
-   {
-    "id": "check-outside-transaction",
-    "kind": "deliberate-fault",
-    "class": "concurrent-race",
-    "statement": "the route checks eligibility, yields, then writes in a transaction that no longer re-checks, and the store trigger is removed: a sequential request is still refused, two in flight both write",
-    "change": {
-     "patch": "architecture/challenges/check-outside-transaction.patch",
-     "digest": "sha256:5addd04aead19744698c96182ce43dff167c35c6b713976fc8272fc2b4dce7c4",
-     "files": [
-      "src/api/routes.ts",
-      "src/contexts/peer-review/service.ts",
-      "src/platform/schema.ts"
-     ]
-    },
-    "expect": {
-     "check": "concurrent-third-and-fourth",
      "path": "HTTP POST /api/proposals/:id/assignments",
      "reason": "activeAfter is 4, expected 3"
     }

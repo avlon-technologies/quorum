@@ -22,7 +22,7 @@
  "attestation": {
   "profile": "continuum-claim-spec/0",
   "id": "reviewstore-writers",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "claim": {
    "language": "adl",
    "kind": "resource-writers",
@@ -96,7 +96,7 @@
   "scope": {
    "discovery": "Lex every module under src/; every INSERT / REPLACE / UPDATE … SET / DELETE FROM in a string or template literal is a write site; its table is resolved to a store through continuum/evidence.json (each Resource's schema.ts citation range holds the tables created in it); a site is in scope when its table belongs to ReviewStore. Every non-literal SQL argument and every file/handle mechanism must be resolved or excluded above, else the scope is incomplete.",
    "conventionPrefix": "rev_",
-   "concurrency": false
+   "concurrency": true
   },
   "assumptions": [
    {

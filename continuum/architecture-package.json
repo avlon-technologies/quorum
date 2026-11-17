@@ -1,0 +1,15 @@
+{
+ "profile": "continuum-architecture-package/1",
+ "name": "avlon.quorum",
+ "model": "continuum/model/quorum.adl-manifest.json",
+ "business": "continuum/model/quorum.bdl",
+ "bindings": [
+  "continuum/model/local-development.adl-binding.json",
+  "continuum/model/production.adl-binding.json"
+ ],
+ "evidence": "continuum/evidence.json",
+ "intent": "architecture",
+ "decisions": "continuum/decisions.jsonl",
+ "adrs": null,
+ "governance": []
+}

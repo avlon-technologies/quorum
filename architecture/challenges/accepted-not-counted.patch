@@ -1,0 +1,26 @@
+diff --git a/src/contexts/peer-review/service.ts b/src/contexts/peer-review/service.ts
+index 05e1d46..4df6b62 100644
+--- a/src/contexts/peer-review/service.ts
++++ b/src/contexts/peer-review/service.ts
+@@ -46,7 +46,7 @@ export { REVIEWERS_PER_PROPOSAL };
+ const getAssignment = (deps: Deps, id: string) => deps.db.prepare(`SELECT * FROM rev_assignment WHERE id = ?`).get(id) as AssignmentRow | undefined;
+ const getCase = (deps: Deps, proposalId: string) => deps.db.prepare(`SELECT * FROM rev_case WHERE proposal_id = ?`).get(proposalId) as CaseRow | undefined;
+ const activeAssignments = (deps: Deps, proposalId: string) =>
+-  deps.db.prepare(`SELECT * FROM rev_assignment WHERE proposal_id = ? AND status <> 'revoked' ORDER BY assigned_at`).all(proposalId) as AssignmentRow[];
++  deps.db.prepare(`SELECT * FROM rev_assignment WHERE proposal_id = ? AND status = 'assigned' ORDER BY assigned_at`).all(proposalId) as AssignmentRow[];
+ 
+ export function assignmentPayload(deps: Deps, a: AssignmentRow, actorId: string, reason: string): AssignmentData {
+   return { assignmentId: a.id, proposalId: a.proposal_id, reviewerId: a.reviewer_id, dueAt: a.due_at, actorId, reason, at: deps.clock.now().toISOString() };
+diff --git a/src/platform/schema.ts b/src/platform/schema.ts
+index f5cd0d7..c17a483 100644
+--- a/src/platform/schema.ts
++++ b/src/platform/schema.ts
+@@ -369,7 +369,7 @@ export const MIGRATIONS: string[] = [
+   -- enforced by the database itself rather than by the service check plus SQLite's single writer
+   CREATE TRIGGER rev_assignment_at_most_three BEFORE INSERT ON rev_assignment
+   WHEN NEW.status <> 'revoked'
+-   AND (SELECT COUNT(*) FROM rev_assignment a WHERE a.proposal_id = NEW.proposal_id AND a.status <> 'revoked') >= 3
++   AND (SELECT COUNT(*) FROM rev_assignment a WHERE a.proposal_id = NEW.proposal_id AND a.status = 'assigned') >= 3
+   BEGIN SELECT RAISE(ABORT, 'INV-5: this proposal already has three active reviewers'); END;
+   CREATE TRIGGER rev_assignment_at_most_three_u BEFORE UPDATE OF status ON rev_assignment
+   WHEN OLD.status = 'revoked' AND NEW.status <> 'revoked'

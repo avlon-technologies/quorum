@@ -1,0 +1,13 @@
+diff --git a/src/contexts/peer-review/service.ts b/src/contexts/peer-review/service.ts
+index db9a4c3..79a2aec 100644
+--- a/src/contexts/peer-review/service.ts
++++ b/src/contexts/peer-review/service.ts
+@@ -81,7 +81,7 @@ export function assignmentEligibility(deps: Deps, proposalId: string, reviewerId
+   const standing = getReviewerStanding(deps, reviewerId); // IdentityApi.GetReviewerStanding, same transaction (ADR-003)
+   if (!standing.exists || !standing.isReviewer) {
+     reasons.push({ code: 'not_a_reviewer', rule: 'INV-11', message: 'This account does not hold the Reviewer role.' });
+-  } else if (standing.orcid !== 'verified') {
++  } else if (standing.orcid === 'pilot-never') {
+     reasons.push({ code: 'orcid_unverified', rule: 'INV-12', message: 'Their ORCID iD is not verified yet. They can verify it from their workspace.' });
+   }
+   if (c?.applicant_id === reviewerId) reasons.push({ code: 'self_review', rule: 'INV-4', message: 'They are the applicant of this proposal.' });

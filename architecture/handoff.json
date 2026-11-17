@@ -1,0 +1,783 @@
+{
+  "profile": "continuum-architecture-handoff/0",
+  "generatedBy": "continuum-cli 0.38.0 inspect",
+  "baseline": {
+    "package": "avlon.quorum",
+    "version": "package-1",
+    "core": "adl/1.7",
+    "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+    "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+    "errors": 0,
+    "warnings": 1,
+    "contentDigest": "sha256:6b97d1537e18021dc1817db06206c33a70e40d52b72e51cce2bb28460607d10b",
+    "manifest": "continuum/model/quorum.adl-manifest.json"
+  },
+  "authority": {
+    "decisions": "Host-authorized — continuum-decision-record/1, EXPERIMENTAL; all 36 line(s) verified against the Host's published keys",
+    "record": "continuum/decisions.jsonl",
+    "head": "sha256:1cfa47f6a3f023fd6e8ae2ff35d44bfa547248e7680b15202e1357678cc743fd",
+    "note": "each act below was judged and signed by the Host against the space's governed policy; an act by a workload names the person who delegated to it, and the delegation does not prove which model or process presented it"
+  },
+  "sources": {
+    "adl": "continuum/model/quorum.adl-manifest.json",
+    "bdl": "continuum/model/quorum.bdl",
+    "bindings": [],
+    "brief": null
+  },
+  "purpose": "Runs a research funding call from publication through submission, eligibility screening, blind peer review and panel adjudication against a fixed budget envelope, and reports where every proposal stands.",
+  "commitments": {
+    "decisions": [],
+    "requirements": [
+      {
+        "name": "::Quorum.ResearchFunding.AccessControl.PersonalDataErasable",
+        "text": "An account's personal data can be erased on request by an operator: identifiers are pseudonymised everywhere they are held, while business records (proposals, reviews, decisions, budget) are retained under business-record retention.",
+        "verifiedBy": [
+          "::Quorum.AccountErasure"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority",
+        "text": "INV-11 — An account may act only in a role it has been granted, and only on resources its role scopes it to. Deny by default.",
+        "verifiedBy": [
+          "::Quorum.Inv11RoleScope"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted",
+        "text": "INV-7 — A reviewer may not read any other review of a proposal until their own review for it is submitted.",
+        "verifiedBy": [
+          "::Quorum.Inv07Blind"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.BlindPeerReview.CompleteScoring",
+        "text": "INV-6 — A review must score every published criterion of its call, each on 1–5, before it may be submitted.",
+        "verifiedBy": [
+          "::Quorum.Inv06CompleteScoring"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.CallAdministration.SubmissionWindow",
+        "text": "INV-1 — A proposal may be submitted only while its call is open and strictly before the call's deadline.",
+        "verifiedBy": [
+          "::Quorum.Inv01SubmissionWindow"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.EligibilityScreening.AgentNeverDecides",
+        "text": "INV-10 — The eligibility triage agent may propose a verdict but may never move a proposal out of screening.",
+        "verifiedBy": [
+          "::Quorum.Inv10AgentNeverDecides"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly",
+        "text": "INV-8 — Only a PanelChair may record a panel decision, and only for a proposal in scored.",
+        "verifiedBy": [
+          "::Quorum.Inv08ChairOnly"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.PanelAdjudication.DecisionsEscalated",
+        "text": "J7 — A chair decision still pending after 14 days notifies the program officer exactly once; nothing is decided by timeout.",
+        "verifiedBy": [
+          "::Quorum.DecisionEscalation"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded",
+        "text": "INV-9 — The sum of all awarded amounts for a call may never exceed the call's budget envelope.",
+        "verifiedBy": [
+          "::Quorum.Inv09Envelope"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.ParticipantNotification.NotificationsDurable",
+        "text": "NFR-5 — Notifications are queued durably and delivered at least once; a failed delivery is visible and retryable.",
+        "verifiedBy": [
+          "::Quorum.DeliveryAndReplay"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.PortfolioReporting.PortfolioFromProjection",
+        "text": "J8 — The portfolio is served from a projection fed by events, never from the write model.",
+        "verifiedBy": [
+          "::Quorum.PortfolioJourney"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.PortfolioReporting.TransitionsAudited",
+        "text": "NFR-8 — Every state transition is recorded with actor, timestamp and reason.",
+        "verifiedBy": [
+          "::Quorum.PortfolioJourney"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.ProposalSubmission.SubmitOnce",
+        "text": "INV-2 — A proposal is submitted at most once; submission is irreversible except by withdrawal.",
+        "verifiedBy": [
+          "::Quorum.Inv02SubmitOnce"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.ReviewCompletionTracking.OverdueReviewsEscalated",
+        "text": "J6 — An assignment whose due date passes without a submitted review becomes overdue and the reviewer and officer are told.",
+        "verifiedBy": [
+          "::Quorum.OverdueEscalation"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.ReviewCompletionTracking.ThreeReviewsBeforeScoring",
+        "text": "INV-5 — A proposal requires exactly three submitted reviews (on non-revoked assignments) before it may enter scored.",
+        "verifiedBy": [
+          "::Quorum.Inv05ThreeReviews"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.ReviewerAssignment.NoConflictedAssignment",
+        "text": "INV-3 — A reviewer with a declared conflict against a proposal can never hold an assignment to it.",
+        "verifiedBy": [
+          "::Quorum.Inv03NoConflictedAssignment"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.ReviewerAssignment.NoSelfReview",
+        "text": "INV-4 — An applicant can never be assigned to review their own proposal.",
+        "verifiedBy": [
+          "::Quorum.Inv04NoSelfReview"
+        ]
+      },
+      {
+        "name": "::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly",
+        "text": "INV-12 — A reviewer may hold an assignment only if their ORCID identity is verified.",
+        "verifiedBy": [
+          "::Quorum.Inv12VerifiedReviewers"
+        ]
+      }
+    ],
+    "businessRules": [
+      {
+        "name": "::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly",
+        "statement": "A panel decision is recorded only by an account holding the panel_chair role, only for a proposal with an open adjudication case (which exists only once the proposal is scored), only once, and an award only when no integrity hold is on the case."
+      },
+      {
+        "name": "::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded",
+        "statement": "An award commits its amount only by a single conditional write on the call's ledger row that succeeds only if committed + amount <= envelope; otherwise nothing is recorded and the case returns to the chair."
+      },
+      {
+        "name": "::Quorum.ResearchFunding.Notification.NoScoresToReviewers",
+        "statement": "A notification addressed to a reviewer never carries another reviewer's scores or comments."
+      },
+      {
+        "name": "::Quorum.ResearchFunding.PeerReview.AssignmentValidity",
+        "statement": "An assignment is valid only if: the proposal is assignable (confirmed eligible and not withdrawn); the reviewer holds the reviewer role; their ORCID is verified (asked of Identity in the same transaction); no conflict is declared between them and the proposal; they are not the proposal's applicant; they hold no other active assignment to it; and the proposal has fewer than three active assignments."
+      },
+      {
+        "name": "::Quorum.ResearchFunding.PeerReview.EveryCriterionScored",
+        "statement": "A review is submitted only if it carries exactly one score for every criterion published on the call, each an integer from 1 to 5."
+      },
+      {
+        "name": "::Quorum.ResearchFunding.PeerReview.PeerReviewsHiddenUntilOwnSubmitted",
+        "statement": "Another reviewer's scores and comments on a proposal are returned to a reviewer only if that reviewer's own review of the proposal is submitted."
+      },
+      {
+        "name": "::Quorum.ResearchFunding.PeerReview.ThreeSubmittedReviews",
+        "statement": "ProposalFullyReviewed is published once, when the count of submitted reviews on non-revoked assignments of the proposal reaches exactly three."
+      },
+      {
+        "name": "::Quorum.ResearchFunding.Submission.ApplicantScope",
+        "statement": "An applicant reads and changes only proposals whose applicantId is their own account; any other proposal is reported as not found."
+      },
+      {
+        "name": "::Quorum.ResearchFunding.Submission.SubmissionWindowOpen",
+        "statement": "SubmitProposal is accepted only while the proposal's call is open and the current instant is strictly before the call's deadline; checked against the call store inside the submitting transaction."
+      },
+      {
+        "name": "::Quorum.ResearchFunding.Submission.SubmittedOnce",
+        "statement": "SubmitProposal moves draft -> submitted and nothing else; a proposal not in draft is refused with already_submitted. Withdrawal is the only way back out, and it is terminal."
+      }
+    ],
+    "policies": [
+      {
+        "name": "::Quorum.ResearchFunding.BlindReview",
+        "statement": "No reviewer sees another reviewer's scores or comments, directly, through the portfolio or through a notification, before their own review of that proposal is submitted. Officers and chairs see all submitted reviews."
+      },
+      {
+        "name": "::Quorum.ResearchFunding.HumansDecide",
+        "statement": "Eligibility, assignment and award are human decisions. Automation proposes, detects and escalates; it never decides."
+      },
+      {
+        "name": "::Quorum.ResearchFunding.RoleScopedAccess",
+        "statement": "Deny by default. Every operation names the roles that may call it and the resources each role is scoped to: applicants their own proposals, reviewers their own assignments, officers and chairs the whole funding programme. Roles are read from the account store on every request."
+      }
+    ],
+    "structure": [
+      {
+        "service": "::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+        "handles": [],
+        "publishes": [
+          "::Quorum.ResearchFunding.Adjudication.DecisionEscalated",
+          "::Quorum.ResearchFunding.Adjudication.AwardHeld"
+        ],
+        "writes": [
+          "::Quorum.ResearchFunding.Adjudication.AdjudicationStore"
+        ],
+        "reads": [
+          "::Quorum.ResearchFunding.Adjudication.AdjudicationStore"
+        ],
+        "deployedAs": [
+          "::Quorum.QuorumServer"
+        ]
+      },
+      {
+        "service": "::Quorum.ResearchFunding.Calls.CallService",
+        "handles": [
+          "::Quorum.ResearchFunding.Calls.CloseCall",
+          "::Quorum.ResearchFunding.Calls.PublishCall"
+        ],
+        "publishes": [
+          "::Quorum.ResearchFunding.Calls.CallPublished",
+          "::Quorum.ResearchFunding.Calls.CallClosed"
+        ],
+        "writes": [
+          "::Quorum.ResearchFunding.Calls.CallStore"
+        ],
+        "reads": [
+          "::Quorum.ResearchFunding.Calls.CallStore"
+        ],
+        "deployedAs": [
+          "::Quorum.QuorumServer"
+        ]
+      },
+      {
+        "service": "::Quorum.ResearchFunding.Identity.AccountService",
+        "handles": [
+          "::Quorum.ResearchFunding.Identity.RegisterApplicant",
+          "::Quorum.ResearchFunding.Identity.EraseAccount",
+          "::Quorum.ResearchFunding.Identity.VerifyOrcid"
+        ],
+        "publishes": [
+          "::Quorum.ResearchFunding.Identity.AccountErased",
+          "::Quorum.ResearchFunding.Identity.OrcidVerified"
+        ],
+        "writes": [
+          "::Quorum.ResearchFunding.Identity.AccountStore"
+        ],
+        "reads": [
+          "::Quorum.ResearchFunding.Identity.AccountStore"
+        ],
+        "deployedAs": [
+          "::Quorum.QuorumServer"
+        ]
+      },
+      {
+        "service": "::Quorum.ResearchFunding.Notification.NotificationService",
+        "handles": [],
+        "publishes": [],
+        "writes": [
+          "::Quorum.ResearchFunding.Notification.OutboundMessageStore"
+        ],
+        "reads": [
+          "::Quorum.ResearchFunding.Notification.OutboundMessageStore"
+        ],
+        "deployedAs": [
+          "::Quorum.QuorumServer"
+        ]
+      },
+      {
+        "service": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+        "handles": [],
+        "publishes": [],
+        "writes": [],
+        "reads": [
+          "::Quorum.ResearchFunding.Oversight.Portfolio",
+          "::Quorum.ResearchFunding.Oversight.AuditTrail"
+        ],
+        "deployedAs": [
+          "::Quorum.QuorumServer"
+        ]
+      },
+      {
+        "service": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+        "handles": [
+          "::Quorum.ResearchFunding.PeerReview.DeclareConflict",
+          "::Quorum.ResearchFunding.PeerReview.RevokeAssignment",
+          "::Quorum.ResearchFunding.PeerReview.AcceptAssignment",
+          "::Quorum.ResearchFunding.PeerReview.SubmitReview",
+          "::Quorum.ResearchFunding.PeerReview.AssignReviewer"
+        ],
+        "publishes": [
+          "::Quorum.ResearchFunding.PeerReview.ReviewSubmitted",
+          "::Quorum.ResearchFunding.PeerReview.ConflictDeclared",
+          "::Quorum.ResearchFunding.PeerReview.ReviewersAssigned",
+          "::Quorum.ResearchFunding.PeerReview.AssignmentRevoked",
+          "::Quorum.ResearchFunding.PeerReview.ReviewerAssigned",
+          "::Quorum.ResearchFunding.PeerReview.AssignmentAccepted"
+        ],
+        "writes": [
+          "::Quorum.ResearchFunding.PeerReview.ReviewStore"
+        ],
+        "reads": [
+          "::Quorum.ResearchFunding.PeerReview.ReviewStore"
+        ],
+        "deployedAs": [
+          "::Quorum.QuorumServer"
+        ]
+      },
+      {
+        "service": "::Quorum.ResearchFunding.PeerReview.ReviewCompletion",
+        "handles": [],
+        "publishes": [
+          "::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed"
+        ],
+        "writes": [
+          "::Quorum.ResearchFunding.PeerReview.CompletionLedger"
+        ],
+        "reads": [
+          "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "::Quorum.ResearchFunding.PeerReview.CompletionLedger"
+        ],
+        "deployedAs": [
+          "::Quorum.QuorumServer"
+        ]
+      },
+      {
+        "service": "::Quorum.ResearchFunding.Submission.ProposalService",
+        "handles": [
+          "::Quorum.ResearchFunding.Submission.SubmitProposal",
+          "::Quorum.ResearchFunding.Submission.WithdrawProposal",
+          "::Quorum.ResearchFunding.Submission.ConfirmEligibility",
+          "::Quorum.ResearchFunding.Submission.SaveDraft"
+        ],
+        "publishes": [
+          "::Quorum.ResearchFunding.Submission.ProposalEnteredScreening",
+          "::Quorum.ResearchFunding.Submission.ProposalUnderReview",
+          "::Quorum.ResearchFunding.Submission.ProposalWithdrawn",
+          "::Quorum.ResearchFunding.Submission.ProposalScored",
+          "::Quorum.ResearchFunding.Submission.ProposalEligible",
+          "::Quorum.ResearchFunding.Submission.ProposalSubmitted",
+          "::Quorum.ResearchFunding.Submission.ProposalIneligible"
+        ],
+        "writes": [
+          "::Quorum.ResearchFunding.Submission.ProposalStore"
+        ],
+        "reads": [
+          "::Quorum.ResearchFunding.Submission.ProposalStore"
+        ],
+        "deployedAs": [
+          "::Quorum.QuorumServer"
+        ]
+      }
+    ]
+  },
+  "rejected": [],
+  "requiresApproval": [
+    {
+      "id": "ADR-001",
+      "title": "Submission is the single writer of Proposal.status; adjudication starts on ProposalScored",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-002",
+      "title": "Seven bounded contexts, one writer per store, one SQLite file",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-003",
+      "title": "Consistency-critical cross-context checks are synchronous in-transaction calls",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-004",
+      "title": "Add Eligible and terminal Ineligible to the proposal lifecycle",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-005",
+      "title": "Conflicts live with assignments; declaring one revokes atomically",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-006",
+      "title": "INV-9 enforced by one conditional write on Adjudication's own budget ledger",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-007",
+      "title": "Transactional outbox, per-proposal ordering, per-consumer progress, park after five attempts",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-008",
+      "title": "Every command carries an Idempotency-Key logged in the same transaction as its effect",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-009",
+      "title": "Fixed 21-day review period; late reviews accepted; explicit acceptance",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-010",
+      "title": "The chair's decision deadline escalates and never decides",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-011",
+      "title": "Triage is advisory and non-blocking; the agent holds no command-sending tool and no decision autonomy",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-012",
+      "title": "Roles are read from the account store on every request",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-013",
+      "title": "The event log is the audit trail, projected by Oversight",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-014",
+      "title": "Delivery is a binding claim; OutboxMessage is Notification's outbound store",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-015",
+      "title": "The refused-award path admits only the chair's acknowledged decline",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-016",
+      "title": "Only AssignmentService writes Overdue; the deadline workflow invokes it",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-017",
+      "title": "A declared conflict voids the review in every phase; a voided counted review reopens the round; a decision on it is suspended for integrity review",
+      "state": "proposed",
+      "options": [
+        "void-rereview-integrity-review"
+      ],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-018",
+      "title": "Escalation, refused awards and integrity holds are published events",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-019",
+      "title": "An Operator role owns operations; officers no longer retry deliveries",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-020",
+      "title": "Repeatedly failing deliveries: park, alert, then retry or skip with a reason; never skip an invariant's input",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-021",
+      "title": "Erasure by pseudonymisation and redaction of the retained event log",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-022",
+      "title": "Rate limiting in process, on failed sign-ins and per-account request rates",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "id": "ADR-023",
+      "title": "Account erasure clears ORCID verification and releases the erased reviewer's outstanding work",
+      "state": "proposed",
+      "options": [],
+      "why": "proposed, not accepted: do not implement either option as if decided"
+    },
+    {
+      "rule": "any change to the model structure — an element added, removed or relinked — or anything that contradicts a commitment above"
+    }
+  ],
+  "freedoms": [
+    {
+      "what": "technology for Deployable ::Quorum.QuorumServer",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Resource ::Quorum.ResearchFunding.Adjudication.AdjudicationStore",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Service ::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Resource ::Quorum.ResearchFunding.Calls.CallStore",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Service ::Quorum.ResearchFunding.Calls.CallService",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Resource ::Quorum.ResearchFunding.Identity.AccountStore",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Service ::Quorum.ResearchFunding.Identity.AccountService",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Resource ::Quorum.ResearchFunding.Notification.OutboundMessageStore",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Service ::Quorum.ResearchFunding.Notification.NotificationService",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Service ::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Resource ::Quorum.ResearchFunding.PeerReview.CompletionLedger",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Resource ::Quorum.ResearchFunding.PeerReview.ReviewStore",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Service ::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Service ::Quorum.ResearchFunding.PeerReview.ReviewCompletion",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Resource ::Quorum.ResearchFunding.Submission.ProposalStore",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "technology for Service ::Quorum.ResearchFunding.Submission.ProposalService",
+      "why": "no binding document was supplied"
+    },
+    {
+      "what": "internal structure, algorithms, data layout and UI within a component",
+      "why": "the model is semantic; it declares components, messages, rules and requirements, not their implementation"
+    },
+    {
+      "what": "concurrency, interleaving and timing not fixed by a requirement or rule",
+      "why": "behaviour.preview marks these UNSPECIFIED: the implementation's, never stated by the model"
+    }
+  ],
+  "risks": [
+    {
+      "label": "RISK",
+      "what": "A future service granted writes on ProposalStore silently re-opens multi-writer status",
+      "note": "recorded with ADR-001 Submission is the single writer of Proposal.status; adjudication starts on ProposalScored (proposed)"
+    },
+    {
+      "label": "RISK",
+      "what": "A future 'adjust envelope' feature would invalidate the reconsider-only-declines reasoning",
+      "note": "recorded with ADR-006 INV-9 enforced by one conditional write on Adjudication's own budget ledger (proposed)"
+    },
+    {
+      "label": "RISK",
+      "what": "A parked message stops that proposal's progress for that consumer until an officer acts; surfaced on the operations view",
+      "note": "recorded with ADR-007 Transactional outbox, per-proposal ordering, per-consumer progress, park after five attempts (proposed)"
+    },
+    {
+      "label": "RISK",
+      "what": "INV-10 in ADL rests on the absence of a command-sending tool; a later 'uses' edge would erase it with no diagnostic, so a test verifies the agent itself",
+      "note": "recorded with ADR-011 Triage is advisory and non-blocking; the agent holds no command-sending tool and no decision autonomy (proposed)"
+    },
+    {
+      "label": "RISK",
+      "what": "A budget release on rescission invalidates ADR-006's 'awards are final, the envelope never grows' premise; reconsider stays decline-only, so a proposal refused for budget is not revisited when budget is released",
+      "note": "recorded with ADR-017 A declared conflict voids the review in every phase; a voided counted review reopens the round; a decision on it is suspended for integrity review (proposed)"
+    },
+    {
+      "label": "RISK",
+      "what": "Quorum does not model disbursement; the release rests on the Program Officer's attestation (BDL unspecified FundsDisbursement)",
+      "note": "recorded with ADR-017 A declared conflict voids the review in every phase; a voided counted review reopens the round; a decision on it is suspended for integrity review (proposed)"
+    },
+    {
+      "label": "RISK",
+      "what": "A conflict declared late re-opens a proposal the applicant believed settled; the time window for this is unbounded (owner question)",
+      "note": "recorded with ADR-017 A declared conflict voids the review in every phase; a voided counted review reopens the round; a decision on it is suspended for integrity review (proposed)"
+    },
+    {
+      "label": "RISK",
+      "what": "A skip drops the event's whole effect, including state later events rely on (a skipped ProposalSubmitted notification means later applicant emails cannot be addressed)",
+      "note": "recorded with ADR-020 Repeatedly failing deliveries: park, alert, then retry or skip with a reason; never skip an invariant's input (proposed)"
+    },
+    {
+      "label": "RISK",
+      "what": "Mail already delivered and backups taken before the erasure keep the data until they age out; free text that does not contain the exact values is not found",
+      "note": "recorded with ADR-021 Erasure by pseudonymisation and redaction of the retained event log (proposed)"
+    },
+    {
+      "label": "RISK",
+      "what": "A second instance would need a shared store; behind a proxy, trustProxy must be configured or every client shares one address",
+      "note": "recorded with ADR-022 Rate limiting in process, on failed sign-ins and per-account request rates (proposed)"
+    },
+    {
+      "label": "RISK",
+      "what": "A notification relies on the shared revocation reason REVOKED_ON_ERASURE to route the message to officers instead of the erased account",
+      "note": "recorded with ADR-023 Account erasure clears ORCID verification and releases the erased reviewer's outstanding work (proposed)"
+    }
+  ],
+  "assumptions": [
+    {
+      "label": "ASSUMED",
+      "what": "1 business domain(s) recorded as assumed, with no provenance",
+      "note": "ResearchFunding"
+    },
+    {
+      "label": "ASSUMED",
+      "what": "7 business capability(s) recorded as assumed, with no provenance",
+      "note": "CallAdministration, ProposalSubmission, EligibilityScreening, ReviewerAssignment, BlindPeerReview, PanelAdjudication, …"
+    },
+    {
+      "label": "ASSUMED",
+      "what": "1 business value(s) recorded as assumed, with no provenance",
+      "note": "Money"
+    },
+    {
+      "label": "ASSUMED",
+      "what": "8 business entity(s) recorded as assumed, with no provenance",
+      "note": "Call, Account, Proposal, ConflictDeclaration, Assignment, Review, …"
+    },
+    {
+      "label": "ASSUMED",
+      "what": "6 business state-model(s) recorded as assumed, with no provenance",
+      "note": "CallLifecycle, OrcidVerification, ProposalLifecycle, AssignmentLifecycle, ReviewLifecycle, MessageDelivery"
+    },
+    {
+      "label": "ASSUMED",
+      "what": "42 business transition(s) recorded as assumed, with no provenance",
+      "note": "Close, Verify, ClearOnErasure, Submit, EnterScreening, ScreenIn, …"
+    },
+    {
+      "label": "ASSUMED",
+      "what": "8 business enum(s) recorded as assumed, with no provenance",
+      "note": "CallStatus, OrcidStatus, ProposalStatus, AssignmentStatus, ReviewStatus, PanelOutcome, …"
+    },
+    {
+      "label": "ASSUMED",
+      "what": "25 business action(s) recorded as assumed, with no provenance",
+      "note": "PublishCall, CloseCall, RegisterApplicant, VerifyOrcid, EraseAccount, SaveDraft, …"
+    },
+    {
+      "label": "ASSUMED",
+      "what": "2 business decision(s) recorded as assumed, with no provenance",
+      "note": "ConfirmEligibility, RecordPanelDecision"
+    },
+    {
+      "label": "ASSUMED",
+      "what": "20 business fact(s) recorded as assumed, with no provenance",
+      "note": "CallPublished, CallClosed, OrcidVerified, ProposalSubmitted, TriageProposed, ProposalEligible, …"
+    },
+    {
+      "label": "ASSUMED",
+      "what": "11 business rule(s) recorded as assumed, with no provenance",
+      "note": "SubmissionWindow, SubmitOnce, NoConflictedAssignment, NoSelfReview, CompleteScoring, BlindUntilOwnSubmitted, …"
+    },
+    {
+      "label": "ASSUMED",
+      "what": "3 business invariant(s) recorded as assumed, with no provenance",
+      "note": "ThreeReviewsBeforeScoring, EnvelopeNeverExceeded, AwardIsTheRequestedAmount"
+    },
+    {
+      "label": "ASSUMED",
+      "what": "8 business actor(s) recorded as assumed, with no provenance",
+      "note": "Applicant, Reviewer, ProgramOfficer, PanelChair, EligibilityTriage, QuorumPlatform, …"
+    },
+    {
+      "label": "ASSUMED",
+      "what": "5 business obligation(s) recorded as assumed, with no provenance",
+      "note": "ReviewWithinPeriod, DecideScoredProposals, TellParticipants, RetainFundingRecords, ReleaseErasedReviewersWork"
+    }
+  ],
+  "unknowns": [
+    {
+      "label": "UNKNOWN",
+      "what": "product purpose",
+      "note": "no brief supplied (--brief); only the model's own description is shown"
+    },
+    {
+      "label": "UNKNOWN",
+      "what": "technology",
+      "note": "no binding document supplied (--bindings); every technology choice is open"
+    },
+    {
+      "label": "DERIVED",
+      "what": "2 underspecified-causality finding(s)",
+      "note": "run continuum preview for the traces"
+    },
+    {
+      "label": "DERIVED",
+      "what": "warning adl/execution/unset-field-read on InvokeStep Quorum.ResearchFunding.Submission.Triage.record",
+      "note": ""
+    },
+    {
+      "label": "QUESTIONED",
+      "what": "business entity Account",
+      "note": "the business model leaves it open: questioned by RoleAdministration"
+    },
+    {
+      "label": "QUESTIONED",
+      "what": "business entity ConflictDeclaration",
+      "note": "the business model leaves it open: questioned by ConflictAfterDecision"
+    }
+  ],
+  "deviation": {
+    "rule": "Do not silently violate a commitment. If the work needs one changed, stop and propose it as a decision; implement only after it is accepted.",
+    "propose": "continuum decision propose --title <t> --decision <d> --rationale <why> --scope <qualifiedName> --model <manifest> --option <name>=<change.adl-change> --as <your acting-as>",
+    "amendOpen": "continuum decision amend <ADR> --reason <r> --option <name>=<change.adl-change>",
+    "inspect": "continuum inspect <manifest> --decisions <dir>"
+  }
+}

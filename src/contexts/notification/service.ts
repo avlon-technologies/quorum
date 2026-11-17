@@ -9,6 +9,7 @@ import type { Deps } from '../../platform/deps.ts';
 import type { Consumer, Handler, StoredEvent } from '../../platform/events.ts';
 import { newId } from '../../platform/ids.ts';
 import type { Role } from '../../contracts/model.generated.ts';
+import { REVOKED_ON_ERASURE } from '../../contracts/review-rules.ts';
 
 const MAX_ATTEMPTS = 5;
 type Recipient = { account: string } | { role: Role };
@@ -58,6 +59,11 @@ export function notificationConsumer(deps: Deps): Consumer {
       }),
       AssignmentRevoked: on((e) => {
         const p = proposal(deps, e.payload.proposalId);
+        if (e.payload.reason === REVOKED_ON_ERASURE) {
+          // ADR-023: the erased account is never written to; the officers are asked to assign a replacement
+          enqueue(deps, e, [{ role: 'programOfficer' }], 'revoked', `Replacement reviewer needed: ${p?.title ?? 'a proposal'}`, `A reviewer of “${p?.title ?? 'a proposal'}” had their account erased, so their unfinished assignment was revoked. Assign a replacement reviewer.`, `#/officer/proposals/${e.payload.proposalId}`);
+          return;
+        }
         enqueue(deps, e, [{ account: e.payload.reviewerId }], 'revoked', 'Assignment withdrawn', `Your assignment to “${p?.title ?? 'a proposal'}” was withdrawn: ${e.payload.reason}.`, null);
       }),
       ReviewOverdue: on((e) => {

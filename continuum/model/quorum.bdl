@@ -2,7 +2,7 @@ model {
   bdl         1.0
   types       adl-type/1.0
   expressions adl-expr/1.0
-  definition  "quorum.2026-11-16.1"
+  definition  "quorum.2026-11-17.1"
 }
 
 business Quorum #b-q001 {
@@ -59,7 +59,7 @@ business Quorum #b-q001 {
     }
 
     entity Account #en-q002 {
-      description "A person who signs in. Roles are granted; a reviewer's ORCID identity moves only from unverified to verified."
+      description "A person who signs in. Roles are granted. A reviewer's ORCID identity moves from unverified to verified by verification, and back to unverified only when an operator erases the account (decision D23)."
       identity accountId
       accountId: text
       institution: text
@@ -73,6 +73,13 @@ business Quorum #b-q001 {
           to Verified
           triggeredBy VerifyOrcid
           produces OrcidVerified
+        }
+        transition ClearOnErasure #t-q003 {
+          description "D23: erasure clears the ORCID verification together with the iD it verified. The only way out of Verified; no verification act ever leaves it."
+          from Verified
+          to Unverified
+          triggeredBy EraseAccount
+          produces AccountErased
         }
       }
     }
@@ -207,6 +214,9 @@ business Quorum #b-q001 {
         transition RevokeAssignedOnWithdrawal #t-q062 { from Assigned to Revoked triggeredBy RevokeOnWithdrawal }
         transition RevokeAcceptedOnWithdrawal #t-q063 { from Accepted to Revoked triggeredBy RevokeOnWithdrawal }
         transition RevokeOverdueOnWithdrawal #t-q064 { from Overdue to Revoked triggeredBy RevokeOnWithdrawal }
+        transition RevokeAssignedOnErasure #t-q065 { from Assigned to Revoked triggeredBy RevokeOnErasure }
+        transition RevokeAcceptedOnErasure #t-q066 { from Accepted to Revoked triggeredBy RevokeOnErasure }
+        transition RevokeOverdueOnErasure #t-q067 { from Overdue to Revoked triggeredBy RevokeOnErasure }
       }
     }
 
@@ -234,6 +244,7 @@ business Quorum #b-q001 {
         transition VoidPendingOnConflict #t-q042 { from Pending to Voided triggeredBy DeclareConflict }
         transition VoidPendingOnRevocation #t-q043 { from Pending to Voided triggeredBy RevokeAssignment }
         transition VoidPendingOnWithdrawal #t-q044 { from Pending to Voided triggeredBy RevokeOnWithdrawal }
+        transition VoidPendingOnErasure #t-q045 { from Pending to Voided triggeredBy RevokeOnErasure }
       }
     }
 
@@ -293,6 +304,12 @@ business Quorum #b-q001 {
       mayPerform Reviewer
       changes Account
       produces OrcidVerified
+    }
+    action EraseAccount [permitted] #ac-q026 {
+      description "D23: pseudonymises the account, removes its roles and clears its ORCID verification. Completed reviews and the assignment history are business records and are kept."
+      mayPerform Operator
+      changes Account
+      produces AccountErased
     }
     action SaveDraft [permitted] #ac-q005 {
       mayPerform Applicant
@@ -372,6 +389,13 @@ business Quorum #b-q001 {
       exercises ReviewerAssignment
       changes Assignment
       requires ProposalWithdrawn
+    }
+    action RevokeOnErasure [permitted] #ac-q027 {
+      description "D23: when an account is erased the platform revokes its outstanding (assigned, accepted or overdue) assignments and voids their pending reviews, so a program officer can assign a replacement. Completed assignments and their reviews are kept."
+      mayPerform QuorumPlatform
+      exercises ReviewerAssignment
+      changes Assignment
+      requires AccountErased
     }
     action AcceptAssignment [permitted] #ac-q014 {
       mayPerform Reviewer
@@ -455,6 +479,7 @@ business Quorum #b-q001 {
     fact ProposalEnteredScreening #f-q017 { proposalId: text }
     fact ProposalIneligible #f-q018 { proposalId: text reason: text }
     fact ProposalUnderReview #f-q019 { proposalId: text }
+    fact AccountErased #f-q020 { accountId: text }
 
     // ------------------------------------------------------------- rules (INV-n)
     rule SubmissionWindow #r-q001 {
@@ -572,6 +597,7 @@ business Quorum #b-q001 {
   actor EligibilityTriage [system] #a-q005 { description "An AI agent. A participant with exactly one permitted action: ProposeEligibility." }
   actor QuorumPlatform [system] #a-q006 { description "The platform's own automated acts: opening screening, recording completion, marking overdue, delivering messages." }
   actor OrcidRegistry [organization] #a-q007 { description "The external researcher identity registry." }
+  actor Operator [person] #a-q008 { description "Platform operator. Executes account erasure; holds no business role." }
 
   obligation ReviewWithinPeriod [internal-commitment] #o-q001 {
     borneBy Reviewer
@@ -597,5 +623,11 @@ business Quorum #b-q001 {
     borneBy ProgramOfficer
     activatedBy ResearchFunding.ProposalSubmitted
     statement "Proposals, reviews, decisions and their audit trail are retained as business records."
+  }
+  obligation ReleaseErasedReviewersWork [internal-commitment] #o-q005 {
+    borneBy QuorumPlatform
+    activatedBy ResearchFunding.AccountErased
+    dischargedBy ResearchFunding.RevokeOnErasure
+    statement "When an account is erased, none of its outstanding assignments stays held: each is revoked, its pending review voided, and the proposal's place is open for a program officer to assign a replacement. Completed reviews and the assignment history are kept. Repeating the cleanup changes nothing."
   }
 }

@@ -3,15 +3,15 @@
   "normative": false,
   "package": "avlon.quorum",
   "anchored": {
-    "commit": "6912f6c8de9522dd1de5f2ff020a526a3b87079a",
-    "attestation": "sha256:6d1550a331264391077c000f34a7a527f5e1d4cbc8374d7c94cdfb6c679b8d59",
-    "commitCovers": false
+    "commit": "3ea23ec92cbca58b02781a1ba2b8055ee44cc195",
+    "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+    "commitCovers": true
   },
   "subject": {
     "form": "continuum-evidence-subject/1",
     "algorithm": "sha256",
     "encoding": "path\\0bytes\\n/raw/1",
-    "digest": "sha256:d751b25eff6f496b24e2ee8a3a158fbf7be939fce4c65d96e4bac44b3cf2b25b",
+    "digest": "sha256:7ebae82a70292a0cc130471983fd1716865a0d0c08937e90678158d22dfc334f",
     "surface": {
       "include": [
         "src/**",
@@ -89,6 +89,7 @@
       "tests/invariants/inv-10-agent-proposes-only.test.ts",
       "tests/invariants/inv-11-role-scope.test.ts",
       "tests/invariants/inv-12-verified-reviewers.test.ts",
+      "tests/scenarios/account-erasure.test.ts",
       "tests/scenarios/adr-005-inv-03-mismatch.test.ts",
       "tests/scenarios/agent-authority.test.ts",
       "tests/scenarios/blind-visibility.test.ts",
@@ -106,7 +107,7 @@
       "tests/support/crash-child.ts",
       "tests/support/harness.ts"
     ],
-    "fileCount": 80
+    "fileCount": 81
   },
   "elements": {
     "88e48015-97bf-4375-b558-fb8ba04e97fe": {
@@ -715,7 +716,7 @@
       "citations": [
         {
           "ref": "src/contexts/notification/service.ts",
-          "digest": "sha256:0f9c6764186e3ab201ed66015435ad8f03c05b6519feef5fac1bc848afb06479"
+          "digest": "sha256:7f237efc6eed0f5c21340e79adc2af7431eecd76afbdac617b19039fca33c437"
         }
       ],
       "status": "verified"
@@ -743,7 +744,7 @@
       "citations": [
         {
           "ref": "src/contexts/notification/service.ts",
-          "digest": "sha256:0f9c6764186e3ab201ed66015435ad8f03c05b6519feef5fac1bc848afb06479"
+          "digest": "sha256:7f237efc6eed0f5c21340e79adc2af7431eecd76afbdac617b19039fca33c437"
         }
       ],
       "status": "verified"
@@ -842,7 +843,7 @@
       "citations": [
         {
           "ref": "src/contexts/peer-review/service.ts",
-          "digest": "sha256:483d5c4fb69f1524329141a00182f6cadbf9f25e2d8fd57f731e12d7524b2f1b"
+          "digest": "sha256:2d07308802ee0197408ebe1605af5dce559e1cb16924ee3fe3fb89c263c879d4"
         },
         {
           "ref": "src/contexts/peer-review/review-deadline.ts",
@@ -989,7 +990,7 @@
       "citations": [
         {
           "ref": "src/contexts/peer-review/service.ts",
-          "digest": "sha256:483d5c4fb69f1524329141a00182f6cadbf9f25e2d8fd57f731e12d7524b2f1b"
+          "digest": "sha256:2d07308802ee0197408ebe1605af5dce559e1cb16924ee3fe3fb89c263c879d4"
         }
       ],
       "status": "verified"

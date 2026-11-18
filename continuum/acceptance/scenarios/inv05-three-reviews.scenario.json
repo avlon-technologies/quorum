@@ -4,6 +4,7 @@
   "purpose": "Two submitted reviews do not score a proposal; the third scores it exactly once (INV-5).",
   "verifies": [
     "::Quorum.ResearchFunding.ReviewCompletionTracking.ThreeReviewsBeforeScoring",
+    "::Quorum.ResearchFunding.PeerReview.ThreeSubmittedReviews",
     "::Quorum.ResearchFunding.PeerReview.ReviewCompletion"
   ],
   "test": "::Quorum.Inv05ThreeReviews",

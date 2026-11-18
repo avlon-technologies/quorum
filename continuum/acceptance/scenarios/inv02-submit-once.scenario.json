@@ -4,6 +4,7 @@
   "purpose": "A submitted proposal cannot be submitted again; a retried request with the same key replays (INV-2).",
   "verifies": [
     "::Quorum.ResearchFunding.ProposalSubmission.SubmitOnce",
+    "::Quorum.ResearchFunding.Submission.SubmittedOnce",
     "::Quorum.ResearchFunding.Submission.ProposalService"
   ],
   "test": "::Quorum.Inv02SubmitOnce",

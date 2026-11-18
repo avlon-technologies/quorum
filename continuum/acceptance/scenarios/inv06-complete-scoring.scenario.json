@@ -4,6 +4,7 @@
   "purpose": "A review missing a criterion score is refused (INV-6).",
   "verifies": [
     "::Quorum.ResearchFunding.BlindPeerReview.CompleteScoring",
+    "::Quorum.ResearchFunding.PeerReview.EveryCriterionScored",
     "::Quorum.ResearchFunding.PeerReview.AssignmentService"
   ],
   "test": "::Quorum.Inv06CompleteScoring",

@@ -4,6 +4,7 @@
   "purpose": "An applicant cannot act outside their role or see another applicant's proposal (INV-11).",
   "verifies": [
     "::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority",
+    "::Quorum.ResearchFunding.Submission.ApplicantScope",
     "::Quorum.ResearchFunding.RoleScopedAccess"
   ],
   "test": "::Quorum.Inv11RoleScope",

@@ -3,7 +3,7 @@
   "normative": false,
   "package": "avlon.quorum",
   "anchored": {
-    "commit": "3ea23ec92cbca58b02781a1ba2b8055ee44cc195",
+    "commit": "f23da8d6bac5eb82e50d9d168a319407d76ec255",
     "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
     "commitCovers": true
   },
@@ -11,7 +11,7 @@
     "form": "continuum-evidence-subject/1",
     "algorithm": "sha256",
     "encoding": "path\\0bytes\\n/raw/1",
-    "digest": "sha256:7ebae82a70292a0cc130471983fd1716865a0d0c08937e90678158d22dfc334f",
+    "digest": "sha256:96d309adf2364bfd12876a79ac28c6ad3b74ab2fb4d0b3ec1d23966337ae6069",
     "surface": {
       "include": [
         "src/**",
@@ -724,8 +724,20 @@
     "ccbffda2-942e-4bdc-86e7-b0082ef7e1b9": {
       "name": "::Quorum.ResearchFunding.Notification.NoScoresToReviewers",
       "kind": "BusinessRule",
-      "citations": [],
-      "status": "uncited"
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-07-blind-review.test.ts:32-38",
+          "digest": "sha256:408989269348a8ea0bf07f6f1def8891a81256f97d680afaa3f0bd7009aec8e6"
+        }
+      ],
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-07-blind-review.test.ts",
+          "name": "INV-7 — no other review is visible until your own is submitted > notifications never carry scores or review text to reviewers",
+          "fingerprint": "sha256:59fdd03114ad5e050c2458be8b2ee962acd9f4adafab8cdb4dc1ed89d3f1f99a"
+        }
+      ]
     },
     "e5088200-1f20-48a5-8edc-2818945718cf": {
       "name": "::Quorum.ResearchFunding.Notification.OutboundMessageStore",
@@ -869,8 +881,30 @@
     "e8aba01d-eba3-4dfd-a70a-c1753ab5090c": {
       "name": "::Quorum.ResearchFunding.PeerReview.EveryCriterionScored",
       "kind": "BusinessRule",
-      "citations": [],
-      "status": "uncited"
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-06-complete-review.test.ts:19-46",
+          "digest": "sha256:8a2cf73e63116f8d915cb3e7c4b50a6edc602533a9fd6e4c412269e90b3eba64"
+        }
+      ],
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-06-complete-review.test.ts",
+          "name": "INV-6 — every criterion scored 1–5 before submission > refuses a review missing a criterion: 422 incomplete_review naming the gap, nothing stored, no event",
+          "fingerprint": "sha256:93e651f2386a6fef88788110c86b90d3aa09875018cf80082d4488eccbe1cfd9"
+        },
+        {
+          "file": "tests/invariants/inv-06-complete-review.test.ts",
+          "name": "INV-6 — every criterion scored 1–5 before submission > refuses out-of-range scores (0 and 6): 422 incomplete_review",
+          "fingerprint": "sha256:11a08842c0530b36c537e50e7353b0a3a98a01eb68369442313cc451119446e3"
+        },
+        {
+          "file": "tests/invariants/inv-06-complete-review.test.ts",
+          "name": "INV-6 — every criterion scored 1–5 before submission > refuses a non-integer score at the schema boundary: 400 validation_failed",
+          "fingerprint": "sha256:8211d4d87f1c78106b07b5c56a40e9238cf7f45d6a9fb00a7a0fcd72da780757"
+        }
+      ]
     },
     "2f95ce2e-315e-41a1-bea2-32833d4f4b3c": {
       "name": "::Quorum.ResearchFunding.PeerReview.PeerReviewsHiddenUntilOwnSubmitted",
@@ -881,8 +915,20 @@
     "c2b0b97a-8216-460b-8644-3c684e945183": {
       "name": "::Quorum.ResearchFunding.PeerReview.ThreeSubmittedReviews",
       "kind": "BusinessRule",
-      "citations": [],
-      "status": "uncited"
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-05-three-reviews.test.ts:9-18",
+          "digest": "sha256:390d033f5019ecb30b9f6444039c9c4292ffc6a27257ea12d9fd598448db795e"
+        }
+      ],
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-05-three-reviews.test.ts",
+          "name": "INV-5 — exactly three submitted reviews before scored > two submitted reviews do not score the proposal: no ProposalFullyReviewed, still underReview",
+          "fingerprint": "sha256:859cd50300df1e7304dc05c558c2c6e7b62b3cfbe18f5ea196734df8e741b045"
+        }
+      ]
     },
     "833d64ac-3cd0-458e-a287-4365d0901ed3": {
       "name": "::Quorum.ResearchFunding.PeerReview.AcceptAssignment",
@@ -1217,14 +1263,43 @@
     "3a49eeb0-3898-44fb-9f71-ba9fd12539db": {
       "name": "::Quorum.ResearchFunding.Submission.ApplicantScope",
       "kind": "BusinessRule",
-      "citations": [],
-      "status": "uncited"
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-11-role-scope.test.ts:27-37",
+          "digest": "sha256:11818fbd7b7a89e57a68294c8e21609502ee8ad89a7a78dc70e5142081bb98d8"
+        }
+      ],
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-11-role-scope.test.ts",
+          "name": "INV-11 — act only in a granted role, only on resources in scope > another applicant's proposal does not exist for you: 404 on read, edit and submit, nothing changes",
+          "fingerprint": "sha256:311ec132ef32625da92df27eaa7d96c13c2562161c63e8bd4e443f2197c53520"
+        }
+      ]
     },
     "743a4807-b286-4ad7-b847-4e00aee60292": {
       "name": "::Quorum.ResearchFunding.Submission.SubmissionWindowOpen",
       "kind": "BusinessRule",
-      "citations": [],
-      "status": "uncited"
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-01-submission-window.test.ts:10-33",
+          "digest": "sha256:89337e2f2f201e0013723d8817a51aeeb79e1e986bc79a6e3cbf1d71d746dffb"
+        }
+      ],
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-01-submission-window.test.ts",
+          "name": "INV-1 — submit only while the call is open and before its deadline > refuses a submission after the deadline: 409 deadline_passed, nothing changes, no event",
+          "fingerprint": "sha256:1cd54436aa046ae72f3aa1a7f7b6f7ab201530a8e142029a5cc34e7fc27c10c5"
+        },
+        {
+          "file": "tests/invariants/inv-01-submission-window.test.ts",
+          "name": "INV-1 — submit only while the call is open and before its deadline > refuses a submission to a closed call: 409 call_closed, nothing changes, no event",
+          "fingerprint": "sha256:3cc67af9735f46e125750b0638b7dabb96c1f2d5e71876b268f1e5202bb5ea39"
+        }
+      ]
     },
     "c9ae9fb3-f8eb-465f-9d21-7324ec817547": {
       "name": "::Quorum.ResearchFunding.Submission.SubmittedOnce",
@@ -1704,7 +1779,14 @@
           "digest": "sha256:aa9475be982cbe320a371de478373a5ec8bf59d51d48b0a288ad09200c3c708e"
         }
       ],
-      "status": "verified"
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/scenarios/replay-and-recovery.test.ts",
+          "name": "Event replay after interruption",
+          "fingerprint": "sha256:237a716ff59730e189c6734d842a3c4384d23910c2624993e5f2189817c26ca3"
+        }
+      ]
     },
     "bf03bde3-f5b6-44a0-b1df-8adb87e6497a": {
       "name": "::Quorum.Inv01SubmissionWindow",
@@ -1715,7 +1797,14 @@
           "digest": "sha256:89b492abc6282a3fb8941a6126a6531655cdb87b7b9e76794e3f93de5030909e"
         }
       ],
-      "status": "verified"
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-01-submission-window.test.ts",
+          "name": "INV-1 — submit only while the call is open and before its deadline",
+          "fingerprint": "sha256:e555c2b3cd03e29057962c5cc815ca5d228baa51ff07f810d6dc9b350acd426f"
+        }
+      ]
     },
     "f45fdb44-3ef3-430e-89a9-342a6b0880c9": {
       "name": "::Quorum.Inv02SubmitOnce",
@@ -1726,7 +1815,14 @@
           "digest": "sha256:3a566a41cd8210b19c28a41ec721dc76f0c0b5fcc475423313cd0e5cef6069de"
         }
       ],
-      "status": "verified"
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-02-submit-once.test.ts",
+          "name": "INV-2 — a proposal is submitted at most once",
+          "fingerprint": "sha256:f60f04e0d8b6c6af9deb4ac74e98342a17752381db889d7b115c9ffa4be39c55"
+        }
+      ]
     },
     "56ed25b9-9935-4b9c-b9a2-f074dd9f9213": {
       "name": "::Quorum.Inv03NoConflictedAssignment",
@@ -1737,7 +1833,14 @@
           "digest": "sha256:3ea289715d8cc0347094d79deb2cd3dae2c1d992837d052dd9b68456792f825f"
         }
       ],
-      "status": "verified"
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-03-conflict.test.ts",
+          "name": "INV-3 — a conflicted reviewer can never hold an assignment",
+          "fingerprint": "sha256:a50d2019360a6a31a6b30317c5510865a92872d9b46a18c8a471180f3dd674bc"
+        }
+      ]
     },
     "fa4d0adf-87d9-4bae-a61b-0d2f47beca35": {
       "name": "::Quorum.Inv04NoSelfReview",
@@ -1748,7 +1851,14 @@
           "digest": "sha256:29f22f23073297f8989f36fa3a860edf8d1da3a0936056f065d95112f732915b"
         }
       ],
-      "status": "verified"
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-04-self-review.test.ts",
+          "name": "INV-4 — an applicant is never assigned to review their own proposal",
+          "fingerprint": "sha256:ff8a664101d08fd9c6d881b385dd8cc644f849a1f4df29e5f98d40cdecb79a45"
+        }
+      ]
     },
     "005d1ac1-f9af-4907-9304-e4dae1d23e2d": {
       "name": "::Quorum.Inv05ThreeReviews",
@@ -1759,7 +1869,14 @@
           "digest": "sha256:a1275b817edcdfdf33c63a02f017b39ad1a6d0123020c848a0d7382d87bd65da"
         }
       ],
-      "status": "verified"
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-05-three-reviews.test.ts",
+          "name": "INV-5 — exactly three submitted reviews before scored",
+          "fingerprint": "sha256:e30e141d4d33986bdfb3445a32c2d6b9859dce5a0f83a1d1bd520dc4855d583a"
+        }
+      ]
     },
     "41034872-d39c-441e-b5c8-1afc7c288a38": {
       "name": "::Quorum.Inv06CompleteScoring",
@@ -1770,7 +1887,14 @@
           "digest": "sha256:e000e7a90a41e75ed32ee73ff0c7ed11e5e1e952b41a945b8cd89851622dd0f7"
         }
       ],
-      "status": "verified"
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-06-complete-review.test.ts",
+          "name": "INV-6 — every criterion scored 1–5 before submission",
+          "fingerprint": "sha256:8702e78e66ffc8bf19dff495cc24c2fdba1ea9f107e90b582cbc917458710606"
+        }
+      ]
     },
     "baca435f-33dd-4c09-86b3-b0370d9bd694": {
       "name": "::Quorum.Inv07Blind",
@@ -1781,7 +1905,14 @@
           "digest": "sha256:c16581bdfa15401d4b42071cbe70aab9b094f2bb9ee57e70e16a003cd26c4aad"
         }
       ],
-      "status": "verified"
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-07-blind-review.test.ts",
+          "name": "INV-7 — no other review is visible until your own is submitted",
+          "fingerprint": "sha256:efb902ef1e7d161eba55c88d6de01f3b567f99fc47a3e4396c1b85ff72d96880"
+        }
+      ]
     },
     "4e09e956-dc08-4447-9dc0-a232eb38cdf2": {
       "name": "::Quorum.Inv08ChairOnly",
@@ -1792,7 +1923,14 @@
           "digest": "sha256:47e21a3ead3aa9544ca38935a43a292213e2e623d0d5981a235e9b61bbb6f60a"
         }
       ],
-      "status": "verified"
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-08-panel-decision.test.ts",
+          "name": "INV-8 — only a PanelChair decides, and only for a scored proposal",
+          "fingerprint": "sha256:e6b32a98c0d95d22f3ccdce9ce841a5119296c8c3b8018161d25a7b3f654c1a8"
+        }
+      ]
     },
     "d32231ea-12c9-454d-83b3-824ca041e06d": {
       "name": "::Quorum.Inv09Envelope",
@@ -1807,7 +1945,19 @@
           "digest": "sha256:067a64c0079d8b9904a140c076f2f752aa108a0199582a5e72e63d641f7a0e13"
         }
       ],
-      "status": "verified"
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-09-budget-envelope.test.ts",
+          "name": "INV-9 — awards never exceed the call envelope",
+          "fingerprint": "sha256:2013f8778a4664de5679df3cbf4f4c42968ced65c9b446f44c9b85c20ae92a06"
+        },
+        {
+          "file": "tests/scenarios/concurrent-awards.test.ts",
+          "name": "Concurrent awards near the budget limit (INV-9), separate processes and connections",
+          "fingerprint": "sha256:6d47f7d2769cf202feefc2b00997d09f2b53638eca0f40b968c5abd91ce2f62a"
+        }
+      ]
     },
     "3fc6d96f-201c-437d-abdd-cf4ac3351f5c": {
       "name": "::Quorum.Inv10AgentNeverDecides",
@@ -1818,7 +1968,14 @@
           "digest": "sha256:cc002a275afb9f269624c36bb22370123aad73a8da8eac148de455581a379528"
         }
       ],
-      "status": "verified"
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-10-agent-proposes-only.test.ts",
+          "name": "INV-10 — the triage agent proposes; it never moves a proposal out of screening",
+          "fingerprint": "sha256:b490937d3c3ee1c6c42a4244bebf03b506acebbee732d815c99b482b04fd6195"
+        }
+      ]
     },
     "cdcebc23-b538-4105-919c-7e3a27e8d291": {
       "name": "::Quorum.Inv11RoleScope",
@@ -1833,7 +1990,19 @@
           "digest": "sha256:1ba5e8b364ebe8cd75febd01cd8b0323eeb637fd10e2cb50f2be0b98f441caaf"
         }
       ],
-      "status": "verified"
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-11-role-scope.test.ts",
+          "name": "INV-11 — act only in a granted role, only on resources in scope",
+          "fingerprint": "sha256:1c03f95084724064fd4dcfaf305f3f5f404d67653a922617877bd56a32cb526a"
+        },
+        {
+          "file": "tests/scenarios/cross-role-access.test.ts",
+          "name": "Cross-role access matrix (INV-11)",
+          "fingerprint": "sha256:ec4f37e5f1107092cb8fc8c63150595fc9fcdb094d762628f4bf095b253447bb"
+        }
+      ]
     },
     "99fb115c-bf3a-4f42-89a5-88298e760111": {
       "name": "::Quorum.Inv12VerifiedReviewers",
@@ -1844,7 +2013,14 @@
           "digest": "sha256:b3a79ab7ab5f0f3369f801704c6f2c585c7f774f543f5f62cdcc15dc1d4a97a8"
         }
       ],
-      "status": "verified"
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-12-verified-reviewers.test.ts",
+          "name": "INV-12 — only ORCID-verified reviewers hold assignments",
+          "fingerprint": "sha256:9ec8a9c1c930312a0abc43759dffad986abc4c9bec6873dd9a05eb67e667aea8"
+        }
+      ]
     },
     "b3e6afd0-7b00-4e7d-baf3-c0ab1a3cf717": {
       "name": "::Quorum.OverdueEscalation",
@@ -1855,7 +2031,14 @@
           "digest": "sha256:9a5b2b65019ddd5fcf5d7fc851687a66ba10ba6acc7e7b08bc31a4bf940119e1"
         }
       ],
-      "status": "verified"
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/scenarios/overdue-escalation.test.ts",
+          "name": "Overdue reviews (P21D) and chair escalation (P14D)",
+          "fingerprint": "sha256:78c3d52575e13ced8d006216967655c5d76c647b1590c5174f15ad16f16c7802"
+        }
+      ]
     },
     "94be2458-22f4-4e3d-b88b-cd99824a263f": {
       "name": "::Quorum.PortfolioJourney",

@@ -4,6 +4,7 @@
   "purpose": "A reviewer sees no peer review until their own is submitted (INV-7).",
   "verifies": [
     "::Quorum.ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted",
+    "::Quorum.ResearchFunding.PeerReview.PeerReviewsHiddenUntilOwnSubmitted",
     "::Quorum.ResearchFunding.BlindReview"
   ],
   "test": "::Quorum.Inv07Blind",

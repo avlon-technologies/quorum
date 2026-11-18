@@ -168,7 +168,7 @@ An event whose delivery is interrupted is delivered after restart, applied once 
 
 A proposal is accepted strictly before the call deadline and refused at it (INV-1).
 
-- verifies: `::Quorum.ResearchFunding.CallAdministration.SubmissionWindow` (Requirement), `::Quorum.ResearchFunding.Submission.ProposalService` (Service)
+- verifies: `::Quorum.ResearchFunding.CallAdministration.SubmissionWindow` (Requirement), `::Quorum.ResearchFunding.Submission.SubmissionWindowOpen` (BusinessRule), `::Quorum.ResearchFunding.Submission.ProposalService` (Service)
 - realizes the declared Test `::Quorum.Inv01SubmissionWindow`
 - environment: `::Quorum.LocalDevelopment`
 
@@ -210,7 +210,7 @@ A proposal is accepted strictly before the call deadline and refused at it (INV-
 
 A submitted proposal cannot be submitted again; a retried request with the same key replays (INV-2).
 
-- verifies: `::Quorum.ResearchFunding.ProposalSubmission.SubmitOnce` (Requirement), `::Quorum.ResearchFunding.Submission.ProposalService` (Service)
+- verifies: `::Quorum.ResearchFunding.ProposalSubmission.SubmitOnce` (Requirement), `::Quorum.ResearchFunding.Submission.SubmittedOnce` (BusinessRule), `::Quorum.ResearchFunding.Submission.ProposalService` (Service)
 - realizes the declared Test `::Quorum.Inv02SubmitOnce`
 - environment: `::Quorum.LocalDevelopment`
 
@@ -290,7 +290,7 @@ An applicant who is also a reviewer cannot review their own proposal (INV-4).
 
 Two submitted reviews do not score a proposal; the third scores it exactly once (INV-5).
 
-- verifies: `::Quorum.ResearchFunding.ReviewCompletionTracking.ThreeReviewsBeforeScoring` (Requirement), `::Quorum.ResearchFunding.PeerReview.ReviewCompletion` (Service)
+- verifies: `::Quorum.ResearchFunding.ReviewCompletionTracking.ThreeReviewsBeforeScoring` (Requirement), `::Quorum.ResearchFunding.PeerReview.ThreeSubmittedReviews` (BusinessRule), `::Quorum.ResearchFunding.PeerReview.ReviewCompletion` (Service)
 - realizes the declared Test `::Quorum.Inv05ThreeReviews`
 - environment: `::Quorum.LocalDevelopment`
 
@@ -357,7 +357,7 @@ Two submitted reviews do not score a proposal; the third scores it exactly once 
 
 A review missing a criterion score is refused (INV-6).
 
-- verifies: `::Quorum.ResearchFunding.BlindPeerReview.CompleteScoring` (Requirement), `::Quorum.ResearchFunding.PeerReview.AssignmentService` (Service)
+- verifies: `::Quorum.ResearchFunding.BlindPeerReview.CompleteScoring` (Requirement), `::Quorum.ResearchFunding.PeerReview.EveryCriterionScored` (BusinessRule), `::Quorum.ResearchFunding.PeerReview.AssignmentService` (Service)
 - realizes the declared Test `::Quorum.Inv06CompleteScoring`
 - environment: `::Quorum.LocalDevelopment`
 
@@ -376,7 +376,7 @@ A review missing a criterion score is refused (INV-6).
 
 A reviewer sees no peer review until their own is submitted (INV-7).
 
-- verifies: `::Quorum.ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted` (Requirement), `::Quorum.ResearchFunding.BlindReview` (Policy)
+- verifies: `::Quorum.ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted` (Requirement), `::Quorum.ResearchFunding.PeerReview.PeerReviewsHiddenUntilOwnSubmitted` (BusinessRule), `::Quorum.ResearchFunding.BlindReview` (Policy)
 - realizes the declared Test `::Quorum.Inv07Blind`
 - environment: `::Quorum.LocalDevelopment`
 
@@ -414,7 +414,7 @@ A panel decision on an unscored proposal is refused, and a program officer canno
 
 An award that would exceed the call envelope is refused, nothing is committed, and only a decline remains (INV-9).
 
-- verifies: `::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded` (Requirement), `::Quorum.ResearchFunding.Adjudication.AdjudicationService` (Service), `::Quorum.ResearchFunding.Adjudication.PanelDecision` (Workflow)
+- verifies: `::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded` (Requirement), `::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded` (BusinessRule), `::Quorum.ResearchFunding.Adjudication.AdjudicationService` (Service), `::Quorum.ResearchFunding.Adjudication.PanelDecision` (Workflow)
 - realizes the declared Test `::Quorum.Inv09Envelope`
 - environment: `::Quorum.LocalDevelopment`
 
@@ -455,7 +455,7 @@ The triage agent proposes a verdict but the proposal stays in screening until an
 
 An applicant cannot act outside their role or see another applicant's proposal (INV-11).
 
-- verifies: `::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority` (Requirement), `::Quorum.ResearchFunding.RoleScopedAccess` (Policy)
+- verifies: `::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority` (Requirement), `::Quorum.ResearchFunding.Submission.ApplicantScope` (BusinessRule), `::Quorum.ResearchFunding.RoleScopedAccess` (Policy)
 - realizes the declared Test `::Quorum.Inv11RoleScope`
 - environment: `::Quorum.LocalDevelopment`
 

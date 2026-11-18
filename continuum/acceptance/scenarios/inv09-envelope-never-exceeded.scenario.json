@@ -4,6 +4,7 @@
   "purpose": "An award that would exceed the call envelope is refused, nothing is committed, and only a decline remains (INV-9).",
   "verifies": [
     "::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded",
+    "::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded",
     "::Quorum.ResearchFunding.Adjudication.AdjudicationService",
     "::Quorum.ResearchFunding.Adjudication.PanelDecision"
   ],

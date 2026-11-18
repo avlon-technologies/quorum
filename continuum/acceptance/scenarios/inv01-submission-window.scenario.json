@@ -4,6 +4,7 @@
   "purpose": "A proposal is accepted strictly before the call deadline and refused at it (INV-1).",
   "verifies": [
     "::Quorum.ResearchFunding.CallAdministration.SubmissionWindow",
+    "::Quorum.ResearchFunding.Submission.SubmissionWindowOpen",
     "::Quorum.ResearchFunding.Submission.ProposalService"
   ],
   "test": "::Quorum.Inv01SubmissionWindow",

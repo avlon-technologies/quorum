@@ -4,6 +4,7 @@
   "purpose": "An applicant who is also a reviewer cannot review their own proposal (INV-4).",
   "verifies": [
     "::Quorum.ResearchFunding.ReviewerAssignment.NoSelfReview",
+    "::Quorum.ResearchFunding.PeerReview.AssignmentValidity",
     "::Quorum.ResearchFunding.PeerReview.AssignmentService"
   ],
   "test": "::Quorum.Inv04NoSelfReview",

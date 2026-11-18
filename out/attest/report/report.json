@@ -1,0 +1,4102 @@
+{
+  "profile": "continuum-conformance-report/0",
+  "experimental": true,
+  "assessedBy": "continuum-cli 0.40.0",
+  "at": "2026-11-17T09:28:41.750Z",
+  "question": "did the implementation at the commit build the architecture accepted at the baseline?",
+  "baseline": {
+    "rev": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+    "intent": "architecture",
+    "handoff": {
+      "digest": "sha256:3a2cb853934a54859498b42d10b6048726fe960c7c1adce40d009267ecd2c595",
+      "package": "avlon.quorum",
+      "version": "package-1",
+      "core": "adl/1.7",
+      "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+      "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+      "errors": 0,
+      "warnings": 1,
+      "contentDigest": "sha256:6b97d1537e18021dc1817db06206c33a70e40d52b72e51cce2bb28460607d10b",
+      "manifest": "continuum/model/quorum.adl-manifest.json"
+    },
+    "decisions": {
+      "decisions": "Host-authorized — continuum-decision-record/1, EXPERIMENTAL; all 36 line(s) verified against the Host's published keys",
+      "record": "continuum/decisions.jsonl",
+      "head": "sha256:1cfa47f6a3f023fd6e8ae2ff35d44bfa547248e7680b15202e1357678cc743fd",
+      "note": "each act below was judged and signed by the Host against the space's governed policy; an act by a workload names the person who delegated to it, and the delegation does not prove which model or process presented it"
+    },
+    "scenarios": []
+  },
+  "implementation": {
+    "rev": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+    "package": "continuum",
+    "adapter": "continuum/acceptance/adapter.mjs",
+    "setup": {
+      "status": "installed",
+      "command": "npm ci",
+      "ms": 10123
+    },
+    "adapterLoaded": {
+      "loaded": false,
+      "message": "the baseline carries no acceptance scenario"
+    },
+    "tests": {
+      "status": "ran",
+      "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+      "source": "assessor",
+      "script": "vitest run",
+      "exit": 0,
+      "ms": 19393,
+      "junit": {
+        "path": "junit.xml",
+        "digest": "sha256:8d17c44798d01bac181a171d2ab58a708469296b65a416221e44bb27403d2ef3"
+      },
+      "totals": {
+        "passed": 210,
+        "failed": 0,
+        "error": 0,
+        "blocked": 0,
+        "skipped": 0
+      },
+      "notPassing": []
+    },
+    "evidenceMap": "continuum/evidence.json (245 element(s))"
+  },
+  "ci": {
+    "status": "not-requested"
+  },
+  "commitments": [
+    {
+      "commitment": "::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly",
+      "kind": "business-rule",
+      "text": "A panel decision is recorded only by an account holding the panel_chair role, only for a proposal with an open adjudication case (which exists only once the proposal is scored), only once, and an award only when no integrity hold is on the case.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded",
+      "kind": "business-rule",
+      "text": "An award commits its amount only by a single conditional write on the call's ledger row that succeeds only if committed + amount <= envelope; otherwise nothing is recorded and the case returns to the chair.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.Notification.NoScoresToReviewers",
+      "kind": "business-rule",
+      "text": "A notification addressed to a reviewer never carries another reviewer's scores or comments.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.PeerReview.AssignmentValidity",
+      "kind": "business-rule",
+      "text": "An assignment is valid only if: the proposal is assignable (confirmed eligible and not withdrawn); the reviewer holds the reviewer role; their ORCID is verified (asked of Identity in the same transaction); no conflict is declared between them and the proposal; they are not the proposal's applicant; they hold no other active assignment to it; and the proposal has fewer than three active assignments.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.PeerReview.EveryCriterionScored",
+      "kind": "business-rule",
+      "text": "A review is submitted only if it carries exactly one score for every criterion published on the call, each an integer from 1 to 5.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.PeerReview.PeerReviewsHiddenUntilOwnSubmitted",
+      "kind": "business-rule",
+      "text": "Another reviewer's scores and comments on a proposal are returned to a reviewer only if that reviewer's own review of the proposal is submitted.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.PeerReview.ThreeSubmittedReviews",
+      "kind": "business-rule",
+      "text": "ProposalFullyReviewed is published once, when the count of submitted reviews on non-revoked assignments of the proposal reaches exactly three.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.Submission.ApplicantScope",
+      "kind": "business-rule",
+      "text": "An applicant reads and changes only proposals whose applicantId is their own account; any other proposal is reported as not found.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.Submission.SubmissionWindowOpen",
+      "kind": "business-rule",
+      "text": "SubmitProposal is accepted only while the proposal's call is open and the current instant is strictly before the call's deadline; checked against the call store inside the submitting transaction.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.Submission.SubmittedOnce",
+      "kind": "business-rule",
+      "text": "SubmitProposal moves draft -> submitted and nothing else; a proposal not in draft is refused with already_submitted. Withdrawal is the only way back out, and it is terminal.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.AccessControl.PersonalDataErasable",
+      "kind": "requirement",
+      "text": "An account's personal data can be erased on request by an operator: identifiers are pseudonymised everywhere they are held, while business records (proposals, reviews, decisions, budget) are retained under business-record retention.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.AccountErasure"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority",
+      "kind": "requirement",
+      "text": "INV-11 — An account may act only in a role it has been granted, and only on resources its role scopes it to. Deny by default.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.Inv11RoleScope"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted",
+      "kind": "requirement",
+      "text": "INV-7 — A reviewer may not read any other review of a proposal until their own review for it is submitted.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.Inv07Blind"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.BlindPeerReview.CompleteScoring",
+      "kind": "requirement",
+      "text": "INV-6 — A review must score every published criterion of its call, each on 1–5, before it may be submitted.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.Inv06CompleteScoring"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.CallAdministration.SubmissionWindow",
+      "kind": "requirement",
+      "text": "INV-1 — A proposal may be submitted only while its call is open and strictly before the call's deadline.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.Inv01SubmissionWindow"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.EligibilityScreening.AgentNeverDecides",
+      "kind": "requirement",
+      "text": "INV-10 — The eligibility triage agent may propose a verdict but may never move a proposal out of screening.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.Inv10AgentNeverDecides"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly",
+      "kind": "requirement",
+      "text": "INV-8 — Only a PanelChair may record a panel decision, and only for a proposal in scored.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.Inv08ChairOnly"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.PanelAdjudication.DecisionsEscalated",
+      "kind": "requirement",
+      "text": "J7 — A chair decision still pending after 14 days notifies the program officer exactly once; nothing is decided by timeout.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.DecisionEscalation"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded",
+      "kind": "requirement",
+      "text": "INV-9 — The sum of all awarded amounts for a call may never exceed the call's budget envelope.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.Inv09Envelope"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.ParticipantNotification.NotificationsDurable",
+      "kind": "requirement",
+      "text": "NFR-5 — Notifications are queued durably and delivered at least once; a failed delivery is visible and retryable.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.DeliveryAndReplay"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.PortfolioReporting.PortfolioFromProjection",
+      "kind": "requirement",
+      "text": "J8 — The portfolio is served from a projection fed by events, never from the write model.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.PortfolioJourney"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.PortfolioReporting.TransitionsAudited",
+      "kind": "requirement",
+      "text": "NFR-8 — Every state transition is recorded with actor, timestamp and reason.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.PortfolioJourney"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.ProposalSubmission.SubmitOnce",
+      "kind": "requirement",
+      "text": "INV-2 — A proposal is submitted at most once; submission is irreversible except by withdrawal.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.Inv02SubmitOnce"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.ReviewCompletionTracking.OverdueReviewsEscalated",
+      "kind": "requirement",
+      "text": "J6 — An assignment whose due date passes without a submitted review becomes overdue and the reviewer and officer are told.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.OverdueEscalation"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.ReviewCompletionTracking.ThreeReviewsBeforeScoring",
+      "kind": "requirement",
+      "text": "INV-5 — A proposal requires exactly three submitted reviews (on non-revoked assignments) before it may enter scored.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.Inv05ThreeReviews"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.ReviewerAssignment.NoConflictedAssignment",
+      "kind": "requirement",
+      "text": "INV-3 — A reviewer with a declared conflict against a proposal can never hold an assignment to it.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.Inv03NoConflictedAssignment"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.ReviewerAssignment.NoSelfReview",
+      "kind": "requirement",
+      "text": "INV-4 — An applicant can never be assigned to review their own proposal.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.Inv04NoSelfReview"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    },
+    {
+      "commitment": "::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly",
+      "kind": "requirement",
+      "text": "INV-12 — A reviewer may hold an assignment only if their ORCID identity is verified.",
+      "verdict": "unsupported",
+      "basis": [],
+      "evidence": {
+        "scenarios": [],
+        "tests": {
+          "mapping": "unmapped",
+          "note": "the entry cites no test file",
+          "cases": []
+        },
+        "declared": {
+          "verifiedBy": [
+            "::Quorum.Inv12VerifiedReviewers"
+          ],
+          "class": "declared in the model — not counted (a declaration is not an execution)"
+        },
+        "claims": []
+      },
+      "architecture": {
+        "code": null,
+        "note": "no architecture verification is declared for this commitment: a passing scenario or pinned test is evidence about behaviour, not verification of an architectural expectation it was never shown to establish"
+      }
+    }
+  ],
+  "tally": {
+    "unsupported": 28
+  },
+  "attestations": [
+    {
+      "surface": "continuum-platform-claim-attestation/0",
+      "verification": "at-most-three-reviewers",
+      "rubric": {
+        "id": "continuum-claim-rubric/3",
+        "levels": {
+          "L0": "Assessed",
+          "L1": "Supported",
+          "L2": "Verified in scope",
+          "L3": "Violation-sensitive"
+        }
+      },
+      "spec": {
+        "id": "at-most-three-reviewers",
+        "version": "1.0.1",
+        "digest": "sha256:6c5ee83498dd2d078461faf3233d64956bf2397de624c78c1c4857a293343c42"
+      },
+      "model": {
+        "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+        "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+        "compiled": "passed"
+      },
+      "implementation": {
+        "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+        "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7"
+      },
+      "claim": {
+        "language": "adl",
+        "kind": "business-rule",
+        "id": "61505d55-158f-4a68-aa7b-204a46219514",
+        "name": "::Quorum.ResearchFunding.PeerReview.AssignmentValidity",
+        "structural": false,
+        "statement": "::Quorum.ResearchFunding.PeerReview.AssignmentValidity: \"the proposal has fewer than three active assignments\" — a clause of the compiled statement, applied by ::Quorum.ResearchFunding.PeerReview.AssignmentService",
+        "declared": {
+          "statement": "An assignment is valid only if: the proposal is assignable (confirmed eligible and not withdrawn); the reviewer holds the reviewer role; their ORCID is verified (asked of Identity in the same transaction); no conflict is declared between them and the proposal; they are not the proposal's applicant; they hold no other active assignment to it; and the proposal has fewer than three active assignments.",
+          "clause": "the proposal has fewer than three active assignments",
+          "appliedBy": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ],
+          "context": "::Quorum.ResearchFunding.PeerReview"
+        }
+      },
+      "boundary": {
+        "statement": "AssignReviewer — every write in src/** that creates an ACTIVE assignment (any status but revoked), and every runtime entry point that reaches one, in one Quorum process over one store.",
+        "includes": [
+          "INSERT INTO rev_assignment",
+          "an UPDATE of rev_assignment that moves a revoked assignment back to an active status",
+          "every call, in src/**, of the function holding such a write"
+        ],
+        "excludes": [
+          {
+            "what": "the demo seed's calls of assignReviewer (src/seed.ts)",
+            "why": "demo data, never run when NODE_ENV=production; it calls the same guarded function"
+          },
+          {
+            "what": "several Quorum processes writing one store at once",
+            "why": "one process per store is the deployment model (LocalDevelopment binding); the store trigger is the defence there and is observed statically (store-bound-trigger), not executed across processes"
+          },
+          {
+            "what": "tests/**, scripts/**",
+            "why": "not part of the deployable"
+          }
+        ]
+      },
+      "assumptions": [
+        {
+          "id": "A1-active",
+          "statement": "An active assignment is any rev_assignment row whose status is not revoked (assigned, accepted, overdue, completed): the model's \"active assignments\", in stored values."
+        },
+        {
+          "id": "A2-harness",
+          "statement": "Cases set up their world (accounts, a published call, an eligible proposal, the first assignments) through the implementation's own harness and services. The act under test — the HTTP route — and the state read — rev_assignment — are the verifier's."
+        },
+        {
+          "id": "A3-reached",
+          "statement": "The `reached` paths are what V8 precise BLOCK coverage reports executing during the act alone (setup excluded): a write site is reached when the innermost covered block containing it ran. Observed by the runtime, not declared."
+        }
+      ],
+      "verdict": "MATCH",
+      "level": "L3",
+      "levelName": "Violation-sensitive",
+      "evidenceState": {
+        "state": "observed"
+      },
+      "binding": {
+        "model": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+        "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+        "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7",
+        "spec": "at-most-three-reviewers@1.0.1",
+        "specDigest": "sha256:6c5ee83498dd2d078461faf3233d64956bf2397de624c78c1c4857a293343c42",
+        "rubric": "continuum-claim-rubric/3",
+        "configuration": {
+          "node": "v24.22.1",
+          "platform": "win32",
+          "database": "SQLite (better-sqlite3), an isolated file per case; manual clock"
+        },
+        "configurationDigest": "sha256:463b87fc070bf3cf5f91f3ddddb9c2a244e5f1260ccc80ff5145c8fc2b4b677b"
+      },
+      "levels": {
+        "L0": {
+          "met": true,
+          "reasons": [
+            "judged: the claim resolved in the model compiled at sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1; evidence observed"
+          ],
+          "evidence": [],
+          "name": "Assessed"
+        },
+        "L1": {
+          "met": true,
+          "reasons": [
+            "concurrent-third-and-fourth (executed-http-route) passed on HTTP POST /api/proposals/:id/assignments",
+            "first-assigned (executed-http-route) passed on HTTP POST /api/proposals/:id/assignments",
+            "fourth-refused (executed-http-route) passed on HTTP POST /api/proposals/:id/assignments",
+            "full-after-acceptance-refused (executed-http-route) passed on HTTP POST /api/proposals/:id/assignments",
+            "panel-full-guard (static-lexical) passed on src/contexts/peer-review/service.ts:assignmentEligibility",
+            "revoked-frees-a-place (executed-http-route) passed on HTTP POST /api/proposals/:id/assignments",
+            "store-bound-trigger (static-lexical) passed on src/platform/schema.ts:rev_assignment_at_most_three",
+            "third-assigned (executed-http-route) passed on HTTP POST /api/proposals/:id/assignments"
+          ],
+          "evidence": [
+            {
+              "check": "concurrent-third-and-fourth",
+              "kind": "case",
+              "path": "HTTP POST /api/proposals/:id/assignments",
+              "method": "executed-http-route",
+              "polarity": "boundary",
+              "reached": [
+                "src/contexts/peer-review/service.ts:128"
+              ]
+            },
+            {
+              "check": "first-assigned",
+              "kind": "case",
+              "path": "HTTP POST /api/proposals/:id/assignments",
+              "method": "executed-http-route",
+              "polarity": "allowed",
+              "reached": [
+                "src/contexts/peer-review/service.ts:128"
+              ]
+            },
+            {
+              "check": "fourth-refused",
+              "kind": "case",
+              "path": "HTTP POST /api/proposals/:id/assignments",
+              "method": "executed-http-route",
+              "polarity": "boundary"
+            },
+            {
+              "check": "full-after-acceptance-refused",
+              "kind": "case",
+              "path": "HTTP POST /api/proposals/:id/assignments",
+              "method": "executed-http-route",
+              "polarity": "rejected"
+            },
+            {
+              "check": "panel-full-guard",
+              "kind": "enforcement",
+              "path": "src/contexts/peer-review/service.ts:assignmentEligibility",
+              "method": "static-lexical"
+            },
+            {
+              "check": "revoked-frees-a-place",
+              "kind": "case",
+              "path": "HTTP POST /api/proposals/:id/assignments",
+              "method": "executed-http-route",
+              "polarity": "allowed",
+              "reached": [
+                "src/contexts/peer-review/service.ts:128"
+              ]
+            },
+            {
+              "check": "store-bound-trigger",
+              "kind": "enforcement",
+              "path": "src/platform/schema.ts:rev_assignment_at_most_three",
+              "method": "static-lexical"
+            },
+            {
+              "check": "third-assigned",
+              "kind": "case",
+              "path": "HTTP POST /api/proposals/:id/assignments",
+              "method": "executed-http-route",
+              "polarity": "boundary",
+              "reached": [
+                "src/contexts/peer-review/service.ts:128"
+              ]
+            }
+          ],
+          "name": "Supported"
+        },
+        "L2": {
+          "met": true,
+          "reasons": [
+            "scope established (2 path(s)), each checked by passing executed/formal verification; allowed, rejected, boundary behaviour checked"
+          ],
+          "evidence": [
+            {
+              "path": "HTTP POST /api/proposals/:id/assignments",
+              "by": [
+                {
+                  "check": "concurrent-third-and-fourth",
+                  "kind": "case",
+                  "path": "HTTP POST /api/proposals/:id/assignments",
+                  "method": "executed-http-route",
+                  "polarity": "boundary",
+                  "reached": [
+                    "src/contexts/peer-review/service.ts:128"
+                  ]
+                },
+                {
+                  "check": "first-assigned",
+                  "kind": "case",
+                  "path": "HTTP POST /api/proposals/:id/assignments",
+                  "method": "executed-http-route",
+                  "polarity": "allowed",
+                  "reached": [
+                    "src/contexts/peer-review/service.ts:128"
+                  ]
+                },
+                {
+                  "check": "fourth-refused",
+                  "kind": "case",
+                  "path": "HTTP POST /api/proposals/:id/assignments",
+                  "method": "executed-http-route",
+                  "polarity": "boundary"
+                },
+                {
+                  "check": "full-after-acceptance-refused",
+                  "kind": "case",
+                  "path": "HTTP POST /api/proposals/:id/assignments",
+                  "method": "executed-http-route",
+                  "polarity": "rejected"
+                },
+                {
+                  "check": "revoked-frees-a-place",
+                  "kind": "case",
+                  "path": "HTTP POST /api/proposals/:id/assignments",
+                  "method": "executed-http-route",
+                  "polarity": "allowed",
+                  "reached": [
+                    "src/contexts/peer-review/service.ts:128"
+                  ]
+                },
+                {
+                  "check": "third-assigned",
+                  "kind": "case",
+                  "path": "HTTP POST /api/proposals/:id/assignments",
+                  "method": "executed-http-route",
+                  "polarity": "boundary",
+                  "reached": [
+                    "src/contexts/peer-review/service.ts:128"
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:128",
+              "by": [
+                {
+                  "check": "concurrent-third-and-fourth",
+                  "kind": "case",
+                  "path": "HTTP POST /api/proposals/:id/assignments",
+                  "method": "executed-http-route",
+                  "polarity": "boundary",
+                  "reached": [
+                    "src/contexts/peer-review/service.ts:128"
+                  ]
+                },
+                {
+                  "check": "first-assigned",
+                  "kind": "case",
+                  "path": "HTTP POST /api/proposals/:id/assignments",
+                  "method": "executed-http-route",
+                  "polarity": "allowed",
+                  "reached": [
+                    "src/contexts/peer-review/service.ts:128"
+                  ]
+                },
+                {
+                  "check": "revoked-frees-a-place",
+                  "kind": "case",
+                  "path": "HTTP POST /api/proposals/:id/assignments",
+                  "method": "executed-http-route",
+                  "polarity": "allowed",
+                  "reached": [
+                    "src/contexts/peer-review/service.ts:128"
+                  ]
+                },
+                {
+                  "check": "third-assigned",
+                  "kind": "case",
+                  "path": "HTTP POST /api/proposals/:id/assignments",
+                  "method": "executed-http-route",
+                  "polarity": "boundary",
+                  "reached": [
+                    "src/contexts/peer-review/service.ts:128"
+                  ]
+                }
+              ]
+            }
+          ],
+          "name": "Verified in scope"
+        },
+        "L3": {
+          "met": true,
+          "reasons": [
+            "active-status-misread: fault accepted-not-counted detected by full-after-acceptance-refused on HTTP POST /api/proposals/:id/assignments",
+            "boundary-shift: fault bound-off-by-one detected by fourth-refused on HTTP POST /api/proposals/:id/assignments",
+            "concurrent-race: fault check-outside-transaction detected by concurrent-third-and-fourth on HTTP POST /api/proposals/:id/assignments",
+            "rule-bypass: fault bound-removed detected by fourth-refused on HTTP POST /api/proposals/:id/assignments"
+          ],
+          "evidence": [
+            {
+              "class": "active-status-misread",
+              "faults": [
+                {
+                  "id": "accepted-not-counted",
+                  "detected": {
+                    "check": "full-after-acceptance-refused",
+                    "path": "HTTP POST /api/proposals/:id/assignments",
+                    "why": "activeAfter is 4, expected 3; refused is false, expected true"
+                  }
+                }
+              ]
+            },
+            {
+              "class": "boundary-shift",
+              "faults": [
+                {
+                  "id": "bound-off-by-one",
+                  "detected": {
+                    "check": "fourth-refused",
+                    "path": "HTTP POST /api/proposals/:id/assignments",
+                    "why": "activeAfter is 4, expected 3; refused is false, expected true"
+                  }
+                }
+              ]
+            },
+            {
+              "class": "concurrent-race",
+              "faults": [
+                {
+                  "id": "check-outside-transaction",
+                  "detected": {
+                    "check": "concurrent-third-and-fourth",
+                    "path": "HTTP POST /api/proposals/:id/assignments",
+                    "why": "activeAfter is 4, expected 3; admitted is 2, expected 1"
+                  }
+                }
+              ]
+            },
+            {
+              "class": "rule-bypass",
+              "faults": [
+                {
+                  "id": "bound-removed",
+                  "detected": {
+                    "check": "fourth-refused",
+                    "path": "HTTP POST /api/proposals/:id/assignments",
+                    "why": "activeAfter is 4, expected 3; refused is false, expected true"
+                  }
+                }
+              ]
+            }
+          ],
+          "name": "Violation-sensitive"
+        }
+      },
+      "checked": {
+        "methods": [
+          "executed",
+          "formal"
+        ],
+        "coverage": [
+          {
+            "path": "HTTP POST /api/proposals/:id/assignments",
+            "by": [
+              {
+                "check": "concurrent-third-and-fourth",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "boundary",
+                "reached": [
+                  "src/contexts/peer-review/service.ts:128"
+                ]
+              },
+              {
+                "check": "first-assigned",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "allowed",
+                "reached": [
+                  "src/contexts/peer-review/service.ts:128"
+                ]
+              },
+              {
+                "check": "fourth-refused",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "boundary"
+              },
+              {
+                "check": "full-after-acceptance-refused",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "rejected"
+              },
+              {
+                "check": "revoked-frees-a-place",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "allowed",
+                "reached": [
+                  "src/contexts/peer-review/service.ts:128"
+                ]
+              },
+              {
+                "check": "third-assigned",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "boundary",
+                "reached": [
+                  "src/contexts/peer-review/service.ts:128"
+                ]
+              }
+            ],
+            "declaredOnly": []
+          },
+          {
+            "path": "src/contexts/peer-review/service.ts:128",
+            "by": [
+              {
+                "check": "concurrent-third-and-fourth",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "boundary",
+                "reached": [
+                  "src/contexts/peer-review/service.ts:128"
+                ]
+              },
+              {
+                "check": "first-assigned",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "allowed",
+                "reached": [
+                  "src/contexts/peer-review/service.ts:128"
+                ]
+              },
+              {
+                "check": "revoked-frees-a-place",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "allowed",
+                "reached": [
+                  "src/contexts/peer-review/service.ts:128"
+                ]
+              },
+              {
+                "check": "third-assigned",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "boundary",
+                "reached": [
+                  "src/contexts/peer-review/service.ts:128"
+                ]
+              }
+            ],
+            "declaredOnly": []
+          }
+        ],
+        "polarities": [
+          {
+            "polarity": "allowed",
+            "by": [
+              {
+                "check": "first-assigned",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "allowed",
+                "reached": [
+                  "src/contexts/peer-review/service.ts:128"
+                ]
+              },
+              {
+                "check": "revoked-frees-a-place",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "allowed",
+                "reached": [
+                  "src/contexts/peer-review/service.ts:128"
+                ]
+              }
+            ]
+          },
+          {
+            "polarity": "rejected",
+            "by": [
+              {
+                "check": "full-after-acceptance-refused",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "rejected"
+              }
+            ]
+          },
+          {
+            "polarity": "boundary",
+            "by": [
+              {
+                "check": "concurrent-third-and-fourth",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "boundary",
+                "reached": [
+                  "src/contexts/peer-review/service.ts:128"
+                ]
+              },
+              {
+                "check": "fourth-refused",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "boundary"
+              },
+              {
+                "check": "third-assigned",
+                "kind": "case",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "method": "executed-http-route",
+                "polarity": "boundary",
+                "reached": [
+                  "src/contexts/peer-review/service.ts:128"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "sensitivity": {
+        "required": [
+          "boundary-shift",
+          "concurrent-race",
+          "rule-bypass"
+        ],
+        "requiredBy": [
+          {
+            "class": "boundary-shift",
+            "owner": "continuum-claim-rubric/3",
+            "rule": "boundary behaviour is in scope"
+          },
+          {
+            "class": "concurrent-race",
+            "owner": "continuum-claim-rubric/3",
+            "rule": "scope.concurrency: true"
+          },
+          {
+            "class": "rule-bypass",
+            "owner": "continuum-claim-rubric/3",
+            "rule": "every adl/business-rule claim"
+          }
+        ],
+        "removedByScope": [],
+        "classes": [
+          {
+            "class": "active-status-misread",
+            "required": false,
+            "declared": true,
+            "statement": "what counts as active is misread: accepted assignments are not counted, so a proposal with three accepted assignments admits a fourth",
+            "met": true,
+            "faults": [
+              {
+                "id": "accepted-not-counted",
+                "qualifies": true,
+                "detected": {
+                  "check": "full-after-acceptance-refused",
+                  "path": "HTTP POST /api/proposals/:id/assignments",
+                  "why": "activeAfter is 4, expected 3; refused is false, expected true"
+                },
+                "reasons": [
+                  "full-after-acceptance-refused passed on HTTP POST /api/proposals/:id/assignments at 6bcacf311447 and failed at the variant: sensitive to active-status-misread",
+                  "the deliberate fault architecture/challenges/accepted-not-counted.patch was detected: full-after-acceptance-refused on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; refused is false, expected true"
+                ]
+              }
+            ]
+          },
+          {
+            "class": "boundary-shift",
+            "required": true,
+            "declared": true,
+            "statement": "the bound is off by one: the comparison admits a fourth active assignment and refuses only a fifth",
+            "met": true,
+            "faults": [
+              {
+                "id": "bound-off-by-one",
+                "qualifies": true,
+                "detected": {
+                  "check": "fourth-refused",
+                  "path": "HTTP POST /api/proposals/:id/assignments",
+                  "why": "activeAfter is 4, expected 3; refused is false, expected true"
+                },
+                "reasons": [
+                  "fourth-refused passed on HTTP POST /api/proposals/:id/assignments at 6bcacf311447 and failed at the variant: sensitive to boundary-shift",
+                  "the deliberate fault architecture/challenges/bound-off-by-one.patch was detected: fourth-refused on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; refused is false, expected true"
+                ]
+              }
+            ]
+          },
+          {
+            "class": "concurrent-race",
+            "required": true,
+            "declared": true,
+            "statement": "the check and the write are not one atomic step: two requests in flight both pass the check against two active assignments and both write",
+            "met": true,
+            "faults": [
+              {
+                "id": "check-outside-transaction",
+                "qualifies": true,
+                "detected": {
+                  "check": "concurrent-third-and-fourth",
+                  "path": "HTTP POST /api/proposals/:id/assignments",
+                  "why": "activeAfter is 4, expected 3; admitted is 2, expected 1"
+                },
+                "reasons": [
+                  "concurrent-third-and-fourth passed on HTTP POST /api/proposals/:id/assignments at 6bcacf311447 and failed at the variant: sensitive to concurrent-race",
+                  "the deliberate fault architecture/challenges/check-outside-transaction.patch was detected: concurrent-third-and-fourth on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; admitted is 2, expected 1"
+                ]
+              }
+            ]
+          },
+          {
+            "class": "rule-bypass",
+            "required": true,
+            "declared": true,
+            "statement": "the bound is not enforced on the write path: a fourth active assignment is admitted",
+            "met": true,
+            "faults": [
+              {
+                "id": "bound-removed",
+                "qualifies": true,
+                "detected": {
+                  "check": "fourth-refused",
+                  "path": "HTTP POST /api/proposals/:id/assignments",
+                  "why": "activeAfter is 4, expected 3; refused is false, expected true"
+                },
+                "reasons": [
+                  "fourth-refused passed on HTTP POST /api/proposals/:id/assignments at 6bcacf311447 and failed at the variant: sensitive to rule-bypass",
+                  "the deliberate fault architecture/challenges/bound-removed.patch was detected: fourth-refused on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; refused is false, expected true"
+                ]
+              }
+            ]
+          }
+        ],
+        "faultedPaths": [
+          "HTTP POST /api/proposals/:id/assignments"
+        ]
+      },
+      "materialExclusions": [
+        {
+          "what": "the demo seed's calls of assignReviewer (src/seed.ts)",
+          "removes": null,
+          "by": "boundary.excludes",
+          "why": "demo data, never run when NODE_ENV=production; it calls the same guarded function"
+        },
+        {
+          "what": "several Quorum processes writing one store at once",
+          "removes": null,
+          "by": "boundary.excludes",
+          "why": "one process per store is the deployment model (LocalDevelopment binding); the store trigger is the defence there and is observed statically (store-bound-trigger), not executed across processes"
+        },
+        {
+          "what": "tests/**, scripts/**",
+          "removes": null,
+          "by": "boundary.excludes",
+          "why": "not part of the deployable"
+        }
+      ],
+      "challenges": [
+        {
+          "id": "bound-removed",
+          "kind": "deliberate-fault",
+          "statement": "the panel-full check and the store trigger are both removed: nothing on the write path bounds the count",
+          "change": {
+            "patch": "architecture/challenges/bound-removed.patch",
+            "digest": "sha256:5d1314c0f17065692186396180180ce94c95ceccb6b37cda16360c2e2f416fa3",
+            "files": [
+              "src/contexts/peer-review/service.ts",
+              "src/platform/schema.ts"
+            ]
+          },
+          "expected": {
+            "check": "fourth-refused",
+            "path": "HTTP POST /api/proposals/:id/assignments",
+            "reason": "activeAfter is 4, expected 3"
+          },
+          "baseline": {
+            "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+            "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7"
+          },
+          "variant": {
+            "commit": "d361beceadaf3e4b06606d64301a7702968349ca",
+            "tree": "dc98e7548f5e58a52da11eee3decf3aaa8539d28",
+            "parent": "6bcacf311447a573d2c408f50a73fcb480ec566e"
+          },
+          "relationshipVerified": true,
+          "variantResult": {
+            "verdict": "MISMATCH",
+            "level": null,
+            "judgmentDigest": "sha256:a61facd4104373e670e42577bba8d466a073ea5c3dabd90c75da0aa9633a3391",
+            "counterexamples": [
+              {
+                "check": "concurrent-third-and-fourth",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "why": "activeAfter is 4, expected 3; admitted is 2, expected 1"
+              },
+              {
+                "check": "fourth-refused",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "why": "activeAfter is 4, expected 3; refused is false, expected true"
+              },
+              {
+                "check": "full-after-acceptance-refused",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "why": "activeAfter is 4, expected 3; refused is false, expected true"
+              }
+            ]
+          },
+          "detected": {
+            "check": "fourth-refused",
+            "path": "HTTP POST /api/proposals/:id/assignments",
+            "why": "activeAfter is 4, expected 3; refused is false, expected true"
+          },
+          "qualifies": true,
+          "reasons": [
+            "fourth-refused passed on HTTP POST /api/proposals/:id/assignments at 6bcacf311447 and failed at the variant: sensitive to rule-bypass",
+            "the deliberate fault architecture/challenges/bound-removed.patch was detected: fourth-refused on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; refused is false, expected true"
+          ],
+          "class": "rule-bypass"
+        },
+        {
+          "id": "bound-off-by-one",
+          "kind": "deliberate-fault",
+          "statement": "the bound compares with > instead of >=, in the service and in the trigger: a fourth is admitted, a fifth refused",
+          "change": {
+            "patch": "architecture/challenges/bound-off-by-one.patch",
+            "digest": "sha256:95b436133b32e0cf4a0a739c625ba6678e47843a5dcabb0cbeaf449164c90b47",
+            "files": [
+              "src/contexts/peer-review/service.ts",
+              "src/platform/schema.ts"
+            ]
+          },
+          "expected": {
+            "check": "fourth-refused",
+            "path": "HTTP POST /api/proposals/:id/assignments",
+            "reason": "activeAfter is 4, expected 3"
+          },
+          "baseline": {
+            "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+            "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7"
+          },
+          "variant": {
+            "commit": "11454b8468db30c97f3217ed871a1c474b89742e",
+            "tree": "9367fd5eb65b117c5c33ca1cf2f62260f00970ea",
+            "parent": "6bcacf311447a573d2c408f50a73fcb480ec566e"
+          },
+          "relationshipVerified": true,
+          "variantResult": {
+            "verdict": "MISMATCH",
+            "level": null,
+            "judgmentDigest": "sha256:0c9883f68c49c4ee5501ba6ad65bc6a1a0369063d67fcd432469c086e441090c",
+            "counterexamples": [
+              {
+                "check": "concurrent-third-and-fourth",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "why": "activeAfter is 4, expected 3; admitted is 2, expected 1"
+              },
+              {
+                "check": "fourth-refused",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "why": "activeAfter is 4, expected 3; refused is false, expected true"
+              },
+              {
+                "check": "full-after-acceptance-refused",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "why": "activeAfter is 4, expected 3; refused is false, expected true"
+              }
+            ]
+          },
+          "detected": {
+            "check": "fourth-refused",
+            "path": "HTTP POST /api/proposals/:id/assignments",
+            "why": "activeAfter is 4, expected 3; refused is false, expected true"
+          },
+          "qualifies": true,
+          "reasons": [
+            "fourth-refused passed on HTTP POST /api/proposals/:id/assignments at 6bcacf311447 and failed at the variant: sensitive to boundary-shift",
+            "the deliberate fault architecture/challenges/bound-off-by-one.patch was detected: fourth-refused on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; refused is false, expected true"
+          ],
+          "class": "boundary-shift"
+        },
+        {
+          "id": "accepted-not-counted",
+          "kind": "deliberate-fault",
+          "statement": "the count of active assignments reads status = assigned, in the service and in the trigger: accepted assignments stop counting",
+          "change": {
+            "patch": "architecture/challenges/accepted-not-counted.patch",
+            "digest": "sha256:e811dcd72784fa9ccf63504d3db1db5bbdba6c850d60d81fc84fceec031503a1",
+            "files": [
+              "src/contexts/peer-review/service.ts",
+              "src/platform/schema.ts"
+            ]
+          },
+          "expected": {
+            "check": "full-after-acceptance-refused",
+            "path": "HTTP POST /api/proposals/:id/assignments",
+            "reason": "activeAfter is 4, expected 3"
+          },
+          "baseline": {
+            "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+            "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7"
+          },
+          "variant": {
+            "commit": "d001e16208a882845b22c29703ee41fe6aedd5b6",
+            "tree": "6022995ef3104ec8f35e1fab273cec98b368711f",
+            "parent": "6bcacf311447a573d2c408f50a73fcb480ec566e"
+          },
+          "relationshipVerified": true,
+          "variantResult": {
+            "verdict": "MISMATCH",
+            "level": null,
+            "judgmentDigest": "sha256:c420444ae0472d9464c809484a99fc24b752ae44e1bc92a7fc672ab21ddcf616",
+            "counterexamples": [
+              {
+                "check": "full-after-acceptance-refused",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "why": "activeAfter is 4, expected 3; refused is false, expected true"
+              }
+            ]
+          },
+          "detected": {
+            "check": "full-after-acceptance-refused",
+            "path": "HTTP POST /api/proposals/:id/assignments",
+            "why": "activeAfter is 4, expected 3; refused is false, expected true"
+          },
+          "qualifies": true,
+          "reasons": [
+            "full-after-acceptance-refused passed on HTTP POST /api/proposals/:id/assignments at 6bcacf311447 and failed at the variant: sensitive to active-status-misread",
+            "the deliberate fault architecture/challenges/accepted-not-counted.patch was detected: full-after-acceptance-refused on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; refused is false, expected true"
+          ],
+          "class": "active-status-misread"
+        },
+        {
+          "id": "check-outside-transaction",
+          "kind": "deliberate-fault",
+          "statement": "the route checks eligibility, yields, then writes in a transaction that no longer re-checks, and the store trigger is removed: a sequential request is still refused, two in flight both write",
+          "change": {
+            "patch": "architecture/challenges/check-outside-transaction.patch",
+            "digest": "sha256:5addd04aead19744698c96182ce43dff167c35c6b713976fc8272fc2b4dce7c4",
+            "files": [
+              "src/api/routes.ts",
+              "src/contexts/peer-review/service.ts",
+              "src/platform/schema.ts"
+            ]
+          },
+          "expected": {
+            "check": "concurrent-third-and-fourth",
+            "path": "HTTP POST /api/proposals/:id/assignments",
+            "reason": "activeAfter is 4, expected 3"
+          },
+          "baseline": {
+            "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+            "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7"
+          },
+          "variant": {
+            "commit": "6eb5f2de0b43bb382491fc0db78ab982e5f5b562",
+            "tree": "a77a6ccd83dbdf357e39810e18ea0baa4e4275a6",
+            "parent": "6bcacf311447a573d2c408f50a73fcb480ec566e"
+          },
+          "relationshipVerified": true,
+          "variantResult": {
+            "verdict": "MISMATCH",
+            "level": null,
+            "judgmentDigest": "sha256:af02f21f2cc962f7a4cddf19910ed179b49af6430f9b09f820dca72b804c0f03",
+            "counterexamples": [
+              {
+                "check": "concurrent-third-and-fourth",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "why": "activeAfter is 4, expected 3; admitted is 2, expected 1"
+              }
+            ]
+          },
+          "detected": {
+            "check": "concurrent-third-and-fourth",
+            "path": "HTTP POST /api/proposals/:id/assignments",
+            "why": "activeAfter is 4, expected 3; admitted is 2, expected 1"
+          },
+          "qualifies": true,
+          "reasons": [
+            "concurrent-third-and-fourth passed on HTTP POST /api/proposals/:id/assignments at 6bcacf311447 and failed at the variant: sensitive to concurrent-race",
+            "the deliberate fault architecture/challenges/check-outside-transaction.patch was detected: concurrent-third-and-fourth on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; admitted is 2, expected 1"
+          ],
+          "class": "concurrent-race"
+        }
+      ],
+      "corroboration": [],
+      "scope": {
+        "declared": true,
+        "established": true,
+        "method": "lexed literal SQL over src/** for writes creating an active rev_assignment; each write's function and every call of it",
+        "paths": [
+          "HTTP POST /api/proposals/:id/assignments",
+          "src/contexts/peer-review/service.ts:128"
+        ],
+        "unresolved": [],
+        "discovery": "Lex src/**: every INSERT/REPLACE INTO rev_assignment, and every UPDATE of rev_assignment that can move a revoked status to an active one, is a write; the named function holding each write is found, and every call of it in src/** is an entry point (an HTTP registration is named by method and URL). Non-literal SQL must resolve, else the scope is incomplete.",
+        "concurrency": true
+      },
+      "declarations": {
+        "clause": "the proposal has fewer than three active assignments",
+        "boundary": "AssignReviewer — every write in src/** that creates an ACTIVE assignment (any status but revoked), and every runtime entry point that reaches one, in one Quorum process over one store.",
+        "scopeDiscovery": "Lex src/**: every INSERT/REPLACE INTO rev_assignment, and every UPDATE of rev_assignment that can move a revoked status to an active one, is a write; the named function holding each write is found, and every call of it in src/** is an entry point (an HTTP registration is named by method and URL). Non-literal SQL must resolve, else the scope is incomplete.",
+        "checks": [
+          {
+            "id": "assignment-scope",
+            "kind": "scope",
+            "method": "static-lexical",
+            "qualifies": [
+              "L2",
+              "L3"
+            ]
+          },
+          {
+            "id": "concurrent-third-and-fourth",
+            "kind": "case",
+            "method": "executed-http-route",
+            "qualifies": [
+              "L1",
+              "L2"
+            ],
+            "polarity": "boundary"
+          },
+          {
+            "id": "first-assigned",
+            "kind": "case",
+            "method": "executed-http-route",
+            "qualifies": [
+              "L1",
+              "L2"
+            ],
+            "polarity": "allowed"
+          },
+          {
+            "id": "fourth-refused",
+            "kind": "case",
+            "method": "executed-http-route",
+            "qualifies": [
+              "L1",
+              "L2"
+            ],
+            "polarity": "boundary",
+            "control": "third-assigned"
+          },
+          {
+            "id": "full-after-acceptance-refused",
+            "kind": "case",
+            "method": "executed-http-route",
+            "qualifies": [
+              "L1",
+              "L2"
+            ],
+            "polarity": "rejected",
+            "control": "first-assigned"
+          },
+          {
+            "id": "panel-full-guard",
+            "kind": "enforcement",
+            "method": "static-lexical",
+            "qualifies": [
+              "L1"
+            ]
+          },
+          {
+            "id": "revoked-frees-a-place",
+            "kind": "case",
+            "method": "executed-http-route",
+            "qualifies": [
+              "L1",
+              "L2"
+            ],
+            "polarity": "allowed"
+          },
+          {
+            "id": "store-bound-trigger",
+            "kind": "enforcement",
+            "method": "static-lexical",
+            "qualifies": [
+              "L1"
+            ]
+          },
+          {
+            "id": "third-assigned",
+            "kind": "case",
+            "method": "executed-http-route",
+            "qualifies": [
+              "L1",
+              "L2"
+            ],
+            "polarity": "boundary"
+          }
+        ],
+        "violations": [
+          {
+            "class": "rule-bypass",
+            "statement": "the bound is not enforced on the write path: a fourth active assignment is admitted"
+          },
+          {
+            "class": "boundary-shift",
+            "statement": "the bound is off by one: the comparison admits a fourth active assignment and refuses only a fifth"
+          },
+          {
+            "class": "concurrent-race",
+            "statement": "the check and the write are not one atomic step: two requests in flight both pass the check against two active assignments and both write"
+          },
+          {
+            "class": "active-status-misread",
+            "statement": "what counts as active is misread: accepted assignments are not counted, so a proposal with three accepted assignments admits a fourth"
+          }
+        ]
+      },
+      "limits": [
+        "assumed (A1-active): An active assignment is any rev_assignment row whose status is not revoked (assigned, accepted, overdue, completed): the model's \"active assignments\", in stored values.",
+        "assumed (A2-harness): Cases set up their world (accounts, a published call, an eligible proposal, the first assignments) through the implementation's own harness and services. The act under test — the HTTP route — and the state read — rev_assignment — are the verifier's.",
+        "assumed (A3-reached): The `reached` paths are what V8 precise BLOCK coverage reports executing during the act alone (setup excluded): a write site is reached when the innermost covered block containing it ran. Observed by the runtime, not declared.",
+        "no detected fault was placed on src/contexts/peer-review/service.ts:128: sensitivity there rests on the violation classes, not on a fault at that path",
+        "outside the boundary: several Quorum processes writing one store at once — one process per store is the deployment model (LocalDevelopment binding); the store trigger is the defence there and is observed statically (store-bound-trigger), not executed across processes",
+        "outside the boundary: tests/**, scripts/** — not part of the deployable",
+        "outside the boundary: the demo seed's calls of assignReviewer (src/seed.ts) — demo data, never run when NODE_ENV=production; it calls the same guarded function",
+        "sensitivity is demonstrated only for the violation classes active-status-misread, boundary-shift, concurrent-race, rule-bypass: another way of violating the claim is not covered"
+      ],
+      "evidence": [
+        {
+          "check": "assignment-scope",
+          "kind": "scope",
+          "path": "src/**",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "concurrent-third-and-fourth",
+          "kind": "case",
+          "path": "HTTP POST /api/proposals/:id/assignments",
+          "covers": [],
+          "reached": [
+            "src/contexts/peer-review/service.ts:128"
+          ],
+          "method": "executed-http-route",
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "first-assigned",
+          "kind": "case",
+          "path": "HTTP POST /api/proposals/:id/assignments",
+          "covers": [],
+          "reached": [
+            "src/contexts/peer-review/service.ts:128"
+          ],
+          "method": "executed-http-route",
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "fourth-refused",
+          "kind": "case",
+          "path": "HTTP POST /api/proposals/:id/assignments",
+          "covers": [],
+          "reached": [],
+          "method": "executed-http-route",
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "full-after-acceptance-refused",
+          "kind": "case",
+          "path": "HTTP POST /api/proposals/:id/assignments",
+          "covers": [],
+          "reached": [],
+          "method": "executed-http-route",
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "panel-full-guard",
+          "kind": "enforcement",
+          "path": "src/contexts/peer-review/service.ts:assignmentEligibility",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:51c6ce0f5d6693087d83eb897a720205fb456d19766f934d2cd119944fd4d7d4",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "revoked-frees-a-place",
+          "kind": "case",
+          "path": "HTTP POST /api/proposals/:id/assignments",
+          "covers": [],
+          "reached": [
+            "src/contexts/peer-review/service.ts:128"
+          ],
+          "method": "executed-http-route",
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "store-bound-trigger",
+          "kind": "enforcement",
+          "path": "src/platform/schema.ts:rev_assignment_at_most_three",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:bb38044957749b65cf4c9599592ef6e68f1e9132bea99dbc4fdbbb36f2ef4439",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "third-assigned",
+          "kind": "case",
+          "path": "HTTP POST /api/proposals/:id/assignments",
+          "covers": [],
+          "reached": [
+            "src/contexts/peer-review/service.ts:128"
+          ],
+          "method": "executed-http-route",
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        }
+      ],
+      "counterexamples": [],
+      "conflicts": [],
+      "reasons": [],
+      "next": null,
+      "judgmentDigest": "sha256:9d333e2aa05d4049bd91f6010c8d178abd10ac6b369ae8dc404ad73b25bf8ebe",
+      "judged": true,
+      "informational": true,
+      "ran": {
+        "declaration": {
+          "path": "architecture/verification/at-most-three-reviewers.verification.json",
+          "digest": "sha256:bb538c41aecb565c8ded5046430c770a55a817646c4df7a21a16697b0618b571"
+        },
+        "verifier": {
+          "name": "at-most-three-reviewers",
+          "version": "1.0.1",
+          "digest": "sha256:ad0e73edec65b3b4fd72fd06acc3e85e4d371037ed4b46767071c782d33dde54"
+        },
+        "run": {
+          "exit": 0,
+          "ms": 8344
+        },
+        "result": {
+          "path": "verification/at-most-three-reviewers/result.json"
+        },
+        "challenges": [
+          {
+            "id": "bound-removed",
+            "variant": {
+              "commit": "d361beceadaf3e4b06606d64301a7702968349ca",
+              "tree": "dc98e7548f5e58a52da11eee3decf3aaa8539d28",
+              "parent": "6bcacf311447a573d2c408f50a73fcb480ec566e"
+            },
+            "change": {
+              "patch": "architecture/challenges/bound-removed.patch",
+              "digest": "sha256:5d1314c0f17065692186396180180ce94c95ceccb6b37cda16360c2e2f416fa3",
+              "files": [
+                "src/contexts/peer-review/service.ts",
+                "src/platform/schema.ts"
+              ]
+            }
+          },
+          {
+            "id": "bound-off-by-one",
+            "variant": {
+              "commit": "11454b8468db30c97f3217ed871a1c474b89742e",
+              "tree": "9367fd5eb65b117c5c33ca1cf2f62260f00970ea",
+              "parent": "6bcacf311447a573d2c408f50a73fcb480ec566e"
+            },
+            "change": {
+              "patch": "architecture/challenges/bound-off-by-one.patch",
+              "digest": "sha256:95b436133b32e0cf4a0a739c625ba6678e47843a5dcabb0cbeaf449164c90b47",
+              "files": [
+                "src/contexts/peer-review/service.ts",
+                "src/platform/schema.ts"
+              ]
+            }
+          },
+          {
+            "id": "accepted-not-counted",
+            "variant": {
+              "commit": "d001e16208a882845b22c29703ee41fe6aedd5b6",
+              "tree": "6022995ef3104ec8f35e1fab273cec98b368711f",
+              "parent": "6bcacf311447a573d2c408f50a73fcb480ec566e"
+            },
+            "change": {
+              "patch": "architecture/challenges/accepted-not-counted.patch",
+              "digest": "sha256:e811dcd72784fa9ccf63504d3db1db5bbdba6c850d60d81fc84fceec031503a1",
+              "files": [
+                "src/contexts/peer-review/service.ts",
+                "src/platform/schema.ts"
+              ]
+            }
+          },
+          {
+            "id": "check-outside-transaction",
+            "variant": {
+              "commit": "6eb5f2de0b43bb382491fc0db78ab982e5f5b562",
+              "tree": "a77a6ccd83dbdf357e39810e18ea0baa4e4275a6",
+              "parent": "6bcacf311447a573d2c408f50a73fcb480ec566e"
+            },
+            "change": {
+              "patch": "architecture/challenges/check-outside-transaction.patch",
+              "digest": "sha256:5addd04aead19744698c96182ce43dff167c35c6b713976fc8272fc2b4dce7c4",
+              "files": [
+                "src/api/routes.ts",
+                "src/contexts/peer-review/service.ts",
+                "src/platform/schema.ts"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "surface": "continuum-platform-claim-attestation/0",
+      "verification": "chair-decides-scored-only",
+      "rubric": {
+        "id": "continuum-claim-rubric/2",
+        "levels": {
+          "L0": "Model Valid",
+          "L1": "Observed Conformance",
+          "L2": "Covered Conformance",
+          "L3": "Strong Conformance"
+        }
+      },
+      "spec": {
+        "id": "chair-decides-scored-only",
+        "version": "1.1.1",
+        "digest": "sha256:f5215797a9cd0c6c30bd88f67f76e9e19da876f98099571b8ea41c12a0e2140a"
+      },
+      "model": {
+        "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+        "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+        "compiled": "passed",
+        "business": {
+          "compiled": "passed",
+          "digest": "sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72"
+        }
+      },
+      "implementation": {
+        "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+        "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7"
+      },
+      "claim": {
+        "language": "bdl",
+        "kind": "business-rule",
+        "id": "r-q008",
+        "name": "ChairDecidesScoredOnly",
+        "structural": false,
+        "statement": "ChairDecidesScoredOnly (r-q008): when Proposal.status != ProposalStatus \"Scored\" on RecordPanelDecision (ac-q019) — Only a Panel Chair records a panel decision, only for a Scored proposal, and only once. [judged at its declared scope RecordPanelDecision (ac-q019) only; the assertion is not evaluated anywhere else]",
+        "declared": {
+          "scope": [
+            "ac-q019"
+          ],
+          "condition": "Proposal.status != ProposalStatus \"Scored\"",
+          "assertion": "Only a Panel Chair records a panel decision, only for a Scored proposal, and only once.",
+          "performers": [
+            "PanelChair"
+          ],
+          "preconditions": [
+            "Proposal.status == ProposalStatus \"Scored\""
+          ]
+        },
+        "business": {
+          "digest": "sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72"
+        }
+      },
+      "boundary": {
+        "statement": "Application approval is the Award outcome of the decision RecordPanelDecision (Proposal Scored → Awarded, t-q016; its only trigger). In scope: every write in src/** that records a panel decision (either outcome — the rule governs the decision, not only the award), every publish of the decision fact, every write that moves a proposal to awarded or declined, and every runtime entry point into the decision writes.",
+        "includes": [],
+        "excludes": [
+          {
+            "what": "the demo seed's calls of recordDecision (src/seed.ts)",
+            "why": "demo data, never run when NODE_ENV=production; no case drives it and the performer guard (the route) does not apply to it"
+          },
+          {
+            "what": "same action, other rules — NOT judged here: r-q013 AwardHeldOnLateConflict, i-q009 EnvelopeNeverExceeded, i-q014 AwardIsTheRequestedAmount, and the open question u-q001 ConflictAfterDecision",
+            "why": "each is its own compiled claim about RecordPanelDecision; an L3 on r-q008 says nothing about them, so the award is not 'fully governed' by this result"
+          },
+          {
+            "what": "ConfirmEligibility (ac-q010, ProgramOfficer)",
+            "why": "it screens a proposal in; 'approve an application' is read as the funding decision (Award). The brief does not settle which it meant — an owner question"
+          },
+          {
+            "what": "the read model ovs_proposal and notifications",
+            "why": "projections fed by the decision fact; they record a decision, they cannot make one. Their writes are still scanned as outcome writes and must lie in a handler of the fact"
+          },
+          {
+            "what": "tests/**, scripts/**",
+            "why": "not part of the deployable"
+          }
+        ]
+      },
+      "assumptions": [
+        {
+          "id": "C1-rule-reading",
+          "statement": "A BDL rule means condition ⇒ assertion (§5.13). Reading r-q008 as 'refuse RecordPanelDecision when the proposal is not Scored' is this model's authoring convention, so the Scored part is anchored on ac-q019's compiled precondition, which states it directly; the check verifies both are what the guards implement."
+        },
+        {
+          "id": "C2-performers",
+          "statement": "The performer part is ac-q019's mayPerform, a closed set (§9.2: any other performer violates business meaning), mapped by scope.actorRoles to the role the route checks (PanelChair → panelChair). The mapping is stated here, not inferred."
+        },
+        {
+          "id": "C3-once-derived",
+          "statement": "'Only once' is derived, not compiled as a condition: after a decision the proposal is Awarded or Declined (both terminal), and only Score enters Scored (sm-q003, closed by §5.8 R-07). The code is checked for a single decision per proposal (the decided guard, a conditional claim, adj_decision keyed by proposal)."
+        },
+        {
+          "id": "C4-case-is-scored",
+          "statement": "An adj_case row exists only for a scored proposal: it is opened only in the ProposalScored handler. The scored guard is 'refuse without a case'; the correspondence check verifies the case is opened nowhere else."
+        },
+        {
+          "id": "C5-status-channel",
+          "statement": "A proposal's status is written only through transition() (the one UPDATE of sub_proposal.status, parametric); every outcome is a call of it, or of a forwarder, with a literal target status. Any other form is unresolved."
+        },
+        {
+          "id": "C6-harness",
+          "statement": "Cases set up their world through the implementation's own test harness (tests/support/harness.ts), in-process (Fastify inject) against an isolated SQLite file with a manual clock. The act under test — the HTTP route — and the state read — adj_decision and sub_proposal.status — are the verifier's."
+        },
+        {
+          "id": "C7-shape",
+          "statement": "Guards and correspondence are recognised textually (lexed, not parsed); a refactor they do not recognise reads as 'not shown', never as 'violated'."
+        }
+      ],
+      "verdict": "MATCH",
+      "level": "L3",
+      "levelName": "Strong Conformance",
+      "binding": {
+        "model": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+        "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+        "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7",
+        "spec": "chair-decides-scored-only@1.1.1",
+        "specDigest": "sha256:f5215797a9cd0c6c30bd88f67f76e9e19da876f98099571b8ea41c12a0e2140a",
+        "rubric": "continuum-claim-rubric/2",
+        "configuration": {
+          "node": "v24.22.1",
+          "platform": "win32",
+          "database": "SQLite (better-sqlite3), an isolated file per case; manual clock"
+        },
+        "configurationDigest": "sha256:463b87fc070bf3cf5f91f3ddddb9c2a244e5f1260ccc80ff5145c8fc2b4b677b"
+      },
+      "levels": {
+        "L0": {
+          "met": true,
+          "reasons": [
+            "the claim compiled at sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 (business model sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72)"
+          ],
+          "name": "Model Valid"
+        },
+        "L1": {
+          "met": true,
+          "reasons": [
+            "non-chair-refused passed on HTTP POST /api/adjudications/:id/decision",
+            "outcome-follows-decision-fact passed on src/contexts/oversight/service.ts:108",
+            "outcome-follows-decision-fact passed on src/contexts/oversight/service.ts:113",
+            "outcome-follows-decision-fact passed on src/contexts/submission/service.ts:230",
+            "outcome-follows-decision-fact passed on src/contexts/submission/service.ts:231",
+            "second-decision-refused passed on HTTP POST /api/adjudications/:id/decision",
+            "unscored-refused passed on HTTP POST /api/adjudications/:id/decision"
+          ],
+          "name": "Observed Conformance"
+        },
+        "L2": {
+          "met": true,
+          "reasons": [
+            "scope established (8 path(s)); every in-scope path is covered by a passing qualifying check"
+          ],
+          "name": "Covered Conformance"
+        },
+        "L3": {
+          "met": true,
+          "reasons": [
+            "full-boundary evidence: constraint src/contexts/adjudication/service.ts:recordDecision applies to every in-scope path (guards-dominate-decision); the constraint implements the model rule (guards-implement-rule on src/contexts/adjudication/service.ts:recordDecision)",
+            "challenge decision-admits-officer (deliberate-fault) qualified: the deliberate fault architecture/challenges/decision-admits-officer.patch was detected: non-chair-refused on HTTP POST /api/adjudications/:id/decision — allRefused is false, expected true; decisionsAdded is 1, expected 0; eventsAdded is 1, expected 0; proposalStatusAfter is \"awarded\", expected \"scored\""
+          ],
+          "name": "Strong Conformance"
+        }
+      },
+      "challenges": [
+        {
+          "id": "decision-admits-officer",
+          "kind": "deliberate-fault",
+          "statement": "the panel-decision route also admits a Program Officer",
+          "change": {
+            "patch": "architecture/challenges/decision-admits-officer.patch",
+            "digest": "sha256:7486d5c4c8a6ab2ad5997511625d72ce29d1b9eb8e5e1939751bbd0a52b30341",
+            "files": [
+              "src/api/routes.ts"
+            ]
+          },
+          "expected": {
+            "check": "non-chair-refused",
+            "path": "HTTP POST /api/adjudications/:id/decision",
+            "reason": "allRefused is false, expected true"
+          },
+          "baseline": {
+            "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+            "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7"
+          },
+          "variant": {
+            "commit": "6e4c0150fa2aa6cc91623952c29cad4ba88f5fa8",
+            "tree": "c1fa8df1794a6a5b33799fda0f2b4125df825593",
+            "parent": "6bcacf311447a573d2c408f50a73fcb480ec566e"
+          },
+          "relationshipVerified": true,
+          "variantResult": {
+            "verdict": "MISMATCH",
+            "level": null,
+            "judgmentDigest": "sha256:0b2468d40fd5ec364ab65619ad8a27b07b392433d08c62a489cbdfb3e18ad6e5",
+            "counterexamples": [
+              {
+                "check": "non-chair-refused",
+                "path": "HTTP POST /api/adjudications/:id/decision",
+                "why": "allRefused is false, expected true; decisionsAdded is 1, expected 0; eventsAdded is 1, expected 0; proposalStatusAfter is \"awarded\", expected \"scored\""
+              }
+            ]
+          },
+          "detected": {
+            "check": "non-chair-refused",
+            "path": "HTTP POST /api/adjudications/:id/decision",
+            "why": "allRefused is false, expected true; decisionsAdded is 1, expected 0; eventsAdded is 1, expected 0; proposalStatusAfter is \"awarded\", expected \"scored\""
+          },
+          "qualifies": true,
+          "reasons": [
+            "the deliberate fault architecture/challenges/decision-admits-officer.patch was detected: non-chair-refused on HTTP POST /api/adjudications/:id/decision — allRefused is false, expected true; decisionsAdded is 1, expected 0; eventsAdded is 1, expected 0; proposalStatusAfter is \"awarded\", expected \"scored\""
+          ]
+        }
+      ],
+      "scope": {
+        "declared": true,
+        "established": true,
+        "method": "lexed src/**: SQL writes to adj_decision and adj_case→decided; publishes of the decision fact; proposal status writes to an outcome through the status channel; every call of each decision function",
+        "paths": [
+          "HTTP POST /api/adjudications/:id/decision",
+          "src/contexts/adjudication/service.ts:102",
+          "src/contexts/adjudication/service.ts:105",
+          "src/contexts/adjudication/service.ts:116",
+          "src/contexts/oversight/service.ts:108",
+          "src/contexts/oversight/service.ts:113",
+          "src/contexts/submission/service.ts:230",
+          "src/contexts/submission/service.ts:231"
+        ],
+        "unresolved": [],
+        "discovery": "Lex src/**: every SQL write to adj_decision, every UPDATE of adj_case to 'decided', every publish of ProposalAwarded/ProposalDeclined (a computed event type is unresolved), and every move of a proposal to awarded/declined — through the status channel transition() or its forwarder react() with a literal target, or literal SQL. Every call of a function holding a decision write is an entry point (an HTTP registration named by method, URL and declared access). Non-literal SQL must resolve, else the scope is incomplete."
+      },
+      "evidence": [
+        {
+          "check": "chair-decides-scored",
+          "kind": "case",
+          "path": "HTTP POST /api/adjudications/:id/decision",
+          "covers": [
+            "src/contexts/adjudication/service.ts:102",
+            "src/contexts/adjudication/service.ts:105",
+            "src/contexts/adjudication/service.ts:116"
+          ],
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "decision-scope",
+          "kind": "scope",
+          "path": "src/**",
+          "covers": [],
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "guards-dominate-decision",
+          "kind": "enforcement",
+          "path": "src/contexts/adjudication/service.ts:recordDecision",
+          "covers": [],
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "guards-implement-rule",
+          "kind": "rule-correspondence",
+          "path": "src/contexts/adjudication/service.ts:recordDecision",
+          "covers": [],
+          "inputs": "sha256:38425878829a5ce5a1221f9256774bf531b2d136e4295dd09ff8d5b73de75528",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "non-chair-refused",
+          "kind": "case",
+          "path": "HTTP POST /api/adjudications/:id/decision",
+          "covers": [
+            "src/contexts/adjudication/service.ts:102",
+            "src/contexts/adjudication/service.ts:105",
+            "src/contexts/adjudication/service.ts:116"
+          ],
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "outcome-follows-decision-fact",
+          "kind": "structural",
+          "path": "src/contexts/oversight/service.ts:108",
+          "covers": [],
+          "inputs": "sha256:57e3e8614c45e637f79803966a43e6033bddf139eb9722a382239a396107f762",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "outcome-follows-decision-fact",
+          "kind": "structural",
+          "path": "src/contexts/oversight/service.ts:113",
+          "covers": [],
+          "inputs": "sha256:57e3e8614c45e637f79803966a43e6033bddf139eb9722a382239a396107f762",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "outcome-follows-decision-fact",
+          "kind": "structural",
+          "path": "src/contexts/submission/service.ts:230",
+          "covers": [],
+          "inputs": "sha256:d69d71e93c612ca71932126b0f0e9e51613c40d706d0c9bc1e9c93ad4e141f30",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "outcome-follows-decision-fact",
+          "kind": "structural",
+          "path": "src/contexts/submission/service.ts:231",
+          "covers": [],
+          "inputs": "sha256:d69d71e93c612ca71932126b0f0e9e51613c40d706d0c9bc1e9c93ad4e141f30",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "second-decision-refused",
+          "kind": "case",
+          "path": "HTTP POST /api/adjudications/:id/decision",
+          "covers": [
+            "src/contexts/adjudication/service.ts:102",
+            "src/contexts/adjudication/service.ts:105",
+            "src/contexts/adjudication/service.ts:116"
+          ],
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "unscored-refused",
+          "kind": "case",
+          "path": "HTTP POST /api/adjudications/:id/decision",
+          "covers": [
+            "src/contexts/adjudication/service.ts:102",
+            "src/contexts/adjudication/service.ts:105",
+            "src/contexts/adjudication/service.ts:116"
+          ],
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        }
+      ],
+      "counterexamples": [],
+      "conflicts": [],
+      "reasons": [],
+      "next": null,
+      "judgmentDigest": "sha256:1902e6a98512ac6bee0a8011c6a9cb1f2401e7a9188f3f2a06dadb35af0e7c5a",
+      "judged": true,
+      "informational": true,
+      "ran": {
+        "declaration": {
+          "path": "architecture/verification/chair-decides-scored-only.verification.json",
+          "digest": "sha256:d0284c32bf2d1ab13ebc9d1cbf605a398fa5dff8c82b60b463d6073a70ac696c"
+        },
+        "verifier": {
+          "name": "chair-decides-scored-only",
+          "version": "1.1.1",
+          "digest": "sha256:d88ed9c6a293b3da99dcd7b175d7fad655a567022556a0922ff29a3ba8062c3d"
+        },
+        "run": {
+          "exit": 0,
+          "ms": 6575
+        },
+        "result": {
+          "path": "verification/chair-decides-scored-only/result.json"
+        },
+        "challenges": [
+          {
+            "id": "decision-admits-officer",
+            "variant": {
+              "commit": "6e4c0150fa2aa6cc91623952c29cad4ba88f5fa8",
+              "tree": "c1fa8df1794a6a5b33799fda0f2b4125df825593",
+              "parent": "6bcacf311447a573d2c408f50a73fcb480ec566e"
+            },
+            "change": {
+              "patch": "architecture/challenges/decision-admits-officer.patch",
+              "digest": "sha256:7486d5c4c8a6ab2ad5997511625d72ce29d1b9eb8e5e1939751bbd0a52b30341",
+              "files": [
+                "src/api/routes.ts"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "surface": "continuum-platform-claim-attestation/0",
+      "verification": "orcid-verification-lifecycle",
+      "rubric": {
+        "id": "continuum-claim-rubric/2",
+        "levels": {
+          "L0": "Model Valid",
+          "L1": "Observed Conformance",
+          "L2": "Covered Conformance",
+          "L3": "Strong Conformance"
+        }
+      },
+      "spec": {
+        "id": "orcid-verification-lifecycle",
+        "version": "2.0.0",
+        "digest": "sha256:94f5edabf41155c1ebda245fbb6e186c702ac1ce8682b501c72520cc92518526"
+      },
+      "model": {
+        "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+        "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+        "compiled": "passed",
+        "business": {
+          "compiled": "passed",
+          "digest": "sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72"
+        }
+      },
+      "implementation": {
+        "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+        "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7"
+      },
+      "claim": {
+        "language": "bdl",
+        "kind": "state-model",
+        "id": "sm-q002",
+        "name": "Account.orcidStatus (OrcidVerification)",
+        "structural": false,
+        "statement": "Account.orcidStatus changes only by the declared transitions of OrcidVerification (sm-q002) — Unverified → Verified by Verify; Verified → Unverified by ClearOnErasure — the complete set of permitted changes (BDL §5.8 R-07); it starts Unverified; terminal: Verified",
+        "declared": {
+          "field": "Account.orcidStatus",
+          "initial": "Unverified",
+          "terminal": [
+            "Verified"
+          ],
+          "transitions": [
+            {
+              "name": "Verify",
+              "id": "t-q002",
+              "from": "Unverified",
+              "to": "Verified"
+            },
+            {
+              "name": "ClearOnErasure",
+              "id": "t-q003",
+              "from": "Verified",
+              "to": "Unverified"
+            }
+          ]
+        },
+        "business": {
+          "digest": "sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72"
+        }
+      },
+      "boundary": {
+        "statement": "Every change of Account.orcidStatus made by the runtime code of the deployable (src/**): every literal SQL write that sets idn_account.orcid_status, and every runtime entry point that reaches one — including which act each write realizes, since R-07's closure is judged on states and the restriction of Verified → Unverified to erasure is checked here.",
+        "includes": [],
+        "excludes": [
+          {
+            "what": "the demo seed (src/seed.ts)",
+            "why": "demo data, never run when NODE_ENV=production; its accounts are provisioned through provisionAccount, whose calls are therefore excluded"
+          },
+          {
+            "what": "VerifiedReviewersOnly (r-q012)",
+            "why": "a separate claim, judged at AssignReviewer only; this claim is the field's lifecycle, whoever holds an assignment"
+          },
+          {
+            "what": "tests/**, scripts/**",
+            "why": "not part of the deployable; the test harness provisions verified reviewers directly"
+          }
+        ]
+      },
+      "assumptions": [
+        {
+          "id": "D1-values",
+          "statement": "BDL OrcidStatus Unverified/Verified is idn_account.orcid_status 'unverified'/'verified'; the schema CHECK admits exactly those two values. The mapping is stated in scope.valueMapping; the evaluator applies it."
+        },
+        {
+          "id": "D2-closure",
+          "statement": "The claim is R-07's closure (the declared transitions are the complete set of permitted changes), not 'terminal' alone: BDL gives terminal no closure of its own."
+        },
+        {
+          "id": "D3-harness",
+          "statement": "Cases run the real routes in-process (Fastify inject) against an isolated SQLite file with a manual clock and a stub ORCID registry, set up through the implementation's own test harness."
+        },
+        {
+          "id": "D4-shape",
+          "statement": "Writes are found lexically (literal SQL); a value set from a parameter, or a channel the scanner cannot follow, is unresolved, never assumed."
+        },
+        {
+          "id": "D5-trigger",
+          "statement": "The evaluator judges a transition by its states only, so after ADR-023 Verified → Unverified is admitted wherever it occurs. Which act a write realizes is read from the code: a write that sets Unverified must lie in eraseAccount (EraseAccount, ac-q026) and be reached only from the operator's erase route; a write that sets Verified must lie in recordOrcidVerification (VerifyOrcid, ac-q004), be reached only from the verification route, and fix Unverified as its prior value. The function and route names are stated in scope.erasure / scope.verification, not inferred."
+        }
+      ],
+      "verdict": "MATCH",
+      "level": "L2",
+      "levelName": "Covered Conformance",
+      "binding": {
+        "model": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+        "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+        "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7",
+        "spec": "orcid-verification-lifecycle@2.0.0",
+        "specDigest": "sha256:94f5edabf41155c1ebda245fbb6e186c702ac1ce8682b501c72520cc92518526",
+        "rubric": "continuum-claim-rubric/2",
+        "configuration": {
+          "node": "v24.22.1",
+          "platform": "win32",
+          "database": "SQLite (better-sqlite3), an isolated file per case; manual clock; stub ORCID registry"
+        },
+        "configurationDigest": "sha256:ae6f30a2f0a7d7a52fe33bfbfda39815fd2e1990fea7cb336295be76ec84710a"
+      },
+      "levels": {
+        "L0": {
+          "met": true,
+          "reasons": [
+            "the claim compiled at sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 (business model sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72)"
+          ],
+          "name": "Model Valid"
+        },
+        "L1": {
+          "met": true,
+          "reasons": [
+            "erasure-clears-verification passed on HTTP POST /api/operations/accounts/:id/erase",
+            "unverified-reviewer-verifies passed on HTTP POST /api/me/orcid",
+            "unverified-set-only-by-erasure passed on src/contexts/identity/service.ts:210",
+            "verification-never-leaves-verified passed on HTTP POST /api/me/orcid",
+            "verified-reviewer-erased passed on HTTP POST /api/operations/accounts/:id/erase",
+            "verified-set-only-by-verification passed on src/contexts/identity/service.ts:102",
+            "write-admitted passed on src/contexts/identity/service.ts:102",
+            "write-admitted passed on src/contexts/identity/service.ts:210"
+          ],
+          "name": "Observed Conformance"
+        },
+        "L2": {
+          "met": true,
+          "reasons": [
+            "scope established (4 path(s)); every in-scope path is covered by a passing qualifying check"
+          ],
+          "name": "Covered Conformance"
+        },
+        "L3": {
+          "met": false,
+          "reasons": [
+            "full-boundary evidence: no enforcement check passed: dominates is false, expected true; the constraint does not apply to 4 in-scope path(s): HTTP POST /api/me/orcid, HTTP POST /api/operations/accounts/:id/erase, src/contexts/identity/service.ts:102, src/contexts/identity/service.ts:210; the specification declares no rule-correspondence check"
+          ],
+          "name": "Strong Conformance"
+        }
+      },
+      "challenges": [],
+      "scope": {
+        "declared": true,
+        "established": true,
+        "method": "lexed literal SQL over src/** for writes that set idn_account.orcid_status; each write's function and every call of it",
+        "paths": [
+          "HTTP POST /api/me/orcid",
+          "HTTP POST /api/operations/accounts/:id/erase",
+          "src/contexts/identity/service.ts:102",
+          "src/contexts/identity/service.ts:210"
+        ],
+        "unresolved": [],
+        "discovery": "Lex src/**: every UPDATE of idn_account that sets orcid_status (the value it sets and the prior value its WHERE fixes, if any) and every INSERT that lists orcid_status; the named function holding each write and every call of it (routes named). A creation site reached only by excluded callers is excluded; a value computed at the call is unresolved; non-literal SQL must resolve."
+      },
+      "evidence": [
+        {
+          "check": "closure-constraint",
+          "kind": "enforcement",
+          "path": "src/platform/schema.ts",
+          "covers": [],
+          "inputs": "sha256:bb38044957749b65cf4c9599592ef6e68f1e9132bea99dbc4fdbbb36f2ef4439",
+          "status": "fail",
+          "why": "dominates is false, expected true; the constraint does not apply to 4 in-scope path(s): HTTP POST /api/me/orcid, HTTP POST /api/operations/accounts/:id/erase, src/contexts/identity/service.ts:102, src/contexts/identity/service.ts:210"
+        },
+        {
+          "check": "erasure-clears-verification",
+          "kind": "case",
+          "path": "HTTP POST /api/operations/accounts/:id/erase",
+          "covers": [
+            "src/contexts/identity/service.ts:210"
+          ],
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "status-write-scope",
+          "kind": "scope",
+          "path": "src/**",
+          "covers": [],
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "unverified-reviewer-verifies",
+          "kind": "case",
+          "path": "HTTP POST /api/me/orcid",
+          "covers": [
+            "src/contexts/identity/service.ts:102"
+          ],
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "unverified-set-only-by-erasure",
+          "kind": "structural",
+          "path": "src/contexts/identity/service.ts:210",
+          "covers": [],
+          "inputs": "sha256:44cca48a7bbc214c9f6379ec52cc988fed6d946d8c95fc63d42b48253db1702d",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "verification-never-leaves-verified",
+          "kind": "case",
+          "path": "HTTP POST /api/me/orcid",
+          "covers": [
+            "src/contexts/identity/service.ts:102"
+          ],
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "verified-reviewer-erased",
+          "kind": "case",
+          "path": "HTTP POST /api/operations/accounts/:id/erase",
+          "covers": [
+            "src/contexts/identity/service.ts:210"
+          ],
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "verified-set-only-by-verification",
+          "kind": "structural",
+          "path": "src/contexts/identity/service.ts:102",
+          "covers": [],
+          "inputs": "sha256:44cca48a7bbc214c9f6379ec52cc988fed6d946d8c95fc63d42b48253db1702d",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "write-admitted",
+          "kind": "structural",
+          "path": "src/contexts/identity/service.ts:102",
+          "covers": [],
+          "inputs": "sha256:44cca48a7bbc214c9f6379ec52cc988fed6d946d8c95fc63d42b48253db1702d",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "write-admitted",
+          "kind": "structural",
+          "path": "src/contexts/identity/service.ts:210",
+          "covers": [],
+          "inputs": "sha256:44cca48a7bbc214c9f6379ec52cc988fed6d946d8c95fc63d42b48253db1702d",
+          "status": "pass",
+          "why": "criterion met"
+        }
+      ],
+      "counterexamples": [],
+      "conflicts": [],
+      "reasons": [],
+      "next": {
+        "level": "L3",
+        "missing": [
+          "full-boundary evidence: no enforcement check passed: dominates is false, expected true; the constraint does not apply to 4 in-scope path(s): HTTP POST /api/me/orcid, HTTP POST /api/operations/accounts/:id/erase, src/contexts/identity/service.ts:102, src/contexts/identity/service.ts:210; the specification declares no rule-correspondence check"
+        ]
+      },
+      "judgmentDigest": "sha256:54d4c3dff03bca6c3756014372e6f943658b875e0e966907c9d6d08127a5051c",
+      "judged": true,
+      "informational": true,
+      "ran": {
+        "declaration": {
+          "path": "architecture/verification/orcid-verification-lifecycle.verification.json",
+          "digest": "sha256:a32f0c7b7b768171473afb171dd655f045e69aff2f168a15813c5128bcd8639e"
+        },
+        "verifier": {
+          "name": "orcid-verification-lifecycle",
+          "version": "2.0.0",
+          "digest": "sha256:a4942708a67ddadd05cc52e774ce2c612461f09b79b72b5bd9fe732d0b6df756"
+        },
+        "run": {
+          "exit": 0,
+          "ms": 5419
+        },
+        "result": {
+          "path": "verification/orcid-verification-lifecycle/result.json"
+        }
+      }
+    },
+    {
+      "surface": "continuum-platform-claim-attestation/0",
+      "verification": "reviewstore-writers",
+      "rubric": {
+        "id": "continuum-claim-rubric/3",
+        "levels": {
+          "L0": "Assessed",
+          "L1": "Supported",
+          "L2": "Verified in scope",
+          "L3": "Violation-sensitive"
+        }
+      },
+      "spec": {
+        "id": "reviewstore-writers",
+        "version": "3.0.0",
+        "digest": "sha256:e033cd0ea2c99ecc05a1de1bc91055c05bc0035a32ffa549337ae264c4601d8c"
+      },
+      "model": {
+        "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+        "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+        "compiled": "passed"
+      },
+      "implementation": {
+        "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+        "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7"
+      },
+      "claim": {
+        "language": "adl",
+        "kind": "resource-writers",
+        "id": "7cbfd5c5-60f5-4af5-bcba-aa0359aaaf4e",
+        "name": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+        "structural": true,
+        "statement": "::Quorum.ResearchFunding.PeerReview.ReviewStore is written only by its declared writer ::Quorum.ResearchFunding.PeerReview.AssignmentService, of its owning context ::Quorum.ResearchFunding.PeerReview (closed over the model's declared writes relationships; the language itself requires only that writers be of the owning context)",
+        "declared": {
+          "writers": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ],
+          "context": "::Quorum.ResearchFunding.PeerReview",
+          "writerContexts": [
+            "::Quorum.ResearchFunding.PeerReview"
+          ]
+        }
+      },
+      "boundary": {
+        "statement": "Every write to the tables of ReviewStore made by the runtime code of the deployable (src/**), through any channel: literal SQL, SQL handed to the database as a variable, and file- or handle-level mechanisms that can change the database file.",
+        "includes": [
+          "src/** (the QuorumServer deployable and its operator CLI src/ops.ts)"
+        ],
+        "excludes": [
+          {
+            "what": "tests/**, scripts/**, tools and continuum/**",
+            "why": "not part of the deployable; they never run in production"
+          },
+          {
+            "what": "schema DDL (CREATE TABLE / INDEX / TRIGGER) in src/platform/schema.ts",
+            "why": "defines the store; it writes no rows. Any INSERT/UPDATE/DELETE inside a migration is NOT excluded: it is scanned like any other literal"
+          },
+          {
+            "what": "whole-database restore by the Operator (src/platform/backup.ts)",
+            "why": "replaces the entire database file with a verified backup — every store at once, by the Operator actor; it is not a context writing a store"
+          },
+          {
+            "what": "the demo seed's reset (src/seed.ts)",
+            "why": "deletes the whole database file before re-seeding a demo; never runs when NODE_ENV=production. The seed's rows are written through the context services, whose SQL is scanned"
+          },
+          {
+            "what": "writes to files that are not the database: the server pid file, the token secret, the outbound mail log",
+            "why": "each targets its own file (pidFileFor(dbFile), <data>/token-secret, <data>/mail.jsonl), never the database"
+          }
+        ]
+      },
+      "assumptions": [
+        {
+          "id": "A1-table-store",
+          "statement": "A table belongs to the store whose evidence.json citation range in src/platform/schema.ts contains its CREATE TABLE. The model declares no bindings, so this mapping is evidence, not a model claim; a rev_* table no range covers is reported unresolved."
+        },
+        {
+          "id": "A2-module-service",
+          "statement": "A write site's writer is the one Service continuum/evidence.json cites for its module (directly or through an element nested in it). A module cited for no Service, or for several, has no attributable writer and its sites are unresolved."
+        },
+        {
+          "id": "A3-sql-channel",
+          "statement": "The database is reached only through better-sqlite3 handles; .prepare is always SQL, and .exec is SQL only on a receiver named db/#db. SQL keywords are matched case-insensitively."
+        },
+        {
+          "id": "A4-static",
+          "statement": "The judgment is about the code at the commit, statically; a write that only exists at runtime through a channel the scanner does not recognise would not be seen. The scanner reports the channels it found and could not follow as unresolved."
+        }
+      ],
+      "verdict": "MATCH",
+      "level": "L3",
+      "levelName": "Violation-sensitive",
+      "evidenceState": {
+        "state": "observed"
+      },
+      "binding": {
+        "model": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+        "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+        "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7",
+        "spec": "reviewstore-writers@3.0.0",
+        "specDigest": "sha256:e033cd0ea2c99ecc05a1de1bc91055c05bc0035a32ffa549337ae264c4601d8c",
+        "rubric": "continuum-claim-rubric/3",
+        "configuration": {
+          "node": "v24.22.1",
+          "platform": "win32"
+        },
+        "configurationDigest": "sha256:8ebbe38ced65fdd52c8229d32b3147999494a5d80394e18b8d944535ba352dcc"
+      },
+      "levels": {
+        "L0": {
+          "met": true,
+          "reasons": [
+            "judged: the claim resolved in the model compiled at sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1; evidence observed"
+          ],
+          "evidence": [],
+          "name": "Assessed"
+        },
+        "L1": {
+          "met": true,
+          "reasons": [
+            "writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:128",
+            "writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:130",
+            "writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:161",
+            "writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:198",
+            "writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:256",
+            "writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:258",
+            "writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:259",
+            "writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:273",
+            "writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:287",
+            "writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:293",
+            "writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:300",
+            "writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:60",
+            "writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:63"
+          ],
+          "evidence": [
+            {
+              "check": "writer-declared",
+              "kind": "structural",
+              "path": "src/contexts/peer-review/service.ts:128",
+              "method": "static-lexical"
+            },
+            {
+              "check": "writer-declared",
+              "kind": "structural",
+              "path": "src/contexts/peer-review/service.ts:130",
+              "method": "static-lexical"
+            },
+            {
+              "check": "writer-declared",
+              "kind": "structural",
+              "path": "src/contexts/peer-review/service.ts:161",
+              "method": "static-lexical"
+            },
+            {
+              "check": "writer-declared",
+              "kind": "structural",
+              "path": "src/contexts/peer-review/service.ts:198",
+              "method": "static-lexical"
+            },
+            {
+              "check": "writer-declared",
+              "kind": "structural",
+              "path": "src/contexts/peer-review/service.ts:256",
+              "method": "static-lexical"
+            },
+            {
+              "check": "writer-declared",
+              "kind": "structural",
+              "path": "src/contexts/peer-review/service.ts:258",
+              "method": "static-lexical"
+            },
+            {
+              "check": "writer-declared",
+              "kind": "structural",
+              "path": "src/contexts/peer-review/service.ts:259",
+              "method": "static-lexical"
+            },
+            {
+              "check": "writer-declared",
+              "kind": "structural",
+              "path": "src/contexts/peer-review/service.ts:273",
+              "method": "static-lexical"
+            },
+            {
+              "check": "writer-declared",
+              "kind": "structural",
+              "path": "src/contexts/peer-review/service.ts:287",
+              "method": "static-lexical"
+            },
+            {
+              "check": "writer-declared",
+              "kind": "structural",
+              "path": "src/contexts/peer-review/service.ts:293",
+              "method": "static-lexical"
+            },
+            {
+              "check": "writer-declared",
+              "kind": "structural",
+              "path": "src/contexts/peer-review/service.ts:300",
+              "method": "static-lexical"
+            },
+            {
+              "check": "writer-declared",
+              "kind": "structural",
+              "path": "src/contexts/peer-review/service.ts:60",
+              "method": "static-lexical"
+            },
+            {
+              "check": "writer-declared",
+              "kind": "structural",
+              "path": "src/contexts/peer-review/service.ts:63",
+              "method": "static-lexical"
+            }
+          ],
+          "name": "Supported"
+        },
+        "L2": {
+          "met": true,
+          "reasons": [
+            "scope established (13 path(s)), each checked by passing static/executed/formal verification"
+          ],
+          "evidence": [
+            {
+              "path": "src/contexts/peer-review/service.ts:128",
+              "by": [
+                {
+                  "check": "writer-declared",
+                  "kind": "structural",
+                  "path": "src/contexts/peer-review/service.ts:128",
+                  "method": "static-lexical"
+                }
+              ]
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:130",
+              "by": [
+                {
+                  "check": "writer-declared",
+                  "kind": "structural",
+                  "path": "src/contexts/peer-review/service.ts:130",
+                  "method": "static-lexical"
+                }
+              ]
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:161",
+              "by": [
+                {
+                  "check": "writer-declared",
+                  "kind": "structural",
+                  "path": "src/contexts/peer-review/service.ts:161",
+                  "method": "static-lexical"
+                }
+              ]
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:198",
+              "by": [
+                {
+                  "check": "writer-declared",
+                  "kind": "structural",
+                  "path": "src/contexts/peer-review/service.ts:198",
+                  "method": "static-lexical"
+                }
+              ]
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:256",
+              "by": [
+                {
+                  "check": "writer-declared",
+                  "kind": "structural",
+                  "path": "src/contexts/peer-review/service.ts:256",
+                  "method": "static-lexical"
+                }
+              ]
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:258",
+              "by": [
+                {
+                  "check": "writer-declared",
+                  "kind": "structural",
+                  "path": "src/contexts/peer-review/service.ts:258",
+                  "method": "static-lexical"
+                }
+              ]
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:259",
+              "by": [
+                {
+                  "check": "writer-declared",
+                  "kind": "structural",
+                  "path": "src/contexts/peer-review/service.ts:259",
+                  "method": "static-lexical"
+                }
+              ]
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:273",
+              "by": [
+                {
+                  "check": "writer-declared",
+                  "kind": "structural",
+                  "path": "src/contexts/peer-review/service.ts:273",
+                  "method": "static-lexical"
+                }
+              ]
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:287",
+              "by": [
+                {
+                  "check": "writer-declared",
+                  "kind": "structural",
+                  "path": "src/contexts/peer-review/service.ts:287",
+                  "method": "static-lexical"
+                }
+              ]
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:293",
+              "by": [
+                {
+                  "check": "writer-declared",
+                  "kind": "structural",
+                  "path": "src/contexts/peer-review/service.ts:293",
+                  "method": "static-lexical"
+                }
+              ]
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:300",
+              "by": [
+                {
+                  "check": "writer-declared",
+                  "kind": "structural",
+                  "path": "src/contexts/peer-review/service.ts:300",
+                  "method": "static-lexical"
+                }
+              ]
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:60",
+              "by": [
+                {
+                  "check": "writer-declared",
+                  "kind": "structural",
+                  "path": "src/contexts/peer-review/service.ts:60",
+                  "method": "static-lexical"
+                }
+              ]
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:63",
+              "by": [
+                {
+                  "check": "writer-declared",
+                  "kind": "structural",
+                  "path": "src/contexts/peer-review/service.ts:63",
+                  "method": "static-lexical"
+                }
+              ]
+            }
+          ],
+          "name": "Verified in scope"
+        },
+        "L3": {
+          "met": true,
+          "reasons": [
+            "undeclared-writer: fault adjudication-writes-review detected by writer-declared on src/contexts/adjudication/service.ts:195"
+          ],
+          "evidence": [
+            {
+              "class": "undeclared-writer",
+              "faults": [
+                {
+                  "id": "adjudication-writes-review",
+                  "detected": {
+                    "check": "writer-declared",
+                    "path": "src/contexts/adjudication/service.ts:195",
+                    "why": "::Quorum.ResearchFunding.Adjudication.AdjudicationService writes ::Quorum.ResearchFunding.PeerReview.ReviewStore at src/contexts/adjudication/service.ts:195; the model declares only ::Quorum.ResearchFunding.PeerReview.AssignmentService as its writer"
+                  }
+                }
+              ]
+            }
+          ],
+          "name": "Violation-sensitive"
+        }
+      },
+      "checked": {
+        "methods": [
+          "static",
+          "executed",
+          "formal"
+        ],
+        "coverage": [
+          {
+            "path": "src/contexts/peer-review/service.ts:128",
+            "by": [
+              {
+                "check": "writer-declared",
+                "kind": "structural",
+                "path": "src/contexts/peer-review/service.ts:128",
+                "method": "static-lexical"
+              }
+            ],
+            "declaredOnly": []
+          },
+          {
+            "path": "src/contexts/peer-review/service.ts:130",
+            "by": [
+              {
+                "check": "writer-declared",
+                "kind": "structural",
+                "path": "src/contexts/peer-review/service.ts:130",
+                "method": "static-lexical"
+              }
+            ],
+            "declaredOnly": []
+          },
+          {
+            "path": "src/contexts/peer-review/service.ts:161",
+            "by": [
+              {
+                "check": "writer-declared",
+                "kind": "structural",
+                "path": "src/contexts/peer-review/service.ts:161",
+                "method": "static-lexical"
+              }
+            ],
+            "declaredOnly": []
+          },
+          {
+            "path": "src/contexts/peer-review/service.ts:198",
+            "by": [
+              {
+                "check": "writer-declared",
+                "kind": "structural",
+                "path": "src/contexts/peer-review/service.ts:198",
+                "method": "static-lexical"
+              }
+            ],
+            "declaredOnly": []
+          },
+          {
+            "path": "src/contexts/peer-review/service.ts:256",
+            "by": [
+              {
+                "check": "writer-declared",
+                "kind": "structural",
+                "path": "src/contexts/peer-review/service.ts:256",
+                "method": "static-lexical"
+              }
+            ],
+            "declaredOnly": []
+          },
+          {
+            "path": "src/contexts/peer-review/service.ts:258",
+            "by": [
+              {
+                "check": "writer-declared",
+                "kind": "structural",
+                "path": "src/contexts/peer-review/service.ts:258",
+                "method": "static-lexical"
+              }
+            ],
+            "declaredOnly": []
+          },
+          {
+            "path": "src/contexts/peer-review/service.ts:259",
+            "by": [
+              {
+                "check": "writer-declared",
+                "kind": "structural",
+                "path": "src/contexts/peer-review/service.ts:259",
+                "method": "static-lexical"
+              }
+            ],
+            "declaredOnly": []
+          },
+          {
+            "path": "src/contexts/peer-review/service.ts:273",
+            "by": [
+              {
+                "check": "writer-declared",
+                "kind": "structural",
+                "path": "src/contexts/peer-review/service.ts:273",
+                "method": "static-lexical"
+              }
+            ],
+            "declaredOnly": []
+          },
+          {
+            "path": "src/contexts/peer-review/service.ts:287",
+            "by": [
+              {
+                "check": "writer-declared",
+                "kind": "structural",
+                "path": "src/contexts/peer-review/service.ts:287",
+                "method": "static-lexical"
+              }
+            ],
+            "declaredOnly": []
+          },
+          {
+            "path": "src/contexts/peer-review/service.ts:293",
+            "by": [
+              {
+                "check": "writer-declared",
+                "kind": "structural",
+                "path": "src/contexts/peer-review/service.ts:293",
+                "method": "static-lexical"
+              }
+            ],
+            "declaredOnly": []
+          },
+          {
+            "path": "src/contexts/peer-review/service.ts:300",
+            "by": [
+              {
+                "check": "writer-declared",
+                "kind": "structural",
+                "path": "src/contexts/peer-review/service.ts:300",
+                "method": "static-lexical"
+              }
+            ],
+            "declaredOnly": []
+          },
+          {
+            "path": "src/contexts/peer-review/service.ts:60",
+            "by": [
+              {
+                "check": "writer-declared",
+                "kind": "structural",
+                "path": "src/contexts/peer-review/service.ts:60",
+                "method": "static-lexical"
+              }
+            ],
+            "declaredOnly": []
+          },
+          {
+            "path": "src/contexts/peer-review/service.ts:63",
+            "by": [
+              {
+                "check": "writer-declared",
+                "kind": "structural",
+                "path": "src/contexts/peer-review/service.ts:63",
+                "method": "static-lexical"
+              }
+            ],
+            "declaredOnly": []
+          }
+        ],
+        "polarities": []
+      },
+      "sensitivity": {
+        "required": [
+          "undeclared-writer"
+        ],
+        "requiredBy": [
+          {
+            "class": "undeclared-writer",
+            "owner": "continuum-claim-rubric/3",
+            "rule": "every adl/resource-writers claim"
+          }
+        ],
+        "removedByScope": [
+          {
+            "class": "concurrent-race",
+            "by": "scope.concurrency: false",
+            "why": "the specification excludes concurrent execution and states no reason (scope.concurrencyStatement)"
+          }
+        ],
+        "classes": [
+          {
+            "class": "undeclared-writer",
+            "required": true,
+            "declared": true,
+            "statement": "a service the model does not declare as a ReviewStore writer writes one of its tables",
+            "met": true,
+            "faults": [
+              {
+                "id": "adjudication-writes-review",
+                "qualifies": true,
+                "detected": {
+                  "check": "writer-declared",
+                  "path": "src/contexts/adjudication/service.ts:195",
+                  "why": "::Quorum.ResearchFunding.Adjudication.AdjudicationService writes ::Quorum.ResearchFunding.PeerReview.ReviewStore at src/contexts/adjudication/service.ts:195; the model declares only ::Quorum.ResearchFunding.PeerReview.AssignmentService as its writer"
+                },
+                "reasons": [
+                  "writer-declared passed on src/contexts/adjudication/service.ts:195 at 6bcacf311447 and failed at the variant: sensitive to undeclared-writer",
+                  "the deliberate fault architecture/challenges/adjudication-writes-review.patch was detected: writer-declared on src/contexts/adjudication/service.ts:195 — ::Quorum.ResearchFunding.Adjudication.AdjudicationService writes ::Quorum.ResearchFunding.PeerReview.ReviewStore at src/contexts/adjudication/service.ts:195; the model declares only ::Quorum.ResearchFunding.PeerReview.AssignmentService as its writer"
+                ]
+              }
+            ]
+          }
+        ],
+        "faultedPaths": [
+          "src/contexts/adjudication/service.ts:195"
+        ]
+      },
+      "materialExclusions": [
+        {
+          "what": "concurrent execution",
+          "removes": "concurrent-race",
+          "by": "scope.concurrency: false",
+          "why": "the specification excludes concurrent execution and states no reason (scope.concurrencyStatement)"
+        },
+        {
+          "what": "tests/**, scripts/**, tools and continuum/**",
+          "removes": null,
+          "by": "boundary.excludes",
+          "why": "not part of the deployable; they never run in production"
+        },
+        {
+          "what": "schema DDL (CREATE TABLE / INDEX / TRIGGER) in src/platform/schema.ts",
+          "removes": null,
+          "by": "boundary.excludes",
+          "why": "defines the store; it writes no rows. Any INSERT/UPDATE/DELETE inside a migration is NOT excluded: it is scanned like any other literal"
+        },
+        {
+          "what": "whole-database restore by the Operator (src/platform/backup.ts)",
+          "removes": null,
+          "by": "boundary.excludes",
+          "why": "replaces the entire database file with a verified backup — every store at once, by the Operator actor; it is not a context writing a store"
+        },
+        {
+          "what": "the demo seed's reset (src/seed.ts)",
+          "removes": null,
+          "by": "boundary.excludes",
+          "why": "deletes the whole database file before re-seeding a demo; never runs when NODE_ENV=production. The seed's rows are written through the context services, whose SQL is scanned"
+        },
+        {
+          "what": "writes to files that are not the database: the server pid file, the token secret, the outbound mail log",
+          "removes": null,
+          "by": "boundary.excludes",
+          "why": "each targets its own file (pidFileFor(dbFile), <data>/token-secret, <data>/mail.jsonl), never the database"
+        }
+      ],
+      "challenges": [
+        {
+          "id": "adjudication-writes-review",
+          "kind": "deliberate-fault",
+          "statement": "Adjudication writes a ReviewStore table directly (029 controlled mismatch M1, reused)",
+          "change": {
+            "patch": "architecture/challenges/adjudication-writes-review.patch",
+            "digest": "sha256:616c6e9b68a99676af98920abbca6d62d748611b1736b71ee39f9a00c52f606c",
+            "files": [
+              "src/contexts/adjudication/service.ts"
+            ]
+          },
+          "expected": {
+            "check": "writer-declared",
+            "pathPrefix": "src/contexts/adjudication/service.ts:",
+            "reason": "::Quorum.ResearchFunding.Adjudication.AdjudicationService writes ::Quorum.ResearchFunding.PeerReview.ReviewStore"
+          },
+          "baseline": {
+            "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+            "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7"
+          },
+          "variant": {
+            "commit": "2dc3ec5c5b1b864e08914784b7b8a0df32b633dc",
+            "tree": "a81279131c07e02cd112525bb11810e5ac19f2df",
+            "parent": "6bcacf311447a573d2c408f50a73fcb480ec566e"
+          },
+          "relationshipVerified": true,
+          "variantResult": {
+            "verdict": "MISMATCH",
+            "level": null,
+            "judgmentDigest": "sha256:fcca19c13ae283809f574dd40bedf70d929bfbedb0e0fa2cf92d2f6261d1c057",
+            "counterexamples": [
+              {
+                "check": "writer-declared",
+                "path": "src/contexts/adjudication/service.ts:195",
+                "why": "::Quorum.ResearchFunding.Adjudication.AdjudicationService writes ::Quorum.ResearchFunding.PeerReview.ReviewStore at src/contexts/adjudication/service.ts:195; the model declares only ::Quorum.ResearchFunding.PeerReview.AssignmentService as its writer"
+              }
+            ]
+          },
+          "detected": {
+            "check": "writer-declared",
+            "path": "src/contexts/adjudication/service.ts:195",
+            "why": "::Quorum.ResearchFunding.Adjudication.AdjudicationService writes ::Quorum.ResearchFunding.PeerReview.ReviewStore at src/contexts/adjudication/service.ts:195; the model declares only ::Quorum.ResearchFunding.PeerReview.AssignmentService as its writer"
+          },
+          "qualifies": true,
+          "reasons": [
+            "writer-declared passed on src/contexts/adjudication/service.ts:195 at 6bcacf311447 and failed at the variant: sensitive to undeclared-writer",
+            "the deliberate fault architecture/challenges/adjudication-writes-review.patch was detected: writer-declared on src/contexts/adjudication/service.ts:195 — ::Quorum.ResearchFunding.Adjudication.AdjudicationService writes ::Quorum.ResearchFunding.PeerReview.ReviewStore at src/contexts/adjudication/service.ts:195; the model declares only ::Quorum.ResearchFunding.PeerReview.AssignmentService as its writer"
+          ],
+          "class": "undeclared-writer"
+        }
+      ],
+      "corroboration": [],
+      "scope": {
+        "declared": true,
+        "established": true,
+        "method": "lexed literal SQL + non-literal SQL channels + file/handle mechanisms over src/**",
+        "paths": [
+          "src/contexts/peer-review/service.ts:128",
+          "src/contexts/peer-review/service.ts:130",
+          "src/contexts/peer-review/service.ts:161",
+          "src/contexts/peer-review/service.ts:198",
+          "src/contexts/peer-review/service.ts:256",
+          "src/contexts/peer-review/service.ts:258",
+          "src/contexts/peer-review/service.ts:259",
+          "src/contexts/peer-review/service.ts:273",
+          "src/contexts/peer-review/service.ts:287",
+          "src/contexts/peer-review/service.ts:293",
+          "src/contexts/peer-review/service.ts:300",
+          "src/contexts/peer-review/service.ts:60",
+          "src/contexts/peer-review/service.ts:63"
+        ],
+        "unresolved": [],
+        "discovery": "Lex every module under src/; every INSERT / REPLACE / UPDATE … SET / DELETE FROM in a string or template literal is a write site; its table is resolved to a store through continuum/evidence.json (each Resource's schema.ts citation range holds the tables created in it); a site is in scope when its table belongs to ReviewStore. Every non-literal SQL argument and every file/handle mechanism must be resolved or excluded above, else the scope is incomplete.",
+        "concurrency": false
+      },
+      "declarations": {
+        "boundary": "Every write to the tables of ReviewStore made by the runtime code of the deployable (src/**), through any channel: literal SQL, SQL handed to the database as a variable, and file- or handle-level mechanisms that can change the database file.",
+        "scopeDiscovery": "Lex every module under src/; every INSERT / REPLACE / UPDATE … SET / DELETE FROM in a string or template literal is a write site; its table is resolved to a store through continuum/evidence.json (each Resource's schema.ts citation range holds the tables created in it); a site is in scope when its table belongs to ReviewStore. Every non-literal SQL argument and every file/handle mechanism must be resolved or excluded above, else the scope is incomplete.",
+        "checks": [
+          {
+            "id": "write-scope",
+            "kind": "scope",
+            "method": "static-lexical",
+            "qualifies": [
+              "L2",
+              "L3"
+            ]
+          },
+          {
+            "id": "writer-declared",
+            "kind": "structural",
+            "method": "static-lexical",
+            "qualifies": [
+              "L1",
+              "L2",
+              "L3"
+            ]
+          }
+        ],
+        "violations": [
+          {
+            "class": "undeclared-writer",
+            "statement": "a service the model does not declare as a ReviewStore writer writes one of its tables"
+          }
+        ]
+      },
+      "limits": [
+        "assumed (A1-table-store): A table belongs to the store whose evidence.json citation range in src/platform/schema.ts contains its CREATE TABLE. The model declares no bindings, so this mapping is evidence, not a model claim; a rev_* table no range covers is reported unresolved.",
+        "assumed (A2-module-service): A write site's writer is the one Service continuum/evidence.json cites for its module (directly or through an element nested in it). A module cited for no Service, or for several, has no attributable writer and its sites are unresolved.",
+        "assumed (A3-sql-channel): The database is reached only through better-sqlite3 handles; .prepare is always SQL, and .exec is SQL only on a receiver named db/#db. SQL keywords are matched case-insensitively.",
+        "assumed (A4-static): The judgment is about the code at the commit, statically; a write that only exists at runtime through a channel the scanner does not recognise would not be seen. The scanner reports the channels it found and could not follow as unresolved.",
+        "concurrent execution is outside the verified scope (scope.concurrency: false)",
+        "no detected fault was placed on src/contexts/peer-review/service.ts:128: sensitivity there rests on the violation classes, not on a fault at that path",
+        "no detected fault was placed on src/contexts/peer-review/service.ts:130: sensitivity there rests on the violation classes, not on a fault at that path",
+        "no detected fault was placed on src/contexts/peer-review/service.ts:161: sensitivity there rests on the violation classes, not on a fault at that path",
+        "no detected fault was placed on src/contexts/peer-review/service.ts:198: sensitivity there rests on the violation classes, not on a fault at that path",
+        "no detected fault was placed on src/contexts/peer-review/service.ts:256: sensitivity there rests on the violation classes, not on a fault at that path",
+        "no detected fault was placed on src/contexts/peer-review/service.ts:258: sensitivity there rests on the violation classes, not on a fault at that path",
+        "no detected fault was placed on src/contexts/peer-review/service.ts:259: sensitivity there rests on the violation classes, not on a fault at that path",
+        "no detected fault was placed on src/contexts/peer-review/service.ts:273: sensitivity there rests on the violation classes, not on a fault at that path",
+        "no detected fault was placed on src/contexts/peer-review/service.ts:287: sensitivity there rests on the violation classes, not on a fault at that path",
+        "no detected fault was placed on src/contexts/peer-review/service.ts:293: sensitivity there rests on the violation classes, not on a fault at that path",
+        "no detected fault was placed on src/contexts/peer-review/service.ts:300: sensitivity there rests on the violation classes, not on a fault at that path",
+        "no detected fault was placed on src/contexts/peer-review/service.ts:60: sensitivity there rests on the violation classes, not on a fault at that path",
+        "no detected fault was placed on src/contexts/peer-review/service.ts:63: sensitivity there rests on the violation classes, not on a fault at that path",
+        "outside the boundary: schema DDL (CREATE TABLE / INDEX / TRIGGER) in src/platform/schema.ts — defines the store; it writes no rows. Any INSERT/UPDATE/DELETE inside a migration is NOT excluded: it is scanned like any other literal",
+        "outside the boundary: tests/**, scripts/**, tools and continuum/** — not part of the deployable; they never run in production",
+        "outside the boundary: the demo seed's reset (src/seed.ts) — deletes the whole database file before re-seeding a demo; never runs when NODE_ENV=production. The seed's rows are written through the context services, whose SQL is scanned",
+        "outside the boundary: whole-database restore by the Operator (src/platform/backup.ts) — replaces the entire database file with a verified backup — every store at once, by the Operator actor; it is not a context writing a store",
+        "outside the boundary: writes to files that are not the database: the server pid file, the token secret, the outbound mail log — each targets its own file (pidFileFor(dbFile), <data>/token-secret, <data>/mail.jsonl), never the database",
+        "sensitivity is demonstrated only for the violation classes undeclared-writer: another way of violating the claim is not covered"
+      ],
+      "evidence": [
+        {
+          "check": "write-scope",
+          "kind": "scope",
+          "path": "src/**",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "writer-declared",
+          "kind": "structural",
+          "path": "src/contexts/peer-review/service.ts:128",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "writer-declared",
+          "kind": "structural",
+          "path": "src/contexts/peer-review/service.ts:130",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "writer-declared",
+          "kind": "structural",
+          "path": "src/contexts/peer-review/service.ts:161",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "writer-declared",
+          "kind": "structural",
+          "path": "src/contexts/peer-review/service.ts:198",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "writer-declared",
+          "kind": "structural",
+          "path": "src/contexts/peer-review/service.ts:256",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "writer-declared",
+          "kind": "structural",
+          "path": "src/contexts/peer-review/service.ts:258",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "writer-declared",
+          "kind": "structural",
+          "path": "src/contexts/peer-review/service.ts:259",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "writer-declared",
+          "kind": "structural",
+          "path": "src/contexts/peer-review/service.ts:273",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "writer-declared",
+          "kind": "structural",
+          "path": "src/contexts/peer-review/service.ts:287",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "writer-declared",
+          "kind": "structural",
+          "path": "src/contexts/peer-review/service.ts:293",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "writer-declared",
+          "kind": "structural",
+          "path": "src/contexts/peer-review/service.ts:300",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "writer-declared",
+          "kind": "structural",
+          "path": "src/contexts/peer-review/service.ts:60",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "writer-declared",
+          "kind": "structural",
+          "path": "src/contexts/peer-review/service.ts:63",
+          "covers": [],
+          "reached": [],
+          "method": "static-lexical",
+          "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+          "status": "pass",
+          "why": "criterion met"
+        }
+      ],
+      "counterexamples": [],
+      "conflicts": [],
+      "reasons": [],
+      "next": null,
+      "judgmentDigest": "sha256:46c791d6d7fcf474741928e6237414d521b94cfdc6e17980e929701128e14758",
+      "judged": true,
+      "informational": true,
+      "ran": {
+        "declaration": {
+          "path": "architecture/verification/reviewstore-writers.verification.json",
+          "digest": "sha256:fadbec94f5a1d3cd615b202fc04048c4fe79495118501dee6fd6fa424079e8e3"
+        },
+        "verifier": {
+          "name": "reviewstore-writers",
+          "version": "3.0.0",
+          "digest": "sha256:5857719eab8553fe846ad659b5cc908fc20567a1c97ce17020c943ace6b1afc8"
+        },
+        "run": {
+          "exit": 0,
+          "ms": 455
+        },
+        "result": {
+          "path": "verification/reviewstore-writers/result.json"
+        },
+        "challenges": [
+          {
+            "id": "adjudication-writes-review",
+            "variant": {
+              "commit": "2dc3ec5c5b1b864e08914784b7b8a0df32b633dc",
+              "tree": "a81279131c07e02cd112525bb11810e5ac19f2df",
+              "parent": "6bcacf311447a573d2c408f50a73fcb480ec566e"
+            },
+            "change": {
+              "patch": "architecture/challenges/adjudication-writes-review.patch",
+              "digest": "sha256:616c6e9b68a99676af98920abbca6d62d748611b1736b71ee39f9a00c52f606c",
+              "files": [
+                "src/contexts/adjudication/service.ts"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "surface": "continuum-platform-claim-attestation/0",
+      "verification": "verified-reviewers-only",
+      "rubric": {
+        "id": "continuum-claim-rubric/2",
+        "levels": {
+          "L0": "Model Valid",
+          "L1": "Observed Conformance",
+          "L2": "Covered Conformance",
+          "L3": "Strong Conformance"
+        }
+      },
+      "spec": {
+        "id": "verified-reviewers-only",
+        "version": "2.0.1",
+        "digest": "sha256:8ff34457bdc7c9e51990e7d10eb0cc44cd8ee72e1308cf5b026d82ba705edc9e"
+      },
+      "model": {
+        "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+        "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+        "compiled": "passed",
+        "business": {
+          "compiled": "passed",
+          "digest": "sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72"
+        }
+      },
+      "implementation": {
+        "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+        "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7"
+      },
+      "claim": {
+        "language": "bdl",
+        "kind": "business-rule",
+        "id": "r-q012",
+        "name": "VerifiedReviewersOnly",
+        "structural": false,
+        "statement": "VerifiedReviewersOnly (r-q012): when Account.orcidStatus != OrcidStatus \"Verified\" on AssignReviewer (ac-q012) — A reviewer may hold an assignment only if their ORCID identity is Verified. [judged at its declared scope AssignReviewer (ac-q012) only; the assertion is not evaluated anywhere else]",
+        "declared": {
+          "scope": [
+            "ac-q012"
+          ],
+          "condition": "Account.orcidStatus != OrcidStatus \"Verified\"",
+          "assertion": "A reviewer may hold an assignment only if their ORCID identity is Verified.",
+          "performers": [
+            "ProgramOfficer"
+          ],
+          "preconditions": [
+            "Proposal.status == ProposalStatus \"Eligible\" || Proposal.status == ProposalStatus \"UnderReview\""
+          ]
+        },
+        "business": {
+          "digest": "sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72"
+        }
+      },
+      "boundary": {
+        "statement": "The rule's declared scope, AssignReviewer: every write in src/** that makes a reviewer hold an assignment, and every runtime entry point that reaches one. 'Held' is any status but revoked (sm-q005: assigned, accepted, overdue, completed; Revoked is terminal).",
+        "includes": [
+          "INSERT INTO rev_assignment",
+          "any UPDATE of rev_assignment that moves a not-held status into a held one",
+          "every call, in src/**, of the function holding such a write"
+        ],
+        "excludes": [
+          {
+            "what": "the demo seed's calls of assignReviewer (src/seed.ts)",
+            "why": "demo data, never run when NODE_ENV=production; it calls the same guarded function, so the enforcement check still covers it, but no case drives it"
+          },
+          {
+            "what": "holding after a later ORCID change (EraseAccount resets orcid_status to unverified)",
+            "why": "r-q012 is scoped to AssignReviewer; 'holding' as a standing invariant is not what BDL declares. Observed and reported outside the boundary, against the Account lifecycle sm-q002, never counted"
+          },
+          {
+            "what": "tests/**, scripts/**",
+            "why": "not part of the deployable"
+          }
+        ]
+      },
+      "assumptions": [
+        {
+          "id": "B1-subject",
+          "statement": "The rule's `Account` is the account being assigned (Assignment.reviewer), not the performer of AssignReviewer (a ProgramOfficer); the correspondence check verifies the guard reads the assigned reviewer."
+        },
+        {
+          "id": "B2-values",
+          "statement": "BDL OrcidStatus Verified/Unverified is idn_account.orcid_status 'verified'/'unverified'; the schema's CHECK admits exactly those two values, which the correspondence check verifies."
+        },
+        {
+          "id": "B3-harness",
+          "statement": "Cases set up their world (accounts, a published call, an eligible proposal) through the implementation's own test harness (tests/support/harness.ts). The act under test — the HTTP route — and the state read — rev_assignment — are the verifier's."
+        },
+        {
+          "id": "B4-environment",
+          "statement": "Cases run in-process (Fastify inject) against an isolated SQLite file with a manual clock and stub integrations; the ORCID registry is never consulted on assignment."
+        },
+        {
+          "id": "B5-shape",
+          "statement": "The guard and correspondence checks recognise the code's shape textually (lexed, not parsed); a refactor they do not recognise reads as 'not shown', never as 'violated'."
+        }
+      ],
+      "verdict": "MATCH",
+      "level": "L3",
+      "levelName": "Strong Conformance",
+      "binding": {
+        "model": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+        "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+        "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7",
+        "spec": "verified-reviewers-only@2.0.1",
+        "specDigest": "sha256:8ff34457bdc7c9e51990e7d10eb0cc44cd8ee72e1308cf5b026d82ba705edc9e",
+        "rubric": "continuum-claim-rubric/2",
+        "configuration": {
+          "node": "v24.22.1",
+          "platform": "win32",
+          "database": "SQLite (better-sqlite3), an isolated file per case; manual clock"
+        },
+        "configurationDigest": "sha256:463b87fc070bf3cf5f91f3ddddb9c2a244e5f1260ccc80ff5145c8fc2b4b677b"
+      },
+      "levels": {
+        "L0": {
+          "met": true,
+          "reasons": [
+            "the claim compiled at sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 (business model sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72)"
+          ],
+          "name": "Model Valid"
+        },
+        "L1": {
+          "met": true,
+          "reasons": [
+            "unverified-reviewer-refused passed on HTTP POST /api/proposals/:id/assignments"
+          ],
+          "name": "Observed Conformance"
+        },
+        "L2": {
+          "met": true,
+          "reasons": [
+            "scope established (2 path(s)); every in-scope path is covered by a passing qualifying check"
+          ],
+          "name": "Covered Conformance"
+        },
+        "L3": {
+          "met": true,
+          "reasons": [
+            "full-boundary evidence: constraint src/contexts/peer-review/service.ts:assignReviewer applies to every in-scope path (guard-dominates-writes); the constraint implements the model rule (guard-implements-condition on src/contexts/peer-review/service.ts:assignmentEligibility)",
+            "challenge orcid-guard-defeated (deliberate-fault) qualified: the deliberate fault architecture/challenges/orcid-guard-defeated.patch was detected: unverified-reviewer-refused on HTTP POST /api/proposals/:id/assignments — code is null, expected \"orcid_unverified\"; heldAfter is true, expected false; refused is false, expected true"
+          ],
+          "name": "Strong Conformance"
+        }
+      },
+      "challenges": [
+        {
+          "id": "orcid-guard-defeated",
+          "kind": "deliberate-fault",
+          "statement": "the AssignReviewer guard no longer refuses an unverified reviewer (029 controlled mismatch M2, reused)",
+          "change": {
+            "patch": "architecture/challenges/orcid-guard-defeated.patch",
+            "digest": "sha256:1be1db18560faa382ef27948d5ab16fe7dbcdeae119ac31e9843034222e8d814",
+            "files": [
+              "src/contexts/peer-review/service.ts"
+            ]
+          },
+          "expected": {
+            "check": "unverified-reviewer-refused",
+            "path": "HTTP POST /api/proposals/:id/assignments",
+            "reason": "refused is false, expected true"
+          },
+          "baseline": {
+            "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+            "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7"
+          },
+          "variant": {
+            "commit": "2a233b1fae3c083fe466adc6d74bfaa22450ee4a",
+            "tree": "d49c07b37e5cbde1dda7dccaaa4af9f214d64acc",
+            "parent": "6bcacf311447a573d2c408f50a73fcb480ec566e"
+          },
+          "relationshipVerified": true,
+          "variantResult": {
+            "verdict": "MISMATCH",
+            "level": null,
+            "judgmentDigest": "sha256:c038825035af9c95a77bce4310206415a129479f10e17edacee30e277790458f",
+            "counterexamples": [
+              {
+                "check": "unverified-reviewer-refused",
+                "path": "HTTP POST /api/proposals/:id/assignments",
+                "why": "code is null, expected \"orcid_unverified\"; heldAfter is true, expected false; refused is false, expected true"
+              }
+            ]
+          },
+          "detected": {
+            "check": "unverified-reviewer-refused",
+            "path": "HTTP POST /api/proposals/:id/assignments",
+            "why": "code is null, expected \"orcid_unverified\"; heldAfter is true, expected false; refused is false, expected true"
+          },
+          "qualifies": true,
+          "reasons": [
+            "the deliberate fault architecture/challenges/orcid-guard-defeated.patch was detected: unverified-reviewer-refused on HTTP POST /api/proposals/:id/assignments — code is null, expected \"orcid_unverified\"; heldAfter is true, expected false; refused is false, expected true"
+          ]
+        }
+      ],
+      "scope": {
+        "declared": true,
+        "established": true,
+        "method": "lexed literal SQL over src/** for writes that make an assignment held; each write's function and every call of it",
+        "paths": [
+          "HTTP POST /api/proposals/:id/assignments",
+          "src/contexts/peer-review/service.ts:128"
+        ],
+        "unresolved": [],
+        "discovery": "Lex src/**; every INSERT/REPLACE INTO rev_assignment, and every UPDATE of rev_assignment whose new status is held while its WHERE admits a not-held prior status (or does not fix it), is a write; the named function holding each write is found, and every call of it in src/** is an entry point (an HTTP registration is named by method and URL). Non-literal SQL must resolve, else the scope is incomplete."
+      },
+      "evidence": [
+        {
+          "check": "guard-dominates-writes",
+          "kind": "enforcement",
+          "path": "src/contexts/peer-review/service.ts:assignReviewer",
+          "covers": [],
+          "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "guard-implements-condition",
+          "kind": "rule-correspondence",
+          "path": "src/contexts/peer-review/service.ts:assignmentEligibility",
+          "covers": [],
+          "inputs": "sha256:4448bc68e888b3c67335dc1dcf68075126893024a9a7d2cdcb04538ba58bc555",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "held-assignment-scope",
+          "kind": "scope",
+          "path": "src/**",
+          "covers": [],
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "unverified-reviewer-refused",
+          "kind": "case",
+          "path": "HTTP POST /api/proposals/:id/assignments",
+          "covers": [
+            "src/contexts/peer-review/service.ts:128"
+          ],
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        },
+        {
+          "check": "verified-reviewer-assigned",
+          "kind": "case",
+          "path": "HTTP POST /api/proposals/:id/assignments",
+          "covers": [
+            "src/contexts/peer-review/service.ts:128"
+          ],
+          "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+          "status": "pass",
+          "why": "criterion met"
+        }
+      ],
+      "counterexamples": [],
+      "conflicts": [],
+      "outOfBoundary": {
+        "note": "observed by the verifier outside the stated boundary: reported, never counted toward or against this claim",
+        "observations": [
+          {
+            "path": "HTTP POST /api/operations/accounts/:id/erase",
+            "note": "EraseAccount is not AssignReviewer, so it is outside r-q012's declared scope; reported against the Account lifecycle (sm-q002: Verified is terminal)",
+            "observed": {
+              "assigned": 201,
+              "erased": 200,
+              "orcidStatusAfter": "unverified",
+              "stillHeld": true
+            }
+          }
+        ]
+      },
+      "reasons": [],
+      "next": null,
+      "judgmentDigest": "sha256:4c6085089aa4cb3d52d0e197880f682f99982710960c9fbcbcd5ac17d6097747",
+      "judged": true,
+      "informational": true,
+      "ran": {
+        "declaration": {
+          "path": "architecture/verification/verified-reviewers-only.verification.json",
+          "digest": "sha256:0994f8d2e87d8e2614586a5c1942f0f0eaaa83f5472ee4ac0d4a529cc097d8f5"
+        },
+        "verifier": {
+          "name": "verified-reviewers-only",
+          "version": "2.0.1",
+          "digest": "sha256:89b6ed80d48fdee03253c31c820b90b6fbf2237c352b10a7ca8b1fa684cdc10c"
+        },
+        "run": {
+          "exit": 0,
+          "ms": 3989
+        },
+        "result": {
+          "path": "verification/verified-reviewers-only/result.json"
+        },
+        "challenges": [
+          {
+            "id": "orcid-guard-defeated",
+            "variant": {
+              "commit": "2a233b1fae3c083fe466adc6d74bfaa22450ee4a",
+              "tree": "d49c07b37e5cbde1dda7dccaaa4af9f214d64acc",
+              "parent": "6bcacf311447a573d2c408f50a73fcb480ec566e"
+            },
+            "change": {
+              "patch": "architecture/challenges/orcid-guard-defeated.patch",
+              "digest": "sha256:1be1db18560faa382ef27948d5ab16fe7dbcdeae119ac31e9843034222e8d814",
+              "files": [
+                "src/contexts/peer-review/service.ts"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "attestationSummary": {
+    "claims": 5,
+    "set": [
+      {
+        "verification": "at-most-three-reviewers",
+        "claim": {
+          "language": "adl",
+          "kind": "business-rule",
+          "id": "61505d55-158f-4a68-aa7b-204a46219514",
+          "name": "::Quorum.ResearchFunding.PeerReview.AssignmentValidity"
+        },
+        "verdict": "MATCH",
+        "level": "L3",
+        "rubric": "continuum-claim-rubric/3"
+      },
+      {
+        "verification": "chair-decides-scored-only",
+        "claim": {
+          "language": "bdl",
+          "kind": "business-rule",
+          "id": "r-q008",
+          "name": "ChairDecidesScoredOnly"
+        },
+        "verdict": "MATCH",
+        "level": "L3",
+        "rubric": "continuum-claim-rubric/2"
+      },
+      {
+        "verification": "orcid-verification-lifecycle",
+        "claim": {
+          "language": "bdl",
+          "kind": "state-model",
+          "id": "sm-q002",
+          "name": "Account.orcidStatus (OrcidVerification)"
+        },
+        "verdict": "MATCH",
+        "level": "L2",
+        "rubric": "continuum-claim-rubric/2"
+      },
+      {
+        "verification": "reviewstore-writers",
+        "claim": {
+          "language": "adl",
+          "kind": "resource-writers",
+          "id": "7cbfd5c5-60f5-4af5-bcba-aa0359aaaf4e",
+          "name": "::Quorum.ResearchFunding.PeerReview.ReviewStore"
+        },
+        "verdict": "MATCH",
+        "level": "L3",
+        "rubric": "continuum-claim-rubric/3"
+      },
+      {
+        "verification": "verified-reviewers-only",
+        "claim": {
+          "language": "bdl",
+          "kind": "business-rule",
+          "id": "r-q012",
+          "name": "VerifiedReviewersOnly"
+        },
+        "verdict": "MATCH",
+        "level": "L3",
+        "rubric": "continuum-claim-rubric/2"
+      }
+    ],
+    "rubrics": [
+      "continuum-claim-rubric/2",
+      "continuum-claim-rubric/3"
+    ],
+    "distribution": {
+      "L2": 1,
+      "L3": 4
+    },
+    "verdicts": {
+      "MATCH": 5
+    },
+    "overall": null,
+    "affected": [],
+    "statement": "Overall level unset across 5 claims — judged under different rubrics (continuum-claim-rubric/2, continuum-claim-rubric/3), which are not one scale · 1 at L2, 4 at L3"
+  },
+  "judgedBy": {
+    "operation": "conformance.judgeReport",
+    "route": "/v1/conformance/judge-report",
+    "surface": "continuum-platform-report-judgment/1",
+    "host": "https://continuum.dev.avlon.ca"
+  },
+  "separate": {
+    "alignment": "decision → architecture is `continuum decision check`; not assessed or implied here",
+    "authorization": "this report authorizes nothing: no change, no deploy"
+  },
+  "coverage": {
+    "sees": [
+      "acceptance scenarios from the baseline (every *.scenario.json under <package>/acceptance/, in any subdirectory), run by the assessor against the adapter at the commit",
+      "the implementation's Node test suite (package.json \"test\" = node --test …), run at the commit with a JUnit reporter",
+      "evidence.json pinned tests (continuum conformance pin): each identity (file, suite chain, name) and declaration fingerprint verified at the commit from its blobs; a deleted pin is evidence-missing, a changed one stale, never transferred to another test",
+      "legacy evidence.json line-span citations: resolved and shown, never counted (nothing proves the span still covers the cited test)",
+      "GitHub Actions runs for the exact commit (with --ci)",
+      "Host-recorded implementation reports on the decisions (shown, never counted)",
+      "architecture verifications the assessor declares under <intent dir>/verification/ at the baseline (continuum-verification/0): each verifier runs from a checkout of the baseline against the commit; its result is checked for shape, for the baseline model state and for the commit and tree it was given — never for what it found",
+      "the acts the system recorded while each scenario ran (the adapter's observe: journal order, planned dates, reported states), checked against a decision's lifecycle and precondition expectations over the business model at the baseline; a reported state the record does not reach makes the record evidence-missing"
+    ],
+    "cannot": [
+      "the meaning of a step binding: the adapter is implementation code; a binding that asserts nothing passes",
+      "any test runner other than node --test; any language other than JavaScript/TypeScript",
+      "source structure or configuration (see continuum conformance check for import coupling)",
+      "runtime behaviour in a deployed environment",
+      "a commitment no scenario and no cited test reaches — it is unsupported, never assumed",
+      "whether a declared verifier checks what it says it checks: its method, coverage and uncovered paths are relayed as it states them; a deployment-level outcome is the verifier's statement, never this report's",
+      "attempts that left no record: a refused act journals nothing, so the record shows what happened, not what was prevented (scenarios assert refusals)",
+      "a journal the adapter misreports, beyond the completeness check against reported states; paths no scenario drove"
+    ],
+    "independence": "scenarios and runner are the assessor's and are read at the baseline; step bindings, tests and their citations are the implementation's"
+  },
+  "overhead": {
+    "ms": 114658,
+    "checkoutMs": 846,
+    "setupMs": 10123,
+    "scenarioMs": null,
+    "testsMs": 19393,
+    "verificationMs": 80198
+  },
+  "result": {
+    "status": "PASS",
+    "exit": 0,
+    "reasons": [],
+    "unverified": []
+  }
+}

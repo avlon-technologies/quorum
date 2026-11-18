@@ -4,6 +4,7 @@
   "purpose": "A reviewer with a declared conflict cannot be assigned to that proposal (INV-3).",
   "verifies": [
     "::Quorum.ResearchFunding.ReviewerAssignment.NoConflictedAssignment",
+    "::Quorum.ResearchFunding.PeerReview.AssignmentValidity",
     "::Quorum.ResearchFunding.PeerReview.AssignmentService"
   ],
   "test": "::Quorum.Inv03NoConflictedAssignment",

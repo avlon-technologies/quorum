@@ -1,0 +1,394 @@
+{
+  "profile": "continuum-verification-result/0",
+  "verifier": {
+    "name": "chair-decides-scored-only",
+    "version": "1.1.1",
+    "digest": "sha256:d88ed9c6a293b3da99dcd7b175d7fad655a567022556a0922ff29a3ba8062c3d"
+  },
+  "model": {
+    "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+    "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+    "elements": [
+      {
+        "id": "r-q008",
+        "name": "ChairDecidesScoredOnly",
+        "kind": "bdl:rule"
+      }
+    ]
+  },
+  "implementation": {
+    "commit": "6e4c0150fa2aa6cc91623952c29cad4ba88f5fa8",
+    "tree": "c1fa8df1794a6a5b33799fda0f2b4125df825593"
+  },
+  "expectation": {
+    "statement": "Who may approve an application: BDL rule ChairDecidesScoredOnly (r-q008) on RecordPanelDecision (ac-q019) — only a Panel Chair (ac-q019 mayPerform, closed), only for a Scored proposal (ac-q019 precondition), and only once (derived from the closed Proposal lifecycle sm-q003).",
+    "source": "continuum-claim-spec/0 chair-decides-scored-only@1.1.1"
+  },
+  "method": "static scope, guard and correspondence checks over src/**, and the real HTTP route driven through the implementation's app (see the attestation observation)",
+  "evidence": [
+    {
+      "ref": "observation: attestation.results"
+    }
+  ],
+  "coverage": {
+    "executed": 11,
+    "covered": [
+      "HTTP POST /api/adjudications/:id/decision",
+      "src/contexts/adjudication/service.ts:102",
+      "src/contexts/adjudication/service.ts:105",
+      "src/contexts/adjudication/service.ts:116",
+      "src/contexts/oversight/service.ts:108",
+      "src/contexts/oversight/service.ts:113",
+      "src/contexts/submission/service.ts:230",
+      "src/contexts/submission/service.ts:231"
+    ],
+    "uncovered": []
+  },
+  "levels": {
+    "code": {
+      "outcome": "UNVERIFIED",
+      "reason": "informational claim attestation: the level is judged by the Host (continuum-claim-attestation/0)"
+    },
+    "deployment": {
+      "outcome": "UNVERIFIED",
+      "reason": "not assessed: the route ran in-process against an isolated database, not a deployment"
+    }
+  },
+  "attestation": {
+    "profile": "continuum-claim-observation/0",
+    "spec": {
+      "id": "chair-decides-scored-only",
+      "version": "1.1.1"
+    },
+    "boundTo": {
+      "commit": "6e4c0150fa2aa6cc91623952c29cad4ba88f5fa8",
+      "tree": "c1fa8df1794a6a5b33799fda0f2b4125df825593",
+      "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+      "spec": {
+        "id": "chair-decides-scored-only",
+        "version": "1.1.1"
+      }
+    },
+    "environment": {
+      "node": "v24.22.1",
+      "platform": "win32",
+      "database": "SQLite (better-sqlite3), an isolated file per case; manual clock"
+    },
+    "results": [
+      {
+        "check": "chair-decides-scored",
+        "ran": "completed",
+        "path": "HTTP POST /api/adjudications/:id/decision",
+        "covers": [
+          "src/contexts/adjudication/service.ts:102",
+          "src/contexts/adjudication/service.ts:105",
+          "src/contexts/adjudication/service.ts:116"
+        ],
+        "inputs": "sha256:2a06325a4e54e9b15bcbeaa2a18d83afd8a4926c659dd8f492bb41d364ba1016",
+        "observed": {
+          "statusBefore": "scored",
+          "httpStatus": 200,
+          "decided": true,
+          "decisionAfter": "award",
+          "proposalStatusAfter": "awarded"
+        }
+      },
+      {
+        "check": "decision-scope",
+        "ran": "completed",
+        "path": "src/**",
+        "inputs": "sha256:2a06325a4e54e9b15bcbeaa2a18d83afd8a4926c659dd8f492bb41d364ba1016",
+        "observed": {
+          "method": "lexed src/**: SQL writes to adj_decision and adj_case→decided; publishes of the decision fact; proposal status writes to an outcome through the status channel; every call of each decision function",
+          "discovered": [
+            "HTTP POST /api/adjudications/:id/decision",
+            "src/contexts/adjudication/service.ts:102",
+            "src/contexts/adjudication/service.ts:105",
+            "src/contexts/adjudication/service.ts:116",
+            "src/contexts/oversight/service.ts:108",
+            "src/contexts/oversight/service.ts:113",
+            "src/contexts/submission/service.ts:230",
+            "src/contexts/submission/service.ts:231"
+          ],
+          "writes": [
+            {
+              "path": "src/contexts/adjudication/service.ts:102",
+              "op": "UPDATE",
+              "table": "adj_case",
+              "statement": "UPDATE adj_case SET status = 'decided' WHERE proposal_id = ? AND status IN ('awaitingDecision','reconsider')",
+              "function": "recordDecision"
+            },
+            {
+              "path": "src/contexts/adjudication/service.ts:105",
+              "op": "INSERT",
+              "table": "adj_decision",
+              "statement": "INSERT INTO adj_decision (proposal_id, call_id, outcome, amount_minor, rationale, decided_by, decided_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              "function": "recordDecision"
+            }
+          ],
+          "publishes": [
+            {
+              "path": "src/contexts/adjudication/service.ts:116",
+              "type": "ProposalAwarded|ProposalDeclined"
+            }
+          ],
+          "outcomes": [
+            {
+              "path": "src/contexts/oversight/service.ts:108",
+              "form": "setProposal",
+              "to": "awarded",
+              "handler": "ProposalAwarded"
+            },
+            {
+              "path": "src/contexts/oversight/service.ts:113",
+              "form": "status",
+              "to": "declined",
+              "handler": "ProposalDeclined"
+            },
+            {
+              "path": "src/contexts/submission/service.ts:230",
+              "form": "react",
+              "to": "awarded",
+              "handler": "ProposalAwarded"
+            },
+            {
+              "path": "src/contexts/submission/service.ts:231",
+              "form": "react",
+              "to": "declined",
+              "handler": "ProposalDeclined"
+            }
+          ],
+          "entries": [
+            {
+              "path": "HTTP POST /api/adjudications/:id/decision",
+              "site": "src/api/routes.ts:334",
+              "through": "recordDecision",
+              "access": [
+                "panelChair",
+                "programOfficer"
+              ],
+              "reaches": [
+                "src/contexts/adjudication/service.ts:102",
+                "src/contexts/adjudication/service.ts:105"
+              ]
+            }
+          ],
+          "unresolved": [],
+          "excluded": [
+            {
+              "path": "src/seed.ts:204",
+              "form": "call",
+              "call": "recordDecision",
+              "because": "the demo seed's calls of recordDecision (src/seed.ts)"
+            },
+            {
+              "path": "src/seed.ts:205",
+              "form": "call",
+              "call": "recordDecision",
+              "because": "the demo seed's calls of recordDecision (src/seed.ts)"
+            }
+          ]
+        }
+      },
+      {
+        "check": "guards-dominate-decision",
+        "ran": "completed",
+        "path": "src/contexts/adjudication/service.ts:recordDecision",
+        "inputs": "sha256:2a06325a4e54e9b15bcbeaa2a18d83afd8a4926c659dd8f492bb41d364ba1016",
+        "observed": {
+          "dominates": true,
+          "appliesTo": [
+            "HTTP POST /api/adjudications/:id/decision",
+            "src/contexts/adjudication/service.ts:102",
+            "src/contexts/adjudication/service.ts:105",
+            "src/contexts/adjudication/service.ts:116",
+            "src/contexts/oversight/service.ts:108",
+            "src/contexts/oversight/service.ts:113",
+            "src/contexts/submission/service.ts:230",
+            "src/contexts/submission/service.ts:231"
+          ],
+          "parts": {
+            "functionGuards": {
+              "recordDecision": {
+                "scored": true,
+                "decidedRefused": true,
+                "conditionalClaim": true,
+                "noEarlyReturn": true
+              }
+            },
+            "everyEntryIsARouteWithAccess": true,
+            "factPublishedOnlyByTheGuardedFunction": true,
+            "outcomesAppliedOnlyOnTheFact": true
+          }
+        }
+      },
+      {
+        "check": "guards-implement-rule",
+        "ran": "completed",
+        "path": "src/contexts/adjudication/service.ts:recordDecision",
+        "inputs": "sha256:856122921c90af2c175692250ffd083a9b67054ce2f83c6213cc96204eaec59e",
+        "observed": {
+          "modelCondition": "Proposal.status != ProposalStatus \"Scored\"",
+          "modelPreconditions": [
+            "Proposal.status == ProposalStatus \"Scored\""
+          ],
+          "admittedRoles": [
+            "panelChair",
+            "programOfficer"
+          ],
+          "scoredOnly": true,
+          "once": true,
+          "parts": {
+            "performer": {
+              "admittedRoles": [
+                "panelChair",
+                "programOfficer"
+              ],
+              "at": [
+                "HTTP POST /api/adjudications/:id/decision"
+              ]
+            },
+            "scored": {
+              "refusesWithoutCase": true,
+              "caseOpenedOnlyOnProposalScored": true,
+              "caseInserts": [
+                "src/contexts/adjudication/panel-decision.ts:21"
+              ]
+            },
+            "once": {
+              "decidedRefused": true,
+              "conditionalClaim": true,
+              "onePerProposal": true
+            }
+          }
+        }
+      },
+      {
+        "check": "non-chair-refused",
+        "ran": "completed",
+        "path": "HTTP POST /api/adjudications/:id/decision",
+        "covers": [
+          "src/contexts/adjudication/service.ts:102",
+          "src/contexts/adjudication/service.ts:105",
+          "src/contexts/adjudication/service.ts:116"
+        ],
+        "inputs": "sha256:2a06325a4e54e9b15bcbeaa2a18d83afd8a4926c659dd8f492bb41d364ba1016",
+        "observed": {
+          "tried": {
+            "programOfficer": {
+              "httpStatus": 200,
+              "code": null
+            },
+            "operator": {
+              "httpStatus": 403,
+              "code": "forbidden"
+            },
+            "applicant": {
+              "httpStatus": 403,
+              "code": "forbidden"
+            },
+            "reviewer": {
+              "httpStatus": 403,
+              "code": "forbidden"
+            },
+            "unverifiedReviewer": {
+              "httpStatus": 403,
+              "code": "forbidden"
+            }
+          },
+          "allRefused": false,
+          "decisionsAdded": 1,
+          "statusBefore": "scored",
+          "proposalStatusAfter": "awarded",
+          "eventsAdded": 1
+        }
+      },
+      {
+        "check": "outcome-follows-decision-fact",
+        "ran": "completed",
+        "path": "src/contexts/oversight/service.ts:108",
+        "inputs": "sha256:57e3e8614c45e637f79803966a43e6033bddf139eb9722a382239a396107f762",
+        "observed": {
+          "handler": "ProposalAwarded",
+          "to": "awarded",
+          "onDecisionFact": true
+        }
+      },
+      {
+        "check": "outcome-follows-decision-fact",
+        "ran": "completed",
+        "path": "src/contexts/oversight/service.ts:113",
+        "inputs": "sha256:57e3e8614c45e637f79803966a43e6033bddf139eb9722a382239a396107f762",
+        "observed": {
+          "handler": "ProposalDeclined",
+          "to": "declined",
+          "onDecisionFact": true
+        }
+      },
+      {
+        "check": "outcome-follows-decision-fact",
+        "ran": "completed",
+        "path": "src/contexts/submission/service.ts:230",
+        "inputs": "sha256:d69d71e93c612ca71932126b0f0e9e51613c40d706d0c9bc1e9c93ad4e141f30",
+        "observed": {
+          "handler": "ProposalAwarded",
+          "to": "awarded",
+          "onDecisionFact": true
+        }
+      },
+      {
+        "check": "outcome-follows-decision-fact",
+        "ran": "completed",
+        "path": "src/contexts/submission/service.ts:231",
+        "inputs": "sha256:d69d71e93c612ca71932126b0f0e9e51613c40d706d0c9bc1e9c93ad4e141f30",
+        "observed": {
+          "handler": "ProposalDeclined",
+          "to": "declined",
+          "onDecisionFact": true
+        }
+      },
+      {
+        "check": "second-decision-refused",
+        "ran": "completed",
+        "path": "HTTP POST /api/adjudications/:id/decision",
+        "covers": [
+          "src/contexts/adjudication/service.ts:102",
+          "src/contexts/adjudication/service.ts:105",
+          "src/contexts/adjudication/service.ts:116"
+        ],
+        "inputs": "sha256:2a06325a4e54e9b15bcbeaa2a18d83afd8a4926c659dd8f492bb41d364ba1016",
+        "observed": {
+          "firstHttpStatus": 200,
+          "statusBefore": "declined",
+          "decisionBefore": "decline",
+          "httpStatus": 409,
+          "refused": true,
+          "code": "already_decided",
+          "decisionAfter": "decline",
+          "proposalStatusAfter": "declined",
+          "eventsAdded": 0
+        }
+      },
+      {
+        "check": "unscored-refused",
+        "ran": "completed",
+        "path": "HTTP POST /api/adjudications/:id/decision",
+        "covers": [
+          "src/contexts/adjudication/service.ts:102",
+          "src/contexts/adjudication/service.ts:105",
+          "src/contexts/adjudication/service.ts:116"
+        ],
+        "inputs": "sha256:2a06325a4e54e9b15bcbeaa2a18d83afd8a4926c659dd8f492bb41d364ba1016",
+        "observed": {
+          "statusBefore": "underReview",
+          "httpStatus": 409,
+          "refused": true,
+          "code": "not_scored",
+          "decisionAfter": null,
+          "proposalStatusAfter": "underReview",
+          "eventsAdded": 0
+        }
+      }
+    ]
+  }
+}

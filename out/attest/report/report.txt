@@ -1,0 +1,376 @@
+CONFORMANCE REPORT (continuum-conformance-report/0, experimental) — continuum-cli 0.40.0, 2026-11-17T09:28:41.750Z
+  question     did the implementation at the commit build the architecture accepted at the baseline?
+  baseline     6bcacf311447  avlon.quorum changeState sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba  (0 acceptance scenario(s), handoff sha256:3a2cb853934a…)
+  commit       6bcacf311447  setup installed
+  tests        ran — 210 passed (exit 0; "vitest run")
+  test map     continuum/evidence.json (245 element(s))
+  adapter      continuum/acceptance/adapter.mjs — not loaded: the baseline carries no acceptance scenario
+  ci           not-requested
+
+  28 unsupported
+  UNSUPPORTED    business-rule ::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly
+                   tests    unmapped — the entry cites no test file
+  UNSUPPORTED    business-rule ::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded
+                   tests    unmapped — the entry cites no test file
+  UNSUPPORTED    business-rule ::Quorum.ResearchFunding.Notification.NoScoresToReviewers
+                   tests    unmapped — the entry cites no test file
+  UNSUPPORTED    business-rule ::Quorum.ResearchFunding.PeerReview.AssignmentValidity
+                   tests    unmapped — the entry cites no test file
+  UNSUPPORTED    business-rule ::Quorum.ResearchFunding.PeerReview.EveryCriterionScored
+                   tests    unmapped — the entry cites no test file
+  UNSUPPORTED    business-rule ::Quorum.ResearchFunding.PeerReview.PeerReviewsHiddenUntilOwnSubmitted
+                   tests    unmapped — the entry cites no test file
+  UNSUPPORTED    business-rule ::Quorum.ResearchFunding.PeerReview.ThreeSubmittedReviews
+                   tests    unmapped — the entry cites no test file
+  UNSUPPORTED    business-rule ::Quorum.ResearchFunding.Submission.ApplicantScope
+                   tests    unmapped — the entry cites no test file
+  UNSUPPORTED    business-rule ::Quorum.ResearchFunding.Submission.SubmissionWindowOpen
+                   tests    unmapped — the entry cites no test file
+  UNSUPPORTED    business-rule ::Quorum.ResearchFunding.Submission.SubmittedOnce
+                   tests    unmapped — the entry cites no test file
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.AccessControl.PersonalDataErasable
+                   tests    unmapped
+                   declared verifiedBy ::Quorum.AccountErasure — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.Inv11RoleScope — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.Inv07Blind — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.BlindPeerReview.CompleteScoring
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.Inv06CompleteScoring — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.CallAdministration.SubmissionWindow
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.Inv01SubmissionWindow — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.EligibilityScreening.AgentNeverDecides
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.Inv10AgentNeverDecides — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.Inv08ChairOnly — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.PanelAdjudication.DecisionsEscalated
+                   tests    unmapped
+                   declared verifiedBy ::Quorum.DecisionEscalation — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.Inv09Envelope — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.ParticipantNotification.NotificationsDurable
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.DeliveryAndReplay — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.PortfolioReporting.PortfolioFromProjection
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.PortfolioJourney — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.PortfolioReporting.TransitionsAudited
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.PortfolioJourney — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.ProposalSubmission.SubmitOnce
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.Inv02SubmitOnce — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.ReviewCompletionTracking.OverdueReviewsEscalated
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.OverdueEscalation — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.ReviewCompletionTracking.ThreeReviewsBeforeScoring
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.Inv05ThreeReviews — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.ReviewerAssignment.NoConflictedAssignment
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.Inv03NoConflictedAssignment — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.ReviewerAssignment.NoSelfReview
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.Inv04NoSelfReview — not counted
+  UNSUPPORTED    requirement   ::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly
+                   tests    unmapped — the entry cites no test file
+                   declared verifiedBy ::Quorum.Inv12VerifiedReviewers — not counted
+
+  CLAIM ATTESTATION (experimental, informational — never sets the exit; continuum-claim-attestation/0)
+  Overall level unset across 5 claims — judged under different rubrics (continuum-claim-rubric/2, continuum-claim-rubric/3), which are not one scale · 1 at L2, 4 at L3
+  model     sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1
+  commit    6bcacf311447a573d2c408f50a73fcb480ec566e
+  rubric    continuum-claim-rubric/2: L0 — Model Valid · L1 — Observed Conformance · L2 — Covered Conformance · L3 — Strong Conformance
+  rubric    continuum-claim-rubric/3: L0 — Assessed · L1 — Supported · L2 — Verified in scope · L3 — Violation-sensitive
+  claim set 5 claims, the claims this report includes — not the model's full set of requirements and obligations:
+            · ADL 61505d55-158f-4a68-aa7b-204a46219514 ::Quorum.ResearchFunding.PeerReview.AssignmentValidity (at-most-three-reviewers)
+            · BDL r-q008 ChairDecidesScoredOnly (chair-decides-scored-only)
+            · BDL sm-q002 Account.orcidStatus (OrcidVerification) (orcid-verification-lifecycle)
+            · ADL 7cbfd5c5-60f5-4af5-bcba-aa0359aaaf4e ::Quorum.ResearchFunding.PeerReview.ReviewStore (reviewstore-writers)
+            · BDL r-q012 VerifiedReviewersOnly (verified-reviewers-only)
+
+  L3 — Violation-sensitive   ADL 61505d55-158f-4a68-aa7b-204a46219514 ::Quorum.ResearchFunding.PeerReview.AssignmentValidity   [at-most-three-reviewers]
+               wording   ::Quorum.ResearchFunding.PeerReview.AssignmentValidity: "the proposal has fewer than three active assignments" — a clause of the compiled statement, applied by ::Quorum.ResearchFunding.PeerReview.AssignmentService
+               boundary  AssignReviewer — every write in src/** that creates an ACTIVE assignment (any status but revoked), and every runtime entry point that reaches one, in one Quorum process over one store.
+               verdict   MATCH · L3 — Violation-sensitive · continuum-claim-rubric/3
+               evidence  OBSERVED
+               earned by L3 — active-status-misread: fault accepted-not-counted detected by full-after-acceptance-refused on HTTP POST /api/proposals/:id/assignments; boundary-shift: fault bound-off-by-one detected by fourth-refused on HTTP POST /api/proposals/:id/assignments; concurrent-race: fault check-outside-transaction detected by concurrent-third-and-fourth on HTTP POST /api/proposals/:id/assignments; rule-bypass: fault bound-removed detected by fourth-refused on HTTP POST /api/proposals/:id/assignments
+                 · HTTP POST /api/proposals/:id/assignments ← concurrent-third-and-fourth (boundary), first-assigned (allowed), fourth-refused (boundary), full-after-acceptance-refused (rejected), revoked-frees-a-place (allowed), third-assigned (boundary)
+                 · src/contexts/peer-review/service.ts:128 ← concurrent-third-and-fourth (boundary), first-assigned (allowed), revoked-frees-a-place (allowed), third-assigned (boundary)
+               behaviour allowed 2 · rejected 1 · boundary 3 (passing executed/formal cases)
+               violation DETECTED  active-status-misread — accepted-not-counted → full-after-acceptance-refused on HTTP POST /api/proposals/:id/assignments
+               violation DETECTED  boundary-shift (required) — bound-off-by-one → fourth-refused on HTTP POST /api/proposals/:id/assignments
+               violation DETECTED  concurrent-race (required) — check-outside-transaction → concurrent-third-and-fourth on HTTP POST /api/proposals/:id/assignments
+               violation DETECTED  rule-bypass (required) — bound-removed → fourth-refused on HTTP POST /api/proposals/:id/assignments
+               limit     assumed (A1-active): An active assignment is any rev_assignment row whose status is not revoked (assigned, accepted, overdue, completed): the model's "active assignments", in stored values.
+               limit     assumed (A2-harness): Cases set up their world (accounts, a published call, an eligible proposal, the first assignments) through the implementation's own harness and services. The act under test — the HTTP route — and the state read — rev_assignment — are the verifier's.
+               limit     assumed (A3-reached): The `reached` paths are what V8 precise BLOCK coverage reports executing during the act alone (setup excluded): a write site is reached when the innermost covered block containing it ran. Observed by the runtime, not declared.
+               limit     no detected fault was placed on src/contexts/peer-review/service.ts:128: sensitivity there rests on the violation classes, not on a fault at that path
+               limit     outside the boundary: several Quorum processes writing one store at once — one process per store is the deployment model (LocalDevelopment binding); the store trigger is the defence there and is observed statically (store-bound-trigger), not executed across processes
+               limit     outside the boundary: tests/**, scripts/** — not part of the deployable
+               limit     outside the boundary: the demo seed's calls of assignReviewer (src/seed.ts) — demo data, never run when NODE_ENV=production; it calls the same guarded function
+               limit     sensitivity is demonstrated only for the violation classes active-status-misread, boundary-shift, concurrent-race, rule-bypass: another way of violating the claim is not covered
+               evidence  verification/at-most-three-reviewers/result.json
+                         9 result(s): 9 counted pass, 0 fail, 0 unresolved, 0 conflicted
+               model     sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 (compile passed)
+               commit    6bcacf311447a573d2c408f50a73fcb480ec566e tree 2eca51bd68a6874a938a219dc92a718d8bc46bf7
+               spec      at-most-three-reviewers@1.0.1 sha256:6c5ee83498dd2d078461faf3233d64956bf2397de624c78c1c4857a293343c42
+               verifier  at-most-three-reviewers 1.0.1 sha256:ad0e73edec65b3b4fd72fd06acc3e85e4d371037ed4b46767071c782d33dde54 (8.3 s)
+               scope     ESTABLISHED · 2 in-scope path(s) · lexed literal SQL over src/** for writes creating an active rev_assignment; each write's function and every call of it
+                 · HTTP POST /api/proposals/:id/assignments
+                 · src/contexts/peer-review/service.ts:128
+               challenge QUALIFIED · bound-removed (deliberate-fault)
+                 change   architecture/challenges/bound-removed.patch sha256:5d1314c0f17065692186396180180ce94c95ceccb6b37cda16360c2e2f416fa3 → src/contexts/peer-review/service.ts, src/platform/schema.ts
+                 variant  d361beceadaf3e4b06606d64301a7702968349ca tree dc98e7548f5e58a52da11eee3decf3aaa8539d28 (parent 6bcacf311447a573d2c408f50a73fcb480ec566e); relationship verified
+                 expects  fourth-refused on HTTP POST /api/proposals/:id/assignments: "activeAfter is 4, expected 3"
+                 detected fourth-refused on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; refused is false, expected true
+                 fourth-refused passed on HTTP POST /api/proposals/:id/assignments at 6bcacf311447 and failed at the variant: sensitive to rule-bypass
+                 the deliberate fault architecture/challenges/bound-removed.patch was detected: fourth-refused on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; refused is false, expected true
+               challenge QUALIFIED · bound-off-by-one (deliberate-fault)
+                 change   architecture/challenges/bound-off-by-one.patch sha256:95b436133b32e0cf4a0a739c625ba6678e47843a5dcabb0cbeaf449164c90b47 → src/contexts/peer-review/service.ts, src/platform/schema.ts
+                 variant  11454b8468db30c97f3217ed871a1c474b89742e tree 9367fd5eb65b117c5c33ca1cf2f62260f00970ea (parent 6bcacf311447a573d2c408f50a73fcb480ec566e); relationship verified
+                 expects  fourth-refused on HTTP POST /api/proposals/:id/assignments: "activeAfter is 4, expected 3"
+                 detected fourth-refused on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; refused is false, expected true
+                 fourth-refused passed on HTTP POST /api/proposals/:id/assignments at 6bcacf311447 and failed at the variant: sensitive to boundary-shift
+                 the deliberate fault architecture/challenges/bound-off-by-one.patch was detected: fourth-refused on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; refused is false, expected true
+               challenge QUALIFIED · accepted-not-counted (deliberate-fault)
+                 change   architecture/challenges/accepted-not-counted.patch sha256:e811dcd72784fa9ccf63504d3db1db5bbdba6c850d60d81fc84fceec031503a1 → src/contexts/peer-review/service.ts, src/platform/schema.ts
+                 variant  d001e16208a882845b22c29703ee41fe6aedd5b6 tree 6022995ef3104ec8f35e1fab273cec98b368711f (parent 6bcacf311447a573d2c408f50a73fcb480ec566e); relationship verified
+                 expects  full-after-acceptance-refused on HTTP POST /api/proposals/:id/assignments: "activeAfter is 4, expected 3"
+                 detected full-after-acceptance-refused on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; refused is false, expected true
+                 full-after-acceptance-refused passed on HTTP POST /api/proposals/:id/assignments at 6bcacf311447 and failed at the variant: sensitive to active-status-misread
+                 the deliberate fault architecture/challenges/accepted-not-counted.patch was detected: full-after-acceptance-refused on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; refused is false, expected true
+               challenge QUALIFIED · check-outside-transaction (deliberate-fault)
+                 change   architecture/challenges/check-outside-transaction.patch sha256:5addd04aead19744698c96182ce43dff167c35c6b713976fc8272fc2b4dce7c4 → src/api/routes.ts, src/contexts/peer-review/service.ts, src/platform/schema.ts
+                 variant  6eb5f2de0b43bb382491fc0db78ab982e5f5b562 tree a77a6ccd83dbdf357e39810e18ea0baa4e4275a6 (parent 6bcacf311447a573d2c408f50a73fcb480ec566e); relationship verified
+                 expects  concurrent-third-and-fourth on HTTP POST /api/proposals/:id/assignments: "activeAfter is 4, expected 3"
+                 detected concurrent-third-and-fourth on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; admitted is 2, expected 1
+                 concurrent-third-and-fourth passed on HTTP POST /api/proposals/:id/assignments at 6bcacf311447 and failed at the variant: sensitive to concurrent-race
+                 the deliberate fault architecture/challenges/check-outside-transaction.patch was detected: concurrent-third-and-fourth on HTTP POST /api/proposals/:id/assignments — activeAfter is 4, expected 3; admitted is 2, expected 1
+               gaps      none at this rubric: L3 is the highest level — within the limits above
+               L0 met      Assessed: judged: the claim resolved in the model compiled at sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1; evidence observed
+               L1 met      Supported: concurrent-third-and-fourth (executed-http-route) passed on HTTP POST /api/proposals/:id/assignments; first-assigned (executed-http-route) passed on HTTP POST /api/proposals/:id/assignments; fourth-refused (executed-http-route) passed on HTTP POST /api/proposals/:id/assignments; full-after-acceptance-refused (executed-http-route) passed on HTTP POST /api/proposals/:id/assignments; panel-full-guard (static-lexical) passed on src/contexts/peer-review/service.ts:assignmentEligibility; revoked-frees-a-place (executed-http-route) passed on HTTP POST /api/proposals/:id/assignments; store-bound-trigger (static-lexical) passed on src/platform/schema.ts:rev_assignment_at_most_three; third-assigned (executed-http-route) passed on HTTP POST /api/proposals/:id/assignments
+               L2 met      Verified in scope: scope established (2 path(s)), each checked by passing executed/formal verification; allowed, rejected, boundary behaviour checked
+               L3 met      Violation-sensitive: active-status-misread: fault accepted-not-counted detected by full-after-acceptance-refused on HTTP POST /api/proposals/:id/assignments; boundary-shift: fault bound-off-by-one detected by fourth-refused on HTTP POST /api/proposals/:id/assignments; concurrent-race: fault check-outside-transaction detected by concurrent-third-and-fourth on HTTP POST /api/proposals/:id/assignments; rule-bypass: fault bound-removed detected by fourth-refused on HTTP POST /api/proposals/:id/assignments
+               bound to  model sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 · commit 6bcacf311447a573d2c408f50a73fcb480ec566e · at-most-three-reviewers@1.0.1 sha256:6c5ee83498dd2d078461faf3233d64956bf2397de624c78c1c4857a293343c42 · continuum-claim-rubric/3 · configuration sha256:463b87fc070bf3cf5f91f3ddddb9c2a244e5f1260ccc80ff5145c8fc2b4b677b
+               judgment  sha256:9d333e2aa05d4049bd91f6010c8d178abd10ac6b369ae8dc404ad73b25bf8ebe
+
+  L3 — Strong Conformance · RecordPanelDecision   BDL r-q008 ChairDecidesScoredOnly   [chair-decides-scored-only]
+               wording   ChairDecidesScoredOnly (r-q008): when Proposal.status != ProposalStatus "Scored" on RecordPanelDecision (ac-q019) — Only a Panel Chair records a panel decision, only for a Scored proposal, and only once. [judged at its declared scope RecordPanelDecision (ac-q019) only; the assertion is not evaluated anywhere else]
+               boundary  RecordPanelDecision — Application approval is the Award outcome of the decision RecordPanelDecision (Proposal Scored → Awarded, t-q016; its only trigger). In scope: every write in src/** that records a panel decision (either outcome — the rule governs the decision, not only the award), every publish of the decision fact, every write that moves a proposal to awarded or declined, and every runtime entry point into the decision writes.
+               verdict   MATCH · L3 — Strong Conformance · continuum-claim-rubric/2
+               evidence  verification/chair-decides-scored-only/result.json
+                         11 result(s): 11 counted pass, 0 fail, 0 unresolved, 0 conflicted
+               model     sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 (compile passed) · business passed
+               commit    6bcacf311447a573d2c408f50a73fcb480ec566e tree 2eca51bd68a6874a938a219dc92a718d8bc46bf7
+               spec      chair-decides-scored-only@1.1.1 sha256:f5215797a9cd0c6c30bd88f67f76e9e19da876f98099571b8ea41c12a0e2140a
+               verifier  chair-decides-scored-only 1.1.1 sha256:d88ed9c6a293b3da99dcd7b175d7fad655a567022556a0922ff29a3ba8062c3d (6.6 s)
+               scope     ESTABLISHED · 8 in-scope path(s) · lexed src/**: SQL writes to adj_decision and adj_case→decided; publishes of the decision fact; proposal status writes to an outcome through the status channel; every call of each decision function
+                 · HTTP POST /api/adjudications/:id/decision
+                 · src/contexts/adjudication/service.ts:102
+                 · src/contexts/adjudication/service.ts:105
+                 · src/contexts/adjudication/service.ts:116
+                 · src/contexts/oversight/service.ts:108
+                 · src/contexts/oversight/service.ts:113
+                 · src/contexts/submission/service.ts:230
+                 · src/contexts/submission/service.ts:231
+               challenge QUALIFIED · decision-admits-officer (deliberate-fault)
+                 change   architecture/challenges/decision-admits-officer.patch sha256:7486d5c4c8a6ab2ad5997511625d72ce29d1b9eb8e5e1939751bbd0a52b30341 → src/api/routes.ts
+                 variant  6e4c0150fa2aa6cc91623952c29cad4ba88f5fa8 tree c1fa8df1794a6a5b33799fda0f2b4125df825593 (parent 6bcacf311447a573d2c408f50a73fcb480ec566e); relationship verified
+                 expects  non-chair-refused on HTTP POST /api/adjudications/:id/decision: "allRefused is false, expected true"
+                 detected non-chair-refused on HTTP POST /api/adjudications/:id/decision — allRefused is false, expected true; decisionsAdded is 1, expected 0; eventsAdded is 1, expected 0; proposalStatusAfter is "awarded", expected "scored"
+                 the deliberate fault architecture/challenges/decision-admits-officer.patch was detected: non-chair-refused on HTTP POST /api/adjudications/:id/decision — allRefused is false, expected true; decisionsAdded is 1, expected 0; eventsAdded is 1, expected 0; proposalStatusAfter is "awarded", expected "scored"
+               gaps      none at this rubric: L3 is the highest level
+               excludes  the demo seed's calls of recordDecision (src/seed.ts) — demo data, never run when NODE_ENV=production; no case drives it and the performer guard (the route) does not apply to it
+               excludes  same action, other rules — NOT judged here: r-q013 AwardHeldOnLateConflict, i-q009 EnvelopeNeverExceeded, i-q014 AwardIsTheRequestedAmount, and the open question u-q001 ConflictAfterDecision — each is its own compiled claim about RecordPanelDecision; an L3 on r-q008 says nothing about them, so the award is not 'fully governed' by this result
+               excludes  ConfirmEligibility (ac-q010, ProgramOfficer) — it screens a proposal in; 'approve an application' is read as the funding decision (Award). The brief does not settle which it meant — an owner question
+               excludes  the read model ovs_proposal and notifications — projections fed by the decision fact; they record a decision, they cannot make one. Their writes are still scanned as outcome writes and must lie in a handler of the fact
+               excludes  tests/**, scripts/** — not part of the deployable
+               assumes   C1-rule-reading: A BDL rule means condition ⇒ assertion (§5.13). Reading r-q008 as 'refuse RecordPanelDecision when the proposal is not Scored' is this model's authoring convention, so the Scored part is anchored on ac-q019's compiled precondition, which states it directly; the check verifies both are what the guards implement.
+               assumes   C2-performers: The performer part is ac-q019's mayPerform, a closed set (§9.2: any other performer violates business meaning), mapped by scope.actorRoles to the role the route checks (PanelChair → panelChair). The mapping is stated here, not inferred.
+               assumes   C3-once-derived: 'Only once' is derived, not compiled as a condition: after a decision the proposal is Awarded or Declined (both terminal), and only Score enters Scored (sm-q003, closed by §5.8 R-07). The code is checked for a single decision per proposal (the decided guard, a conditional claim, adj_decision keyed by proposal).
+               assumes   C4-case-is-scored: An adj_case row exists only for a scored proposal: it is opened only in the ProposalScored handler. The scored guard is 'refuse without a case'; the correspondence check verifies the case is opened nowhere else.
+               assumes   C5-status-channel: A proposal's status is written only through transition() (the one UPDATE of sub_proposal.status, parametric); every outcome is a call of it, or of a forwarder, with a literal target status. Any other form is unresolved.
+               assumes   C6-harness: Cases set up their world through the implementation's own test harness (tests/support/harness.ts), in-process (Fastify inject) against an isolated SQLite file with a manual clock. The act under test — the HTTP route — and the state read — adj_decision and sub_proposal.status — are the verifier's.
+               assumes   C7-shape: Guards and correspondence are recognised textually (lexed, not parsed); a refactor they do not recognise reads as 'not shown', never as 'violated'.
+               L0 met      Model Valid: the claim compiled at sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 (business model sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72)
+               L1 met      Observed Conformance: non-chair-refused passed on HTTP POST /api/adjudications/:id/decision; outcome-follows-decision-fact passed on src/contexts/oversight/service.ts:108; outcome-follows-decision-fact passed on src/contexts/oversight/service.ts:113; outcome-follows-decision-fact passed on src/contexts/submission/service.ts:230; outcome-follows-decision-fact passed on src/contexts/submission/service.ts:231; second-decision-refused passed on HTTP POST /api/adjudications/:id/decision; unscored-refused passed on HTTP POST /api/adjudications/:id/decision
+               L2 met      Covered Conformance: scope established (8 path(s)); every in-scope path is covered by a passing qualifying check
+               L3 met      Strong Conformance: full-boundary evidence: constraint src/contexts/adjudication/service.ts:recordDecision applies to every in-scope path (guards-dominate-decision); the constraint implements the model rule (guards-implement-rule on src/contexts/adjudication/service.ts:recordDecision); challenge decision-admits-officer (deliberate-fault) qualified: the deliberate fault architecture/challenges/decision-admits-officer.patch was detected: non-chair-refused on HTTP POST /api/adjudications/:id/decision — allRefused is false, expected true; decisionsAdded is 1, expected 0; eventsAdded is 1, expected 0; proposalStatusAfter is "awarded", expected "scored"
+               bound to  model sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 · commit 6bcacf311447a573d2c408f50a73fcb480ec566e · chair-decides-scored-only@1.1.1 sha256:f5215797a9cd0c6c30bd88f67f76e9e19da876f98099571b8ea41c12a0e2140a · continuum-claim-rubric/2 · configuration sha256:463b87fc070bf3cf5f91f3ddddb9c2a244e5f1260ccc80ff5145c8fc2b4b677b
+               judgment  sha256:1902e6a98512ac6bee0a8011c6a9cb1f2401e7a9188f3f2a06dadb35af0e7c5a
+
+  L2 — Covered Conformance · Account.orcidStatus   BDL sm-q002 Account.orcidStatus (OrcidVerification)   [orcid-verification-lifecycle]
+               wording   Account.orcidStatus changes only by the declared transitions of OrcidVerification (sm-q002) — Unverified → Verified by Verify; Verified → Unverified by ClearOnErasure — the complete set of permitted changes (BDL §5.8 R-07); it starts Unverified; terminal: Verified
+               boundary  Account.orcidStatus — Every change of Account.orcidStatus made by the runtime code of the deployable (src/**): every literal SQL write that sets idn_account.orcid_status, and every runtime entry point that reaches one — including which act each write realizes, since R-07's closure is judged on states and the restriction of Verified → Unverified to erasure is checked here.
+               verdict   MATCH · L2 — Covered Conformance · continuum-claim-rubric/2
+               evidence  verification/orcid-verification-lifecycle/result.json
+                         10 result(s): 9 counted pass, 1 fail, 0 unresolved, 0 conflicted
+               model     sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 (compile passed) · business passed
+               commit    6bcacf311447a573d2c408f50a73fcb480ec566e tree 2eca51bd68a6874a938a219dc92a718d8bc46bf7
+               spec      orcid-verification-lifecycle@2.0.0 sha256:94f5edabf41155c1ebda245fbb6e186c702ac1ce8682b501c72520cc92518526
+               verifier  orcid-verification-lifecycle 2.0.0 sha256:a4942708a67ddadd05cc52e774ce2c612461f09b79b72b5bd9fe732d0b6df756 (5.4 s)
+               scope     ESTABLISHED · 4 in-scope path(s) · lexed literal SQL over src/** for writes that set idn_account.orcid_status; each write's function and every call of it
+                 · HTTP POST /api/me/orcid
+                 · HTTP POST /api/operations/accounts/:id/erase
+                 · src/contexts/identity/service.ts:102
+                 · src/contexts/identity/service.ts:210
+               GAP       L3 — Strong Conformance needs: full-boundary evidence: no enforcement check passed: dominates is false, expected true; the constraint does not apply to 4 in-scope path(s): HTTP POST /api/me/orcid, HTTP POST /api/operations/accounts/:id/erase, src/contexts/identity/service.ts:102, src/contexts/identity/service.ts:210; the specification declares no rule-correspondence check
+               excludes  the demo seed (src/seed.ts) — demo data, never run when NODE_ENV=production; its accounts are provisioned through provisionAccount, whose calls are therefore excluded
+               excludes  VerifiedReviewersOnly (r-q012) — a separate claim, judged at AssignReviewer only; this claim is the field's lifecycle, whoever holds an assignment
+               excludes  tests/**, scripts/** — not part of the deployable; the test harness provisions verified reviewers directly
+               assumes   D1-values: BDL OrcidStatus Unverified/Verified is idn_account.orcid_status 'unverified'/'verified'; the schema CHECK admits exactly those two values. The mapping is stated in scope.valueMapping; the evaluator applies it.
+               assumes   D2-closure: The claim is R-07's closure (the declared transitions are the complete set of permitted changes), not 'terminal' alone: BDL gives terminal no closure of its own.
+               assumes   D3-harness: Cases run the real routes in-process (Fastify inject) against an isolated SQLite file with a manual clock and a stub ORCID registry, set up through the implementation's own test harness.
+               assumes   D4-shape: Writes are found lexically (literal SQL); a value set from a parameter, or a channel the scanner cannot follow, is unresolved, never assumed.
+               assumes   D5-trigger: The evaluator judges a transition by its states only, so after ADR-023 Verified → Unverified is admitted wherever it occurs. Which act a write realizes is read from the code: a write that sets Unverified must lie in eraseAccount (EraseAccount, ac-q026) and be reached only from the operator's erase route; a write that sets Verified must lie in recordOrcidVerification (VerifyOrcid, ac-q004), be reached only from the verification route, and fix Unverified as its prior value. The function and route names are stated in scope.erasure / scope.verification, not inferred.
+               L0 met      Model Valid: the claim compiled at sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 (business model sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72)
+               L1 met      Observed Conformance: erasure-clears-verification passed on HTTP POST /api/operations/accounts/:id/erase; unverified-reviewer-verifies passed on HTTP POST /api/me/orcid; unverified-set-only-by-erasure passed on src/contexts/identity/service.ts:210; verification-never-leaves-verified passed on HTTP POST /api/me/orcid; verified-reviewer-erased passed on HTTP POST /api/operations/accounts/:id/erase; verified-set-only-by-verification passed on src/contexts/identity/service.ts:102; write-admitted passed on src/contexts/identity/service.ts:102; write-admitted passed on src/contexts/identity/service.ts:210
+               L2 met      Covered Conformance: scope established (4 path(s)); every in-scope path is covered by a passing qualifying check
+               L3 not met  Strong Conformance: full-boundary evidence: no enforcement check passed: dominates is false, expected true; the constraint does not apply to 4 in-scope path(s): HTTP POST /api/me/orcid, HTTP POST /api/operations/accounts/:id/erase, src/contexts/identity/service.ts:102, src/contexts/identity/service.ts:210; the specification declares no rule-correspondence check
+               bound to  model sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 · commit 6bcacf311447a573d2c408f50a73fcb480ec566e · orcid-verification-lifecycle@2.0.0 sha256:94f5edabf41155c1ebda245fbb6e186c702ac1ce8682b501c72520cc92518526 · continuum-claim-rubric/2 · configuration sha256:ae6f30a2f0a7d7a52fe33bfbfda39815fd2e1990fea7cb336295be76ec84710a
+               judgment  sha256:54d4c3dff03bca6c3756014372e6f943658b875e0e966907c9d6d08127a5051c
+
+  L3 — Violation-sensitive · static, this commit   ADL 7cbfd5c5-60f5-4af5-bcba-aa0359aaaf4e ::Quorum.ResearchFunding.PeerReview.ReviewStore   [reviewstore-writers]
+               wording   ::Quorum.ResearchFunding.PeerReview.ReviewStore is written only by its declared writer ::Quorum.ResearchFunding.PeerReview.AssignmentService, of its owning context ::Quorum.ResearchFunding.PeerReview (closed over the model's declared writes relationships; the language itself requires only that writers be of the owning context)
+               boundary  static, this commit — Every write to the tables of ReviewStore made by the runtime code of the deployable (src/**), through any channel: literal SQL, SQL handed to the database as a variable, and file- or handle-level mechanisms that can change the database file.
+               verdict   MATCH · L3 — Violation-sensitive · continuum-claim-rubric/3
+               evidence  OBSERVED
+               earned by L3 — undeclared-writer: fault adjudication-writes-review detected by writer-declared on src/contexts/adjudication/service.ts:195
+                 · src/contexts/peer-review/service.ts:128 ← writer-declared
+                 · src/contexts/peer-review/service.ts:130 ← writer-declared
+                 · src/contexts/peer-review/service.ts:161 ← writer-declared
+                 · src/contexts/peer-review/service.ts:198 ← writer-declared
+                 · src/contexts/peer-review/service.ts:256 ← writer-declared
+                 · src/contexts/peer-review/service.ts:258 ← writer-declared
+                 · src/contexts/peer-review/service.ts:259 ← writer-declared
+                 · src/contexts/peer-review/service.ts:273 ← writer-declared
+                 · src/contexts/peer-review/service.ts:287 ← writer-declared
+                 · src/contexts/peer-review/service.ts:293 ← writer-declared
+                 · src/contexts/peer-review/service.ts:300 ← writer-declared
+                 · src/contexts/peer-review/service.ts:60 ← writer-declared
+                 · src/contexts/peer-review/service.ts:63 ← writer-declared
+               violation DETECTED  undeclared-writer (required) — adjudication-writes-review → writer-declared on src/contexts/adjudication/service.ts:195
+               limit     assumed (A1-table-store): A table belongs to the store whose evidence.json citation range in src/platform/schema.ts contains its CREATE TABLE. The model declares no bindings, so this mapping is evidence, not a model claim; a rev_* table no range covers is reported unresolved.
+               limit     assumed (A2-module-service): A write site's writer is the one Service continuum/evidence.json cites for its module (directly or through an element nested in it). A module cited for no Service, or for several, has no attributable writer and its sites are unresolved.
+               limit     assumed (A3-sql-channel): The database is reached only through better-sqlite3 handles; .prepare is always SQL, and .exec is SQL only on a receiver named db/#db. SQL keywords are matched case-insensitively.
+               limit     assumed (A4-static): The judgment is about the code at the commit, statically; a write that only exists at runtime through a channel the scanner does not recognise would not be seen. The scanner reports the channels it found and could not follow as unresolved.
+               limit     concurrent execution is outside the verified scope (scope.concurrency: false)
+               limit     no detected fault was placed on src/contexts/peer-review/service.ts:128: sensitivity there rests on the violation classes, not on a fault at that path
+               limit     no detected fault was placed on src/contexts/peer-review/service.ts:130: sensitivity there rests on the violation classes, not on a fault at that path
+               limit     no detected fault was placed on src/contexts/peer-review/service.ts:161: sensitivity there rests on the violation classes, not on a fault at that path
+               limit     no detected fault was placed on src/contexts/peer-review/service.ts:198: sensitivity there rests on the violation classes, not on a fault at that path
+               limit     no detected fault was placed on src/contexts/peer-review/service.ts:256: sensitivity there rests on the violation classes, not on a fault at that path
+               limit     no detected fault was placed on src/contexts/peer-review/service.ts:258: sensitivity there rests on the violation classes, not on a fault at that path
+               limit     no detected fault was placed on src/contexts/peer-review/service.ts:259: sensitivity there rests on the violation classes, not on a fault at that path
+               limit     no detected fault was placed on src/contexts/peer-review/service.ts:273: sensitivity there rests on the violation classes, not on a fault at that path
+               limit     no detected fault was placed on src/contexts/peer-review/service.ts:287: sensitivity there rests on the violation classes, not on a fault at that path
+               limit     no detected fault was placed on src/contexts/peer-review/service.ts:293: sensitivity there rests on the violation classes, not on a fault at that path
+               limit     no detected fault was placed on src/contexts/peer-review/service.ts:300: sensitivity there rests on the violation classes, not on a fault at that path
+               limit     no detected fault was placed on src/contexts/peer-review/service.ts:60: sensitivity there rests on the violation classes, not on a fault at that path
+               limit     no detected fault was placed on src/contexts/peer-review/service.ts:63: sensitivity there rests on the violation classes, not on a fault at that path
+               limit     outside the boundary: schema DDL (CREATE TABLE / INDEX / TRIGGER) in src/platform/schema.ts — defines the store; it writes no rows. Any INSERT/UPDATE/DELETE inside a migration is NOT excluded: it is scanned like any other literal
+               limit     outside the boundary: tests/**, scripts/**, tools and continuum/** — not part of the deployable; they never run in production
+               limit     outside the boundary: the demo seed's reset (src/seed.ts) — deletes the whole database file before re-seeding a demo; never runs when NODE_ENV=production. The seed's rows are written through the context services, whose SQL is scanned
+               limit     outside the boundary: whole-database restore by the Operator (src/platform/backup.ts) — replaces the entire database file with a verified backup — every store at once, by the Operator actor; it is not a context writing a store
+               limit     outside the boundary: writes to files that are not the database: the server pid file, the token secret, the outbound mail log — each targets its own file (pidFileFor(dbFile), <data>/token-secret, <data>/mail.jsonl), never the database
+               limit     sensitivity is demonstrated only for the violation classes undeclared-writer: another way of violating the claim is not covered
+               evidence  verification/reviewstore-writers/result.json
+                         14 result(s): 14 counted pass, 0 fail, 0 unresolved, 0 conflicted
+               model     sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 (compile passed)
+               commit    6bcacf311447a573d2c408f50a73fcb480ec566e tree 2eca51bd68a6874a938a219dc92a718d8bc46bf7
+               spec      reviewstore-writers@3.0.0 sha256:e033cd0ea2c99ecc05a1de1bc91055c05bc0035a32ffa549337ae264c4601d8c
+               verifier  reviewstore-writers 3.0.0 sha256:5857719eab8553fe846ad659b5cc908fc20567a1c97ce17020c943ace6b1afc8 (0.5 s)
+               scope     ESTABLISHED · 13 in-scope path(s) · lexed literal SQL + non-literal SQL channels + file/handle mechanisms over src/**
+                 · src/contexts/peer-review/service.ts:128
+                 · src/contexts/peer-review/service.ts:130
+                 · src/contexts/peer-review/service.ts:161
+                 · src/contexts/peer-review/service.ts:198
+                 · src/contexts/peer-review/service.ts:256
+                 · src/contexts/peer-review/service.ts:258
+                 · src/contexts/peer-review/service.ts:259
+                 · src/contexts/peer-review/service.ts:273
+                 · src/contexts/peer-review/service.ts:287
+                 · src/contexts/peer-review/service.ts:293
+                 · src/contexts/peer-review/service.ts:300
+                 · src/contexts/peer-review/service.ts:60
+                 · src/contexts/peer-review/service.ts:63
+               challenge QUALIFIED · adjudication-writes-review (deliberate-fault)
+                 change   architecture/challenges/adjudication-writes-review.patch sha256:616c6e9b68a99676af98920abbca6d62d748611b1736b71ee39f9a00c52f606c → src/contexts/adjudication/service.ts
+                 variant  2dc3ec5c5b1b864e08914784b7b8a0df32b633dc tree a81279131c07e02cd112525bb11810e5ac19f2df (parent 6bcacf311447a573d2c408f50a73fcb480ec566e); relationship verified
+                 expects  writer-declared on src/contexts/adjudication/service.ts:…: "::Quorum.ResearchFunding.Adjudication.AdjudicationService writes ::Quorum.ResearchFunding.PeerReview.ReviewStore"
+                 detected writer-declared on src/contexts/adjudication/service.ts:195 — ::Quorum.ResearchFunding.Adjudication.AdjudicationService writes ::Quorum.ResearchFunding.PeerReview.ReviewStore at src/contexts/adjudication/service.ts:195; the model declares only ::Quorum.ResearchFunding.PeerReview.AssignmentService as its writer
+                 writer-declared passed on src/contexts/adjudication/service.ts:195 at 6bcacf311447 and failed at the variant: sensitive to undeclared-writer
+                 the deliberate fault architecture/challenges/adjudication-writes-review.patch was detected: writer-declared on src/contexts/adjudication/service.ts:195 — ::Quorum.ResearchFunding.Adjudication.AdjudicationService writes ::Quorum.ResearchFunding.PeerReview.ReviewStore at src/contexts/adjudication/service.ts:195; the model declares only ::Quorum.ResearchFunding.PeerReview.AssignmentService as its writer
+               gaps      none at this rubric: L3 is the highest level — within the limits above
+               L0 met      Assessed: judged: the claim resolved in the model compiled at sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1; evidence observed
+               L1 met      Supported: writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:128; writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:130; writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:161; writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:198; writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:256; writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:258; writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:259; writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:273; writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:287; writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:293; writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:300; writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:60; writer-declared (static-lexical) passed on src/contexts/peer-review/service.ts:63
+               L2 met      Verified in scope: scope established (13 path(s)), each checked by passing static/executed/formal verification
+               L3 met      Violation-sensitive: undeclared-writer: fault adjudication-writes-review detected by writer-declared on src/contexts/adjudication/service.ts:195
+               bound to  model sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 · commit 6bcacf311447a573d2c408f50a73fcb480ec566e · reviewstore-writers@3.0.0 sha256:e033cd0ea2c99ecc05a1de1bc91055c05bc0035a32ffa549337ae264c4601d8c · continuum-claim-rubric/3 · configuration sha256:8ebbe38ced65fdd52c8229d32b3147999494a5d80394e18b8d944535ba352dcc
+               judgment  sha256:46c791d6d7fcf474741928e6237414d521b94cfdc6e17980e929701128e14758
+
+  L3 — Strong Conformance · AssignReviewer   BDL r-q012 VerifiedReviewersOnly   [verified-reviewers-only]
+               wording   VerifiedReviewersOnly (r-q012): when Account.orcidStatus != OrcidStatus "Verified" on AssignReviewer (ac-q012) — A reviewer may hold an assignment only if their ORCID identity is Verified. [judged at its declared scope AssignReviewer (ac-q012) only; the assertion is not evaluated anywhere else]
+               boundary  AssignReviewer — The rule's declared scope, AssignReviewer: every write in src/** that makes a reviewer hold an assignment, and every runtime entry point that reaches one. 'Held' is any status but revoked (sm-q005: assigned, accepted, overdue, completed; Revoked is terminal).
+               verdict   MATCH · L3 — Strong Conformance · continuum-claim-rubric/2
+               evidence  verification/verified-reviewers-only/result.json
+                         5 result(s): 5 counted pass, 0 fail, 0 unresolved, 0 conflicted
+               model     sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 (compile passed) · business passed
+               commit    6bcacf311447a573d2c408f50a73fcb480ec566e tree 2eca51bd68a6874a938a219dc92a718d8bc46bf7
+               spec      verified-reviewers-only@2.0.1 sha256:8ff34457bdc7c9e51990e7d10eb0cc44cd8ee72e1308cf5b026d82ba705edc9e
+               verifier  verified-reviewers-only 2.0.1 sha256:89b6ed80d48fdee03253c31c820b90b6fbf2237c352b10a7ca8b1fa684cdc10c (4.0 s)
+               scope     ESTABLISHED · 2 in-scope path(s) · lexed literal SQL over src/** for writes that make an assignment held; each write's function and every call of it
+                 · HTTP POST /api/proposals/:id/assignments
+                 · src/contexts/peer-review/service.ts:128
+               challenge QUALIFIED · orcid-guard-defeated (deliberate-fault)
+                 change   architecture/challenges/orcid-guard-defeated.patch sha256:1be1db18560faa382ef27948d5ab16fe7dbcdeae119ac31e9843034222e8d814 → src/contexts/peer-review/service.ts
+                 variant  2a233b1fae3c083fe466adc6d74bfaa22450ee4a tree d49c07b37e5cbde1dda7dccaaa4af9f214d64acc (parent 6bcacf311447a573d2c408f50a73fcb480ec566e); relationship verified
+                 expects  unverified-reviewer-refused on HTTP POST /api/proposals/:id/assignments: "refused is false, expected true"
+                 detected unverified-reviewer-refused on HTTP POST /api/proposals/:id/assignments — code is null, expected "orcid_unverified"; heldAfter is true, expected false; refused is false, expected true
+                 the deliberate fault architecture/challenges/orcid-guard-defeated.patch was detected: unverified-reviewer-refused on HTTP POST /api/proposals/:id/assignments — code is null, expected "orcid_unverified"; heldAfter is true, expected false; refused is false, expected true
+               gaps      none at this rubric: L3 is the highest level
+               excludes  the demo seed's calls of assignReviewer (src/seed.ts) — demo data, never run when NODE_ENV=production; it calls the same guarded function, so the enforcement check still covers it, but no case drives it
+               excludes  holding after a later ORCID change (EraseAccount resets orcid_status to unverified) — r-q012 is scoped to AssignReviewer; 'holding' as a standing invariant is not what BDL declares. Observed and reported outside the boundary, against the Account lifecycle sm-q002, never counted
+               excludes  tests/**, scripts/** — not part of the deployable
+               assumes   B1-subject: The rule's `Account` is the account being assigned (Assignment.reviewer), not the performer of AssignReviewer (a ProgramOfficer); the correspondence check verifies the guard reads the assigned reviewer.
+               assumes   B2-values: BDL OrcidStatus Verified/Unverified is idn_account.orcid_status 'verified'/'unverified'; the schema's CHECK admits exactly those two values, which the correspondence check verifies.
+               assumes   B3-harness: Cases set up their world (accounts, a published call, an eligible proposal) through the implementation's own test harness (tests/support/harness.ts). The act under test — the HTTP route — and the state read — rev_assignment — are the verifier's.
+               assumes   B4-environment: Cases run in-process (Fastify inject) against an isolated SQLite file with a manual clock and stub integrations; the ORCID registry is never consulted on assignment.
+               assumes   B5-shape: The guard and correspondence checks recognise the code's shape textually (lexed, not parsed); a refactor they do not recognise reads as 'not shown', never as 'violated'.
+               outside   HTTP POST /api/operations/accounts/:id/erase: {"assigned":201,"erased":200,"orcidStatusAfter":"unverified","stillHeld":true} — EraseAccount is not AssignReviewer, so it is outside r-q012's declared scope; reported against the Account lifecycle (sm-q002: Verified is terminal)
+               L0 met      Model Valid: the claim compiled at sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 (business model sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72)
+               L1 met      Observed Conformance: unverified-reviewer-refused passed on HTTP POST /api/proposals/:id/assignments
+               L2 met      Covered Conformance: scope established (2 path(s)); every in-scope path is covered by a passing qualifying check
+               L3 met      Strong Conformance: full-boundary evidence: constraint src/contexts/peer-review/service.ts:assignReviewer applies to every in-scope path (guard-dominates-writes); the constraint implements the model rule (guard-implements-condition on src/contexts/peer-review/service.ts:assignmentEligibility); challenge orcid-guard-defeated (deliberate-fault) qualified: the deliberate fault architecture/challenges/orcid-guard-defeated.patch was detected: unverified-reviewer-refused on HTTP POST /api/proposals/:id/assignments — code is null, expected "orcid_unverified"; heldAfter is true, expected false; refused is false, expected true
+               bound to  model sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1 · commit 6bcacf311447a573d2c408f50a73fcb480ec566e · verified-reviewers-only@2.0.1 sha256:8ff34457bdc7c9e51990e7d10eb0cc44cd8ee72e1308cf5b026d82ba705edc9e · continuum-claim-rubric/2 · configuration sha256:463b87fc070bf3cf5f91f3ddddb9c2a244e5f1260ccc80ff5145c8fc2b4b677b
+               judgment  sha256:4c6085089aa4cb3d52d0e197880f682f99982710960c9fbcbcd5ac17d6097747
+
+  RESULT       PASS (exit 0)
+
+  separate     decision → architecture is `continuum decision check`; not assessed or implied here
+               this report authorizes nothing: no change, no deploy
+  sees         acceptance scenarios from the baseline (every *.scenario.json under <package>/acceptance/, in any subdirectory), run by the assessor against the adapter at the commit
+               the implementation's Node test suite (package.json "test" = node --test …), run at the commit with a JUnit reporter
+               evidence.json pinned tests (continuum conformance pin): each identity (file, suite chain, name) and declaration fingerprint verified at the commit from its blobs; a deleted pin is evidence-missing, a changed one stale, never transferred to another test
+               legacy evidence.json line-span citations: resolved and shown, never counted (nothing proves the span still covers the cited test)
+               GitHub Actions runs for the exact commit (with --ci)
+               Host-recorded implementation reports on the decisions (shown, never counted)
+               architecture verifications the assessor declares under <intent dir>/verification/ at the baseline (continuum-verification/0): each verifier runs from a checkout of the baseline against the commit; its result is checked for shape, for the baseline model state and for the commit and tree it was given — never for what it found
+               the acts the system recorded while each scenario ran (the adapter's observe: journal order, planned dates, reported states), checked against a decision's lifecycle and precondition expectations over the business model at the baseline; a reported state the record does not reach makes the record evidence-missing
+  cannot see   the meaning of a step binding: the adapter is implementation code; a binding that asserts nothing passes
+               any test runner other than node --test; any language other than JavaScript/TypeScript
+               source structure or configuration (see continuum conformance check for import coupling)
+               runtime behaviour in a deployed environment
+               a commitment no scenario and no cited test reaches — it is unsupported, never assumed
+               whether a declared verifier checks what it says it checks: its method, coverage and uncovered paths are relayed as it states them; a deployment-level outcome is the verifier's statement, never this report's
+               attempts that left no record: a refused act journals nothing, so the record shows what happened, not what was prevented (scenarios assert refusals)
+               a journal the adapter misreports, beyond the completeness check against reported states; paths no scenario drove
+  time         114.7 s (checkout 0.8 s, setup 10.1 s, scenarios - s, tests 19.4 s, verification 80.2 s)

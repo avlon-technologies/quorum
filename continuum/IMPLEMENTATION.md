@@ -1470,20 +1470,23 @@ Run the scenarios first against deterministic fakes, and only then against a met
 | scenario | verifies |
 |---|---|
 | `account-erasure` | `::Quorum.ResearchFunding.AccessControl.PersonalDataErasable`, `::Quorum.ResearchFunding.Identity.AccountService` |
+| `assignment-no-duplicate` | `::Quorum.ResearchFunding.PeerReview.AssignmentValidity`, `::Quorum.ResearchFunding.PeerReview.AssignmentService` |
+| `assignment-proposal-not-assignable` | `::Quorum.ResearchFunding.PeerReview.AssignmentValidity`, `::Quorum.ResearchFunding.PeerReview.AssignmentService` |
+| `assignment-requires-reviewer-role` | `::Quorum.ResearchFunding.PeerReview.AssignmentValidity`, `::Quorum.ResearchFunding.PeerReview.AssignmentService` |
 | `decision-escalated` | `::Quorum.ResearchFunding.PanelAdjudication.DecisionsEscalated`, `::Quorum.ResearchFunding.Adjudication.AdjudicationService`, `::Quorum.ResearchFunding.Adjudication.PanelDecision` |
 | `delivery-survives-interruption` | `::Quorum.ResearchFunding.ParticipantNotification.NotificationsDurable`, `::Quorum.ResearchFunding.Oversight.PortfolioProjector`, `::Quorum.ResearchFunding.Notification.NotificationService` |
 | `inv01-submission-window` | `::Quorum.ResearchFunding.CallAdministration.SubmissionWindow`, `::Quorum.ResearchFunding.Submission.SubmissionWindowOpen`, `::Quorum.ResearchFunding.Submission.ProposalService` |
 | `inv02-submit-once` | `::Quorum.ResearchFunding.ProposalSubmission.SubmitOnce`, `::Quorum.ResearchFunding.Submission.SubmittedOnce`, `::Quorum.ResearchFunding.Submission.ProposalService` |
-| `inv03-no-conflicted-assignment` | `::Quorum.ResearchFunding.ReviewerAssignment.NoConflictedAssignment`, `::Quorum.ResearchFunding.PeerReview.AssignmentService` |
-| `inv04-no-self-review` | `::Quorum.ResearchFunding.ReviewerAssignment.NoSelfReview`, `::Quorum.ResearchFunding.PeerReview.AssignmentService` |
+| `inv03-no-conflicted-assignment` | `::Quorum.ResearchFunding.ReviewerAssignment.NoConflictedAssignment`, `::Quorum.ResearchFunding.PeerReview.AssignmentValidity`, `::Quorum.ResearchFunding.PeerReview.AssignmentService` |
+| `inv04-no-self-review` | `::Quorum.ResearchFunding.ReviewerAssignment.NoSelfReview`, `::Quorum.ResearchFunding.PeerReview.AssignmentValidity`, `::Quorum.ResearchFunding.PeerReview.AssignmentService` |
 | `inv05-three-reviews` | `::Quorum.ResearchFunding.ReviewCompletionTracking.ThreeReviewsBeforeScoring`, `::Quorum.ResearchFunding.PeerReview.ThreeSubmittedReviews`, `::Quorum.ResearchFunding.PeerReview.ReviewCompletion` |
 | `inv06-complete-scoring` | `::Quorum.ResearchFunding.BlindPeerReview.CompleteScoring`, `::Quorum.ResearchFunding.PeerReview.EveryCriterionScored`, `::Quorum.ResearchFunding.PeerReview.AssignmentService` |
 | `inv07-blind-until-own-submitted` | `::Quorum.ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted`, `::Quorum.ResearchFunding.PeerReview.PeerReviewsHiddenUntilOwnSubmitted`, `::Quorum.ResearchFunding.BlindReview` |
-| `inv08-chair-decides-scored-only` | `::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly`, `::Quorum.ResearchFunding.Adjudication.PanelDecision` |
+| `inv08-chair-decides-scored-only` | `::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly`, `::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly`, `::Quorum.ResearchFunding.Adjudication.PanelDecision` |
 | `inv09-envelope-never-exceeded` | `::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded`, `::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded`, `::Quorum.ResearchFunding.Adjudication.AdjudicationService`, `::Quorum.ResearchFunding.Adjudication.PanelDecision` |
 | `inv10-agent-never-decides` | `::Quorum.ResearchFunding.EligibilityScreening.AgentNeverDecides`, `::Quorum.ResearchFunding.Submission.EligibilityTriage`, `::Quorum.ResearchFunding.Submission.AgentProposesOnly`, `::Quorum.ResearchFunding.Submission.Triage` |
 | `inv11-role-scoped-authority` | `::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority`, `::Quorum.ResearchFunding.Submission.ApplicantScope`, `::Quorum.ResearchFunding.RoleScopedAccess` |
-| `inv12-verified-reviewers-only` | `::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly`, `::Quorum.ResearchFunding.PeerReview.AssignmentService`, `::Quorum.ResearchFunding.Identity.AccountService` |
+| `inv12-verified-reviewers-only` | `::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly`, `::Quorum.ResearchFunding.PeerReview.AssignmentValidity`, `::Quorum.ResearchFunding.PeerReview.AssignmentService`, `::Quorum.ResearchFunding.Identity.AccountService` |
 | `overdue-review-escalated` | `::Quorum.ResearchFunding.ReviewCompletionTracking.OverdueReviewsEscalated`, `::Quorum.ResearchFunding.PeerReview.ReviewDeadline` |
 | `portfolio-from-projection` | `::Quorum.ResearchFunding.PortfolioReporting.PortfolioFromProjection`, `::Quorum.ResearchFunding.PortfolioReporting.TransitionsAudited`, `::Quorum.ResearchFunding.Oversight.PortfolioProjector` |
 

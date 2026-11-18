@@ -1,0 +1,211 @@
+{
+  "profile": "continuum-verification-result/0",
+  "verifier": {
+    "name": "at-most-three-reviewers",
+    "version": "1.0.1",
+    "digest": "sha256:ad0e73edec65b3b4fd72fd06acc3e85e4d371037ed4b46767071c782d33dde54"
+  },
+  "model": {
+    "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+    "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+    "elements": [
+      {
+        "id": "61505d55-158f-4a68-aa7b-204a46219514",
+        "name": "AssignmentValidity",
+        "kind": "adl:business-rule"
+      }
+    ]
+  },
+  "implementation": {
+    "commit": "11454b8468db30c97f3217ed871a1c474b89742e",
+    "tree": "9367fd5eb65b117c5c33ca1cf2f62260f00970ea"
+  },
+  "expectation": {
+    "statement": "AssignmentValidity: \"the proposal has fewer than three active assignments\"",
+    "source": "continuum-claim-spec/0 at-most-three-reviewers@1.0.1"
+  },
+  "method": "static scope and guard checks over src/**; the real HTTP route driven through the implementation's app, with V8 precise coverage observing which write sites executed",
+  "evidence": [
+    {
+      "ref": "observation: attestation.results"
+    }
+  ],
+  "coverage": {
+    "executed": 9,
+    "covered": [
+      "HTTP POST /api/proposals/:id/assignments",
+      "src/contexts/peer-review/service.ts:128"
+    ],
+    "uncovered": []
+  },
+  "levels": {
+    "code": {
+      "outcome": "UNVERIFIED",
+      "reason": "informational claim attestation: the level is judged by the Host (continuum-claim-rubric/3)"
+    },
+    "deployment": {
+      "outcome": "UNVERIFIED",
+      "reason": "not assessed: the route ran in-process against an isolated database, not a deployment"
+    }
+  },
+  "attestation": {
+    "profile": "continuum-claim-observation/0",
+    "spec": {
+      "id": "at-most-three-reviewers",
+      "version": "1.0.1"
+    },
+    "boundTo": {
+      "commit": "11454b8468db30c97f3217ed871a1c474b89742e",
+      "tree": "9367fd5eb65b117c5c33ca1cf2f62260f00970ea",
+      "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+      "spec": {
+        "id": "at-most-three-reviewers",
+        "version": "1.0.1"
+      }
+    },
+    "environment": {
+      "node": "v24.22.1",
+      "platform": "win32",
+      "database": "SQLite (better-sqlite3), an isolated file per case; manual clock"
+    },
+    "results": [
+      {
+        "check": "assignment-scope",
+        "ran": "completed",
+        "path": "src/**",
+        "inputs": "sha256:0f60585da03e21eda5cad428f4d14697fd8c3c7ce133d4c2c49513e92f6240a4",
+        "observed": {
+          "method": "lexed literal SQL over src/** for writes creating an active rev_assignment; each write's function and every call of it",
+          "discovered": [
+            "HTTP POST /api/proposals/:id/assignments",
+            "src/contexts/peer-review/service.ts:128"
+          ],
+          "writes": [
+            {
+              "path": "src/contexts/peer-review/service.ts:128",
+              "op": "INSERT",
+              "function": "assignReviewer"
+            }
+          ],
+          "entries": [
+            {
+              "path": "HTTP POST /api/proposals/:id/assignments",
+              "site": "src/api/routes.ts:247",
+              "through": "assignReviewer",
+              "access": [
+                "programOfficer"
+              ],
+              "reaches": "src/contexts/peer-review/service.ts:128"
+            }
+          ],
+          "unresolved": []
+        }
+      },
+      {
+        "check": "concurrent-third-and-fourth",
+        "ran": "completed",
+        "path": "HTTP POST /api/proposals/:id/assignments",
+        "reached": [
+          "src/contexts/peer-review/service.ts:128"
+        ],
+        "inputs": "sha256:0f60585da03e21eda5cad428f4d14697fd8c3c7ce133d4c2c49513e92f6240a4",
+        "observed": {
+          "admitted": 2,
+          "activeAfter": 4
+        }
+      },
+      {
+        "check": "first-assigned",
+        "ran": "completed",
+        "path": "HTTP POST /api/proposals/:id/assignments",
+        "reached": [
+          "src/contexts/peer-review/service.ts:128"
+        ],
+        "inputs": "sha256:0f60585da03e21eda5cad428f4d14697fd8c3c7ce133d4c2c49513e92f6240a4",
+        "observed": {
+          "refused": false,
+          "activeAfter": 1
+        }
+      },
+      {
+        "check": "fourth-refused",
+        "ran": "completed",
+        "path": "HTTP POST /api/proposals/:id/assignments",
+        "reached": [
+          "src/contexts/peer-review/service.ts:128"
+        ],
+        "inputs": "sha256:0f60585da03e21eda5cad428f4d14697fd8c3c7ce133d4c2c49513e92f6240a4",
+        "observed": {
+          "refused": false,
+          "activeAfter": 4,
+          "code": null
+        }
+      },
+      {
+        "check": "full-after-acceptance-refused",
+        "ran": "completed",
+        "path": "HTTP POST /api/proposals/:id/assignments",
+        "reached": [
+          "src/contexts/peer-review/service.ts:128"
+        ],
+        "inputs": "sha256:0f60585da03e21eda5cad428f4d14697fd8c3c7ce133d4c2c49513e92f6240a4",
+        "observed": {
+          "refused": false,
+          "activeAfter": 4,
+          "accepted": 3
+        }
+      },
+      {
+        "check": "panel-full-guard",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:assignmentEligibility",
+        "inputs": "sha256:bcd86151936d4847500eb21e774e9814bb87c34748a5d4613b6c4af961dcf922",
+        "observed": {
+          "guarded": false,
+          "bound": 3,
+          "parts": {
+            "guard": false,
+            "checkedBeforeWrite": true
+          }
+        }
+      },
+      {
+        "check": "revoked-frees-a-place",
+        "ran": "completed",
+        "path": "HTTP POST /api/proposals/:id/assignments",
+        "reached": [
+          "src/contexts/peer-review/service.ts:128"
+        ],
+        "inputs": "sha256:0f60585da03e21eda5cad428f4d14697fd8c3c7ce133d4c2c49513e92f6240a4",
+        "observed": {
+          "revoked": true,
+          "refused": false,
+          "activeAfter": 3
+        }
+      },
+      {
+        "check": "store-bound-trigger",
+        "ran": "completed",
+        "path": "src/platform/schema.ts:rev_assignment_at_most_three",
+        "inputs": "sha256:b10d7ec75c9c3e43b70c2086af5b5be49a29e401599f0eff2cae03f0bfec572f",
+        "observed": {
+          "guarded": false,
+          "bound": null
+        }
+      },
+      {
+        "check": "third-assigned",
+        "ran": "completed",
+        "path": "HTTP POST /api/proposals/:id/assignments",
+        "reached": [
+          "src/contexts/peer-review/service.ts:128"
+        ],
+        "inputs": "sha256:0f60585da03e21eda5cad428f4d14697fd8c3c7ce133d4c2c49513e92f6240a4",
+        "observed": {
+          "refused": false,
+          "activeAfter": 3
+        }
+      }
+    ]
+  }
+}

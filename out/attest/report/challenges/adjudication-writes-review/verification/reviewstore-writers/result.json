@@ -1,0 +1,570 @@
+{
+  "profile": "continuum-verification-result/0",
+  "verifier": {
+    "name": "reviewstore-writers",
+    "version": "3.0.0",
+    "digest": "sha256:5857719eab8553fe846ad659b5cc908fc20567a1c97ce17020c943ace6b1afc8"
+  },
+  "model": {
+    "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+    "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+    "elements": [
+      {
+        "id": "7cbfd5c5-60f5-4af5-bcba-aa0359aaaf4e",
+        "name": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+        "kind": "Resource"
+      }
+    ]
+  },
+  "implementation": {
+    "commit": "2dc3ec5c5b1b864e08914784b7b8a0df32b633dc",
+    "tree": "a81279131c07e02cd112525bb11810e5ac19f2df"
+  },
+  "expectation": {
+    "statement": "::Quorum.ResearchFunding.PeerReview.ReviewStore is written only by the Service(s) the model declares as its writers",
+    "source": "continuum-claim-spec/0 reviewstore-writers@3.0.0"
+  },
+  "method": "static enumeration of every write channel under src/ (see the attestation observation)",
+  "evidence": [
+    {
+      "ref": "observation: attestation.results"
+    }
+  ],
+  "coverage": {
+    "executed": 15,
+    "covered": [
+      "src/contexts/adjudication/service.ts:195",
+      "src/contexts/peer-review/service.ts:128",
+      "src/contexts/peer-review/service.ts:130",
+      "src/contexts/peer-review/service.ts:161",
+      "src/contexts/peer-review/service.ts:198",
+      "src/contexts/peer-review/service.ts:256",
+      "src/contexts/peer-review/service.ts:258",
+      "src/contexts/peer-review/service.ts:259",
+      "src/contexts/peer-review/service.ts:273",
+      "src/contexts/peer-review/service.ts:287",
+      "src/contexts/peer-review/service.ts:293",
+      "src/contexts/peer-review/service.ts:300",
+      "src/contexts/peer-review/service.ts:60",
+      "src/contexts/peer-review/service.ts:63"
+    ],
+    "uncovered": []
+  },
+  "levels": {
+    "code": {
+      "outcome": "UNVERIFIED",
+      "reason": "informational claim attestation: the level is judged by the Host (continuum-claim-attestation/0); 14 write site(s) observed, 0 unresolved channel(s)"
+    },
+    "deployment": {
+      "outcome": "UNVERIFIED",
+      "reason": "not assessed: a static scan of the commit says nothing about a deployment"
+    }
+  },
+  "attestation": {
+    "profile": "continuum-claim-observation/0",
+    "spec": {
+      "id": "reviewstore-writers",
+      "version": "3.0.0"
+    },
+    "boundTo": {
+      "commit": "2dc3ec5c5b1b864e08914784b7b8a0df32b633dc",
+      "tree": "a81279131c07e02cd112525bb11810e5ac19f2df",
+      "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+      "spec": {
+        "id": "reviewstore-writers",
+        "version": "3.0.0"
+      }
+    },
+    "environment": {
+      "node": "v24.22.1",
+      "platform": "win32"
+    },
+    "attribution": {
+      "source": "continuum/evidence.json at the baseline",
+      "digest": "sha256:288522acb6161376d28f49540f69f05749e79e859893660d4dd891fadc55b93a"
+    },
+    "results": [
+      {
+        "check": "writer-declared",
+        "ran": "completed",
+        "path": "src/contexts/adjudication/service.ts:195",
+        "inputs": "sha256:8159df17fd4d33bfe195dcc567059f65206e7dbbd3e1bec115799015199cc8f3",
+        "observed": {
+          "store": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "table": "rev_review",
+          "op": "UPDATE",
+          "statement": "UPDATE rev_review SET comment = ? WHERE id = ?",
+          "module": "src/contexts/adjudication/service.ts",
+          "writer": {
+            "service": "::Quorum.ResearchFunding.Adjudication.AdjudicationService"
+          },
+          "citedServices": [
+            "::Quorum.ResearchFunding.Adjudication.AdjudicationService"
+          ]
+        },
+        "detail": "cited for ::Quorum.ResearchFunding.Adjudication.AdjudicationService"
+      },
+      {
+        "check": "writer-declared",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:60",
+        "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+        "observed": {
+          "store": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "table": "rev_assignment",
+          "op": "UPDATE",
+          "statement": "UPDATE rev_assignment SET status = 'revoked', revoked_at = ?, revoke_reason = ? WHERE id = ? AND status IN (${…})",
+          "module": "src/contexts/peer-review/service.ts",
+          "writer": {
+            "service": "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          },
+          "citedServices": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ]
+        },
+        "detail": "cited for ::Quorum.ResearchFunding.PeerReview.AssignmentService"
+      },
+      {
+        "check": "writer-declared",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:63",
+        "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+        "observed": {
+          "store": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "table": "rev_review",
+          "op": "UPDATE",
+          "statement": "UPDATE rev_review SET voided_at = ?, void_reason = ? WHERE assignment_id = ? AND voided_at IS NULL",
+          "module": "src/contexts/peer-review/service.ts",
+          "writer": {
+            "service": "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          },
+          "citedServices": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ]
+        },
+        "detail": "cited for ::Quorum.ResearchFunding.PeerReview.AssignmentService"
+      },
+      {
+        "check": "writer-declared",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:128",
+        "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+        "observed": {
+          "store": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "table": "rev_assignment",
+          "op": "INSERT",
+          "statement": "INSERT INTO rev_assignment (id, proposal_id, reviewer_id, status, due_at, assigned_by, assigned_at) VALUES (?, ?, ?, 'assigned', ?, ?, ?)",
+          "module": "src/contexts/peer-review/service.ts",
+          "writer": {
+            "service": "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          },
+          "citedServices": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ]
+        },
+        "detail": "cited for ::Quorum.ResearchFunding.PeerReview.AssignmentService"
+      },
+      {
+        "check": "writer-declared",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:130",
+        "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+        "observed": {
+          "store": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "table": "rev_review",
+          "op": "INSERT",
+          "statement": "INSERT INTO rev_review (id, assignment_id, proposal_id, reviewer_id, status) VALUES (?, ?, ?, ?, 'pending')",
+          "module": "src/contexts/peer-review/service.ts",
+          "writer": {
+            "service": "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          },
+          "citedServices": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ]
+        },
+        "detail": "cited for ::Quorum.ResearchFunding.PeerReview.AssignmentService"
+      },
+      {
+        "check": "writer-declared",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:161",
+        "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+        "observed": {
+          "store": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "table": "rev_assignment",
+          "op": "UPDATE",
+          "statement": "UPDATE rev_assignment SET status = 'accepted', accepted_at = ? WHERE id = ? AND status = 'assigned'",
+          "module": "src/contexts/peer-review/service.ts",
+          "writer": {
+            "service": "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          },
+          "citedServices": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ]
+        },
+        "detail": "cited for ::Quorum.ResearchFunding.PeerReview.AssignmentService"
+      },
+      {
+        "check": "writer-declared",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:198",
+        "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+        "observed": {
+          "store": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "table": "rev_conflict",
+          "op": "INSERT",
+          "statement": "INSERT INTO rev_conflict (reviewer_id, proposal_id, reason, declared_by, declared_at) VALUES (?, ?, ?, ?, ?)",
+          "module": "src/contexts/peer-review/service.ts",
+          "writer": {
+            "service": "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          },
+          "citedServices": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ]
+        },
+        "detail": "cited for ::Quorum.ResearchFunding.PeerReview.AssignmentService"
+      },
+      {
+        "check": "writer-declared",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:256",
+        "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+        "observed": {
+          "store": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "table": "rev_assignment",
+          "op": "UPDATE",
+          "statement": "UPDATE rev_assignment SET status = 'completed', completed_at = ? WHERE id = ? AND status IN ('accepted','overdue')",
+          "module": "src/contexts/peer-review/service.ts",
+          "writer": {
+            "service": "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          },
+          "citedServices": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ]
+        },
+        "detail": "cited for ::Quorum.ResearchFunding.PeerReview.AssignmentService"
+      },
+      {
+        "check": "writer-declared",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:258",
+        "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+        "observed": {
+          "store": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "table": "rev_review",
+          "op": "UPDATE",
+          "statement": "UPDATE rev_review SET status = 'submitted', comment = ?, submitted_at = ? WHERE id = ? AND status = 'pending'",
+          "module": "src/contexts/peer-review/service.ts",
+          "writer": {
+            "service": "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          },
+          "citedServices": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ]
+        },
+        "detail": "cited for ::Quorum.ResearchFunding.PeerReview.AssignmentService"
+      },
+      {
+        "check": "writer-declared",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:259",
+        "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+        "observed": {
+          "store": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "table": "rev_score",
+          "op": "INSERT",
+          "statement": "INSERT INTO rev_score (review_id, criterion_id, score) VALUES (?, ?, ?)",
+          "module": "src/contexts/peer-review/service.ts",
+          "writer": {
+            "service": "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          },
+          "citedServices": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ]
+        },
+        "detail": "cited for ::Quorum.ResearchFunding.PeerReview.AssignmentService"
+      },
+      {
+        "check": "writer-declared",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:273",
+        "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+        "observed": {
+          "store": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "table": "rev_assignment",
+          "op": "UPDATE",
+          "statement": "UPDATE rev_assignment SET status = 'overdue', overdue_at = ? WHERE id = ? AND status IN ('assigned','accepted') AND due_at <= ?",
+          "module": "src/contexts/peer-review/service.ts",
+          "writer": {
+            "service": "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          },
+          "citedServices": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ]
+        },
+        "detail": "cited for ::Quorum.ResearchFunding.PeerReview.AssignmentService"
+      },
+      {
+        "check": "writer-declared",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:287",
+        "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+        "observed": {
+          "store": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "table": "rev_call_criteria",
+          "op": "INSERT",
+          "statement": "INSERT OR IGNORE INTO rev_call_criteria (call_id, id, position, name, guidance) VALUES (?, ?, ?, ?, ?)",
+          "module": "src/contexts/peer-review/service.ts",
+          "writer": {
+            "service": "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          },
+          "citedServices": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ]
+        },
+        "detail": "cited for ::Quorum.ResearchFunding.PeerReview.AssignmentService"
+      },
+      {
+        "check": "writer-declared",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:293",
+        "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+        "observed": {
+          "store": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "table": "rev_case",
+          "op": "INSERT",
+          "statement": "INSERT INTO rev_case (proposal_id, call_id, applicant_id, status, opened_at) VALUES (?, ?, ?, 'open', ?) ON CONFLICT (proposal_id) DO UPDATE SET cal",
+          "module": "src/contexts/peer-review/service.ts",
+          "writer": {
+            "service": "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          },
+          "citedServices": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ]
+        },
+        "detail": "cited for ::Quorum.ResearchFunding.PeerReview.AssignmentService"
+      },
+      {
+        "check": "writer-declared",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:300",
+        "inputs": "sha256:355b8943bc1802b05f4be96a14e9ee400d9b531742e4c7cca98d9a6cc45a38e6",
+        "observed": {
+          "store": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "table": "rev_case",
+          "op": "INSERT",
+          "statement": "INSERT INTO rev_case (proposal_id, call_id, applicant_id, status, opened_at) VALUES (?, ?, NULL, 'withdrawn', ?) ON CONFLICT (proposal_id) DO UPDATE",
+          "module": "src/contexts/peer-review/service.ts",
+          "writer": {
+            "service": "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          },
+          "citedServices": [
+            "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+          ]
+        },
+        "detail": "cited for ::Quorum.ResearchFunding.PeerReview.AssignmentService"
+      },
+      {
+        "check": "write-scope",
+        "ran": "completed",
+        "path": "src/**",
+        "inputs": "sha256:b19e72f5e5b60d9ab0b54a3325e134db39233bebd2248e9984be047a12f9475f",
+        "observed": {
+          "method": "lexed literal SQL + non-literal SQL channels + file/handle mechanisms over src/**",
+          "files": 44,
+          "storeTables": [
+            "rev_assignment",
+            "rev_call_criteria",
+            "rev_case",
+            "rev_conflict",
+            "rev_review",
+            "rev_score"
+          ],
+          "discovered": [
+            "src/contexts/adjudication/service.ts:195",
+            "src/contexts/peer-review/service.ts:128",
+            "src/contexts/peer-review/service.ts:130",
+            "src/contexts/peer-review/service.ts:161",
+            "src/contexts/peer-review/service.ts:198",
+            "src/contexts/peer-review/service.ts:256",
+            "src/contexts/peer-review/service.ts:258",
+            "src/contexts/peer-review/service.ts:259",
+            "src/contexts/peer-review/service.ts:273",
+            "src/contexts/peer-review/service.ts:287",
+            "src/contexts/peer-review/service.ts:293",
+            "src/contexts/peer-review/service.ts:300",
+            "src/contexts/peer-review/service.ts:60",
+            "src/contexts/peer-review/service.ts:63"
+          ],
+          "sites": [
+            {
+              "path": "src/contexts/adjudication/service.ts:195",
+              "op": "UPDATE",
+              "table": "rev_review"
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:128",
+              "op": "INSERT",
+              "table": "rev_assignment"
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:130",
+              "op": "INSERT",
+              "table": "rev_review"
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:161",
+              "op": "UPDATE",
+              "table": "rev_assignment"
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:198",
+              "op": "INSERT",
+              "table": "rev_conflict"
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:256",
+              "op": "UPDATE",
+              "table": "rev_assignment"
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:258",
+              "op": "UPDATE",
+              "table": "rev_review"
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:259",
+              "op": "INSERT",
+              "table": "rev_score"
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:273",
+              "op": "UPDATE",
+              "table": "rev_assignment"
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:287",
+              "op": "INSERT",
+              "table": "rev_call_criteria"
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:293",
+              "op": "INSERT",
+              "table": "rev_case"
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:300",
+              "op": "INSERT",
+              "table": "rev_case"
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:60",
+              "op": "UPDATE",
+              "table": "rev_assignment"
+            },
+            {
+              "path": "src/contexts/peer-review/service.ts:63",
+              "op": "UPDATE",
+              "table": "rev_review"
+            }
+          ],
+          "unresolved": [],
+          "excluded": [
+            {
+              "path": "src/integrations/mail.ts:25",
+              "form": "fs-write",
+              "call": "appendFileSync",
+              "because": "writes to files that are not the database: the server pid file, the token secret, the outbound mail log"
+            },
+            {
+              "path": "src/platform/auth.ts:38",
+              "form": "fs-write",
+              "call": "writeFileSync",
+              "because": "writes to files that are not the database: the server pid file, the token secret, the outbound mail log"
+            },
+            {
+              "path": "src/platform/backup.ts:111",
+              "form": "fs-write",
+              "call": "renameSync",
+              "because": "whole-database restore by the Operator (src/platform/backup.ts)"
+            },
+            {
+              "path": "src/platform/backup.ts:112",
+              "form": "fs-write",
+              "call": "renameSync",
+              "because": "whole-database restore by the Operator (src/platform/backup.ts)"
+            },
+            {
+              "path": "src/platform/backup.ts:114",
+              "form": "fs-write",
+              "call": "copyFileSync",
+              "because": "whole-database restore by the Operator (src/platform/backup.ts)"
+            },
+            {
+              "path": "src/platform/backup.ts:56",
+              "form": "sqlite-backup",
+              "call": ".backup",
+              "because": "whole-database restore by the Operator (src/platform/backup.ts)"
+            },
+            {
+              "path": "src/platform/backup.ts:59",
+              "form": "fs-write",
+              "call": "rmSync",
+              "because": "whole-database restore by the Operator (src/platform/backup.ts)"
+            },
+            {
+              "path": "src/platform/backup.ts:62",
+              "form": "fs-write",
+              "call": "writeFileSync",
+              "because": "whole-database restore by the Operator (src/platform/backup.ts)"
+            },
+            {
+              "path": "src/platform/backup.ts:81",
+              "form": "fs-write",
+              "call": "rmSync",
+              "because": "whole-database restore by the Operator (src/platform/backup.ts)"
+            },
+            {
+              "path": "src/platform/backup.ts:82",
+              "form": "fs-write",
+              "call": "rmSync",
+              "because": "whole-database restore by the Operator (src/platform/backup.ts)"
+            },
+            {
+              "path": "src/seed.ts:283",
+              "form": "fs-write",
+              "call": "rmSync",
+              "because": "the demo seed's reset (src/seed.ts)"
+            },
+            {
+              "path": "src/server.ts:50",
+              "form": "fs-write",
+              "call": "writeFileSync",
+              "because": "writes to files that are not the database: the server pid file, the token secret, the outbound mail log"
+            },
+            {
+              "path": "src/server.ts:54",
+              "form": "fs-write",
+              "call": "rmSync",
+              "because": "writes to files that are not the database: the server pid file, the token secret, the outbound mail log"
+            }
+          ],
+          "channels": [
+            {
+              "path": "src/api/routes.ts:458",
+              "form": "deps.db.prepare(sql)",
+              "resolved": true,
+              "why": "sql is the parameter of n, and all 1 call(s) of n pass a literal (scanned)"
+            },
+            {
+              "path": "src/platform/db.ts:37",
+              "form": "db.exec(sql)",
+              "resolved": true,
+              "why": "sql is an entry of MIGRATIONS from ./schema.ts, whose literals are scanned"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

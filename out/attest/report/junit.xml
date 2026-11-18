@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="210" failures="0" errors="0" time="91.9463215">
+    <testsuite name="tests/integrations/factory.test.ts" timestamp="2026-11-17T09:27:18.317Z" hostname="Avlon" tests="11" failures="0" errors="0" skipped="0" time="0.0146568">
+        <testcase classname="tests/integrations/factory.test.ts" name="integrationsFromEnv &gt; defaults to stub / stub / file, and lists what the production adapters would need" time="0.0031368">
+        </testcase>
+        <testcase classname="tests/integrations/factory.test.ts" name="integrationsFromEnv &gt; builds all three production adapters from a full configuration" time="0.0040885">
+        </testcase>
+        <testcase classname="tests/integrations/factory.test.ts" name="integrationsFromEnv &gt; never exposes a secret through describe, missing, JSON or inspect" time="0.0017131">
+        </testcase>
+        <testcase classname="tests/integrations/factory.test.ts" name="integrationsFromEnv &gt; a selected adapter missing ORCID_CLIENT_SECRET fails startup (no silent stub)" time="0.0004681">
+        </testcase>
+        <testcase classname="tests/integrations/factory.test.ts" name="integrationsFromEnv &gt; a selected adapter missing ORCID_CLIENT_ID fails startup (no silent stub)" time="0.0002108">
+        </testcase>
+        <testcase classname="tests/integrations/factory.test.ts" name="integrationsFromEnv &gt; a selected adapter missing ANTHROPIC_API_KEY fails startup (no silent stub)" time="0.0001894">
+        </testcase>
+        <testcase classname="tests/integrations/factory.test.ts" name="integrationsFromEnv &gt; a selected adapter missing SMTP_HOST fails startup (no silent stub)" time="0.000202">
+        </testcase>
+        <testcase classname="tests/integrations/factory.test.ts" name="integrationsFromEnv &gt; a selected adapter missing SMTP_FROM fails startup (no silent stub)" time="0.0001818">
+        </testcase>
+        <testcase classname="tests/integrations/factory.test.ts" name="integrationsFromEnv &gt; a selected adapter missing SMTP_PASS fails startup (no silent stub)" time="0.0002068">
+        </testcase>
+        <testcase classname="tests/integrations/factory.test.ts" name="integrationsFromEnv &gt; missing configuration for an adapter that is not selected does not fail startup" time="0.0011787">
+        </testcase>
+        <testcase classname="tests/integrations/factory.test.ts" name="integrationsFromEnv &gt; rejects unknown selector values and invalid options for a selected adapter" time="0.0014492">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integrations/orcid-http.test.ts" timestamp="2026-11-17T09:27:18.329Z" hostname="Avlon" tests="13" failures="0" errors="0" skipped="0" time="0.6089622">
+        <testcase classname="tests/integrations/orcid-http.test.ts" name="HttpOrcidClient against a fake ORCID registry &gt; 200: the iD exists, with the public name" time="0.1063276">
+        </testcase>
+        <testcase classname="tests/integrations/orcid-http.test.ts" name="HttpOrcidClient against a fake ORCID registry &gt; a private name is null, not an error" time="0.0508707">
+        </testcase>
+        <testcase classname="tests/integrations/orcid-http.test.ts" name="HttpOrcidClient against a fake ORCID registry &gt; 404: not found (exists false), no retry" time="0.0109624">
+        </testcase>
+        <testcase classname="tests/integrations/orcid-http.test.ts" name="HttpOrcidClient against a fake ORCID registry &gt; 500: retries a bounded number of times, then throws OrcidUnavailableError (not &quot;not found&quot;)" time="0.0302995">
+        </testcase>
+        <testcase classname="tests/integrations/orcid-http.test.ts" name="HttpOrcidClient against a fake ORCID registry &gt; a transient 503 is retried and the lookup succeeds" time="0.031509">
+        </testcase>
+        <testcase classname="tests/integrations/orcid-http.test.ts" name="HttpOrcidClient against a fake ORCID registry &gt; slow registry: times out and throws OrcidUnavailableError" time="0.3456797">
+        </testcase>
+        <testcase classname="tests/integrations/orcid-http.test.ts" name="HttpOrcidClient against a fake ORCID registry &gt; checksum validation is local: a malformed iD makes no network call" time="0.0043905">
+        </testcase>
+        <testcase classname="tests/integrations/orcid-http.test.ts" name="HttpOrcidClient against a fake ORCID registry &gt; requests a /read-public client-credentials token once and caches it" time="0.0123083">
+        </testcase>
+        <testcase classname="tests/integrations/orcid-http.test.ts" name="HttpOrcidClient against a fake ORCID registry &gt; a 401 on a record drops the cached token and fetches a new one once" time="0.0084047">
+        </testcase>
+        <testcase classname="tests/integrations/orcid-http.test.ts" name="HttpOrcidClient against a fake ORCID registry &gt; rejected client credentials surface as unavailable, without the secret in the message" time="0.0038967">
+        </testcase>
+        <testcase classname="tests/integrations/orcid-http.test.ts" name="HttpOrcidClient against a fake ORCID registry &gt; unreachable registry: unavailable" time="0.0014906">
+        </testcase>
+        <testcase classname="tests/integrations/orcid-http.test.ts" name="HttpOrcidClient against a fake ORCID registry &gt; derives the public API host from the site base" time="0.0001692">
+        </testcase>
+        <testcase classname="tests/integrations/orcid-http.test.ts" name="HttpOrcidClient against a fake ORCID registry &gt; orcidFromEnv: http without credentials throws instead of falling back to the stub" time="0.0007061">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integrations/smtp.test.ts" timestamp="2026-11-17T09:27:18.332Z" hostname="Avlon" tests="16" failures="0" errors="0" skipped="0" time="0.4535347">
+        <testcase classname="tests/integrations/smtp.test.ts" name="SmtpMailTransport against a local SMTP sink &gt; plain connection (STARTTLS off, no auth): the message is accepted" time="0.0510848">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="SmtpMailTransport against a local SMTP sink &gt; STARTTLS + AUTH PLAIN: upgrades, re-EHLOs, authenticates, delivers" time="0.0437953">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="SmtpMailTransport against a local SMTP sink &gt; STARTTLS + AUTH LOGIN when PLAIN is not offered" time="0.0260842">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="SmtpMailTransport against a local SMTP sink &gt; implicit TLS (SMTP_SECURE) with AUTH" time="0.0264889">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="SmtpMailTransport against a local SMTP sink &gt; an untrusted server certificate fails the send" time="0.0200832">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="SmtpMailTransport against a local SMTP sink &gt; STARTTLS required but not offered: refuses to send" time="0.0066647">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="SmtpMailTransport against a local SMTP sink &gt; never sends credentials over an unencrypted connection" time="0.0150885">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="SmtpMailTransport against a local SMTP sink &gt; wrong password: SmtpError 535, password not in the message" time="0.0228887">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="SmtpMailTransport against a local SMTP sink &gt; a permanent RCPT refusal propagates (so the drain records the failure)" time="0.0116047">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="SmtpMailTransport against a local SMTP sink &gt; a transient DATA refusal propagates as non-permanent" time="0.0126719">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="SmtpMailTransport against a local SMTP sink &gt; slow server: times out waiting for the greeting" time="0.2050214">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="SmtpMailTransport against a local SMTP sink &gt; connection refused propagates" time="0.003313">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="SmtpMailTransport against a local SMTP sink &gt; rejects header injection before connecting" time="0.0029428">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="SmtpMailTransport against a local SMTP sink &gt; describe() never contains the password" time="0.0008609">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="message building &gt; encodes a non-ASCII subject (RFC 2047) and keeps the body UTF-8" time="0.001032">
+        </testcase>
+        <testcase classname="tests/integrations/smtp.test.ts" name="message building &gt; extracts envelope addresses" time="0.0008682">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integrations/triage-anthropic.test.ts" timestamp="2026-11-17T09:27:18.337Z" hostname="Avlon" tests="22" failures="0" errors="0" skipped="0" time="0.3936232">
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="AnthropicTriageProvider against a fake Messages API &gt; good JSON: returns the verdict proposal" time="0.0781732">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="AnthropicTriageProvider against a fake Messages API &gt; sends the documented headers, structured-output schema and an advise-only system prompt" time="0.0170287">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="AnthropicTriageProvider against a fake Messages API &gt; the request carries TriageInput fields only: extra runtime properties never leave the process" time="0.0144441">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="AnthropicTriageProvider against a fake Messages API &gt; a configured model is used; models without server-side fallback get no beta header" time="0.0114036">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="AnthropicTriageProvider against a fake Messages API &gt; malformed output throws (a failed attempt)" time="0.0077643">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="AnthropicTriageProvider against a fake Messages API &gt; extra-field output throws (a failed attempt)" time="0.0053847">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="AnthropicTriageProvider against a fake Messages API &gt; bad-verdict output throws (a failed attempt)" time="0.0044659">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="AnthropicTriageProvider against a fake Messages API &gt; max_tokens output throws (a failed attempt)" time="0.0053612">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="AnthropicTriageProvider against a fake Messages API &gt; refusal output throws (a failed attempt)" time="0.0242473">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="AnthropicTriageProvider against a fake Messages API &gt; HTTP 529 throws with the status, never the key" time="0.0051958">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="AnthropicTriageProvider against a fake Messages API &gt; HTTP 500 throws with the status, never the key" time="0.0050907">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="AnthropicTriageProvider against a fake Messages API &gt; slow endpoint: the request times out and throws" time="0.2057282">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="AnthropicTriageProvider against a fake Messages API &gt; a wrong key is an error, and the key is not echoed" time="0.0039704">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="AnthropicTriageProvider against a fake Messages API &gt; the provider object does not expose the key" time="0.0009387">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="parseTriageOutput &gt; accepts exactly {verdict, rationale}" time="0.0007331">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="parseTriageOutput &gt; rejects &quot;&quot;" time="0.0002934">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="parseTriageOutput &gt; rejects &quot;null&quot;" time="0.0001734">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="parseTriageOutput &gt; rejects &quot;[]&quot;" time="0.0001187">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="parseTriageOutput &gt; rejects &quot;{\&quot;verdict\&quot;:\&quot;eligible\&quot;}&quot;" time="0.0001342">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="parseTriageOutput &gt; rejects &quot;{\&quot;verdict\&quot;:\&quot;eligible\&quot;,\&quot;rationale\&quot;:\&quot;\&quot;}&quot;" time="0.0000916">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="parseTriageOutput &gt; rejects &quot;{\&quot;verdict\&quot;:\&quot;eligible\&quot;,\&quot;rationale\&quot;:5}&quot;" time="0.000088">
+        </testcase>
+        <testcase classname="tests/integrations/triage-anthropic.test.ts" name="parseTriageOutput &gt; rejects &quot;```json\n{\&quot;verdict\&quot;:\&quot;eligible\&quot;,\&quot;rationale\&quot;:\&quot;x\&quot;}\n```&quot;" time="0.0000946">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/invariants/inv-01-submission-window.test.ts" timestamp="2026-11-17T09:27:18.342Z" hostname="Avlon" tests="2" failures="0" errors="0" skipped="0" time="1.6723952">
+        <testcase classname="tests/invariants/inv-01-submission-window.test.ts" name="INV-1 — submit only while the call is open and before its deadline &gt; refuses a submission after the deadline: 409 deadline_passed, nothing changes, no event" time="0.9749751">
+        </testcase>
+        <testcase classname="tests/invariants/inv-01-submission-window.test.ts" name="INV-1 — submit only while the call is open and before its deadline &gt; refuses a submission to a closed call: 409 call_closed, nothing changes, no event" time="0.6954867">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/invariants/inv-02-submit-once.test.ts" timestamp="2026-11-17T09:27:18.343Z" hostname="Avlon" tests="2" failures="0" errors="0" skipped="0" time="1.6636154">
+        <testcase classname="tests/invariants/inv-02-submit-once.test.ts" name="INV-2 — a proposal is submitted at most once &gt; refuses a second submission (new request): 409 already_submitted, one ProposalSubmitted only" time="0.9877364">
+        </testcase>
+        <testcase classname="tests/invariants/inv-02-submit-once.test.ts" name="INV-2 — a proposal is submitted at most once &gt; refuses editing a submitted proposal: 409 not_a_draft, content unchanged" time="0.6736912">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/invariants/inv-03-conflict.test.ts" timestamp="2026-11-17T09:27:18.344Z" hostname="Avlon" tests="3" failures="0" errors="0" skipped="0" time="2.5547855">
+        <testcase classname="tests/invariants/inv-03-conflict.test.ts" name="INV-3 — a conflicted reviewer can never hold an assignment &gt; refuses assigning a reviewer with a declared conflict: 409 conflict_of_interest, no assignment, no event" time="1.0190375">
+        </testcase>
+        <testcase classname="tests/invariants/inv-03-conflict.test.ts" name="INV-3 — a conflicted reviewer can never hold an assignment &gt; the database refuses a conflicted assignment even if the service check were bypassed (trigger)" time="0.7878895">
+        </testcase>
+        <testcase classname="tests/invariants/inv-03-conflict.test.ts" name="INV-3 — a conflicted reviewer can never hold an assignment &gt; a conflict declared on a live assignment revokes it in the same transaction" time="0.7460871">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/invariants/inv-04-self-review.test.ts" timestamp="2026-11-17T09:27:18.345Z" hostname="Avlon" tests="2" failures="0" errors="0" skipped="0" time="1.4730477">
+        <testcase classname="tests/invariants/inv-04-self-review.test.ts" name="INV-4 — an applicant is never assigned to review their own proposal &gt; refuses assigning the applicant (who is also a verified reviewer): 409 self_review, no assignment, no event" time="0.8935075">
+        </testcase>
+        <testcase classname="tests/invariants/inv-04-self-review.test.ts" name="INV-4 — an applicant is never assigned to review their own proposal &gt; the candidate list marks the applicant as ineligible for the same reason" time="0.5773348">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/invariants/inv-05-three-reviews.test.ts" timestamp="2026-11-17T09:27:18.346Z" hostname="Avlon" tests="2" failures="0" errors="0" skipped="0" time="1.4644143">
+        <testcase classname="tests/invariants/inv-05-three-reviews.test.ts" name="INV-5 — exactly three submitted reviews before scored &gt; two submitted reviews do not score the proposal: no ProposalFullyReviewed, still underReview" time="0.8432939">
+        </testcase>
+        <testcase classname="tests/invariants/inv-05-three-reviews.test.ts" name="INV-5 — exactly three submitted reviews before scored &gt; refuses a fourth reviewer: 409 panel_full, no assignment, no event" time="0.6191228">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/invariants/inv-06-complete-review.test.ts" timestamp="2026-11-17T09:27:18.347Z" hostname="Avlon" tests="3" failures="0" errors="0" skipped="0" time="2.4732682">
+        <testcase classname="tests/invariants/inv-06-complete-review.test.ts" name="INV-6 — every criterion scored 1–5 before submission &gt; refuses a review missing a criterion: 422 incomplete_review naming the gap, nothing stored, no event" time="0.9920272">
+        </testcase>
+        <testcase classname="tests/invariants/inv-06-complete-review.test.ts" name="INV-6 — every criterion scored 1–5 before submission &gt; refuses out-of-range scores (0 and 6): 422 incomplete_review" time="0.7599781">
+        </testcase>
+        <testcase classname="tests/invariants/inv-06-complete-review.test.ts" name="INV-6 — every criterion scored 1–5 before submission &gt; refuses a non-integer score at the schema boundary: 400 validation_failed" time="0.718373">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/invariants/inv-07-blind-review.test.ts" timestamp="2026-11-17T09:27:18.348Z" hostname="Avlon" tests="3" failures="0" errors="0" skipped="0" time="2.3896214">
+        <testcase classname="tests/invariants/inv-07-blind-review.test.ts" name="INV-7 — no other review is visible until your own is submitted &gt; a reviewer who has not submitted sees no peer review, even when two peers have submitted" time="1.010031">
+        </testcase>
+        <testcase classname="tests/invariants/inv-07-blind-review.test.ts" name="INV-7 — no other review is visible until your own is submitted &gt; a reviewer not on the panel cannot read the reviews at all: 404" time="0.7025083">
+        </testcase>
+        <testcase classname="tests/invariants/inv-07-blind-review.test.ts" name="INV-7 — no other review is visible until your own is submitted &gt; notifications never carry scores or review text to reviewers" time="0.6749418">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/invariants/inv-08-panel-decision.test.ts" timestamp="2026-11-17T09:27:18.349Z" hostname="Avlon" tests="3" failures="0" errors="0" skipped="0" time="2.5463088">
+        <testcase classname="tests/invariants/inv-08-panel-decision.test.ts" name="INV-8 — only a PanelChair decides, and only for a scored proposal &gt; refuses a decision on a proposal that is not scored: 409 not_scored, no decision, no event" time="1.0054243">
+        </testcase>
+        <testcase classname="tests/invariants/inv-08-panel-decision.test.ts" name="INV-8 — only a PanelChair decides, and only for a scored proposal &gt; refuses a decision by a program officer (not a chair): 403 forbidden, nothing decided" time="0.7742677">
+        </testcase>
+        <testcase classname="tests/invariants/inv-08-panel-decision.test.ts" name="INV-8 — only a PanelChair decides, and only for a scored proposal &gt; refuses a second decision: 409 already_decided, the first stands" time="0.7638562">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/invariants/inv-09-budget-envelope.test.ts" timestamp="2026-11-17T09:27:18.350Z" hostname="Avlon" tests="3" failures="0" errors="0" skipped="0" time="2.8953987">
+        <testcase classname="tests/invariants/inv-09-budget-envelope.test.ts" name="INV-9 — awards never exceed the call envelope &gt; refuses an award that would exceed the envelope: 409 envelope_exceeded, nothing committed, no ProposalAwarded" time="1.3776821">
+        </testcase>
+        <testcase classname="tests/invariants/inv-09-budget-envelope.test.ts" name="INV-9 — awards never exceed the call envelope &gt; after a refusal, a second award attempt is refused (envelope_exhausted) and only a decline is accepted" time="0.8841251">
+        </testcase>
+        <testcase classname="tests/invariants/inv-09-budget-envelope.test.ts" name="INV-9 — awards never exceed the call envelope &gt; the database CHECK constraint refuses an over-commit even if the conditional update were bypassed" time="0.6317041">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/invariants/inv-10-agent-proposes-only.test.ts" timestamp="2026-11-17T09:27:18.351Z" hostname="Avlon" tests="3" failures="0" errors="0" skipped="0" time="2.3431659">
+        <testcase classname="tests/invariants/inv-10-agent-proposes-only.test.ts" name="INV-10 — the triage agent proposes; it never moves a proposal out of screening &gt; an agent verdict leaves the proposal in screening; the agent published only TriageProposed" time="0.9329735">
+        </testcase>
+        <testcase classname="tests/invariants/inv-10-agent-proposes-only.test.ts" name="INV-10 — the triage agent proposes; it never moves a proposal out of screening &gt; the agent account holds no role, so the screening command refuses it: 403 forbidden, still screening, no event" time="0.7122075">
+        </testcase>
+        <testcase classname="tests/invariants/inv-10-agent-proposes-only.test.ts" name="INV-10 — the triage agent proposes; it never moves a proposal out of screening &gt; a screening decision on a proposal not in screening is refused: 409 not_in_screening" time="0.6954867">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/invariants/inv-11-role-scope.test.ts" timestamp="2026-11-17T09:27:18.352Z" hostname="Avlon" tests="3" failures="0" errors="0" skipped="0" time="2.3463105">
+        <testcase classname="tests/invariants/inv-11-role-scope.test.ts" name="INV-11 — act only in a granted role, only on resources in scope &gt; an applicant cannot publish a call: 403 forbidden, no call, no event" time="0.9485962">
+        </testcase>
+        <testcase classname="tests/invariants/inv-11-role-scope.test.ts" name="INV-11 — act only in a granted role, only on resources in scope &gt; another applicant&apos;s proposal does not exist for you: 404 on read, edit and submit, nothing changes" time="0.7149642">
+        </testcase>
+        <testcase classname="tests/invariants/inv-11-role-scope.test.ts" name="INV-11 — act only in a granted role, only on resources in scope &gt; a revoked role stops working on the next request (roles are read per request, not from the token)" time="0.6805083">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/invariants/inv-12-verified-reviewers.test.ts" timestamp="2026-11-17T09:27:18.353Z" hostname="Avlon" tests="3" failures="0" errors="0" skipped="0" time="2.4589571">
+        <testcase classname="tests/invariants/inv-12-verified-reviewers.test.ts" name="INV-12 — only ORCID-verified reviewers hold assignments &gt; refuses assigning an unverified reviewer: 409 orcid_unverified, no assignment, no event" time="0.9966392">
+        </testcase>
+        <testcase classname="tests/invariants/inv-12-verified-reviewers.test.ts" name="INV-12 — only ORCID-verified reviewers hold assignments &gt; refuses verifying an iD the registry does not know: 422 orcid_not_found, account stays unverified, no OrcidVerified" time="0.7205094">
+        </testcase>
+        <testcase classname="tests/invariants/inv-12-verified-reviewers.test.ts" name="INV-12 — only ORCID-verified reviewers hold assignments &gt; after a successful verification the same reviewer can be assigned" time="0.7364605">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/scenarios/account-erasure.test.ts" timestamp="2026-11-17T09:27:18.354Z" hostname="Avlon" tests="7" failures="0" errors="0" skipped="0" time="7.322255">
+        <testcase classname="tests/scenarios/account-erasure.test.ts" name="ADR-023: erasing a reviewer through the operator route &gt; clears ORCID verification (Verified → Unverified) in the erasing transaction" time="0.9905738">
+        </testcase>
+        <testcase classname="tests/scenarios/account-erasure.test.ts" name="ADR-023: erasing a reviewer through the operator route &gt; closes every outstanding assignment, keeps the completed review and the whole assignment history" time="1.9415775">
+        </testcase>
+        <testcase classname="tests/scenarios/account-erasure.test.ts" name="ADR-023: erasing a reviewer through the operator route &gt; makes the work available for reassignment through the ordinary AssignReviewer route, and tells the officers" time="1.1742933">
+            <system-out>
+[submission] ReviewersAssigned 9f09f5ce-35e0-451e-b7b8-4970594eaaa7 ignored: Q-0401 is underReview, expected eligible
+
+[submission] ReviewersAssigned 41ab713f-14a5-43e0-a768-1b5c41d42216 ignored: Q-0402 is underReview, expected eligible
+
+[submission] ReviewersAssigned 141e2cc2-0244-407a-98c4-647b6fef7285 ignored: Q-0403 is underReview, expected eligible
+
+            </system-out>
+        </testcase>
+        <testcase classname="tests/scenarios/account-erasure.test.ts" name="ADR-023: erasing a reviewer through the operator route &gt; the cleanup is safe to retry: a failed reaction rolls back and is redelivered; repeats change nothing" time="0.828356">
+            <system-err>
+[dispatcher] peer-review.assignment-service failed on AccountErased 1088e25d-a372-43a0-a0b3-b7d105415f8f (attempt 1): peer-review outage (injected)
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/scenarios/account-erasure.test.ts" name="ADR-023: erasing a reviewer through the operator route &gt; erasing an unverified reviewer makes no ORCID transition" time="0.9055923">
+        </testcase>
+        <testcase classname="tests/scenarios/account-erasure.test.ts" name="ADR-023: the ordinary verification workflow still never leaves Verified &gt; a verified reviewer cannot re-verify with another iD; the same iD is a no-op; the status stays Verified" time="0.6936735">
+        </testcase>
+        <testcase classname="tests/scenarios/account-erasure.test.ts" name="ADR-023: the ordinary verification workflow still never leaves Verified &gt; the erased account cannot use the verification route to become Verified again" time="0.7851278">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/scenarios/adr-005-inv-03-mismatch.test.ts" timestamp="2026-11-17T09:27:18.357Z" hostname="Avlon" tests="1" failures="0" errors="0" skipped="0" time="1.132055">
+        <testcase classname="tests/scenarios/adr-005-inv-03-mismatch.test.ts" name="ADR-005 vs INV-3 (open owner decision) &gt; after scoring, a declared conflict coexists with a completed, non-revoked assignment whose review still counts" time="1.1304963">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/scenarios/agent-authority.test.ts" timestamp="2026-11-17T09:27:18.357Z" hostname="Avlon" tests="4" failures="0" errors="0" skipped="0" time="3.5745999">
+        <testcase classname="tests/scenarios/agent-authority.test.ts" name="Agent authority (INV-10) &gt; the agent account holds no role and cannot sign in" time="1.1944087">
+        </testcase>
+        <testcase classname="tests/scenarios/agent-authority.test.ts" name="Agent authority (INV-10) &gt; whatever the agent proposes, the proposal stays in screening until an officer decides" time="0.8093661">
+        </testcase>
+        <testcase classname="tests/scenarios/agent-authority.test.ts" name="Agent authority (INV-10) &gt; provider failure: after bounded retries the verdict is recorded as absent and the officer still decides" time="0.8498147">
+        </testcase>
+        <testcase classname="tests/scenarios/agent-authority.test.ts" name="Agent authority (INV-10) &gt; overriding the agent requires a reason: 422 reason_required without one, accepted with one" time="0.7183605">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/scenarios/blind-visibility.test.ts" timestamp="2026-11-17T09:27:18.358Z" hostname="Avlon" tests="2" failures="0" errors="0" skipped="0" time="1.8713419">
+        <testcase classname="tests/scenarios/blind-visibility.test.ts" name="Premature visibility of reviews (INV-7) &gt; locked before your own submission, anonymized peers after; officers and chairs see everything" time="1.1448256">
+        </testcase>
+        <testcase classname="tests/scenarios/blind-visibility.test.ts" name="Premature visibility of reviews (INV-7) &gt; a reviewer cannot see triage advice or screening notes on the proposal they review" time="0.7248115">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/scenarios/concurrent-awards.test.ts" timestamp="2026-11-17T09:27:18.359Z" hostname="Avlon" tests="2" failures="0" errors="0" skipped="0" time="6.1351457">
+        <testcase classname="tests/scenarios/concurrent-awards.test.ts" name="Concurrent awards near the budget limit (INV-9), separate processes and connections &gt; ten processes commit 40,000 each against a 300,000 envelope: exactly seven succeed, never over the envelope" time="3.3396601">
+        </testcase>
+        <testcase classname="tests/scenarios/concurrent-awards.test.ts" name="Concurrent awards near the budget limit (INV-9), separate processes and connections &gt; four chairs award four 100,000 proposals at once against 300,000: three awarded, one refused into reconsider, which then admits only a decline" time="2.7922974">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/scenarios/conflict-lifecycle.test.ts" timestamp="2026-11-17T09:27:18.360Z" hostname="Avlon" tests="3" failures="0" errors="0" skipped="0" time="3.8169772">
+        <testcase classname="tests/scenarios/conflict-lifecycle.test.ts" name="Conflicted assignment across the review lifecycle (INV-3, ADR-005) &gt; a conflict declared after a submitted review but before scoring revokes the assignment and voids the review" time="1.2127181">
+            <system-out>
+[submission] ReviewersAssigned cdb35af1-192d-4db9-8802-9416712339a3 ignored: Q-0401 is underReview, expected eligible
+
+            </system-out>
+        </testcase>
+        <testcase classname="tests/scenarios/conflict-lifecycle.test.ts" name="Conflicted assignment across the review lifecycle (INV-3, ADR-005) &gt; a conflict declared after scoring holds the award: the chair is refused with 409 integrity_hold, a decline is still possible" time="1.781061">
+        </testcase>
+        <testcase classname="tests/scenarios/conflict-lifecycle.test.ts" name="Conflicted assignment across the review lifecycle (INV-3, ADR-005) &gt; a reviewer cannot declare a conflict on behalf of another reviewer: 403" time="0.8201649">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/scenarios/cross-role-access.test.ts" timestamp="2026-11-17T09:27:18.361Z" hostname="Avlon" tests="57" failures="0" errors="0" skipped="0" time="1.9209537">
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; officer workspace as anon -&gt; 401" time="0.0635372">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; officer workspace as applicant -&gt; 403" time="0.0618963">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; officer workspace as reviewer -&gt; 403" time="0.1277943">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; officer workspace as chair -&gt; 403" time="0.2140321">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; officer workspace as officer -&gt; 200" time="0.1777929">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; portfolio as anon -&gt; 401" time="0.0023962">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; portfolio as applicant -&gt; 403" time="0.0028071">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; portfolio as reviewer -&gt; 403" time="0.003432">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; portfolio as chair -&gt; 200" time="0.0299412">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; portfolio as officer -&gt; 200" time="0.017028">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; publish call as anon -&gt; 401" time="0.0015737">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; publish call as applicant -&gt; 403" time="0.0022118">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; publish call as reviewer -&gt; 403" time="0.0042175">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; publish call as chair -&gt; 403" time="0.0085346">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; publish call as officer -&gt; 201" time="0.0510306">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; record panel decision as anon -&gt; 401" time="0.0009377">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; record panel decision as applicant -&gt; 403" time="0.0017542">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; record panel decision as reviewer -&gt; 403" time="0.0057682">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; record panel decision as chair -&gt; 200" time="0.0045197">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; record panel decision as officer -&gt; 403" time="0.0078139">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; assign reviewer as anon -&gt; 401" time="0.0005393">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; assign reviewer as applicant -&gt; 403" time="0.0009458">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; assign reviewer as reviewer -&gt; 403" time="0.0013597">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; assign reviewer as chair -&gt; 403" time="0.0013858">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; assign reviewer as officer -&gt; 422" time="0.003746">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; screen a proposal as anon -&gt; 401" time="0.0010511">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; screen a proposal as applicant -&gt; 403" time="0.0015474">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; screen a proposal as reviewer -&gt; 403" time="0.0010332">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; screen a proposal as chair -&gt; 403" time="0.0024271">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; screen a proposal as officer -&gt; 409" time="0.0028123">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read another applicant&apos;s draft as anon -&gt; 401" time="0.0004839">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read another applicant&apos;s draft as applicant -&gt; 200" time="0.0019085">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read another applicant&apos;s draft as reviewer -&gt; 404" time="0.001155">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read another applicant&apos;s draft as chair -&gt; 200" time="0.0025361">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read another applicant&apos;s draft as officer -&gt; 200" time="0.0022768">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read a proposal you do not review as anon -&gt; 401" time="0.0011545">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read a proposal you do not review as applicant -&gt; 404" time="0.0022325">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read a proposal you do not review as reviewer -&gt; 404" time="0.0010413">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read a proposal you do not review as chair -&gt; 200" time="0.0018439">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read a proposal you do not review as officer -&gt; 200" time="0.0023759">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read another reviewer&apos;s assignment as anon -&gt; 401" time="0.0006393">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read another reviewer&apos;s assignment as applicant -&gt; 403" time="0.0458141">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read another reviewer&apos;s assignment as reviewer -&gt; 404" time="0.0020642">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read another reviewer&apos;s assignment as chair -&gt; 403" time="0.0013703">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; read another reviewer&apos;s assignment as officer -&gt; 403" time="0.0018163">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; submit another reviewer&apos;s review as anon -&gt; 401" time="0.0020976">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; submit another reviewer&apos;s review as applicant -&gt; 403" time="0.0038583">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; submit another reviewer&apos;s review as reviewer -&gt; 404" time="0.0418864">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; submit another reviewer&apos;s review as chair -&gt; 403" time="0.0021161">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; submit another reviewer&apos;s review as officer -&gt; 403" time="0.0013904">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; retry a parked delivery as anon -&gt; 401" time="0.0009964">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; retry a parked delivery as applicant -&gt; 403" time="0.00099">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; retry a parked delivery as reviewer -&gt; 403" time="0.0008447">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; retry a parked delivery as chair -&gt; 403" time="0.000741">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; retry a parked delivery as officer -&gt; 403" time="0.0009654">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; a forged token is refused: 401" time="0.0008109">
+        </testcase>
+        <testcase classname="tests/scenarios/cross-role-access.test.ts" name="Cross-role access matrix (INV-11) &gt; an expired token (8h) is refused: 401" time="0.0028674">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/scenarios/deadline-boundaries.test.ts" timestamp="2026-11-17T09:27:18.376Z" hostname="Avlon" tests="4" failures="0" errors="0" skipped="0" time="2.947088">
+        <testcase classname="tests/scenarios/deadline-boundaries.test.ts" name="Deadline boundaries (INV-1) &gt; accepts a submission 1 ms before the deadline" time="0.9398039">
+        </testcase>
+        <testcase classname="tests/scenarios/deadline-boundaries.test.ts" name="Deadline boundaries (INV-1) &gt; refuses a submission at exactly the deadline instant" time="0.6689822">
+        </testcase>
+        <testcase classname="tests/scenarios/deadline-boundaries.test.ts" name="Deadline boundaries (INV-1) &gt; refuses a submission after the call is closed, even well before the deadline" time="0.6633641">
+        </testcase>
+        <testcase classname="tests/scenarios/deadline-boundaries.test.ts" name="Deadline boundaries (INV-1) &gt; refuses starting a new draft on a closed call" time="0.6729778">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/scenarios/duplicate-submission.test.ts" timestamp="2026-11-17T09:27:18.378Z" hostname="Avlon" tests="4" failures="0" errors="0" skipped="0" time="3.0936882">
+        <testcase classname="tests/scenarios/duplicate-submission.test.ts" name="Duplicate submission and idempotency &gt; a retried request with the same Idempotency-Key replays the original response and publishes nothing new" time="0.9711395">
+        </testcase>
+        <testcase classname="tests/scenarios/duplicate-submission.test.ts" name="Duplicate submission and idempotency &gt; a second submission with a new key is a new request and is refused: 409 already_submitted (INV-2)" time="0.7122417">
+        </testcase>
+        <testcase classname="tests/scenarios/duplicate-submission.test.ts" name="Duplicate submission and idempotency &gt; reusing a key for a different request is refused: 422 idempotency_key_reused, nothing applied" time="0.7244898">
+        </testcase>
+        <testcase classname="tests/scenarios/duplicate-submission.test.ts" name="Duplicate submission and idempotency &gt; a command without an Idempotency-Key is refused: 400 validation_failed" time="0.6838576">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/scenarios/overdue-escalation.test.ts" timestamp="2026-11-17T09:27:18.379Z" hostname="Avlon" tests="2" failures="0" errors="0" skipped="0" time="1.8727366">
+        <testcase classname="tests/scenarios/overdue-escalation.test.ts" name="Overdue reviews (P21D) and chair escalation (P14D) &gt; marks an assignment overdue exactly at its due date, exactly once; a late review is still accepted" time="1.0328542">
+        </testcase>
+        <testcase classname="tests/scenarios/overdue-escalation.test.ts" name="Overdue reviews (P21D) and chair escalation (P14D) &gt; a chair decision pending 14 days escalates (escalated_at) and is never decided automatically" time="0.8368633">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/scenarios/pre-release-review.test.ts" timestamp="2026-11-17T09:27:18.381Z" hostname="Avlon" tests="5" failures="0" errors="0" skipped="0" time="5.7812578">
+        <testcase classname="tests/scenarios/pre-release-review.test.ts" name="Pre-release review regressions &gt; A1: the portfolio committed total is right even when an earlier award reaches the projector last" time="1.6900109">
+            <system-err>
+[dispatcher] oversight.portfolio-projector failed on ProposalAwarded fed11390-c16b-43ef-854e-84cf19d17afd (attempt 1): projector outage (injected)
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/scenarios/pre-release-review.test.ts" name="Pre-release review regressions &gt; A2: an award is refused (fail closed) while a late ConflictDeclared has not reached Adjudication" time="1.4772428">
+            <system-err>
+[dispatcher] adjudication.adjudication-service failed on ConflictDeclared 27ee3668-aafd-4aff-bd91-7b8214f6134e (attempt 1): adjudication consumer outage (injected)
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/scenarios/pre-release-review.test.ts" name="Pre-release review regressions &gt; A2: a conflict that lands before the adjudication case exists still holds the award" time="0.8970075">
+            <system-err>
+[dispatcher] adjudication.panel-decision-workflow failed on ProposalScored e89d1e13-7db7-4670-90d4-c5254c99b701 (attempt 1): case creation delayed (injected)
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/scenarios/pre-release-review.test.ts" name="Pre-release review regressions &gt; B2: a malformed agent verdict is a failed attempt, not a silently lost triage" time="0.8201393">
+        </testcase>
+        <testcase classname="tests/scenarios/pre-release-review.test.ts" name="Pre-release review regressions &gt; B5: a reviewer whose assignment was revoked can no longer open it" time="0.8933621">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/scenarios/production-readiness.test.ts" timestamp="2026-11-17T09:27:18.383Z" hostname="Avlon" tests="19" failures="0" errors="0" skipped="0" time="16.0430843">
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="B7: at most three active reviewers, enforced by the database &gt; six processes assign six different reviewers at once: exactly three succeed" time="3.0744309">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="B7: at most three active reviewers, enforced by the database &gt; a fourth live assignment written directly, bypassing the service check, is refused by the trigger" time="0.7522717">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="B3/B4: escalation, refusal and hold are events, notified and audited &gt; a decision past due publishes DecisionEscalated exactly once, notifies officers and decides nothing" time="0.7334339">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="B3/B4: escalation, refusal and hold are events, notified and audited &gt; a refused award publishes AwardRefused, which reaches the audit trail and the officers" time="1.0517824">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="B3/B4: escalation, refusal and hold are events, notified and audited &gt; an integrity hold publishes AwardHeld once and is audited" time="0.8767164">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="B5: notifications, operations and conflicts &gt; one officer reading a role-addressed notification does not mark it read for another officer" time="0.7875107">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="B5: notifications, operations and conflicts &gt; an officer cannot declare a conflict for a proposal or reviewer that does not exist" time="0.7184939">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="B5: notifications, operations and conflicts &gt; operations are the operator’s: officers and chairs are refused" time="0.7934081">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="B6: repeatedly failing deliveries &gt; parking raises one alert carrying ids and no personal data" time="0.6448604">
+            <system-err>
+[dispatcher] notification.notification-service failed on ProposalSubmitted a9968be1-728e-4432-8510-23bb21debb76 (attempt 1): SMTP relay rejected the template
+
+[dispatcher] notification.notification-service failed on ProposalSubmitted a9968be1-728e-4432-8510-23bb21debb76 (attempt 2): SMTP relay rejected the template
+
+[dispatcher] notification.notification-service failed on ProposalSubmitted a9968be1-728e-4432-8510-23bb21debb76 (attempt 3): SMTP relay rejected the template
+
+[dispatcher] notification.notification-service failed on ProposalSubmitted a9968be1-728e-4432-8510-23bb21debb76 (attempt 4): SMTP relay rejected the template
+
+[dispatcher] notification.notification-service failed on ProposalSubmitted a9968be1-728e-4432-8510-23bb21debb76 (attempt 5, parked): SMTP relay rejected the template
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="B6: repeatedly failing deliveries &gt; an operator skips a poison delivery with a reason; the partition is released and the act is recorded" time="0.7560047">
+            <system-err>
+[dispatcher] notification.notification-service failed on ProposalSubmitted 2f539ecc-6080-4028-9c17-15853c8915cf (attempt 1): SMTP relay rejected the template
+
+[dispatcher] notification.notification-service failed on ProposalSubmitted 2f539ecc-6080-4028-9c17-15853c8915cf (attempt 2): SMTP relay rejected the template
+
+[dispatcher] notification.notification-service failed on ProposalSubmitted 2f539ecc-6080-4028-9c17-15853c8915cf (attempt 3): SMTP relay rejected the template
+
+[dispatcher] notification.notification-service failed on ProposalSubmitted 2f539ecc-6080-4028-9c17-15853c8915cf (attempt 4): SMTP relay rejected the template
+
+[dispatcher] notification.notification-service failed on ProposalSubmitted 2f539ecc-6080-4028-9c17-15853c8915cf (attempt 5, parked): SMTP relay rejected the template
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="B6: repeatedly failing deliveries &gt; a delivery whose effect guards an invariant can never be skipped" time="0.8155124">
+            <system-err>
+[dispatcher] adjudication.adjudication-service failed on CallPublished 9c7b4df4-d969-4426-ab0c-059291b43c04 (attempt 1): ledger write failed
+
+[dispatcher] adjudication.adjudication-service failed on CallPublished 9c7b4df4-d969-4426-ab0c-059291b43c04 (attempt 2): ledger write failed
+[dispatcher] adjudication.adjudication-service failed on ConflictDeclared df5c7b6d-2fe9-4d78-97ac-36d589eef84c (attempt 1): ledger write failed
+
+[dispatcher] adjudication.adjudication-service failed on CallPublished 9c7b4df4-d969-4426-ab0c-059291b43c04 (attempt 3): ledger write failed
+[dispatcher] adjudication.adjudication-service failed on ConflictDeclared df5c7b6d-2fe9-4d78-97ac-36d589eef84c (attempt 2): ledger write failed
+
+[dispatcher] adjudication.adjudication-service failed on CallPublished 9c7b4df4-d969-4426-ab0c-059291b43c04 (attempt 4): ledger write failed
+[dispatcher] adjudication.adjudication-service failed on ConflictDeclared df5c7b6d-2fe9-4d78-97ac-36d589eef84c (attempt 3): ledger write failed
+
+[dispatcher] adjudication.adjudication-service failed on CallPublished 9c7b4df4-d969-4426-ab0c-059291b43c04 (attempt 5, parked): ledger write failed
+[dispatcher] adjudication.adjudication-service failed on ConflictDeclared df5c7b6d-2fe9-4d78-97ac-36d589eef84c (attempt 4): ledger write failed
+
+[dispatcher] adjudication.adjudication-service failed on ConflictDeclared df5c7b6d-2fe9-4d78-97ac-36d589eef84c (attempt 5, parked): ledger write failed
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="Erasure &gt; erases an applicant’s personal data everywhere it is held, keeps business records, and survives a rebuild" time="0.975777">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="Erasure &gt; erasing a reviewer removes their ORCID iD from the event log and the audit trail" time="0.7489543">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="Rate limiting &gt; sign-in failures are throttled per address and email; a correct password is refused while locked" time="1.2078297">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="Rate limiting &gt; writes beyond the per-account limit get 429 with Retry-After, and nothing is applied" time="0.2566195">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="Rate limiting &gt; the limiter forgets expired windows" time="0.0476373">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="Monitoring &gt; liveness, readiness and Prometheus metrics" time="0.5323027">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="Backup and restore &gt; an online backup taken while serving restores to exactly that point, and restore refuses while a server holds the file" time="0.6324993">
+        </testcase>
+        <testcase classname="tests/scenarios/production-readiness.test.ts" name="Backup and restore &gt; a corrupted backup is refused before anything is touched" time="0.6330712">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/scenarios/replay-and-recovery.test.ts" timestamp="2026-11-17T09:27:18.390Z" hostname="Avlon" tests="5" failures="0" errors="0" skipped="0" time="7.6517457">
+        <testcase classname="tests/scenarios/replay-and-recovery.test.ts" name="Event replay after interruption &gt; a process killed inside notification.notification-service&apos;s delivery loses nothing and duplicates nothing after restart" time="2.5574592">
+        </testcase>
+        <testcase classname="tests/scenarios/replay-and-recovery.test.ts" name="Event replay after interruption &gt; a process killed inside oversight.portfolio-projector&apos;s delivery loses nothing and duplicates nothing after restart" time="1.7318035">
+        </testcase>
+        <testcase classname="tests/scenarios/replay-and-recovery.test.ts" name="Event replay after interruption &gt; a process killed inside submission.proposal-service&apos;s delivery loses nothing and duplicates nothing after restart" time="1.5071933">
+        </testcase>
+        <testcase classname="tests/scenarios/replay-and-recovery.test.ts" name="Event replay after interruption &gt; a delivery that keeps failing is parked after 5 attempts and holds its partition; retry() releases it in order" time="0.813635">
+            <system-err>
+[dispatcher] notification.notification-service failed on ProposalSubmitted 76965971-2d05-4c7d-b1c7-921a138469ba (attempt 1): mail templating outage (injected)
+
+[dispatcher] notification.notification-service failed on ProposalSubmitted 76965971-2d05-4c7d-b1c7-921a138469ba (attempt 2): mail templating outage (injected)
+
+[dispatcher] notification.notification-service failed on ProposalSubmitted 76965971-2d05-4c7d-b1c7-921a138469ba (attempt 3): mail templating outage (injected)
+
+[dispatcher] notification.notification-service failed on ProposalSubmitted 76965971-2d05-4c7d-b1c7-921a138469ba (attempt 4): mail templating outage (injected)
+
+[dispatcher] notification.notification-service failed on ProposalSubmitted 76965971-2d05-4c7d-b1c7-921a138469ba (attempt 5, parked): mail templating outage (injected)
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/scenarios/replay-and-recovery.test.ts" name="Event replay after interruption &gt; replaying the whole log into the portfolio projector rebuilds an identical projection" time="1.0384454">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/scenarios/two-of-three-readiness.test.ts" timestamp="2026-11-17T09:27:18.392Z" hostname="Avlon" tests="1" failures="0" errors="0" skipped="0" time="1.0313269">
+        <testcase classname="tests/scenarios/two-of-three-readiness.test.ts" name="Two-of-three panel readiness (INV-5, INV-8) &gt; two reviews: nothing reaches the panel; the third scores exactly once, even when ReviewSubmitted is redelivered" time="1.0271242">
+            <system-out>
+[submission] ProposalFullyReviewed c137cac8-1148-43cc-822f-6f2b2052acf3 ignored: Q-0401 is scored, expected underReview
+
+            </system-out>
+        </testcase>
+    </testsuite>
+</testsuites>

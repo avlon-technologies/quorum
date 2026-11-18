@@ -32,7 +32,7 @@ export function createAdapter({ createFakeProvider, env }) {
 | `call.publish.as` | then | `as`, `rule`, `status` | 1 scenario |
 | `case.status` | then | `proposal`, `status` | 1 scenario |
 | `clock.advanced` | then, when | `days` | 2 scenarios |
-| `command.refused` | then | `code`, `rule`, `status` | 8 scenarios |
+| `command.refused` | then | `code`, `rule`, `status` | 11 scenarios |
 | `conflict.declared` | given | `proposal`, `reviewer` | 1 scenario |
 | `consumers.applied.once` | then | `type` | 1 scenario |
 | `decision.record` | when | `as`, `outcome`, `proposal` | 3 scenarios |
@@ -40,23 +40,23 @@ export function createAdapter({ createFakeProvider, env }) {
 | `decision.recorded` | given | `outcome`, `proposal` | 1 scenario |
 | `delivery.interrupted` | when | `consumer`, `proposal` | 1 scenario |
 | `delivery.redelivered` | then | `type` | 1 scenario |
-| `event.count` | then | `count`, `type` | 10 scenarios |
+| `event.count` | then | `count`, `type` | 13 scenarios |
 | `foreign.proposal.read` | when | `as`, `proposal` | 1 scenario |
 | `notification.sent` | then | `count`, `kind`, `recipient` | 1 scenario |
 | `personal.data.absent` | then | — | 1 scenario |
 | `portfolio.shows` | then | `committed`, `proposal`, `status` | 1 scenario |
 | `projection.replays.identically` | then | — | 2 scenarios |
-| `proposal.prepared` | given | `applicant`, `proposal`, `stage` | 13 scenarios |
+| `proposal.prepared` | given | `applicant`, `proposal`, `stage` | 16 scenarios |
 | `proposal.retained` | then | `proposal`, `status` | 1 scenario |
 | `proposal.status` | then | `proposal`, `status` | 4 scenarios |
 | `proposal.submit` | when | `at`, `proposal` | 2 scenarios |
 | `proposals.scored` | given | `proposals`, `requested` | 4 scenarios |
-| `quorum.running` | given | `envelope`, `maxRequest` | 17 scenarios |
+| `quorum.running` | given | `envelope`, `maxRequest` | 20 scenarios |
 | `response.status` | then | `status` | 1 scenario |
 | `review.submit` | when | `proposal`, `reviewer`, `scores` | 2 scenarios |
 | `review.submit.accepted` | then | `proposal`, `reviewer` | 1 scenario |
 | `review.submitted` | given | `proposal`, `reviewers` | 2 scenarios |
-| `reviewer.assign` | when | `proposal`, `reviewer` | 3 scenarios |
+| `reviewer.assign` | when | `proposal`, `reviewer` | 6 scenarios |
 | `reviews.read` | when | `proposal`, `reviewer` | 1 scenario |
 | `reviews.visible` | then | `count` | 1 scenario |
 | `timeline.has` | then | `events`, `proposal` | 1 scenario |
@@ -68,7 +68,7 @@ export function createAdapter({ createFakeProvider, env }) {
 - `call.publish.as` — "an applicant trying to publish a call is refused under INV-11"
 - `case.status` — "the case still awaits the chair: nothing was decided by timeout"
 - `clock.advanced` — "15 days pass without a decision" / "21 days pass" / "another day passes" / "ten more days pass"
-- `command.refused` — "the assignment is refused under INV-12" / "the assignment is refused under INV-3" / "the assignment is refused under INV-4" / "the award is refused under INV-9" / "the decision is refused under INV-8" / "the review is refused under INV-6" / "the second submission is refused under INV-2" / "the submission is refused as deadline_passed under INV-1"
+- `command.refused` — "the assignment is refused as already_assigned" / "the assignment is refused as not_a_reviewer" / "the assignment is refused as not_assignable" / "the assignment is refused under INV-12" / "the assignment is refused under INV-3" / "the assignment is refused under INV-4" / "the award is refused under INV-9" / "the decision is refused under INV-8" / "the review is refused under INV-6" / "the second submission is refused under INV-2" / "the submission is refused as deadline_passed under INV-1"
 - `conflict.declared` — "reviewer 1 has declared a conflict on p1"
 - `consumers.applied.once` — "each consumer applied ProposalSubmitted exactly once"
 - `decision.record` — "the chair awards p1" / "the chair records an award on unscored p1" / "the chair tries to award p2"
@@ -76,13 +76,13 @@ export function createAdapter({ createFakeProvider, env }) {
 - `decision.recorded` — "the chair has awarded p1"
 - `delivery.interrupted` — "p1 is submitted and the notification delivery fails before it is marked, then Quorum restarts"
 - `delivery.redelivered` — "redelivering every ReviewSubmitted changes nothing"
-- `event.count` — "ProposalFullyReviewed was published exactly once" / "exactly one ProposalSubmitted exists" / "no ProposalAwarded is published" / "no ProposalSubmitted is published" / "no ReviewSubmitted is published" / "no ReviewerAssigned is published" / "one AccountErased event is published" / "one DecisionEscalated event is published" / "one TriageProposed is published" / "still exactly one DecisionEscalated event" / "still exactly one ProposalScored" / "still three ReviewOverdue events" / "three ReviewOverdue events are published"
+- `event.count` — "ProposalFullyReviewed was published exactly once" / "exactly one ProposalSubmitted exists" / "no ProposalAwarded is published" / "no ProposalSubmitted is published" / "no ReviewSubmitted is published" / "no ReviewerAssigned is published" / "one AccountErased event is published" / "one DecisionEscalated event is published" / "one TriageProposed is published" / "still exactly one DecisionEscalated event" / "still exactly one ProposalScored" / "still exactly three ReviewerAssigned events" / "still three ReviewOverdue events" / "three ReviewOverdue events are published"
 - `foreign.proposal.read` — "another applicant requests p1"
 - `notification.sent` — "the program officers are notified once"
 - `personal.data.absent` — "alice's name and email appear nowhere" / "and still no personal data after the rebuild"
 - `portfolio.shows` — "the portfolio shows p1 awarded and 100000 committed"
 - `projection.replays.identically` — "rebuilding the projection from the redacted log gives the same projection" / "replaying the portfolio projection from the event log reproduces it exactly"
-- `proposal.prepared` — "proposal p1 has reached draft" / "proposal p1 has reached eligible" / "proposal p1 has reached submitted" / "proposal p1 has reached underReview"
+- `proposal.prepared` — "proposal p1 has reached draft" / "proposal p1 has reached eligible" / "proposal p1 has reached submitted" / "proposal p1 has reached submitted and is still in screening" / "proposal p1 has reached underReview" / "proposal p1 has reached underReview with reviewers 0, 1 and 2 assigned"
 - `proposal.retained` — "p1 is kept as a business record"
 - `proposal.status` — "p1 is scored" / "p1 is still a draft" / "p1 is still scored" / "p1 remains in screening"
 - `proposal.submit` — "the applicant submits p1 again with a new request" / "the applicant submits p1 exactly at the deadline"
@@ -92,7 +92,7 @@ export function createAdapter({ createFakeProvider, env }) {
 - `review.submit` — "reviewer 0 submits a review that omits one criterion" / "reviewer 2 submits a complete review"
 - `review.submit.accepted` — "reviewer 0 submits late and is accepted"
 - `review.submitted` — "reviewers 0 and 1 have submitted" / "reviewers 0 and 1 have submitted complete reviews"
-- `reviewer.assign` — "the officer assigns reviewer 1 to p1" / "the officer assigns the applicant (a verified reviewer) to their own proposal" / "the officer assigns the unverified reviewer"
+- `reviewer.assign` — "the officer assigns bob, another applicant who is not a reviewer, to p1" / "the officer assigns reviewer 0 to p1 a second time" / "the officer assigns reviewer 1 to p1" / "the officer assigns the applicant (a verified reviewer) to their own proposal" / "the officer assigns the unverified reviewer" / "the officer assigns verified reviewer 0 to p1"
 - `reviews.read` — "reviewer 2, who has not submitted, reads the reviews of p1"
 - `reviews.visible` — "no review is visible to them"
 - `timeline.has` — "the audit timeline of p1 records each transition with its actor"
@@ -121,6 +121,60 @@ An operator erases an applicant on request: no personal identifier remains in ac
 - and still no personal data after the rebuild `[personal.data.absent]`
 - p1 is kept as a business record `[proposal.retained]`
 - one AccountErased event is published `[event.count]`
+
+### `assignment-no-duplicate`
+
+A reviewer who already holds an active assignment to a proposal cannot be assigned to it again (AssignmentValidity: no other active assignment to it).
+
+- verifies: `::Quorum.ResearchFunding.PeerReview.AssignmentValidity` (BusinessRule), `::Quorum.ResearchFunding.PeerReview.AssignmentService` (Service)
+- environment: `::Quorum.LocalDevelopment`
+
+**given**
+- Quorum is running with a published call, an officer, a chair, applicants and verified reviewers `[quorum.running]`
+- proposal p1 has reached underReview with reviewers 0, 1 and 2 assigned `[proposal.prepared]`
+
+**when**
+- the officer assigns reviewer 0 to p1 a second time `[reviewer.assign]`
+
+**then**
+- the assignment is refused as already_assigned `[command.refused]`
+- still exactly three ReviewerAssigned events `[event.count]`
+
+### `assignment-proposal-not-assignable`
+
+A reviewer cannot be assigned to a proposal that has not been confirmed eligible (AssignmentValidity: the proposal is assignable).
+
+- verifies: `::Quorum.ResearchFunding.PeerReview.AssignmentValidity` (BusinessRule), `::Quorum.ResearchFunding.PeerReview.AssignmentService` (Service)
+- environment: `::Quorum.LocalDevelopment`
+
+**given**
+- Quorum is running with a published call, an officer, a chair, applicants and verified reviewers `[quorum.running]`
+- proposal p1 has reached submitted and is still in screening `[proposal.prepared]`
+
+**when**
+- the officer assigns verified reviewer 0 to p1 `[reviewer.assign]`
+
+**then**
+- the assignment is refused as not_assignable `[command.refused]`
+- no ReviewerAssigned is published `[event.count]`
+
+### `assignment-requires-reviewer-role`
+
+An account that does not hold the reviewer role cannot be assigned to a proposal (AssignmentValidity: the reviewer holds the reviewer role).
+
+- verifies: `::Quorum.ResearchFunding.PeerReview.AssignmentValidity` (BusinessRule), `::Quorum.ResearchFunding.PeerReview.AssignmentService` (Service)
+- environment: `::Quorum.LocalDevelopment`
+
+**given**
+- Quorum is running with a published call, an officer, a chair, applicants and verified reviewers `[quorum.running]`
+- proposal p1 has reached eligible `[proposal.prepared]`
+
+**when**
+- the officer assigns bob, another applicant who is not a reviewer, to p1 `[reviewer.assign]`
+
+**then**
+- the assignment is refused as not_a_reviewer `[command.refused]`
+- no ReviewerAssigned is published `[event.count]`
 
 ### `decision-escalated`
 
@@ -229,7 +283,7 @@ A submitted proposal cannot be submitted again; a retried request with the same 
 
 A reviewer with a declared conflict cannot be assigned to that proposal (INV-3).
 
-- verifies: `::Quorum.ResearchFunding.ReviewerAssignment.NoConflictedAssignment` (Requirement), `::Quorum.ResearchFunding.PeerReview.AssignmentService` (Service)
+- verifies: `::Quorum.ResearchFunding.ReviewerAssignment.NoConflictedAssignment` (Requirement), `::Quorum.ResearchFunding.PeerReview.AssignmentValidity` (BusinessRule), `::Quorum.ResearchFunding.PeerReview.AssignmentService` (Service)
 - realizes the declared Test `::Quorum.Inv03NoConflictedAssignment`
 - environment: `::Quorum.LocalDevelopment`
 
@@ -272,7 +326,7 @@ A reviewer with a declared conflict cannot be assigned to that proposal (INV-3).
 
 An applicant who is also a reviewer cannot review their own proposal (INV-4).
 
-- verifies: `::Quorum.ResearchFunding.ReviewerAssignment.NoSelfReview` (Requirement), `::Quorum.ResearchFunding.PeerReview.AssignmentService` (Service)
+- verifies: `::Quorum.ResearchFunding.ReviewerAssignment.NoSelfReview` (Requirement), `::Quorum.ResearchFunding.PeerReview.AssignmentValidity` (BusinessRule), `::Quorum.ResearchFunding.PeerReview.AssignmentService` (Service)
 - realizes the declared Test `::Quorum.Inv04NoSelfReview`
 - environment: `::Quorum.LocalDevelopment`
 
@@ -395,7 +449,7 @@ A reviewer sees no peer review until their own is submitted (INV-7).
 
 A panel decision on an unscored proposal is refused, and a program officer cannot decide (INV-8).
 
-- verifies: `::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly` (Requirement), `::Quorum.ResearchFunding.Adjudication.PanelDecision` (Workflow)
+- verifies: `::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly` (Requirement), `::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly` (BusinessRule), `::Quorum.ResearchFunding.Adjudication.PanelDecision` (Workflow)
 - realizes the declared Test `::Quorum.Inv08ChairOnly`
 - environment: `::Quorum.LocalDevelopment`
 
@@ -474,7 +528,7 @@ An applicant cannot act outside their role or see another applicant's proposal (
 
 A reviewer without a verified ORCID iD cannot be assigned (INV-12).
 
-- verifies: `::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly` (Requirement), `::Quorum.ResearchFunding.PeerReview.AssignmentService` (Service), `::Quorum.ResearchFunding.Identity.AccountService` (Service)
+- verifies: `::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly` (Requirement), `::Quorum.ResearchFunding.PeerReview.AssignmentValidity` (BusinessRule), `::Quorum.ResearchFunding.PeerReview.AssignmentService` (Service), `::Quorum.ResearchFunding.Identity.AccountService` (Service)
 - realizes the declared Test `::Quorum.Inv12VerifiedReviewers`
 - environment: `::Quorum.LocalDevelopment`
 

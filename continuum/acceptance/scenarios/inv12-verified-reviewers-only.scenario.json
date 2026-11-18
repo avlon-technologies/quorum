@@ -4,6 +4,7 @@
   "purpose": "A reviewer without a verified ORCID iD cannot be assigned (INV-12).",
   "verifies": [
     "::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly",
+    "::Quorum.ResearchFunding.PeerReview.AssignmentValidity",
     "::Quorum.ResearchFunding.PeerReview.AssignmentService",
     "::Quorum.ResearchFunding.Identity.AccountService"
   ],

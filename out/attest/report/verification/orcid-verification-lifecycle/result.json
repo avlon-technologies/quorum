@@ -1,0 +1,319 @@
+{
+  "profile": "continuum-verification-result/0",
+  "verifier": {
+    "name": "orcid-verification-lifecycle",
+    "version": "2.0.0",
+    "digest": "sha256:a4942708a67ddadd05cc52e774ce2c612461f09b79b72b5bd9fe732d0b6df756"
+  },
+  "model": {
+    "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+    "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+    "elements": [
+      {
+        "id": "sm-q002",
+        "name": "OrcidVerification",
+        "kind": "bdl:state-model"
+      }
+    ]
+  },
+  "implementation": {
+    "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+    "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7"
+  },
+  "expectation": {
+    "statement": "BDL state model OrcidVerification (sm-q002) on Account.orcidStatus: the declared transitions — Verify (Unverified → Verified, by VerifyOrcid) and ClearOnErasure (Verified → Unverified, by EraseAccount; ADR-023) — are the complete set of permitted changes of the field (BDL §5.8 R-07). Verified stays terminal for verification: no verification act leaves it, and only erasure sets Unverified.",
+    "source": "continuum-claim-spec/0 orcid-verification-lifecycle@2.0.0"
+  },
+  "method": "static enumeration of the field's writes, and the real routes driven through the implementation's app (see the attestation observation)",
+  "evidence": [
+    {
+      "ref": "observation: attestation.results"
+    }
+  ],
+  "coverage": {
+    "executed": 10,
+    "covered": [
+      "HTTP POST /api/me/orcid",
+      "HTTP POST /api/operations/accounts/:id/erase",
+      "src/contexts/identity/service.ts:102",
+      "src/contexts/identity/service.ts:210"
+    ],
+    "uncovered": []
+  },
+  "levels": {
+    "code": {
+      "outcome": "UNVERIFIED",
+      "reason": "informational claim attestation: the level is judged by the Host (continuum-claim-attestation/0)"
+    },
+    "deployment": {
+      "outcome": "UNVERIFIED",
+      "reason": "not assessed: the routes ran in-process against an isolated database, not a deployment"
+    }
+  },
+  "attestation": {
+    "profile": "continuum-claim-observation/0",
+    "spec": {
+      "id": "orcid-verification-lifecycle",
+      "version": "2.0.0"
+    },
+    "boundTo": {
+      "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+      "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7",
+      "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+      "spec": {
+        "id": "orcid-verification-lifecycle",
+        "version": "2.0.0"
+      }
+    },
+    "environment": {
+      "node": "v24.22.1",
+      "platform": "win32",
+      "database": "SQLite (better-sqlite3), an isolated file per case; manual clock; stub ORCID registry"
+    },
+    "results": [
+      {
+        "check": "closure-constraint",
+        "ran": "completed",
+        "path": "src/platform/schema.ts",
+        "inputs": "sha256:bb38044957749b65cf4c9599592ef6e68f1e9132bea99dbc4fdbbb36f2ef4439",
+        "observed": {
+          "dominates": false,
+          "appliesTo": [],
+          "constraint": null,
+          "detail": "no constraint in the schema refuses an undeclared change of idn_account.orcid_status; each write is on its own"
+        }
+      },
+      {
+        "check": "erasure-clears-verification",
+        "ran": "completed",
+        "path": "HTTP POST /api/operations/accounts/:id/erase",
+        "covers": [
+          "src/contexts/identity/service.ts:210"
+        ],
+        "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+        "observed": {
+          "assignedHttpStatus": 201,
+          "erasedHttpStatus": 200,
+          "before": {
+            "orcidStatus": "verified",
+            "heldAssignments": 1,
+            "roleGrants": 1
+          },
+          "after": {
+            "orcidStatus": "unverified",
+            "heldAssignments": 0,
+            "roleGrants": 0
+          },
+          "from": "verified",
+          "to": "unverified",
+          "heldAssignmentsAfter": 0
+        }
+      },
+      {
+        "check": "status-write-scope",
+        "ran": "completed",
+        "path": "src/**",
+        "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+        "observed": {
+          "method": "lexed literal SQL over src/** for writes that set idn_account.orcid_status; each write's function and every call of it",
+          "discovered": [
+            "HTTP POST /api/me/orcid",
+            "HTTP POST /api/operations/accounts/:id/erase",
+            "src/contexts/identity/service.ts:102",
+            "src/contexts/identity/service.ts:210"
+          ],
+          "sites": [
+            {
+              "path": "src/contexts/identity/service.ts:102",
+              "op": "UPDATE",
+              "function": "recordOrcidVerification",
+              "from": "unverified",
+              "to": "verified",
+              "creates": false
+            },
+            {
+              "path": "src/contexts/identity/service.ts:164",
+              "op": "INSERT",
+              "function": "provisionAccount",
+              "creates": true,
+              "to": null
+            },
+            {
+              "path": "src/contexts/identity/service.ts:210",
+              "op": "UPDATE",
+              "function": "eraseAccount",
+              "from": null,
+              "to": "unverified",
+              "creates": false
+            }
+          ],
+          "entries": [
+            {
+              "path": "HTTP POST /api/me/orcid",
+              "site": "src/api/routes.ts:111",
+              "through": "recordOrcidVerification",
+              "access": [
+                "reviewer"
+              ],
+              "reaches": "src/contexts/identity/service.ts:102"
+            },
+            {
+              "path": "HTTP POST /api/operations/accounts/:id/erase",
+              "site": "src/api/routes.ts:441",
+              "through": "eraseAccount",
+              "access": null,
+              "reaches": "src/contexts/identity/service.ts:210"
+            }
+          ],
+          "unresolved": [],
+          "excluded": [
+            {
+              "path": "src/seed.ts:98",
+              "form": "call",
+              "call": "recordOrcidVerification",
+              "because": "the demo seed (src/seed.ts)"
+            },
+            {
+              "path": "src/seed.ts:101",
+              "form": "call",
+              "call": "recordOrcidVerification",
+              "because": "the demo seed (src/seed.ts)"
+            },
+            {
+              "path": "src/seed.ts:91",
+              "form": "call",
+              "call": "provisionAccount",
+              "because": "the demo seed (src/seed.ts)"
+            },
+            {
+              "path": "src/seed.ts:93",
+              "form": "call",
+              "call": "provisionAccount",
+              "because": "the demo seed (src/seed.ts)"
+            },
+            {
+              "path": "src/contexts/identity/service.ts:164",
+              "form": "write",
+              "because": "every call of provisionAccount is excluded: src/seed.ts:91, src/seed.ts:93"
+            }
+          ]
+        }
+      },
+      {
+        "check": "unverified-reviewer-verifies",
+        "ran": "completed",
+        "path": "HTTP POST /api/me/orcid",
+        "covers": [
+          "src/contexts/identity/service.ts:102"
+        ],
+        "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+        "observed": {
+          "httpStatus": 200,
+          "code": null,
+          "from": "unverified",
+          "to": "verified"
+        }
+      },
+      {
+        "check": "unverified-set-only-by-erasure",
+        "ran": "completed",
+        "path": "src/contexts/identity/service.ts:210",
+        "inputs": "sha256:44cca48a7bbc214c9f6379ec52cc988fed6d946d8c95fc63d42b48253db1702d",
+        "observed": {
+          "function": "eraseAccount",
+          "entryPoints": [
+            "HTTP POST /api/operations/accounts/:id/erase"
+          ],
+          "from": null,
+          "to": "unverified"
+        }
+      },
+      {
+        "check": "verification-never-leaves-verified",
+        "ran": "completed",
+        "path": "HTTP POST /api/me/orcid",
+        "covers": [
+          "src/contexts/identity/service.ts:102"
+        ],
+        "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+        "observed": {
+          "from": "verified",
+          "to": "verified",
+          "afterOtherId": "verified",
+          "afterUnknownId": "verified",
+          "afterSameId": "verified",
+          "otherIdHttpStatus": 409,
+          "otherIdCode": "orcid_already_verified",
+          "unknownIdHttpStatus": 422,
+          "unknownIdCode": "orcid_not_found",
+          "sameIdHttpStatus": 200,
+          "orcidVerifiedPublished": 0
+        }
+      },
+      {
+        "check": "verified-reviewer-erased",
+        "ran": "completed",
+        "path": "HTTP POST /api/operations/accounts/:id/erase",
+        "covers": [
+          "src/contexts/identity/service.ts:210"
+        ],
+        "inputs": "sha256:398f6829968ba16fa622508c2046770b83528ea6c299a7555b8609a1caab3723",
+        "observed": {
+          "assignedHttpStatus": 201,
+          "erasedHttpStatus": 200,
+          "before": {
+            "orcidStatus": "verified",
+            "heldAssignments": 1,
+            "roleGrants": 1
+          },
+          "after": {
+            "orcidStatus": "unverified",
+            "heldAssignments": 0,
+            "roleGrants": 0
+          },
+          "from": "verified",
+          "to": "unverified",
+          "heldAssignmentsAfter": 0
+        }
+      },
+      {
+        "check": "verified-set-only-by-verification",
+        "ran": "completed",
+        "path": "src/contexts/identity/service.ts:102",
+        "inputs": "sha256:44cca48a7bbc214c9f6379ec52cc988fed6d946d8c95fc63d42b48253db1702d",
+        "observed": {
+          "function": "recordOrcidVerification",
+          "entryPoints": [
+            "HTTP POST /api/me/orcid"
+          ],
+          "from": "unverified",
+          "to": "verified"
+        }
+      },
+      {
+        "check": "write-admitted",
+        "ran": "completed",
+        "path": "src/contexts/identity/service.ts:102",
+        "inputs": "sha256:44cca48a7bbc214c9f6379ec52cc988fed6d946d8c95fc63d42b48253db1702d",
+        "observed": {
+          "from": "unverified",
+          "to": "verified",
+          "creates": false,
+          "function": "recordOrcidVerification"
+        }
+      },
+      {
+        "check": "write-admitted",
+        "ran": "completed",
+        "path": "src/contexts/identity/service.ts:210",
+        "inputs": "sha256:44cca48a7bbc214c9f6379ec52cc988fed6d946d8c95fc63d42b48253db1702d",
+        "observed": {
+          "from": null,
+          "to": "unverified",
+          "creates": false,
+          "function": "eraseAccount"
+        }
+      }
+    ]
+  }
+}

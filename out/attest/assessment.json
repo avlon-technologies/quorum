@@ -1,0 +1,805 @@
+{
+  "profile": "continuum-conformance-assessment/1",
+  "assessedBy": "continuum-cli 0.40.0",
+  "revision": {
+    "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+    "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7",
+    "mode": "same-commit",
+    "model": {
+      "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+      "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+      "manifest": "continuum/model/quorum.adl-manifest.json"
+    },
+    "snapshot": "committed"
+  },
+  "resolution": {
+    "package": "avlon.quorum",
+    "descriptor": {
+      "path": "continuum/architecture-package.json",
+      "digest": "sha256:0cc31b36d923f1f4c82bfba3587786276099c97fa60b0742874f2e19a1e15db7"
+    },
+    "inputs": [
+      {
+        "role": "binding",
+        "path": "continuum/model/local-development.adl-binding.json",
+        "status": "resolved",
+        "digest": "sha256:087d4301e0d2334310f5b09e9c3ae87a1bf4aa622c28c5ce082b6bd1569fe24a"
+      },
+      {
+        "role": "binding",
+        "path": "continuum/model/production.adl-binding.json",
+        "status": "resolved",
+        "digest": "sha256:777f2020fb21a519cde68db97a37556f8a5549f554a96bddd37709297a2eebd1"
+      },
+      {
+        "role": "business",
+        "path": "continuum/model/quorum.bdl",
+        "status": "resolved",
+        "digest": "sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72"
+      },
+      {
+        "role": "claim",
+        "path": "architecture/verification/at-most-three-reviewers.verification.json",
+        "status": "resolved",
+        "digest": "sha256:bb538c41aecb565c8ded5046430c770a55a817646c4df7a21a16697b0618b571"
+      },
+      {
+        "role": "claim",
+        "path": "architecture/verification/chair-decides-scored-only.verification.json",
+        "status": "resolved",
+        "digest": "sha256:d0284c32bf2d1ab13ebc9d1cbf605a398fa5dff8c82b60b463d6073a70ac696c"
+      },
+      {
+        "role": "claim",
+        "path": "architecture/verification/orcid-verification-lifecycle.verification.json",
+        "status": "resolved",
+        "digest": "sha256:a32f0c7b7b768171473afb171dd655f045e69aff2f168a15813c5128bcd8639e"
+      },
+      {
+        "role": "claim",
+        "path": "architecture/verification/reviewstore-writers.verification.json",
+        "status": "resolved",
+        "digest": "sha256:fadbec94f5a1d3cd615b202fc04048c4fe79495118501dee6fd6fa424079e8e3"
+      },
+      {
+        "role": "claim",
+        "path": "architecture/verification/verified-reviewers-only.verification.json",
+        "status": "resolved",
+        "digest": "sha256:0994f8d2e87d8e2614586a5c1942f0f0eaaa83f5472ee4ac0d4a529cc097d8f5"
+      },
+      {
+        "role": "decisions",
+        "path": "continuum/decisions.jsonl",
+        "status": "resolved",
+        "digest": "sha256:8671abba656264761dfc8cc4afa870d887ff6bfc7f717a1d7733aa68490a46a2"
+      },
+      {
+        "role": "evidence",
+        "path": "continuum/evidence.json",
+        "status": "resolved",
+        "digest": "sha256:288522acb6161376d28f49540f69f05749e79e859893660d4dd891fadc55b93a"
+      },
+      {
+        "role": "handoff",
+        "path": "architecture/handoff.json",
+        "status": "resolved",
+        "digest": "sha256:3a2cb853934a54859498b42d10b6048726fe960c7c1adce40d009267ecd2c595"
+      },
+      {
+        "role": "model",
+        "path": "continuum/model/quorum.adl-manifest.json",
+        "status": "resolved",
+        "digest": "sha256:3f2a36aa8e8d55725592b8c9ddcfd4bfcdf1728a41e92ea271f9fff3b8016711"
+      },
+      {
+        "role": "principles",
+        "path": "(principle registries)",
+        "status": "unretrievable",
+        "why": "principle registries are Host-kept signed records, resolved by `continuum principle resolve`; this package does not pin one"
+      }
+    ]
+  },
+  "sources": {
+    "static": {
+      "state": "judged"
+    },
+    "scenarios": {
+      "state": "not-declared",
+      "detail": "the baseline carries no acceptance scenario"
+    },
+    "tests": {
+      "state": "judged",
+      "runner": "vitest|node"
+    },
+    "claims": {
+      "state": "judged",
+      "executesProjectCode": true
+    }
+  },
+  "assessment": {
+    "ok": true,
+    "surface": "continuum-platform-assessment-judgment/1",
+    "revision": {
+      "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+      "tree": "2eca51bd68a6874a938a219dc92a718d8bc46bf7",
+      "mode": "same-commit",
+      "model": {
+        "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+        "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+        "manifest": "continuum/model/quorum.adl-manifest.json"
+      },
+      "snapshot": "committed"
+    },
+    "status": "INCOMPLETE",
+    "exit": 0,
+    "contradictions": [],
+    "errors": [],
+    "gaps": [
+      {
+        "kind": "not-declared",
+        "source": "scenarios",
+        "detail": "the baseline carries no acceptance scenario",
+        "next": {
+          "action": "declare-scenario",
+          "detail": "the baseline carries no acceptance scenario"
+        }
+      },
+      {
+        "kind": "no-evidence",
+        "source": "report",
+        "detail": "28 commitments with no scenario or pinned test: ChairOnScoredOnly, EnvelopeNotExceeded, NoScoresToReviewers, AssignmentValidity, …",
+        "next": {
+          "action": "add-evidence",
+          "detail": "::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly"
+        }
+      }
+    ],
+    "coverage": {
+      "commitments": {
+        "total": 28,
+        "established": 0,
+        "byVerdict": {
+          "unsupported": 28
+        },
+        "notEstablished": [
+          {
+            "commitment": "::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly",
+            "kind": "business-rule",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded",
+            "kind": "business-rule",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.Notification.NoScoresToReviewers",
+            "kind": "business-rule",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.PeerReview.AssignmentValidity",
+            "kind": "business-rule",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.PeerReview.EveryCriterionScored",
+            "kind": "business-rule",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.PeerReview.PeerReviewsHiddenUntilOwnSubmitted",
+            "kind": "business-rule",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.PeerReview.ThreeSubmittedReviews",
+            "kind": "business-rule",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.Submission.ApplicantScope",
+            "kind": "business-rule",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.Submission.SubmissionWindowOpen",
+            "kind": "business-rule",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.Submission.SubmittedOnce",
+            "kind": "business-rule",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.AccessControl.PersonalDataErasable",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.BlindPeerReview.CompleteScoring",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.CallAdministration.SubmissionWindow",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.EligibilityScreening.AgentNeverDecides",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.PanelAdjudication.DecisionsEscalated",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.ParticipantNotification.NotificationsDurable",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.PortfolioReporting.PortfolioFromProjection",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.PortfolioReporting.TransitionsAudited",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.ProposalSubmission.SubmitOnce",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.ReviewCompletionTracking.OverdueReviewsEscalated",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.ReviewCompletionTracking.ThreeReviewsBeforeScoring",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.ReviewerAssignment.NoConflictedAssignment",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.ReviewerAssignment.NoSelfReview",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          },
+          {
+            "commitment": "::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly",
+            "kind": "requirement",
+            "verdict": "unsupported"
+          }
+        ]
+      },
+      "static": {
+        "verified": 4,
+        "violated": 0,
+        "unverified": 1,
+        "unsupported": 33,
+        "outcome": "CONFORMS"
+      },
+      "tests": {
+        "passed": 210,
+        "failed": 0,
+        "error": 0,
+        "blocked": 0,
+        "skipped": 0,
+        "runner": "vitest|node"
+      },
+      "claims": {
+        "declared": 5,
+        "judged": 5
+      }
+    },
+    "levels": {
+      "distribution": {
+        "L0": 0,
+        "L1": 0,
+        "L2": 1,
+        "L3": 4
+      },
+      "assigned": 5,
+      "unassigned": 0,
+      "rubrics": [
+        "continuum-claim-rubric/2",
+        "continuum-claim-rubric/3"
+      ],
+      "statement": "Overall level unset across 5 claims — judged under different rubrics (continuum-claim-rubric/2, continuum-claim-rubric/3), which are not one scale · 1 at L2, 4 at L3"
+    },
+    "claims": [
+      {
+        "verification": "at-most-three-reviewers",
+        "claim": {
+          "language": "adl",
+          "kind": "business-rule",
+          "id": "61505d55-158f-4a68-aa7b-204a46219514",
+          "name": "::Quorum.ResearchFunding.PeerReview.AssignmentValidity",
+          "statement": "::Quorum.ResearchFunding.PeerReview.AssignmentValidity: \"the proposal has fewer than three active assignments\" — a clause of the compiled statement, applied by ::Quorum.ResearchFunding.PeerReview.AssignmentService"
+        },
+        "rubric": "continuum-claim-rubric/3",
+        "verdict": "MATCH",
+        "level": "L3",
+        "levelName": "Violation-sensitive",
+        "judged": true,
+        "scope": {
+          "established": true,
+          "paths": 2,
+          "method": "lexed literal SQL over src/** for writes creating an active rev_assignment; each write's function and every call of it"
+        },
+        "binding": {
+          "model": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+          "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+          "specDigest": "sha256:6c5ee83498dd2d078461faf3233d64956bf2397de624c78c1c4857a293343c42",
+          "rubric": "continuum-claim-rubric/3"
+        },
+        "judgmentDigest": "sha256:9d333e2aa05d4049bd91f6010c8d178abd10ac6b369ae8dc404ad73b25bf8ebe",
+        "evidence": {
+          "results": 9,
+          "passed": 9
+        },
+        "evidenceState": {
+          "state": "observed"
+        },
+        "earnedBy": {
+          "level": "L3",
+          "reasons": [
+            "active-status-misread: fault accepted-not-counted detected by full-after-acceptance-refused on HTTP POST /api/proposals/:id/assignments",
+            "boundary-shift: fault bound-off-by-one detected by fourth-refused on HTTP POST /api/proposals/:id/assignments",
+            "concurrent-race: fault check-outside-transaction detected by concurrent-third-and-fourth on HTTP POST /api/proposals/:id/assignments",
+            "rule-bypass: fault bound-removed detected by fourth-refused on HTTP POST /api/proposals/:id/assignments"
+          ],
+          "evidence": [
+            {
+              "class": "active-status-misread",
+              "faults": [
+                {
+                  "id": "accepted-not-counted",
+                  "detected": {
+                    "check": "full-after-acceptance-refused",
+                    "path": "HTTP POST /api/proposals/:id/assignments",
+                    "why": "activeAfter is 4, expected 3; refused is false, expected true"
+                  }
+                }
+              ]
+            },
+            {
+              "class": "boundary-shift",
+              "faults": [
+                {
+                  "id": "bound-off-by-one",
+                  "detected": {
+                    "check": "fourth-refused",
+                    "path": "HTTP POST /api/proposals/:id/assignments",
+                    "why": "activeAfter is 4, expected 3; refused is false, expected true"
+                  }
+                }
+              ]
+            },
+            {
+              "class": "concurrent-race",
+              "faults": [
+                {
+                  "id": "check-outside-transaction",
+                  "detected": {
+                    "check": "concurrent-third-and-fourth",
+                    "path": "HTTP POST /api/proposals/:id/assignments",
+                    "why": "activeAfter is 4, expected 3; admitted is 2, expected 1"
+                  }
+                }
+              ]
+            },
+            {
+              "class": "rule-bypass",
+              "faults": [
+                {
+                  "id": "bound-removed",
+                  "detected": {
+                    "check": "fourth-refused",
+                    "path": "HTTP POST /api/proposals/:id/assignments",
+                    "why": "activeAfter is 4, expected 3; refused is false, expected true"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "sensitivity": {
+          "required": [
+            "boundary-shift",
+            "concurrent-race",
+            "rule-bypass"
+          ],
+          "classes": [
+            {
+              "class": "active-status-misread",
+              "required": false,
+              "met": true
+            },
+            {
+              "class": "boundary-shift",
+              "required": true,
+              "met": true
+            },
+            {
+              "class": "concurrent-race",
+              "required": true,
+              "met": true
+            },
+            {
+              "class": "rule-bypass",
+              "required": true,
+              "met": true
+            }
+          ]
+        },
+        "materialExclusions": [
+          {
+            "what": "the demo seed's calls of assignReviewer (src/seed.ts)",
+            "removes": null,
+            "by": "boundary.excludes",
+            "why": "demo data, never run when NODE_ENV=production; it calls the same guarded function"
+          },
+          {
+            "what": "several Quorum processes writing one store at once",
+            "removes": null,
+            "by": "boundary.excludes",
+            "why": "one process per store is the deployment model (LocalDevelopment binding); the store trigger is the defence there and is observed statically (store-bound-trigger), not executed across processes"
+          },
+          {
+            "what": "tests/**, scripts/**",
+            "removes": null,
+            "by": "boundary.excludes",
+            "why": "not part of the deployable"
+          }
+        ],
+        "limits": [
+          "assumed (A1-active): An active assignment is any rev_assignment row whose status is not revoked (assigned, accepted, overdue, completed): the model's \"active assignments\", in stored values.",
+          "assumed (A2-harness): Cases set up their world (accounts, a published call, an eligible proposal, the first assignments) through the implementation's own harness and services. The act under test — the HTTP route — and the state read — rev_assignment — are the verifier's.",
+          "assumed (A3-reached): The `reached` paths are what V8 precise BLOCK coverage reports executing during the act alone (setup excluded): a write site is reached when the innermost covered block containing it ran. Observed by the runtime, not declared.",
+          "no detected fault was placed on src/contexts/peer-review/service.ts:128: sensitivity there rests on the violation classes, not on a fault at that path",
+          "outside the boundary: several Quorum processes writing one store at once — one process per store is the deployment model (LocalDevelopment binding); the store trigger is the defence there and is observed statically (store-bound-trigger), not executed across processes",
+          "outside the boundary: tests/**, scripts/** — not part of the deployable",
+          "outside the boundary: the demo seed's calls of assignReviewer (src/seed.ts) — demo data, never run when NODE_ENV=production; it calls the same guarded function",
+          "sensitivity is demonstrated only for the violation classes active-status-misread, boundary-shift, concurrent-race, rule-bypass: another way of violating the claim is not covered"
+        ]
+      },
+      {
+        "verification": "chair-decides-scored-only",
+        "claim": {
+          "language": "bdl",
+          "kind": "business-rule",
+          "id": "r-q008",
+          "name": "ChairDecidesScoredOnly",
+          "statement": "ChairDecidesScoredOnly (r-q008): when Proposal.status != ProposalStatus \"Scored\" on RecordPanelDecision (ac-q019) — Only a Panel Chair records a panel decision, only for a Scored proposal, and only once. [judged at its declared scope RecordPanelDecision (ac-q019) only; the assertion is not evaluated anywhere else]"
+        },
+        "rubric": "continuum-claim-rubric/2",
+        "verdict": "MATCH",
+        "level": "L3",
+        "levelName": "Strong Conformance",
+        "judged": true,
+        "scope": {
+          "established": true,
+          "paths": 8,
+          "method": "lexed src/**: SQL writes to adj_decision and adj_case→decided; publishes of the decision fact; proposal status writes to an outcome through the status channel; every call of each decision function"
+        },
+        "binding": {
+          "model": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+          "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+          "specDigest": "sha256:f5215797a9cd0c6c30bd88f67f76e9e19da876f98099571b8ea41c12a0e2140a",
+          "rubric": "continuum-claim-rubric/2"
+        },
+        "judgmentDigest": "sha256:1902e6a98512ac6bee0a8011c6a9cb1f2401e7a9188f3f2a06dadb35af0e7c5a",
+        "evidence": {
+          "results": 11,
+          "passed": 11
+        },
+        "earnedBy": {
+          "level": "L3",
+          "reasons": [
+            "full-boundary evidence: constraint src/contexts/adjudication/service.ts:recordDecision applies to every in-scope path (guards-dominate-decision); the constraint implements the model rule (guards-implement-rule on src/contexts/adjudication/service.ts:recordDecision)",
+            "challenge decision-admits-officer (deliberate-fault) qualified: the deliberate fault architecture/challenges/decision-admits-officer.patch was detected: non-chair-refused on HTTP POST /api/adjudications/:id/decision — allRefused is false, expected true; decisionsAdded is 1, expected 0; eventsAdded is 1, expected 0; proposalStatusAfter is \"awarded\", expected \"scored\""
+          ]
+        }
+      },
+      {
+        "verification": "orcid-verification-lifecycle",
+        "claim": {
+          "language": "bdl",
+          "kind": "state-model",
+          "id": "sm-q002",
+          "name": "Account.orcidStatus (OrcidVerification)",
+          "statement": "Account.orcidStatus changes only by the declared transitions of OrcidVerification (sm-q002) — Unverified → Verified by Verify; Verified → Unverified by ClearOnErasure — the complete set of permitted changes (BDL §5.8 R-07); it starts Unverified; terminal: Verified"
+        },
+        "rubric": "continuum-claim-rubric/2",
+        "verdict": "MATCH",
+        "level": "L2",
+        "levelName": "Covered Conformance",
+        "judged": true,
+        "scope": {
+          "established": true,
+          "paths": 4,
+          "method": "lexed literal SQL over src/** for writes that set idn_account.orcid_status; each write's function and every call of it"
+        },
+        "binding": {
+          "model": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+          "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+          "specDigest": "sha256:94f5edabf41155c1ebda245fbb6e186c702ac1ce8682b501c72520cc92518526",
+          "rubric": "continuum-claim-rubric/2"
+        },
+        "judgmentDigest": "sha256:54d4c3dff03bca6c3756014372e6f943658b875e0e966907c9d6d08127a5051c",
+        "evidence": {
+          "results": 10,
+          "passed": 9
+        },
+        "earnedBy": {
+          "level": "L2",
+          "reasons": [
+            "scope established (4 path(s)); every in-scope path is covered by a passing qualifying check"
+          ]
+        },
+        "next": {
+          "action": "raise-level",
+          "level": "L3",
+          "detail": "full-boundary evidence: no enforcement check passed: dominates is false, expected true; the constraint does not apply to 4 in-scope path(s): HTTP POST /api/me/orcid, HTTP POST /api/operations/accounts/:id/erase, src/contexts/identity/service.ts:102, src/contexts/identity/service.ts:210; the specification declares no rule-correspondence check"
+        }
+      },
+      {
+        "verification": "reviewstore-writers",
+        "claim": {
+          "language": "adl",
+          "kind": "resource-writers",
+          "id": "7cbfd5c5-60f5-4af5-bcba-aa0359aaaf4e",
+          "name": "::Quorum.ResearchFunding.PeerReview.ReviewStore",
+          "statement": "::Quorum.ResearchFunding.PeerReview.ReviewStore is written only by its declared writer ::Quorum.ResearchFunding.PeerReview.AssignmentService, of its owning context ::Quorum.ResearchFunding.PeerReview (closed over the model's declared writes relationships; the language itself requires only that writers be of the owning context)"
+        },
+        "rubric": "continuum-claim-rubric/3",
+        "verdict": "MATCH",
+        "level": "L3",
+        "levelName": "Violation-sensitive",
+        "judged": true,
+        "scope": {
+          "established": true,
+          "paths": 13,
+          "method": "lexed literal SQL + non-literal SQL channels + file/handle mechanisms over src/**"
+        },
+        "binding": {
+          "model": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+          "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+          "specDigest": "sha256:e033cd0ea2c99ecc05a1de1bc91055c05bc0035a32ffa549337ae264c4601d8c",
+          "rubric": "continuum-claim-rubric/3"
+        },
+        "judgmentDigest": "sha256:46c791d6d7fcf474741928e6237414d521b94cfdc6e17980e929701128e14758",
+        "evidence": {
+          "results": 14,
+          "passed": 14
+        },
+        "evidenceState": {
+          "state": "observed"
+        },
+        "earnedBy": {
+          "level": "L3",
+          "reasons": [
+            "undeclared-writer: fault adjudication-writes-review detected by writer-declared on src/contexts/adjudication/service.ts:195"
+          ],
+          "evidence": [
+            {
+              "class": "undeclared-writer",
+              "faults": [
+                {
+                  "id": "adjudication-writes-review",
+                  "detected": {
+                    "check": "writer-declared",
+                    "path": "src/contexts/adjudication/service.ts:195",
+                    "why": "::Quorum.ResearchFunding.Adjudication.AdjudicationService writes ::Quorum.ResearchFunding.PeerReview.ReviewStore at src/contexts/adjudication/service.ts:195; the model declares only ::Quorum.ResearchFunding.PeerReview.AssignmentService as its writer"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "sensitivity": {
+          "required": [
+            "undeclared-writer"
+          ],
+          "removedByScope": [
+            {
+              "class": "concurrent-race",
+              "by": "scope.concurrency: false",
+              "why": "the specification excludes concurrent execution and states no reason (scope.concurrencyStatement)"
+            }
+          ],
+          "classes": [
+            {
+              "class": "undeclared-writer",
+              "required": true,
+              "met": true
+            }
+          ]
+        },
+        "materialExclusions": [
+          {
+            "what": "concurrent execution",
+            "removes": "concurrent-race",
+            "by": "scope.concurrency: false",
+            "why": "the specification excludes concurrent execution and states no reason (scope.concurrencyStatement)"
+          },
+          {
+            "what": "tests/**, scripts/**, tools and continuum/**",
+            "removes": null,
+            "by": "boundary.excludes",
+            "why": "not part of the deployable; they never run in production"
+          },
+          {
+            "what": "schema DDL (CREATE TABLE / INDEX / TRIGGER) in src/platform/schema.ts",
+            "removes": null,
+            "by": "boundary.excludes",
+            "why": "defines the store; it writes no rows. Any INSERT/UPDATE/DELETE inside a migration is NOT excluded: it is scanned like any other literal"
+          },
+          {
+            "what": "whole-database restore by the Operator (src/platform/backup.ts)",
+            "removes": null,
+            "by": "boundary.excludes",
+            "why": "replaces the entire database file with a verified backup — every store at once, by the Operator actor; it is not a context writing a store"
+          },
+          {
+            "what": "the demo seed's reset (src/seed.ts)",
+            "removes": null,
+            "by": "boundary.excludes",
+            "why": "deletes the whole database file before re-seeding a demo; never runs when NODE_ENV=production. The seed's rows are written through the context services, whose SQL is scanned"
+          },
+          {
+            "what": "writes to files that are not the database: the server pid file, the token secret, the outbound mail log",
+            "removes": null,
+            "by": "boundary.excludes",
+            "why": "each targets its own file (pidFileFor(dbFile), <data>/token-secret, <data>/mail.jsonl), never the database"
+          }
+        ],
+        "limits": [
+          "assumed (A1-table-store): A table belongs to the store whose evidence.json citation range in src/platform/schema.ts contains its CREATE TABLE. The model declares no bindings, so this mapping is evidence, not a model claim; a rev_* table no range covers is reported unresolved.",
+          "assumed (A2-module-service): A write site's writer is the one Service continuum/evidence.json cites for its module (directly or through an element nested in it). A module cited for no Service, or for several, has no attributable writer and its sites are unresolved.",
+          "assumed (A3-sql-channel): The database is reached only through better-sqlite3 handles; .prepare is always SQL, and .exec is SQL only on a receiver named db/#db. SQL keywords are matched case-insensitively.",
+          "assumed (A4-static): The judgment is about the code at the commit, statically; a write that only exists at runtime through a channel the scanner does not recognise would not be seen. The scanner reports the channels it found and could not follow as unresolved.",
+          "concurrent execution is outside the verified scope (scope.concurrency: false)",
+          "no detected fault was placed on src/contexts/peer-review/service.ts:128: sensitivity there rests on the violation classes, not on a fault at that path",
+          "no detected fault was placed on src/contexts/peer-review/service.ts:130: sensitivity there rests on the violation classes, not on a fault at that path",
+          "no detected fault was placed on src/contexts/peer-review/service.ts:161: sensitivity there rests on the violation classes, not on a fault at that path",
+          "no detected fault was placed on src/contexts/peer-review/service.ts:198: sensitivity there rests on the violation classes, not on a fault at that path",
+          "no detected fault was placed on src/contexts/peer-review/service.ts:256: sensitivity there rests on the violation classes, not on a fault at that path",
+          "no detected fault was placed on src/contexts/peer-review/service.ts:258: sensitivity there rests on the violation classes, not on a fault at that path",
+          "no detected fault was placed on src/contexts/peer-review/service.ts:259: sensitivity there rests on the violation classes, not on a fault at that path",
+          "no detected fault was placed on src/contexts/peer-review/service.ts:273: sensitivity there rests on the violation classes, not on a fault at that path",
+          "no detected fault was placed on src/contexts/peer-review/service.ts:287: sensitivity there rests on the violation classes, not on a fault at that path",
+          "no detected fault was placed on src/contexts/peer-review/service.ts:293: sensitivity there rests on the violation classes, not on a fault at that path",
+          "no detected fault was placed on src/contexts/peer-review/service.ts:300: sensitivity there rests on the violation classes, not on a fault at that path",
+          "no detected fault was placed on src/contexts/peer-review/service.ts:60: sensitivity there rests on the violation classes, not on a fault at that path",
+          "no detected fault was placed on src/contexts/peer-review/service.ts:63: sensitivity there rests on the violation classes, not on a fault at that path",
+          "outside the boundary: schema DDL (CREATE TABLE / INDEX / TRIGGER) in src/platform/schema.ts — defines the store; it writes no rows. Any INSERT/UPDATE/DELETE inside a migration is NOT excluded: it is scanned like any other literal",
+          "outside the boundary: tests/**, scripts/**, tools and continuum/** — not part of the deployable; they never run in production",
+          "outside the boundary: the demo seed's reset (src/seed.ts) — deletes the whole database file before re-seeding a demo; never runs when NODE_ENV=production. The seed's rows are written through the context services, whose SQL is scanned",
+          "outside the boundary: whole-database restore by the Operator (src/platform/backup.ts) — replaces the entire database file with a verified backup — every store at once, by the Operator actor; it is not a context writing a store",
+          "outside the boundary: writes to files that are not the database: the server pid file, the token secret, the outbound mail log — each targets its own file (pidFileFor(dbFile), <data>/token-secret, <data>/mail.jsonl), never the database",
+          "sensitivity is demonstrated only for the violation classes undeclared-writer: another way of violating the claim is not covered"
+        ]
+      },
+      {
+        "verification": "verified-reviewers-only",
+        "claim": {
+          "language": "bdl",
+          "kind": "business-rule",
+          "id": "r-q012",
+          "name": "VerifiedReviewersOnly",
+          "statement": "VerifiedReviewersOnly (r-q012): when Account.orcidStatus != OrcidStatus \"Verified\" on AssignReviewer (ac-q012) — A reviewer may hold an assignment only if their ORCID identity is Verified. [judged at its declared scope AssignReviewer (ac-q012) only; the assertion is not evaluated anywhere else]"
+        },
+        "rubric": "continuum-claim-rubric/2",
+        "verdict": "MATCH",
+        "level": "L3",
+        "levelName": "Strong Conformance",
+        "judged": true,
+        "scope": {
+          "established": true,
+          "paths": 2,
+          "method": "lexed literal SQL over src/** for writes that make an assignment held; each write's function and every call of it"
+        },
+        "binding": {
+          "model": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+          "commit": "6bcacf311447a573d2c408f50a73fcb480ec566e",
+          "specDigest": "sha256:8ff34457bdc7c9e51990e7d10eb0cc44cd8ee72e1308cf5b026d82ba705edc9e",
+          "rubric": "continuum-claim-rubric/2"
+        },
+        "judgmentDigest": "sha256:4c6085089aa4cb3d52d0e197880f682f99982710960c9fbcbcd5ac17d6097747",
+        "evidence": {
+          "results": 5,
+          "passed": 5
+        },
+        "earnedBy": {
+          "level": "L3",
+          "reasons": [
+            "full-boundary evidence: constraint src/contexts/peer-review/service.ts:assignReviewer applies to every in-scope path (guard-dominates-writes); the constraint implements the model rule (guard-implements-condition on src/contexts/peer-review/service.ts:assignmentEligibility)",
+            "challenge orcid-guard-defeated (deliberate-fault) qualified: the deliberate fault architecture/challenges/orcid-guard-defeated.patch was detected: unverified-reviewer-refused on HTTP POST /api/proposals/:id/assignments — code is null, expected \"orcid_unverified\"; heldAfter is true, expected false; refused is false, expected true"
+          ]
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "source": "static",
+        "state": "judged",
+        "next": null
+      },
+      {
+        "source": "scenarios",
+        "state": "not-declared",
+        "detail": "the baseline carries no acceptance scenario",
+        "next": {
+          "action": "declare-scenario",
+          "detail": "the baseline carries no acceptance scenario"
+        }
+      },
+      {
+        "source": "tests",
+        "state": "judged",
+        "runner": "vitest|node",
+        "next": null
+      },
+      {
+        "source": "claims",
+        "state": "judged",
+        "executesProjectCode": true,
+        "next": null
+      }
+    ],
+    "gates": null,
+    "governance": [],
+    "headline": {
+      "kind": "not-declared",
+      "text": "the baseline carries no acceptance scenario",
+      "detail": null,
+      "next": {
+        "action": "declare-scenario",
+        "detail": "the baseline carries no acceptance scenario"
+      }
+    },
+    "digest": "sha256:dc0d182693b5d0927d236c9f66bc8c28fcaaf77629e4d91f87bab602d04c6909"
+  },
+  "attestation": {
+    "space": "sha256:e9eb5c8314be1418b4f99a033e46413e5a786f32f91b80c05e4ce020145e15a4",
+    "id": "sha256:152583e1eb38f867e496ac9dd9a7fde3c5a9da6f81e73add004bf8169ae1e140",
+    "idempotent": false,
+    "line": "{\"at\":\"2026-11-17T09:28:48.247Z\",\"attestation\":{\"alg\":\"ES256\",\"kid\":\"decisions-dev-2026-11-04\",\"sig\":\"_EoD_9inToUcwsSJO60WDnrZElK3tCcRclax-q2RzdAsQ0AfsD0waab73LsU5iQC84a6-CsqeFXMH2Xbgw68FA\"},\"id\":\"sha256:152583e1eb38f867e496ac9dd9a7fde3c5a9da6f81e73add004bf8169ae1e140\",\"previous\":\"sha256:e30d2586cc9f53547e650599378b64cc060f1f3777e62983e7832221d2f65248\",\"profile\":\"continuum-conformance-attestation-record/1\",\"requestedBy\":{\"issuer\":null,\"subject\":null,\"via\":\"principal\"},\"seq\":2,\"space\":\"sha256:e9eb5c8314be1418b4f99a033e46413e5a786f32f91b80c05e4ce020145e15a4\",\"statement\":{\"evidence\":[{\"digest\":\"sha256:163f250166fc2fc10106db1fb488b45cd6ea030dc4851a5bac8f35320a5f05dd\",\"name\":\"report/challenges/accepted-not-counted/verification/at-most-three-reviewers/result.json\"},{\"digest\":\"sha256:8be4ea7640520bc609f75d537e25521e63bc01791beb813a5efc9611bc68f193\",\"name\":\"report/challenges/adjudication-writes-review/verification/reviewstore-writers/result.json\"},{\"digest\":\"sha256:bd020ebadc9e596eebf5e093e5590020aba0f37373243d0815491d42173ea5fc\",\"name\":\"report/challenges/bound-off-by-one/verification/at-most-three-reviewers/result.json\"},{\"digest\":\"sha256:28476f8685dfa306024351d5821beb97bb95ad61487753d0e813285535f7a8c5\",\"name\":\"report/challenges/bound-removed/verification/at-most-three-reviewers/result.json\"},{\"digest\":\"sha256:e98b00b62a7e4943802d569b3b3c6bca5cc66a6b7692bd1b5b2ff52fd075b233\",\"name\":\"report/challenges/check-outside-transaction/verification/at-most-three-reviewers/result.json\"},{\"digest\":\"sha256:40050adb030c0f2c6f366ac3b7aefd3e4ab0f435d07036479399744fdebec295\",\"name\":\"report/challenges/decision-admits-officer/verification/chair-decides-scored-only/result.json\"},{\"digest\":\"sha256:70fffb8b9abff802f3dd6f6f1dba0db738fb47000c5b14fe15388cc11ca974b0\",\"name\":\"report/challenges/orcid-guard-defeated/verification/verified-reviewers-only/result.json\"},{\"digest\":\"sha256:8d17c44798d01bac181a171d2ab58a708469296b65a416221e44bb27403d2ef3\",\"name\":\"report/junit.xml\"},{\"digest\":\"sha256:63e6274f659211ffc9b3df5635d6b7b0a95e6ad6066ffd5d586a5a9a7ff79aea\",\"name\":\"report/report.json\"},{\"digest\":\"sha256:7ddad5ab782de3acd6f04bdeebe18b6cfecac4b0a09777b8fe9f172dac952e11\",\"name\":\"report/verification-results.json\"},{\"digest\":\"sha256:1d0cf9a70bf45f7299945cbb680103ac7267150db8ca844c66390921b23de657\",\"name\":\"report/verification/at-most-three-reviewers/result.json\"},{\"digest\":\"sha256:2dae9cdc85cba545fa8db7085ae7fb4d35c757fa0387a09d044d281d7c5536b1\",\"name\":\"report/verification/chair-decides-scored-only/result.json\"},{\"digest\":\"sha256:355c714916fc45e16266e7bdbc3aa3aa2dc0cd9654a7d8d336d9655a3849bf16\",\"name\":\"report/verification/orcid-verification-lifecycle/result.json\"},{\"digest\":\"sha256:813271e85ab7dc726c71f8bff4bd0ca7ee2863ff22507bbb154a8e4d9ed399d6\",\"name\":\"report/verification/reviewstore-writers/result.json\"},{\"digest\":\"sha256:927b7901eab7c318c55b3efedba36af271c95dcce7b46479ec184c2b40d1e073\",\"name\":\"report/verification/verified-reviewers-only/result.json\"}],\"judgment\":{\"claims\":[{\"claim\":{\"id\":\"61505d55-158f-4a68-aa7b-204a46219514\",\"kind\":\"business-rule\",\"language\":\"adl\",\"name\":\"::Quorum.ResearchFunding.PeerReview.AssignmentValidity\",\"statement\":\"::Quorum.ResearchFunding.PeerReview.AssignmentValidity: \\\"the proposal has fewer than three active assignments\\\" — a clause of the compiled statement, applied by ::Quorum.ResearchFunding.PeerReview.AssignmentService\"},\"evidence\":{\"passed\":9,\"results\":9},\"judgmentDigest\":\"sha256:9d333e2aa05d4049bd91f6010c8d178abd10ac6b369ae8dc404ad73b25bf8ebe\",\"level\":\"L3\",\"rubric\":\"continuum-claim-rubric/3\",\"scope\":{\"established\":true,\"method\":\"lexed literal SQL over src/** for writes creating an active rev_assignment; each write's function and every call of it\",\"paths\":2},\"specDigest\":\"sha256:6c5ee83498dd2d078461faf3233d64956bf2397de624c78c1c4857a293343c42\",\"verdict\":\"MATCH\",\"verification\":\"at-most-three-reviewers\"},{\"claim\":{\"id\":\"r-q008\",\"kind\":\"business-rule\",\"language\":\"bdl\",\"name\":\"ChairDecidesScoredOnly\",\"statement\":\"ChairDecidesScoredOnly (r-q008): when Proposal.status != ProposalStatus \\\"Scored\\\" on RecordPanelDecision (ac-q019) — Only a Panel Chair records a panel decision, only for a Scored proposal, and only once. [judged at its declared scope RecordPanelDecision (ac-q019) only; the assertion is not evaluated anywhere else]\"},\"evidence\":{\"passed\":11,\"results\":11},\"judgmentDigest\":\"sha256:1902e6a98512ac6bee0a8011c6a9cb1f2401e7a9188f3f2a06dadb35af0e7c5a\",\"level\":\"L3\",\"rubric\":\"continuum-claim-rubric/2\",\"scope\":{\"established\":true,\"method\":\"lexed src/**: SQL writes to adj_decision and adj_case→decided; publishes of the decision fact; proposal status writes to an outcome through the status channel; every call of each decision function\",\"paths\":8},\"specDigest\":\"sha256:f5215797a9cd0c6c30bd88f67f76e9e19da876f98099571b8ea41c12a0e2140a\",\"verdict\":\"MATCH\",\"verification\":\"chair-decides-scored-only\"},{\"claim\":{\"id\":\"sm-q002\",\"kind\":\"state-model\",\"language\":\"bdl\",\"name\":\"Account.orcidStatus (OrcidVerification)\",\"statement\":\"Account.orcidStatus changes only by the declared transitions of OrcidVerification (sm-q002) — Unverified → Verified by Verify; Verified → Unverified by ClearOnErasure — the complete set of permitted changes (BDL §5.8 R-07); it starts Unverified; terminal: Verified\"},\"evidence\":{\"passed\":9,\"results\":10},\"judgmentDigest\":\"sha256:54d4c3dff03bca6c3756014372e6f943658b875e0e966907c9d6d08127a5051c\",\"level\":\"L2\",\"rubric\":\"continuum-claim-rubric/2\",\"scope\":{\"established\":true,\"method\":\"lexed literal SQL over src/** for writes that set idn_account.orcid_status; each write's function and every call of it\",\"paths\":4},\"specDigest\":\"sha256:94f5edabf41155c1ebda245fbb6e186c702ac1ce8682b501c72520cc92518526\",\"verdict\":\"MATCH\",\"verification\":\"orcid-verification-lifecycle\"},{\"claim\":{\"id\":\"7cbfd5c5-60f5-4af5-bcba-aa0359aaaf4e\",\"kind\":\"resource-writers\",\"language\":\"adl\",\"name\":\"::Quorum.ResearchFunding.PeerReview.ReviewStore\",\"statement\":\"::Quorum.ResearchFunding.PeerReview.ReviewStore is written only by its declared writer ::Quorum.ResearchFunding.PeerReview.AssignmentService, of its owning context ::Quorum.ResearchFunding.PeerReview (closed over the model's declared writes relationships; the language itself requires only that writers be of the owning context)\"},\"evidence\":{\"passed\":14,\"results\":14},\"judgmentDigest\":\"sha256:46c791d6d7fcf474741928e6237414d521b94cfdc6e17980e929701128e14758\",\"level\":\"L3\",\"rubric\":\"continuum-claim-rubric/3\",\"scope\":{\"established\":true,\"method\":\"lexed literal SQL + non-literal SQL channels + file/handle mechanisms over src/**\",\"paths\":13},\"specDigest\":\"sha256:e033cd0ea2c99ecc05a1de1bc91055c05bc0035a32ffa549337ae264c4601d8c\",\"verdict\":\"MATCH\",\"verification\":\"reviewstore-writers\"},{\"claim\":{\"id\":\"r-q012\",\"kind\":\"business-rule\",\"language\":\"bdl\",\"name\":\"VerifiedReviewersOnly\",\"statement\":\"VerifiedReviewersOnly (r-q012): when Account.orcidStatus != OrcidStatus \\\"Verified\\\" on AssignReviewer (ac-q012) — A reviewer may hold an assignment only if their ORCID identity is Verified. [judged at its declared scope AssignReviewer (ac-q012) only; the assertion is not evaluated anywhere else]\"},\"evidence\":{\"passed\":5,\"results\":5},\"judgmentDigest\":\"sha256:4c6085089aa4cb3d52d0e197880f682f99982710960c9fbcbcd5ac17d6097747\",\"level\":\"L3\",\"rubric\":\"continuum-claim-rubric/2\",\"scope\":{\"established\":true,\"method\":\"lexed literal SQL over src/** for writes that make an assignment held; each write's function and every call of it\",\"paths\":2},\"specDigest\":\"sha256:8ff34457bdc7c9e51990e7d10eb0cc44cd8ee72e1308cf5b026d82ba705edc9e\",\"verdict\":\"MATCH\",\"verification\":\"verified-reviewers-only\"}],\"commitments\":[{\"commitment\":\"::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.Notification.NoScoresToReviewers\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PeerReview.AssignmentValidity\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PeerReview.EveryCriterionScored\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PeerReview.PeerReviewsHiddenUntilOwnSubmitted\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PeerReview.ThreeSubmittedReviews\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.Submission.ApplicantScope\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.Submission.SubmissionWindowOpen\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.Submission.SubmittedOnce\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.AccessControl.PersonalDataErasable\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.BlindPeerReview.CompleteScoring\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.CallAdministration.SubmissionWindow\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.EligibilityScreening.AgentNeverDecides\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PanelAdjudication.DecisionsEscalated\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.ParticipantNotification.NotificationsDurable\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PortfolioReporting.PortfolioFromProjection\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PortfolioReporting.TransitionsAudited\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.ProposalSubmission.SubmitOnce\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.ReviewCompletionTracking.OverdueReviewsEscalated\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.ReviewCompletionTracking.ThreeReviewsBeforeScoring\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.ReviewerAssignment.NoConflictedAssignment\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.ReviewerAssignment.NoSelfReview\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"}],\"contradictions\":[],\"coverage\":{\"claims\":{\"declared\":5,\"judged\":5},\"commitments\":{\"byVerdict\":{\"unsupported\":28},\"established\":0,\"notEstablished\":[{\"commitment\":\"::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.Notification.NoScoresToReviewers\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PeerReview.AssignmentValidity\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PeerReview.EveryCriterionScored\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PeerReview.PeerReviewsHiddenUntilOwnSubmitted\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PeerReview.ThreeSubmittedReviews\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.Submission.ApplicantScope\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.Submission.SubmissionWindowOpen\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.Submission.SubmittedOnce\",\"kind\":\"business-rule\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.AccessControl.PersonalDataErasable\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.AccessControl.RoleScopedAuthority\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.BlindPeerReview.BlindUntilOwnSubmitted\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.BlindPeerReview.CompleteScoring\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.CallAdministration.SubmissionWindow\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.EligibilityScreening.AgentNeverDecides\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PanelAdjudication.DecisionsEscalated\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PanelAdjudication.EnvelopeNeverExceeded\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.ParticipantNotification.NotificationsDurable\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PortfolioReporting.PortfolioFromProjection\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.PortfolioReporting.TransitionsAudited\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.ProposalSubmission.SubmitOnce\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.ReviewCompletionTracking.OverdueReviewsEscalated\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.ReviewCompletionTracking.ThreeReviewsBeforeScoring\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.ReviewerAssignment.NoConflictedAssignment\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.ReviewerAssignment.NoSelfReview\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"},{\"commitment\":\"::Quorum.ResearchFunding.ReviewerAssignment.VerifiedReviewersOnly\",\"kind\":\"requirement\",\"verdict\":\"unsupported\"}],\"total\":28},\"static\":{\"outcome\":\"CONFORMS\",\"unsupported\":33,\"unverified\":1,\"verified\":4,\"violated\":0},\"tests\":{\"blocked\":0,\"error\":0,\"failed\":0,\"passed\":210,\"runner\":\"vitest|node\",\"skipped\":0}},\"digest\":\"sha256:dc0d182693b5d0927d236c9f66bc8c28fcaaf77629e4d91f87bab602d04c6909\",\"errors\":[],\"evidence\":[{\"next\":null,\"source\":\"static\",\"state\":\"judged\"},{\"detail\":\"the baseline carries no acceptance scenario\",\"next\":{\"action\":\"declare-scenario\",\"detail\":\"the baseline carries no acceptance scenario\"},\"source\":\"scenarios\",\"state\":\"not-declared\"},{\"next\":null,\"runner\":\"vitest|node\",\"source\":\"tests\",\"state\":\"judged\"},{\"executesProjectCode\":true,\"next\":null,\"source\":\"claims\",\"state\":\"judged\"}],\"governance\":[],\"incomplete\":[{\"detail\":\"the baseline carries no acceptance scenario\",\"kind\":\"not-declared\",\"next\":{\"action\":\"declare-scenario\",\"detail\":\"the baseline carries no acceptance scenario\"},\"source\":\"scenarios\"},{\"detail\":\"28 commitments with no scenario or pinned test: ChairOnScoredOnly, EnvelopeNotExceeded, NoScoresToReviewers, AssignmentValidity, …\",\"kind\":\"no-evidence\",\"next\":{\"action\":\"add-evidence\",\"detail\":\"::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly\"},\"source\":\"report\"}],\"levels\":{\"assigned\":5,\"distribution\":{\"L0\":0,\"L1\":0,\"L2\":1,\"L3\":4},\"rubrics\":[\"continuum-claim-rubric/2\",\"continuum-claim-rubric/3\"],\"statement\":\"Overall level unset across 5 claims — judged under different rubrics (continuum-claim-rubric/2, continuum-claim-rubric/3), which are not one scale · 1 at L2, 4 at L3\",\"unassigned\":0},\"static\":{\"byStatus\":{\"unsupported\":33,\"unverified\":1,\"verified\":4,\"violated\":0},\"outcome\":\"CONFORMS\",\"violated\":[]},\"status\":\"INCOMPLETE\",\"surface\":\"continuum-platform-assessment-judgment/1\"},\"profile\":\"continuum-conformance-attestation/1\",\"rubrics\":[\"continuum-claim-rubric/2\",\"continuum-claim-rubric/3\"],\"subject\":{\"architecture\":{\"descriptor\":{\"digest\":\"sha256:0cc31b36d923f1f4c82bfba3587786276099c97fa60b0742874f2e19a1e15db7\",\"path\":\"continuum/architecture-package.json\"},\"inputs\":[{\"digest\":\"sha256:087d4301e0d2334310f5b09e9c3ae87a1bf4aa622c28c5ce082b6bd1569fe24a\",\"path\":\"continuum/model/local-development.adl-binding.json\",\"role\":\"binding\",\"status\":\"resolved\"},{\"digest\":\"sha256:777f2020fb21a519cde68db97a37556f8a5549f554a96bddd37709297a2eebd1\",\"path\":\"continuum/model/production.adl-binding.json\",\"role\":\"binding\",\"status\":\"resolved\"},{\"digest\":\"sha256:0262d0d9af3156a64f05446bb3753d24cd6b5c797e6872bb11a51cce92456a72\",\"path\":\"continuum/model/quorum.bdl\",\"role\":\"business\",\"status\":\"resolved\"},{\"digest\":\"sha256:bb538c41aecb565c8ded5046430c770a55a817646c4df7a21a16697b0618b571\",\"path\":\"architecture/verification/at-most-three-reviewers.verification.json\",\"role\":\"claim\",\"status\":\"resolved\"},{\"digest\":\"sha256:d0284c32bf2d1ab13ebc9d1cbf605a398fa5dff8c82b60b463d6073a70ac696c\",\"path\":\"architecture/verification/chair-decides-scored-only.verification.json\",\"role\":\"claim\",\"status\":\"resolved\"},{\"digest\":\"sha256:a32f0c7b7b768171473afb171dd655f045e69aff2f168a15813c5128bcd8639e\",\"path\":\"architecture/verification/orcid-verification-lifecycle.verification.json\",\"role\":\"claim\",\"status\":\"resolved\"},{\"digest\":\"sha256:fadbec94f5a1d3cd615b202fc04048c4fe79495118501dee6fd6fa424079e8e3\",\"path\":\"architecture/verification/reviewstore-writers.verification.json\",\"role\":\"claim\",\"status\":\"resolved\"},{\"digest\":\"sha256:0994f8d2e87d8e2614586a5c1942f0f0eaaa83f5472ee4ac0d4a529cc097d8f5\",\"path\":\"architecture/verification/verified-reviewers-only.verification.json\",\"role\":\"claim\",\"status\":\"resolved\"},{\"digest\":\"sha256:8671abba656264761dfc8cc4afa870d887ff6bfc7f717a1d7733aa68490a46a2\",\"path\":\"continuum/decisions.jsonl\",\"role\":\"decisions\",\"status\":\"resolved\"},{\"digest\":\"sha256:288522acb6161376d28f49540f69f05749e79e859893660d4dd891fadc55b93a\",\"path\":\"continuum/evidence.json\",\"role\":\"evidence\",\"status\":\"resolved\"},{\"digest\":\"sha256:3a2cb853934a54859498b42d10b6048726fe960c7c1adce40d009267ecd2c595\",\"path\":\"architecture/handoff.json\",\"role\":\"handoff\",\"status\":\"resolved\"},{\"digest\":\"sha256:3f2a36aa8e8d55725592b8c9ddcfd4bfcdf1728a41e92ea271f9fff3b8016711\",\"path\":\"continuum/model/quorum.adl-manifest.json\",\"role\":\"model\",\"status\":\"resolved\"},{\"path\":\"(principle registries)\",\"role\":\"principles\",\"status\":\"unretrievable\",\"why\":\"principle registries are Host-kept signed records, resolved by `continuum principle resolve`; this package does not pin one\"}],\"model\":{\"attestation\":\"sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1\",\"changeState\":\"sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba\",\"manifest\":\"continuum/model/quorum.adl-manifest.json\"},\"package\":\"avlon.quorum\",\"source\":{\"commit\":\"6bcacf311447a573d2c408f50a73fcb480ec566e\",\"tree\":\"2eca51bd68a6874a938a219dc92a718d8bc46bf7\"}},\"implementation\":{\"commit\":\"6bcacf311447a573d2c408f50a73fcb480ec566e\",\"snapshot\":\"committed\",\"tree\":\"2eca51bd68a6874a938a219dc92a718d8bc46bf7\"},\"package\":\"avlon.quorum\",\"repository\":\"root:75176ba62062f2ead0750efa4740c10dcabbca29\"},\"toolchain\":{\"cli\":\"0.40.0\"}}}\n",
+    "kid": "decisions-dev-2026-11-04"
+  },
+  "out": "C:\\projects\\avlon\\demo4-part2\\out\\attest"
+}

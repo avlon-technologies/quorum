@@ -1,0 +1,53 @@
+{
+  "acceptance-scenario": "1",
+  "name": "assignment-no-duplicate",
+  "purpose": "A reviewer who already holds an active assignment to a proposal cannot be assigned to it again (AssignmentValidity: no other active assignment to it).",
+  "verifies": [
+    "::Quorum.ResearchFunding.PeerReview.AssignmentValidity",
+    "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+  ],
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "underReview"
+      },
+      "text": "proposal p1 has reached underReview with reviewers 0, 1 and 2 assigned"
+    }
+  ],
+  "when": [
+    {
+      "step": "reviewer.assign",
+      "args": {
+        "proposal": "p1",
+        "reviewer": 0
+      },
+      "text": "the officer assigns reviewer 0 to p1 a second time"
+    }
+  ],
+  "then": [
+    {
+      "step": "command.refused",
+      "args": {
+        "status": 409,
+        "code": "already_assigned",
+        "rule": "INV-5"
+      },
+      "text": "the assignment is refused as already_assigned"
+    },
+    {
+      "step": "event.count",
+      "args": {
+        "type": "ReviewerAssigned",
+        "count": 3
+      },
+      "text": "still exactly three ReviewerAssigned events"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "acceptance-scenario": "1",
+  "name": "assignment-requires-reviewer-role",
+  "purpose": "An account that does not hold the reviewer role cannot be assigned to a proposal (AssignmentValidity: the reviewer holds the reviewer role).",
+  "verifies": [
+    "::Quorum.ResearchFunding.PeerReview.AssignmentValidity",
+    "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+  ],
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "eligible"
+      },
+      "text": "proposal p1 has reached eligible"
+    }
+  ],
+  "when": [
+    {
+      "step": "reviewer.assign",
+      "args": {
+        "proposal": "p1",
+        "reviewer": "bob"
+      },
+      "text": "the officer assigns bob, another applicant who is not a reviewer, to p1"
+    }
+  ],
+  "then": [
+    {
+      "step": "command.refused",
+      "args": {
+        "status": 422,
+        "code": "not_a_reviewer",
+        "rule": "INV-11"
+      },
+      "text": "the assignment is refused as not_a_reviewer"
+    },
+    {
+      "step": "event.count",
+      "args": {
+        "type": "ReviewerAssigned",
+        "count": 0
+      },
+      "text": "no ReviewerAssigned is published"
+    }
+  ]
+}

@@ -3,7 +3,7 @@
   "normative": false,
   "package": "avlon.quorum",
   "anchored": {
-    "commit": "f23da8d6bac5eb82e50d9d168a319407d76ec255",
+    "commit": "0b5104d1de995a3050c567240c77335a45192aeb",
     "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
     "commitCovers": true
   },
@@ -189,8 +189,39 @@
     "6ab58159-755c-4901-a1c0-788b9794ca30": {
       "name": "::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly",
       "kind": "BusinessRule",
-      "citations": [],
-      "status": "uncited"
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-08-panel-decision.test.ts:11-46",
+          "digest": "sha256:1e7c7b9756677de345c118658297f79e070bd80965de0e2dcbcae8b7294d889a"
+        },
+        {
+          "ref": "tests/scenarios/conflict-lifecycle.test.ts:41-59",
+          "digest": "sha256:cc06a03349ebf2fc47ec7d4408392eb3963f9f16b8bc06d617599395e43022f8"
+        }
+      ],
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-08-panel-decision.test.ts",
+          "name": "INV-8 — only a PanelChair decides, and only for a scored proposal > refuses a decision on a proposal that is not scored: 409 not_scored, no decision, no event",
+          "fingerprint": "sha256:0a7bcce312948ce50af8b7bfe03a812e282d971257df3b702aa5f70521851b27"
+        },
+        {
+          "file": "tests/invariants/inv-08-panel-decision.test.ts",
+          "name": "INV-8 — only a PanelChair decides, and only for a scored proposal > refuses a decision by a program officer (not a chair): 403 forbidden, nothing decided",
+          "fingerprint": "sha256:1dcf0be2399328396797124e74139b8ac660bb22f30170528747ac3f22f9aa36"
+        },
+        {
+          "file": "tests/invariants/inv-08-panel-decision.test.ts",
+          "name": "INV-8 — only a PanelChair decides, and only for a scored proposal > refuses a second decision: 409 already_decided, the first stands",
+          "fingerprint": "sha256:c91f63e997432653ea506cc9c98a557eae5aa6f3a69271bd49e20c4a25be1a6b"
+        },
+        {
+          "file": "tests/scenarios/conflict-lifecycle.test.ts",
+          "name": "Conflicted assignment across the review lifecycle (INV-3, ADR-005) > a conflict declared after scoring holds the award: the chair is refused with 409 integrity_hold, a decline is still possible",
+          "fingerprint": "sha256:aaa05c68e5f0054e8f63a1eb6d12bb2a1bab63f9eea31833093fed0f097ca3c2"
+        }
+      ]
     },
     "a4b26ee8-0547-42b5-adde-d2ee9bab2073": {
       "name": "::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded",
@@ -875,8 +906,47 @@
     "61505d55-158f-4a68-aa7b-204a46219514": {
       "name": "::Quorum.ResearchFunding.PeerReview.AssignmentValidity",
       "kind": "BusinessRule",
-      "citations": [],
-      "status": "uncited"
+      "citations": [
+        {
+          "ref": "tests/invariants/inv-03-conflict.test.ts:9-21",
+          "digest": "sha256:9e4bef2c5f9c36d5f083d7905ba0033b8f51ca552f8ca3206f4fa8d161812720"
+        },
+        {
+          "ref": "tests/invariants/inv-04-self-review.test.ts:9-18",
+          "digest": "sha256:443de512357bf476b8980ee88cf0a3e41613cf3fb4b7184787ce1bbf3134f47b"
+        },
+        {
+          "ref": "tests/invariants/inv-12-verified-reviewers.test.ts:9-18",
+          "digest": "sha256:9683d1faaf6d795acffdd02ed61d5feae55379d05daf78227cbef086aaa6acbd"
+        },
+        {
+          "ref": "tests/invariants/inv-05-three-reviews.test.ts:20-29",
+          "digest": "sha256:4bb42883b2df98bd050d6dcd2493502aee17fff13f417cc9be9bd26d32a61832"
+        }
+      ],
+      "status": "verified",
+      "tests": [
+        {
+          "file": "tests/invariants/inv-03-conflict.test.ts",
+          "name": "INV-3 — a conflicted reviewer can never hold an assignment > refuses assigning a reviewer with a declared conflict: 409 conflict_of_interest, no assignment, no event",
+          "fingerprint": "sha256:202a8b8af7fddf05b64989a739a400163322a1604816b943bb64f5b174d8731b"
+        },
+        {
+          "file": "tests/invariants/inv-04-self-review.test.ts",
+          "name": "INV-4 — an applicant is never assigned to review their own proposal > refuses assigning the applicant (who is also a verified reviewer): 409 self_review, no assignment, no event",
+          "fingerprint": "sha256:199d0189f19c758af68d5ad652a33f953c763aaf273405267edfaa86dd348d6d"
+        },
+        {
+          "file": "tests/invariants/inv-12-verified-reviewers.test.ts",
+          "name": "INV-12 — only ORCID-verified reviewers hold assignments > refuses assigning an unverified reviewer: 409 orcid_unverified, no assignment, no event",
+          "fingerprint": "sha256:5678212ae53fe2601fdde99276cbb0dd14333d16792a2cb96cf8550badb2c298"
+        },
+        {
+          "file": "tests/invariants/inv-05-three-reviews.test.ts",
+          "name": "INV-5 — exactly three submitted reviews before scored > refuses a fourth reviewer: 409 panel_full, no assignment, no event",
+          "fingerprint": "sha256:44ccf2e069cfd13959c053dd8e02e404cc699c5c946be5c984d975d716e93745"
+        }
+      ]
     },
     "e8aba01d-eba3-4dfd-a70a-c1753ab5090c": {
       "name": "::Quorum.ResearchFunding.PeerReview.EveryCriterionScored",

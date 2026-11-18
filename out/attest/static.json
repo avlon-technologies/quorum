@@ -1,0 +1,617 @@
+{
+  "ok": true,
+  "surface": "continuum-platform-conformance/1",
+  "compiled": true,
+  "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+  "judged": {
+    "kinds": [
+      "Agent",
+      "Service",
+      "Workflow"
+    ],
+    "services": 12,
+    "servicesWithModules": 12,
+    "modules": 37,
+    "unreadable": [],
+    "sharedModules": [],
+    "servicesWithoutModules": [],
+    "runtimeResolution": []
+  },
+  "rows": [
+    {
+      "source": "6bbc3747-a1d4-4477-a882-1147d2ab0618",
+      "sourceName": "::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+      "target": "5cb21bef-2f92-499c-b8ff-8f8040c4dc3c",
+      "targetName": "::Quorum.ResearchFunding.Calls.CallService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Calls.CallPublished; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Adjudication.AdjudicationService imports a cited module of ::Quorum.ResearchFunding.Calls.CallService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Calls.CallPublished"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "6bbc3747-a1d4-4477-a882-1147d2ab0618",
+      "sourceName": "::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+      "target": "870cfc1f-ea8a-4562-a0f0-8e9d126b1342",
+      "targetName": "::Quorum.ResearchFunding.Notification.NotificationService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Adjudication.AwardHeld, ::Quorum.ResearchFunding.Adjudication.DecisionEscalated; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Adjudication.AdjudicationService imports a cited module of ::Quorum.ResearchFunding.Notification.NotificationService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Adjudication.AwardHeld",
+        "::Quorum.ResearchFunding.Adjudication.DecisionEscalated"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "6bbc3747-a1d4-4477-a882-1147d2ab0618",
+      "sourceName": "::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+      "target": "b65240e8-b01b-461c-8bb2-fc09d15f4bda",
+      "targetName": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Adjudication.AwardHeld, ::Quorum.ResearchFunding.Adjudication.DecisionEscalated; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Adjudication.AdjudicationService imports a cited module of ::Quorum.ResearchFunding.Oversight.PortfolioProjector, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Adjudication.AwardHeld",
+        "::Quorum.ResearchFunding.Adjudication.DecisionEscalated"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "6bbc3747-a1d4-4477-a882-1147d2ab0618",
+      "sourceName": "::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+      "target": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "targetName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.PeerReview.ConflictDeclared; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Adjudication.AdjudicationService imports a cited module of ::Quorum.ResearchFunding.PeerReview.AssignmentService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.PeerReview.ConflictDeclared"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "aa87850c-c0f9-4a87-9a13-e807fb13c981",
+      "sourceName": "::Quorum.ResearchFunding.Adjudication.PanelDecision",
+      "target": "6bbc3747-a1d4-4477-a882-1147d2ab0618",
+      "targetName": "::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+      "status": "unverified",
+      "reason": "declared invokes; no cited module of ::Quorum.ResearchFunding.Adjudication.PanelDecision imports a cited module of ::Quorum.ResearchFunding.Adjudication.AdjudicationService — realised elsewhere, or not at all",
+      "declared": [
+        "invokes"
+      ],
+      "mediated": [],
+      "evidence": []
+    },
+    {
+      "source": "5cb21bef-2f92-499c-b8ff-8f8040c4dc3c",
+      "sourceName": "::Quorum.ResearchFunding.Calls.CallService",
+      "target": "6bbc3747-a1d4-4477-a882-1147d2ab0618",
+      "targetName": "::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Calls.CallPublished; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Calls.CallService imports a cited module of ::Quorum.ResearchFunding.Adjudication.AdjudicationService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Calls.CallPublished"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "5cb21bef-2f92-499c-b8ff-8f8040c4dc3c",
+      "sourceName": "::Quorum.ResearchFunding.Calls.CallService",
+      "target": "b65240e8-b01b-461c-8bb2-fc09d15f4bda",
+      "targetName": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Calls.CallClosed, ::Quorum.ResearchFunding.Calls.CallPublished; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Calls.CallService imports a cited module of ::Quorum.ResearchFunding.Oversight.PortfolioProjector, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Calls.CallClosed",
+        "::Quorum.ResearchFunding.Calls.CallPublished"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "5cb21bef-2f92-499c-b8ff-8f8040c4dc3c",
+      "sourceName": "::Quorum.ResearchFunding.Calls.CallService",
+      "target": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "targetName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Calls.CallPublished; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Calls.CallService imports a cited module of ::Quorum.ResearchFunding.PeerReview.AssignmentService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Calls.CallPublished"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "a4504f75-f50e-4ef5-b6e1-0737af838a6e",
+      "sourceName": "::Quorum.ResearchFunding.Identity.AccountService",
+      "target": "870cfc1f-ea8a-4562-a0f0-8e9d126b1342",
+      "targetName": "::Quorum.ResearchFunding.Notification.NotificationService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Identity.AccountErased; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Identity.AccountService imports a cited module of ::Quorum.ResearchFunding.Notification.NotificationService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Identity.AccountErased"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "a4504f75-f50e-4ef5-b6e1-0737af838a6e",
+      "sourceName": "::Quorum.ResearchFunding.Identity.AccountService",
+      "target": "b65240e8-b01b-461c-8bb2-fc09d15f4bda",
+      "targetName": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Identity.AccountErased, ::Quorum.ResearchFunding.Identity.OrcidVerified; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Identity.AccountService imports a cited module of ::Quorum.ResearchFunding.Oversight.PortfolioProjector, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Identity.AccountErased",
+        "::Quorum.ResearchFunding.Identity.OrcidVerified"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "a4504f75-f50e-4ef5-b6e1-0737af838a6e",
+      "sourceName": "::Quorum.ResearchFunding.Identity.AccountService",
+      "target": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "targetName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Identity.AccountErased; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Identity.AccountService imports a cited module of ::Quorum.ResearchFunding.PeerReview.AssignmentService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Identity.AccountErased"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "870cfc1f-ea8a-4562-a0f0-8e9d126b1342",
+      "sourceName": "::Quorum.ResearchFunding.Notification.NotificationService",
+      "target": "6bbc3747-a1d4-4477-a882-1147d2ab0618",
+      "targetName": "::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Adjudication.AwardHeld, ::Quorum.ResearchFunding.Adjudication.DecisionEscalated; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Notification.NotificationService imports a cited module of ::Quorum.ResearchFunding.Adjudication.AdjudicationService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Adjudication.AwardHeld",
+        "::Quorum.ResearchFunding.Adjudication.DecisionEscalated"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "870cfc1f-ea8a-4562-a0f0-8e9d126b1342",
+      "sourceName": "::Quorum.ResearchFunding.Notification.NotificationService",
+      "target": "a4504f75-f50e-4ef5-b6e1-0737af838a6e",
+      "targetName": "::Quorum.ResearchFunding.Identity.AccountService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Identity.AccountErased; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Notification.NotificationService imports a cited module of ::Quorum.ResearchFunding.Identity.AccountService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Identity.AccountErased"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "870cfc1f-ea8a-4562-a0f0-8e9d126b1342",
+      "sourceName": "::Quorum.ResearchFunding.Notification.NotificationService",
+      "target": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "targetName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Notification.NotificationService imports a cited module of ::Quorum.ResearchFunding.PeerReview.AssignmentService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.PeerReview.AssignmentRevoked",
+        "::Quorum.ResearchFunding.PeerReview.ReviewerAssigned"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "870cfc1f-ea8a-4562-a0f0-8e9d126b1342",
+      "sourceName": "::Quorum.ResearchFunding.Notification.NotificationService",
+      "target": "0d09ec42-5b02-46f6-969f-d65bc15aef6c",
+      "targetName": "::Quorum.ResearchFunding.Submission.ProposalService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalSubmitted; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Notification.NotificationService imports a cited module of ::Quorum.ResearchFunding.Submission.ProposalService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Submission.ProposalEligible",
+        "::Quorum.ResearchFunding.Submission.ProposalIneligible",
+        "::Quorum.ResearchFunding.Submission.ProposalScored",
+        "::Quorum.ResearchFunding.Submission.ProposalSubmitted"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "b65240e8-b01b-461c-8bb2-fc09d15f4bda",
+      "sourceName": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "target": "6bbc3747-a1d4-4477-a882-1147d2ab0618",
+      "targetName": "::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Adjudication.AwardHeld, ::Quorum.ResearchFunding.Adjudication.DecisionEscalated; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Oversight.PortfolioProjector imports a cited module of ::Quorum.ResearchFunding.Adjudication.AdjudicationService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Adjudication.AwardHeld",
+        "::Quorum.ResearchFunding.Adjudication.DecisionEscalated"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "b65240e8-b01b-461c-8bb2-fc09d15f4bda",
+      "sourceName": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "target": "5cb21bef-2f92-499c-b8ff-8f8040c4dc3c",
+      "targetName": "::Quorum.ResearchFunding.Calls.CallService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Calls.CallClosed, ::Quorum.ResearchFunding.Calls.CallPublished; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Oversight.PortfolioProjector imports a cited module of ::Quorum.ResearchFunding.Calls.CallService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Calls.CallClosed",
+        "::Quorum.ResearchFunding.Calls.CallPublished"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "b65240e8-b01b-461c-8bb2-fc09d15f4bda",
+      "sourceName": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "target": "a4504f75-f50e-4ef5-b6e1-0737af838a6e",
+      "targetName": "::Quorum.ResearchFunding.Identity.AccountService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Identity.AccountErased, ::Quorum.ResearchFunding.Identity.OrcidVerified; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Oversight.PortfolioProjector imports a cited module of ::Quorum.ResearchFunding.Identity.AccountService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Identity.AccountErased",
+        "::Quorum.ResearchFunding.Identity.OrcidVerified"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "b65240e8-b01b-461c-8bb2-fc09d15f4bda",
+      "sourceName": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "target": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "targetName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared, ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Oversight.PortfolioProjector imports a cited module of ::Quorum.ResearchFunding.PeerReview.AssignmentService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.PeerReview.AssignmentAccepted",
+        "::Quorum.ResearchFunding.PeerReview.AssignmentRevoked",
+        "::Quorum.ResearchFunding.PeerReview.ConflictDeclared",
+        "::Quorum.ResearchFunding.PeerReview.ReviewSubmitted",
+        "::Quorum.ResearchFunding.PeerReview.ReviewerAssigned"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "b65240e8-b01b-461c-8bb2-fc09d15f4bda",
+      "sourceName": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "target": "7e9ffd9e-4f58-4754-a0da-2140ddd22984",
+      "targetName": "::Quorum.ResearchFunding.PeerReview.ReviewCompletion",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Oversight.PortfolioProjector imports a cited module of ::Quorum.ResearchFunding.PeerReview.ReviewCompletion, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "b65240e8-b01b-461c-8bb2-fc09d15f4bda",
+      "sourceName": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "target": "0d09ec42-5b02-46f6-969f-d65bc15aef6c",
+      "targetName": "::Quorum.ResearchFunding.Submission.ProposalService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.ProposalUnderReview, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Oversight.PortfolioProjector imports a cited module of ::Quorum.ResearchFunding.Submission.ProposalService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Submission.ProposalEligible",
+        "::Quorum.ResearchFunding.Submission.ProposalEnteredScreening",
+        "::Quorum.ResearchFunding.Submission.ProposalIneligible",
+        "::Quorum.ResearchFunding.Submission.ProposalScored",
+        "::Quorum.ResearchFunding.Submission.ProposalSubmitted",
+        "::Quorum.ResearchFunding.Submission.ProposalUnderReview",
+        "::Quorum.ResearchFunding.Submission.ProposalWithdrawn"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "sourceName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "target": "6bbc3747-a1d4-4477-a882-1147d2ab0618",
+      "targetName": "::Quorum.ResearchFunding.Adjudication.AdjudicationService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.PeerReview.ConflictDeclared; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.PeerReview.AssignmentService imports a cited module of ::Quorum.ResearchFunding.Adjudication.AdjudicationService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.PeerReview.ConflictDeclared"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "sourceName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "target": "5cb21bef-2f92-499c-b8ff-8f8040c4dc3c",
+      "targetName": "::Quorum.ResearchFunding.Calls.CallService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Calls.CallPublished; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.PeerReview.AssignmentService imports a cited module of ::Quorum.ResearchFunding.Calls.CallService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Calls.CallPublished"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "sourceName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "target": "a4504f75-f50e-4ef5-b6e1-0737af838a6e",
+      "targetName": "::Quorum.ResearchFunding.Identity.AccountService",
+      "status": "verified",
+      "reason": "declared invokes; the code imports accordingly",
+      "declared": [
+        "invokes"
+      ],
+      "mediated": [
+        "::Quorum.ResearchFunding.Identity.AccountErased"
+      ],
+      "evidence": [
+        {
+          "from": "src/contexts/peer-review/service.ts",
+          "to": "src/contexts/identity/service.ts",
+          "specifier": "../identity/api.ts"
+        }
+      ]
+    },
+    {
+      "source": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "sourceName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "target": "870cfc1f-ea8a-4562-a0f0-8e9d126b1342",
+      "targetName": "::Quorum.ResearchFunding.Notification.NotificationService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.PeerReview.AssignmentService imports a cited module of ::Quorum.ResearchFunding.Notification.NotificationService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.PeerReview.AssignmentRevoked",
+        "::Quorum.ResearchFunding.PeerReview.ReviewerAssigned"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "sourceName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "target": "b65240e8-b01b-461c-8bb2-fc09d15f4bda",
+      "targetName": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.PeerReview.AssignmentAccepted, ::Quorum.ResearchFunding.PeerReview.AssignmentRevoked, ::Quorum.ResearchFunding.PeerReview.ConflictDeclared, ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted, ::Quorum.ResearchFunding.PeerReview.ReviewerAssigned; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.PeerReview.AssignmentService imports a cited module of ::Quorum.ResearchFunding.Oversight.PortfolioProjector, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.PeerReview.AssignmentAccepted",
+        "::Quorum.ResearchFunding.PeerReview.AssignmentRevoked",
+        "::Quorum.ResearchFunding.PeerReview.ConflictDeclared",
+        "::Quorum.ResearchFunding.PeerReview.ReviewSubmitted",
+        "::Quorum.ResearchFunding.PeerReview.ReviewerAssigned"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "sourceName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "target": "7e9ffd9e-4f58-4754-a0da-2140ddd22984",
+      "targetName": "::Quorum.ResearchFunding.PeerReview.ReviewCompletion",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.PeerReview.AssignmentService imports a cited module of ::Quorum.ResearchFunding.PeerReview.ReviewCompletion, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.PeerReview.ReviewSubmitted"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "sourceName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "target": "0d09ec42-5b02-46f6-969f-d65bc15aef6c",
+      "targetName": "::Quorum.ResearchFunding.Submission.ProposalService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.PeerReview.ReviewersAssigned, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.PeerReview.AssignmentService imports a cited module of ::Quorum.ResearchFunding.Submission.ProposalService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.PeerReview.ReviewersAssigned",
+        "::Quorum.ResearchFunding.Submission.ProposalEligible",
+        "::Quorum.ResearchFunding.Submission.ProposalWithdrawn"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "7e9ffd9e-4f58-4754-a0da-2140ddd22984",
+      "sourceName": "::Quorum.ResearchFunding.PeerReview.ReviewCompletion",
+      "target": "b65240e8-b01b-461c-8bb2-fc09d15f4bda",
+      "targetName": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.PeerReview.ReviewCompletion imports a cited module of ::Quorum.ResearchFunding.Oversight.PortfolioProjector, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "7e9ffd9e-4f58-4754-a0da-2140ddd22984",
+      "sourceName": "::Quorum.ResearchFunding.PeerReview.ReviewCompletion",
+      "target": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "targetName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.PeerReview.ReviewSubmitted; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.PeerReview.ReviewCompletion imports a cited module of ::Quorum.ResearchFunding.PeerReview.AssignmentService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.PeerReview.ReviewSubmitted"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "7e9ffd9e-4f58-4754-a0da-2140ddd22984",
+      "sourceName": "::Quorum.ResearchFunding.PeerReview.ReviewCompletion",
+      "target": "0d09ec42-5b02-46f6-969f-d65bc15aef6c",
+      "targetName": "::Quorum.ResearchFunding.Submission.ProposalService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.PeerReview.ReviewCompletion imports a cited module of ::Quorum.ResearchFunding.Submission.ProposalService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "0433462f-c93a-4dfd-881f-ff3f448512df",
+      "sourceName": "::Quorum.ResearchFunding.PeerReview.ReviewDeadline",
+      "target": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "targetName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "status": "verified",
+      "reason": "declared invokes; the code imports accordingly",
+      "declared": [
+        "invokes"
+      ],
+      "mediated": [],
+      "evidence": [
+        {
+          "from": "src/contexts/peer-review/review-deadline.ts",
+          "to": "src/contexts/peer-review/service.ts",
+          "specifier": "./service.ts"
+        }
+      ]
+    },
+    {
+      "source": "0d09ec42-5b02-46f6-969f-d65bc15aef6c",
+      "sourceName": "::Quorum.ResearchFunding.Submission.ProposalService",
+      "target": "5cb21bef-2f92-499c-b8ff-8f8040c4dc3c",
+      "targetName": "::Quorum.ResearchFunding.Calls.CallService",
+      "status": "verified",
+      "reason": "declared invokes; the code imports accordingly",
+      "declared": [
+        "invokes"
+      ],
+      "mediated": [],
+      "evidence": [
+        {
+          "from": "src/contexts/submission/service.ts",
+          "to": "src/contexts/calls/service.ts",
+          "specifier": "../calls/api.ts"
+        }
+      ]
+    },
+    {
+      "source": "0d09ec42-5b02-46f6-969f-d65bc15aef6c",
+      "sourceName": "::Quorum.ResearchFunding.Submission.ProposalService",
+      "target": "870cfc1f-ea8a-4562-a0f0-8e9d126b1342",
+      "targetName": "::Quorum.ResearchFunding.Notification.NotificationService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalSubmitted; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Submission.ProposalService imports a cited module of ::Quorum.ResearchFunding.Notification.NotificationService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Submission.ProposalEligible",
+        "::Quorum.ResearchFunding.Submission.ProposalIneligible",
+        "::Quorum.ResearchFunding.Submission.ProposalScored",
+        "::Quorum.ResearchFunding.Submission.ProposalSubmitted"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "0d09ec42-5b02-46f6-969f-d65bc15aef6c",
+      "sourceName": "::Quorum.ResearchFunding.Submission.ProposalService",
+      "target": "b65240e8-b01b-461c-8bb2-fc09d15f4bda",
+      "targetName": "::Quorum.ResearchFunding.Oversight.PortfolioProjector",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalEnteredScreening, ::Quorum.ResearchFunding.Submission.ProposalIneligible, ::Quorum.ResearchFunding.Submission.ProposalScored, ::Quorum.ResearchFunding.Submission.ProposalSubmitted, ::Quorum.ResearchFunding.Submission.ProposalUnderReview, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Submission.ProposalService imports a cited module of ::Quorum.ResearchFunding.Oversight.PortfolioProjector, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.Submission.ProposalEligible",
+        "::Quorum.ResearchFunding.Submission.ProposalEnteredScreening",
+        "::Quorum.ResearchFunding.Submission.ProposalIneligible",
+        "::Quorum.ResearchFunding.Submission.ProposalScored",
+        "::Quorum.ResearchFunding.Submission.ProposalSubmitted",
+        "::Quorum.ResearchFunding.Submission.ProposalUnderReview",
+        "::Quorum.ResearchFunding.Submission.ProposalWithdrawn"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "0d09ec42-5b02-46f6-969f-d65bc15aef6c",
+      "sourceName": "::Quorum.ResearchFunding.Submission.ProposalService",
+      "target": "1a2bf939-5081-451d-b2f9-e64695741bf5",
+      "targetName": "::Quorum.ResearchFunding.PeerReview.AssignmentService",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.PeerReview.ReviewersAssigned, ::Quorum.ResearchFunding.Submission.ProposalEligible, ::Quorum.ResearchFunding.Submission.ProposalWithdrawn; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Submission.ProposalService imports a cited module of ::Quorum.ResearchFunding.PeerReview.AssignmentService, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.PeerReview.ReviewersAssigned",
+        "::Quorum.ResearchFunding.Submission.ProposalEligible",
+        "::Quorum.ResearchFunding.Submission.ProposalWithdrawn"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "0d09ec42-5b02-46f6-969f-d65bc15aef6c",
+      "sourceName": "::Quorum.ResearchFunding.Submission.ProposalService",
+      "target": "7e9ffd9e-4f58-4754-a0da-2140ddd22984",
+      "targetName": "::Quorum.ResearchFunding.PeerReview.ReviewCompletion",
+      "status": "unsupported",
+      "reason": "the model relates them only through ::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed; a message coupling is not observable as a static import, so whether it is realised is not established here — no cited module of ::Quorum.ResearchFunding.Submission.ProposalService imports a cited module of ::Quorum.ResearchFunding.PeerReview.ReviewCompletion, which is consistent with the model",
+      "declared": [],
+      "mediated": [
+        "::Quorum.ResearchFunding.PeerReview.ProposalFullyReviewed"
+      ],
+      "evidence": []
+    },
+    {
+      "source": "8503be9e-9942-471a-84de-07f3814b5f2a",
+      "sourceName": "::Quorum.ResearchFunding.Submission.Triage",
+      "target": "0d09ec42-5b02-46f6-969f-d65bc15aef6c",
+      "targetName": "::Quorum.ResearchFunding.Submission.ProposalService",
+      "status": "verified",
+      "reason": "declared invokes; the code imports accordingly",
+      "declared": [
+        "invokes"
+      ],
+      "mediated": [],
+      "evidence": [
+        {
+          "from": "src/contexts/submission/triage.ts",
+          "to": "src/contexts/submission/service.ts",
+          "specifier": "./service.ts"
+        }
+      ]
+    }
+  ],
+  "byStatus": {
+    "verified": 4,
+    "violated": 0,
+    "unverified": 1,
+    "unsupported": 33
+  },
+  "externals": [
+    "@fastify/static",
+    "fastify",
+    "node:child_process",
+    "node:fs",
+    "node:path",
+    "node:url",
+    "vitest"
+  ],
+  "exitCode": 0,
+  "outcome": "CONFORMS",
+  "outcomeExit": 0,
+  "coverage": {
+    "modulesRead": 37,
+    "modulesUnreadable": 0,
+    "cited": 37,
+    "services": 12,
+    "servicesWithoutModules": 0,
+    "complete": true
+  },
+  "findings": {
+    "violated": 0
+  },
+  "unknown": {
+    "unverified": 1,
+    "unsupported": 33,
+    "runtimeResolutionSites": 1,
+    "readerLimitations": 0
+  }
+}

@@ -1,0 +1,20 @@
+INCOMPLETE — nothing contradicts the model, but evidence is missing (exit 0)
+Why: (1) the baseline carries no acceptance scenario; (2) 28 commitments with no scenario or pinned test: ChairOnScoredOnly, EnvelopeNotExceeded, NoScoresToReviewers, AssignmentValidity, …
+6bcacf311447 · avlon.quorum · model sha256:2099b4d94ef9…
+SIGNED (recorded) · id sha256:152583e1eb38… · kid decisions-dev-2026-11-04
+Next: declare-scenario · add-evidence ::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly
+
+Claim levels — the strength of each claim's own evidence, separate from the package status:
+  L3   at-most-three-reviewers       MATCH      /3
+       scope: 3 boundary exclusions
+  L3   chair-decides-scored-only     MATCH      /2
+  L2   orcid-verification-lifecycle  MATCH      /2
+  L3   reviewstore-writers           MATCH      /3
+       scope: excludes concurrent execution, so no concurrent-race challenge is required · 5 boundary exclusions
+  L3   verified-reviewers-only       MATCH      /2
+Overall level: unset — the claims use different rubric versions (/2, /3), which are not one scale.
+
+Evidence: static CONFORMS (4 verified, 0 undeclared, 1 unverified) · tests 210 passed, 0 failed · scenarios not-declared · commitments 0/28 established
+
+judgment sha256:dc0d182693b5d0927d236c9f66bc8c28fcaaf77629e4d91f87bab602d04c6909
+written to C:\projects\avlon\demo4-part2\out\attest  (--json for everything, --verbose for the full report)

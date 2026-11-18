@@ -1,0 +1,219 @@
+{
+  "profile": "continuum-verification-result/0",
+  "verifier": {
+    "name": "verified-reviewers-only",
+    "version": "2.0.1",
+    "digest": "sha256:89b6ed80d48fdee03253c31c820b90b6fbf2237c352b10a7ca8b1fa684cdc10c"
+  },
+  "model": {
+    "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+    "changeState": "sha256:d95dfab0d6c84f716ac2c18865454637984cd332ce2619018bdb93aa06a7b3ba",
+    "elements": [
+      {
+        "id": "r-q012",
+        "name": "VerifiedReviewersOnly",
+        "kind": "bdl:rule"
+      }
+    ]
+  },
+  "implementation": {
+    "commit": "2a233b1fae3c083fe466adc6d74bfaa22450ee4a",
+    "tree": "d49c07b37e5cbde1dda7dccaaa4af9f214d64acc"
+  },
+  "expectation": {
+    "statement": "On AssignReviewer, a reviewer whose ORCID status is not Verified is not assigned (BDL r-q012)",
+    "source": "continuum-claim-spec/0 verified-reviewers-only@2.0.1"
+  },
+  "method": "static scope and guard checks over src/**, and the real HTTP route driven through the implementation's app (see the attestation observation)",
+  "evidence": [
+    {
+      "ref": "observation: attestation.results"
+    }
+  ],
+  "coverage": {
+    "executed": 5,
+    "covered": [
+      "HTTP POST /api/proposals/:id/assignments",
+      "src/contexts/peer-review/service.ts:128"
+    ],
+    "uncovered": []
+  },
+  "levels": {
+    "code": {
+      "outcome": "UNVERIFIED",
+      "reason": "informational claim attestation: the level is judged by the Host (continuum-claim-attestation/0)"
+    },
+    "deployment": {
+      "outcome": "UNVERIFIED",
+      "reason": "not assessed: the route ran in-process against an isolated database, not a deployment"
+    }
+  },
+  "attestation": {
+    "profile": "continuum-claim-observation/0",
+    "spec": {
+      "id": "verified-reviewers-only",
+      "version": "2.0.1"
+    },
+    "boundTo": {
+      "commit": "2a233b1fae3c083fe466adc6d74bfaa22450ee4a",
+      "tree": "d49c07b37e5cbde1dda7dccaaa4af9f214d64acc",
+      "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
+      "spec": {
+        "id": "verified-reviewers-only",
+        "version": "2.0.1"
+      }
+    },
+    "environment": {
+      "node": "v24.22.1",
+      "platform": "win32",
+      "database": "SQLite (better-sqlite3), an isolated file per case; manual clock"
+    },
+    "results": [
+      {
+        "check": "guard-dominates-writes",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:assignReviewer",
+        "inputs": "sha256:2809556e0b75bf1b6bbdc5eb3969894ecb77a3307af11c86f0d7d6440a760c6f",
+        "observed": {
+          "dominates": true,
+          "constraint": "assignmentEligibility",
+          "write": "src/contexts/peer-review/service.ts:128",
+          "appliesTo": [
+            "HTTP POST /api/proposals/:id/assignments",
+            "src/contexts/peer-review/service.ts:128"
+          ],
+          "detail": "assignReviewer calls assignmentEligibility and throws when it is not ok, at the top level of its body, before src/contexts/peer-review/service.ts:128, with no return between"
+        }
+      },
+      {
+        "check": "guard-implements-condition",
+        "ran": "completed",
+        "path": "src/contexts/peer-review/service.ts:assignmentEligibility",
+        "inputs": "sha256:a0f8348bff491a268e063547518bac1108ebdc8ffee0acbe3ad4ca276e838518",
+        "observed": {
+          "modelCondition": "Account.orcidStatus != OrcidStatus \"Verified\"",
+          "conditionSubject": "reviewer",
+          "refusesWhenConditionHolds": false,
+          "guard": null,
+          "parts": {
+            "subjectIsReviewer": true,
+            "guardFound": false,
+            "okOnlyWithoutReasons": true,
+            "readsStatus": true,
+            "domainIsExactlyTheEnum": true
+          },
+          "valueMapping": {
+            "Verified": "verified",
+            "Unverified": "unverified"
+          }
+        }
+      },
+      {
+        "check": "held-assignment-scope",
+        "ran": "completed",
+        "path": "src/**",
+        "inputs": "sha256:ea8707e0fab44e49584e84d042624e6bbd9e456bca14cd143cd36a15426b1ac9",
+        "observed": {
+          "method": "lexed literal SQL over src/** for writes that make an assignment held; each write's function and every call of it",
+          "discovered": [
+            "HTTP POST /api/proposals/:id/assignments",
+            "src/contexts/peer-review/service.ts:128"
+          ],
+          "writes": [
+            {
+              "path": "src/contexts/peer-review/service.ts:128",
+              "op": "INSERT",
+              "statement": "INSERT INTO rev_assignment (id, proposal_id, reviewer_id, status, due_at, assigned_by, assigned_at) VALUES (?, ?, ?, 'assigned', ?, ?, ?)",
+              "function": "assignReviewer"
+            }
+          ],
+          "entries": [
+            {
+              "path": "HTTP POST /api/proposals/:id/assignments",
+              "site": "src/api/routes.ts:247",
+              "reaches": "src/contexts/peer-review/service.ts:128",
+              "through": "assignReviewer"
+            }
+          ],
+          "unresolved": [],
+          "excluded": [
+            {
+              "path": "src/seed.ts:181",
+              "form": "call",
+              "call": "assignReviewer",
+              "because": "the demo seed's calls of assignReviewer (src/seed.ts)"
+            },
+            {
+              "path": "src/seed.ts:232",
+              "form": "call",
+              "call": "assignReviewer",
+              "because": "the demo seed's calls of assignReviewer (src/seed.ts)"
+            },
+            {
+              "path": "src/seed.ts:233",
+              "form": "call",
+              "call": "assignReviewer",
+              "because": "the demo seed's calls of assignReviewer (src/seed.ts)"
+            },
+            {
+              "path": "src/seed.ts:234",
+              "form": "call",
+              "call": "assignReviewer",
+              "because": "the demo seed's calls of assignReviewer (src/seed.ts)"
+            },
+            {
+              "path": "src/seed.ts:235",
+              "form": "call",
+              "call": "assignReviewer",
+              "because": "the demo seed's calls of assignReviewer (src/seed.ts)"
+            }
+          ]
+        }
+      },
+      {
+        "check": "unverified-reviewer-refused",
+        "ran": "completed",
+        "path": "HTTP POST /api/proposals/:id/assignments",
+        "covers": [
+          "src/contexts/peer-review/service.ts:128"
+        ],
+        "inputs": "sha256:ea8707e0fab44e49584e84d042624e6bbd9e456bca14cd143cd36a15426b1ac9",
+        "observed": {
+          "reviewerOrcidStatus": "unverified",
+          "httpStatus": 201,
+          "refused": false,
+          "code": null,
+          "heldAfter": true
+        }
+      },
+      {
+        "check": "verified-reviewer-assigned",
+        "ran": "completed",
+        "path": "HTTP POST /api/proposals/:id/assignments",
+        "covers": [
+          "src/contexts/peer-review/service.ts:128"
+        ],
+        "inputs": "sha256:ea8707e0fab44e49584e84d042624e6bbd9e456bca14cd143cd36a15426b1ac9",
+        "observed": {
+          "reviewerOrcidStatus": "verified",
+          "httpStatus": 201,
+          "refused": false,
+          "code": null,
+          "heldAfter": true
+        }
+      }
+    ],
+    "outOfBoundary": [
+      {
+        "path": "HTTP POST /api/operations/accounts/:id/erase",
+        "note": "EraseAccount is not AssignReviewer, so it is outside r-q012's declared scope; reported against the Account lifecycle (sm-q002: Verified is terminal)",
+        "observed": {
+          "assigned": 201,
+          "erased": 200,
+          "orcidStatusAfter": "unverified",
+          "stillHeld": true
+        }
+      }
+    ]
+  }
+}

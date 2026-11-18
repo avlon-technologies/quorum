@@ -4,6 +4,7 @@
   "purpose": "A panel decision on an unscored proposal is refused, and a program officer cannot decide (INV-8).",
   "verifies": [
     "::Quorum.ResearchFunding.PanelAdjudication.ChairDecidesScoredOnly",
+    "::Quorum.ResearchFunding.Adjudication.ChairOnScoredOnly",
     "::Quorum.ResearchFunding.Adjudication.PanelDecision"
   ],
   "test": "::Quorum.Inv08ChairOnly",

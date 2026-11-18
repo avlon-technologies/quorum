@@ -1,0 +1,53 @@
+{
+  "acceptance-scenario": "1",
+  "name": "assignment-proposal-not-assignable",
+  "purpose": "A reviewer cannot be assigned to a proposal that has not been confirmed eligible (AssignmentValidity: the proposal is assignable).",
+  "verifies": [
+    "::Quorum.ResearchFunding.PeerReview.AssignmentValidity",
+    "::Quorum.ResearchFunding.PeerReview.AssignmentService"
+  ],
+  "environment": "LocalDevelopment",
+  "given": [
+    {
+      "step": "quorum.running",
+      "text": "Quorum is running with a published call, an officer, a chair, applicants and verified reviewers"
+    },
+    {
+      "step": "proposal.prepared",
+      "args": {
+        "proposal": "p1",
+        "stage": "submitted"
+      },
+      "text": "proposal p1 has reached submitted and is still in screening"
+    }
+  ],
+  "when": [
+    {
+      "step": "reviewer.assign",
+      "args": {
+        "proposal": "p1",
+        "reviewer": 0
+      },
+      "text": "the officer assigns verified reviewer 0 to p1"
+    }
+  ],
+  "then": [
+    {
+      "step": "command.refused",
+      "args": {
+        "status": 409,
+        "code": "not_assignable",
+        "rule": "ADR-004"
+      },
+      "text": "the assignment is refused as not_assignable"
+    },
+    {
+      "step": "event.count",
+      "args": {
+        "type": "ReviewerAssigned",
+        "count": 0
+      },
+      "text": "no ReviewerAssigned is published"
+    }
+  ]
+}

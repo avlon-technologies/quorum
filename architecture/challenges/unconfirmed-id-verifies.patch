@@ -1,0 +1,13 @@
+diff --git a/src/contexts/identity/service.ts b/src/contexts/identity/service.ts
+index 241d814..9776eab 100644
+--- a/src/contexts/identity/service.ts
++++ b/src/contexts/identity/service.ts
+@@ -83,7 +83,7 @@ export async function lookupOrcid(deps: Deps, orcidId: string): Promise<OrcidRec
+ 
+ /** Phase 2 of VerifyOrcid (inside the transaction): unverified -> verified, the only ORCID transition. */
+ export function recordOrcidVerification(deps: Deps, accountId: string, orcidId: string, exists: boolean): { orcidStatus: 'verified'; orcidId: string } {
+-  if (!exists) {
++  if (!exists && !orcidId) {
+     throw unprocessable('orcid_not_found', 'The ORCID registry has no record for that iD. Check it on orcid.org and try again.', {
+       fields: [{ field: 'orcidId', message: 'Not found in the ORCID registry.' }],
+       rule: 'INV-12',

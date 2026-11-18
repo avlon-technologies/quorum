@@ -22,7 +22,7 @@
  "attestation": {
   "profile": "continuum-claim-spec/0",
   "id": "orcid-verification-lifecycle",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "rubric": "continuum-claim-rubric/3",
   "claim": {
    "language": "bdl",
@@ -299,6 +299,10 @@
    {
     "class": "undeclared-transition",
     "statement": "the field changes in a way the state model does not declare: a verification act takes an account out of Verified, which only erasure may do"
+   },
+   {
+    "class": "boundary-shift",
+    "statement": "the edge of Verify is misplaced: something short of the registry's confirmation — an iD merely submitted — is taken for a verification, so an account becomes Verified on an iD the registry does not know"
    }
   ],
   "challenges": [
@@ -318,6 +322,24 @@
      "check": "verification-never-leaves-verified",
      "path": "HTTP POST /api/me/orcid",
      "reason": "afterOtherId is \"unverified\", expected \"verified\""
+    }
+   },
+   {
+    "id": "unconfirmed-id-verifies",
+    "kind": "deliberate-fault",
+    "class": "boundary-shift",
+    "statement": "recordOrcidVerification no longer refuses an iD the registry does not confirm: any iD that was submitted is recorded, so Unverified → Verified is taken one step short of Verify",
+    "change": {
+     "patch": "architecture/challenges/unconfirmed-id-verifies.patch",
+     "digest": "sha256:55a0a4a1ab6f8f9d2b421b2d95d88562235ada4b00949c7a3468c8aaff6006d8",
+     "files": [
+      "src/contexts/identity/service.ts"
+     ]
+    },
+    "expect": {
+     "check": "unregistered-id-stays-unverified",
+     "path": "HTTP POST /api/me/orcid",
+     "reason": "to is \"verified\", expected \"unverified\""
     }
    }
   ]

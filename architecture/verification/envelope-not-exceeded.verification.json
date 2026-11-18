@@ -1,0 +1,436 @@
+{
+ "continuum-verification": "continuum-verification/0",
+ "name": "envelope-not-exceeded",
+ "verifies": [
+  "::Quorum.ResearchFunding.Adjudication.EnvelopeNotExceeded"
+ ],
+ "expectation": "ADL business rule EnvelopeNotExceeded: an award commits its amount only by a single conditional write on the call's ledger row that succeeds only if committed + amount <= envelope; otherwise nothing is recorded and the case returns to the chair.",
+ "required": false,
+ "run": {
+  "module": "architecture/verifiers/envelope-not-exceeded.mjs",
+  "args": [
+   "architecture/verification/envelope-not-exceeded.verification.json",
+   "${IMPLEMENTATION}",
+   "${RESULT}",
+   "${OUT}",
+   "${COMMIT}",
+   "${TREE}",
+   "${ATTESTATION}",
+   "${CHANGE_STATE}"
+  ]
+ },
+ "attestation": {
+  "profile": "continuum-claim-spec/0",
+  "id": "envelope-not-exceeded",
+  "version": "1.0.0",
+  "rubric": "continuum-claim-rubric/3",
+  "claim": {
+   "language": "adl",
+   "kind": "business-rule",
+   "element": "a4b26ee8-0547-42b5-adde-d2ee9bab2073",
+   "clause": "An award commits its amount only by a single conditional write on the call's ledger row that succeeds only if committed + amount <= envelope; otherwise nothing is recorded and the case returns to the chair."
+  },
+  "model": {
+   "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1"
+  },
+  "boundary": {
+   "statement": "The call's budget ledger (adj_budget) in the runtime code of the deployable (src/**): every literal SQL write to it, the function holding each write, and every way into that function — a call followed to its HTTP route, or the event whose handler holds the write — in one Quorum process over one store.",
+   "includes": [
+    "UPDATE adj_budget (the commit of an award)",
+    "INSERT INTO adj_budget (the ledger row opened when a call is published)",
+    "any REPLACE INTO or DELETE FROM adj_budget, were one to exist",
+    "every call, in src/**, of the function holding such a write, followed to the route that reaches it"
+   ],
+   "excludes": [
+    {
+     "what": "the demo seed's calls of recordDecision (src/seed.ts)",
+     "why": "demo data, never run when NODE_ENV=production; it calls the same guarded function",
+     "match": [
+      {
+       "path": "src/seed.ts",
+       "form": "call"
+      }
+     ]
+    },
+    {
+     "what": "several Quorum processes writing one store at once",
+     "why": "one process per store is the deployment model (LocalDevelopment binding). The conditional write and the store's CHECK constraint are the defence there; both are observed statically here, and the implementation's own test tests/scenarios/concurrent-awards.test.ts races separate processes — it is not run by this claim"
+    },
+    {
+     "what": "which amount an award commits (BDL i-q014 AwardIsTheRequestedAmount)",
+     "why": "a separate invariant: this claim judges that whatever amount is committed stays within the envelope, not that it equals the requested amount"
+    },
+    {
+     "what": "who may record a decision, on which proposal, and integrity holds (ADL ChairOnScoredOnly)",
+     "why": "a separate claim, chair-decides-scored-only; every case here is a chair deciding a scored proposal with no hold"
+    },
+    {
+     "what": "the envelope of the call itself (cal_call.envelope_minor) and its immutability once the call is open",
+     "why": "owned by Calls (ADR-006). The ledger copies the envelope once, when CallPublished is delivered; a write that changed adj_budget.envelope_minor afterwards is in scope and would be reported as not admitted"
+    },
+    {
+     "what": "schema DDL (CREATE TABLE adj_budget) in src/platform/schema.ts",
+     "why": "defines the ledger, writes no row; its CHECK constraint is observed by store-check-constraint"
+    },
+    {
+     "what": "whole-database restore by the Operator (src/platform/backup.ts)",
+     "why": "replaces the database file, not a row of the ledger; an operator act outside the award path"
+    },
+    {
+     "what": "tests/**, scripts/**",
+     "why": "not part of the deployable"
+    }
+   ]
+  },
+  "scope": {
+   "discovery": "Lex src/**: every INSERT, REPLACE, UPDATE and DELETE on adj_budget is a write (an UPDATE that sets neither committed_minor nor envelope_minor would not be one; the table has no other value column). The named function holding each write is found. A write inside an event handler of a consumer is entered by that event; otherwise every call of the function in src/** is followed through its own named caller until an HTTP registration, named by method and URL. A call that leads to no route, and non-literal SQL that does not resolve, leave the scope incomplete.",
+   "table": "adj_budget",
+   "committed": "committed_minor",
+   "envelope": "envelope_minor",
+   "concurrency": true,
+   "concurrencyStatement": "two award requests for different proposals of one call in flight at once, against one process and one store"
+  },
+  "assumptions": [
+   {
+    "id": "E1-ledger",
+    "statement": "\"The call's ledger row\" is the adj_budget row keyed by call_id: \"committed\" is committed_minor and \"envelope\" is envelope_minor, both integers in minor units (cents). The mapping is stated in scope.table / scope.committed / scope.envelope, not inferred."
+   },
+   {
+    "id": "E2-amount",
+    "statement": "The amount an award commits is the proposal's requested amount as the adjudication case holds it (adj_case.requested_minor). The cases choose requested amounts to place committed + amount below, at, one minor unit above and far above the envelope."
+   },
+   {
+    "id": "E3-nothing-recorded",
+    "statement": "\"Nothing is recorded\" is read as: the ledger's committed amount is unchanged, no adj_decision row exists for the proposal, and no ProposalAwarded is published. The refusal itself is recorded (the case moves to reconsider and AwardRefused is published); that is the case returning to the chair, not a decision."
+   },
+   {
+    "id": "E4-returns-to-chair",
+    "statement": "\"The case returns to the chair\" is adj_case.status = 'reconsider': the case is still open and undecided, and the chair can still act on it — a further award is refused, a decline is accepted."
+   },
+   {
+    "id": "E5-harness",
+    "statement": "Cases set up their world (accounts, a published call, scored proposals) through the implementation's own test harness and services (tests/support/harness.ts), in-process (Fastify inject) against an isolated SQLite file with a manual clock. The acts under test — the decision route and the call publication route — and the state read — adj_budget, adj_decision, adj_case — are the verifier's."
+   },
+   {
+    "id": "E6-reached",
+    "statement": "The `reached` paths are what V8 precise BLOCK coverage reports executing during the act alone — the request and the delivery of the events it published; setup excluded. A write is reached when its code ran; a continuation after an early throw is read with the count V8 gives it. Observed by the runtime, not declared."
+   },
+   {
+    "id": "E7-shape",
+    "statement": "Writes are found lexically (literal SQL), and the guard checks recognise the code's shape textually (lexed, not parsed); a refactor they do not recognise reads as 'not shown', never as 'violated'."
+   },
+   {
+    "id": "E8-in-process-race",
+    "statement": "The concurrent case sends two requests at once to one in-process app. better-sqlite3 runs each write transaction to completion, so the race it can show is between a request's check and its write when the two are not one step — not between two connections or processes."
+   }
+  ],
+  "checks": [
+   {
+    "id": "ledger-scope",
+    "kind": "scope",
+    "method": "static-lexical",
+    "qualifies": [
+     "L2",
+     "L3"
+    ],
+    "statement": "the writes to the ledger, and the ways into them, are all known: at least one discovered, nothing unresolved",
+    "criterion": {
+     "scopeComplete": true
+    }
+   },
+   {
+    "id": "ledger-write-admitted",
+    "kind": "structural",
+    "method": "static-lexical",
+    "qualifies": [
+     "L1"
+    ],
+    "statement": "each write to the ledger is either the conditional commit (committed raised by a parameter, on one call's row, only where committed + that amount <= envelope) or the opening of a row at zero that never replaces an existing row; no write changes the committed amount unconditionally, changes the envelope, or deletes or replaces a row",
+    "criterion": {
+     "equals": {
+      "admitted": true
+     }
+    }
+   },
+   {
+    "id": "single-conditional-write",
+    "kind": "enforcement",
+    "method": "static-lexical",
+    "qualifies": [
+     "L1"
+    ],
+    "statement": "commitAward holds exactly one write: the conditional UPDATE, adding and testing the same amount, and reports the award committed only when that UPDATE changed one row",
+    "criterion": {
+     "equals": {
+      "guarded": true
+     }
+    }
+   },
+   {
+    "id": "refusal-leaves-before-decision",
+    "kind": "enforcement",
+    "method": "static-lexical",
+    "qualifies": [
+     "L1"
+    ],
+    "statement": "in recordDecision, an award that was not committed moves the case to reconsider and leaves the function before the decision is recorded",
+    "criterion": {
+     "equals": {
+      "guarded": true
+     }
+    }
+   },
+   {
+    "id": "store-check-constraint",
+    "kind": "enforcement",
+    "method": "static-lexical",
+    "qualifies": [
+     "L1"
+    ],
+    "statement": "the store itself refuses a ledger row whose committed amount exceeds its envelope (CHECK on adj_budget)",
+    "criterion": {
+     "equals": {
+      "guarded": true
+     }
+    }
+   },
+   {
+    "id": "ledger-opens-empty",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "allowed",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "publishing a call through the real route opens its ledger row with the call's envelope and nothing committed",
+    "criterion": {
+     "equals": {
+      "opened": true,
+      "committedMinor": 0,
+      "envelopeMinor": 25000000
+     }
+    }
+   },
+   {
+    "id": "award-within-envelope",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "allowed",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "with nothing committed against a 300,000 envelope, the chair awards 100,000 through the real route: exactly that amount is committed and the award is recorded",
+    "criterion": {
+     "equals": {
+      "committedBeforeMinor": 0,
+      "committedAfterMinor": 10000000,
+      "refused": false,
+      "decisionAfter": "award"
+     }
+    }
+   },
+   {
+    "id": "award-exactly-fills-envelope",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "boundary",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "with 100,000 committed against a 200,000 envelope, an award of exactly 100,000 is admitted: committed equals the envelope, the bound itself is reachable",
+    "criterion": {
+     "equals": {
+      "committedBeforeMinor": 10000000,
+      "committedAfterMinor": 20000000,
+      "remainingAfterMinor": 0,
+      "refused": false,
+      "decisionAfter": "award"
+     }
+    }
+   },
+   {
+    "id": "award-one-over-refused",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "boundary",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "with 100,000 committed against a 200,000 envelope, an award of 100,000.01 — one minor unit past the envelope — is refused: nothing more is committed, no decision is recorded, no ProposalAwarded is published, and the case returns to the chair. Counts only when its control, award-exactly-fills-envelope, passed on the route",
+    "criterion": {
+     "equals": {
+      "overByMinor": 1,
+      "committedAfterMinor": 10000000,
+      "refused": true,
+      "code": "envelope_exceeded",
+      "decisionAfter": null,
+      "awardedPublished": 0,
+      "caseStatusAfter": "reconsider"
+     }
+    },
+    "control": "award-exactly-fills-envelope"
+   },
+   {
+    "id": "award-over-envelope-refused",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "rejected",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "with 150,000 committed against a 200,000 envelope, a further award of 150,000 is refused: nothing more is committed, no decision is recorded, no ProposalAwarded is published, and the case returns to the chair. Counts only when its control, award-within-envelope, passed on the route",
+    "criterion": {
+     "equals": {
+      "committedAfterMinor": 15000000,
+      "refused": true,
+      "code": "envelope_exceeded",
+      "decisionAfter": null,
+      "awardedPublished": 0,
+      "caseStatusAfter": "reconsider"
+     }
+    },
+    "control": "award-within-envelope"
+   },
+   {
+    "id": "refused-case-admits-decline",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "allowed",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "a case returned to the chair by a refused award is still the chair's to decide: a second award is refused, a decline is recorded, and the committed amount does not move",
+    "criterion": {
+     "equals": {
+      "caseStatusBefore": "reconsider",
+      "secondAwardRefused": true,
+      "declined": true,
+      "committedBeforeMinor": 15000000,
+      "committedAfterMinor": 15000000,
+      "decisionAfter": "decline"
+     }
+    }
+   },
+   {
+    "id": "concurrent-awards-one-admitted",
+    "kind": "case",
+    "method": "executed-http-route",
+    "polarity": "boundary",
+    "qualifies": [
+     "L1",
+     "L2"
+    ],
+    "statement": "with nothing committed against a 200,000 envelope, two awards of 150,000 for different proposals in flight at once: exactly one is admitted and 150,000 is committed",
+    "criterion": {
+     "equals": {
+      "admitted": 1,
+      "committedAfterMinor": 15000000,
+      "awardsRecorded": 1
+     }
+    }
+   }
+  ],
+  "violations": [
+   {
+    "class": "rule-bypass",
+    "statement": "the condition is not enforced on the write: an award is committed although committed + amount exceeds the envelope"
+   },
+   {
+    "class": "boundary-shift",
+    "statement": "the bound is off by one: the comparison admits an award that takes the committed amount one minor unit past the envelope"
+   },
+   {
+    "class": "concurrent-race",
+    "statement": "the check and the write are not one atomic step: two awards in flight both pass the check against the same committed amount and both commit"
+   },
+   {
+    "class": "refusal-not-clean",
+    "statement": "an award the envelope cannot fund is not refused cleanly: although nothing is committed, the decision is recorded and the case does not return to the chair"
+   }
+  ],
+  "challenges": [
+   {
+    "id": "envelope-check-removed",
+    "kind": "deliberate-fault",
+    "class": "rule-bypass",
+    "statement": "commitAward's UPDATE no longer tests the envelope, and the store's CHECK no longer bounds the committed amount: nothing on the write path keeps committed within the envelope",
+    "change": {
+     "patch": "architecture/challenges/envelope-check-removed.patch",
+     "digest": "sha256:ceccf2565433f1d416ddb19b2e66fd1be875eb177e3fea212abca90dc247cfef",
+     "files": [
+      "src/contexts/adjudication/service.ts",
+      "src/platform/schema.ts"
+     ]
+    },
+    "expect": {
+     "check": "award-over-envelope-refused",
+     "path": "HTTP POST /api/adjudications/:id/decision",
+     "reason": "committedAfterMinor is 30000000, expected 15000000"
+    }
+   },
+   {
+    "id": "envelope-off-by-one",
+    "kind": "deliberate-fault",
+    "class": "boundary-shift",
+    "statement": "the bound is one minor unit too generous, in the conditional write and in the store's CHECK (<= envelope + 1): an award far over the envelope is still refused, one a single minor unit over is committed",
+    "change": {
+     "patch": "architecture/challenges/envelope-off-by-one.patch",
+     "digest": "sha256:81e59b58c34e1fbfbc18fbedea57223dfcc4b4ae6c795a9e4bcba6e04fd306ed",
+     "files": [
+      "src/contexts/adjudication/service.ts",
+      "src/platform/schema.ts"
+     ]
+    },
+    "expect": {
+     "check": "award-one-over-refused",
+     "path": "HTTP POST /api/adjudications/:id/decision",
+     "reason": "committedAfterMinor is 20000001, expected 10000000"
+    }
+   },
+   {
+    "id": "envelope-check-outside-transaction",
+    "kind": "deliberate-fault",
+    "class": "concurrent-race",
+    "statement": "the route reads whether the award fits, yields, then commits in a transaction that no longer tests the envelope, and the store's CHECK no longer bounds the committed amount: a sequential award over the envelope is still refused, two in flight both commit",
+    "change": {
+     "patch": "architecture/challenges/envelope-check-outside-transaction.patch",
+     "digest": "sha256:4aa3cdbf8def1291f921232f13a4791456c058017688ef15f1eb7b084d3a41c7",
+     "files": [
+      "src/api/routes.ts",
+      "src/contexts/adjudication/service.ts",
+      "src/platform/schema.ts"
+     ]
+    },
+    "expect": {
+     "check": "concurrent-awards-one-admitted",
+     "path": "HTTP POST /api/adjudications/:id/decision",
+     "reason": "admitted is 2, expected 1"
+    }
+   },
+   {
+    "id": "refused-award-recorded",
+    "kind": "deliberate-fault",
+    "class": "refusal-not-clean",
+    "statement": "recordDecision no longer leaves when the award was not committed: the ledger is untouched, but the award is recorded and published and the case is decided instead of returning to the chair",
+    "change": {
+     "patch": "architecture/challenges/refused-award-recorded.patch",
+     "digest": "sha256:a77f1c219ceab8ce2da11d1d1bfc6252fbf7269f2f65e080be9a85c0b0fdef25",
+     "files": [
+      "src/contexts/adjudication/service.ts"
+     ]
+    },
+    "expect": {
+     "check": "award-over-envelope-refused",
+     "path": "HTTP POST /api/adjudications/:id/decision",
+     "reason": "refused is false, expected true"
+    }
+   }
+  ]
+ }
+}

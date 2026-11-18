@@ -1,0 +1,26 @@
+diff --git a/src/contexts/adjudication/service.ts b/src/contexts/adjudication/service.ts
+index 3a960ed..c7beddb 100644
+--- a/src/contexts/adjudication/service.ts
++++ b/src/contexts/adjudication/service.ts
+@@ -44,7 +44,7 @@ export function budgetOf(deps: Deps, callId: string): Budget | null {
+  */
+ export function commitAward(deps: Deps, callId: string, amountMinor: number): AwardResult & { remainingMinor: number } {
+   const r = deps.db
+-    .prepare(`UPDATE adj_budget SET committed_minor = committed_minor + ? WHERE call_id = ? AND committed_minor + ? <= envelope_minor`)
++    .prepare(`UPDATE adj_budget SET committed_minor = committed_minor + ? WHERE call_id = ? AND committed_minor + ? <= envelope_minor + 1`)
+     .run(amountMinor, callId, amountMinor);
+   const b = budgetOf(deps, callId)!;
+   return { committed: r.changes === 1, remaining: toDecimal(b.remainingMinor), remainingMinor: b.remainingMinor };
+diff --git a/src/platform/schema.ts b/src/platform/schema.ts
+index f5cd0d7..0ffac54 100644
+--- a/src/platform/schema.ts
++++ b/src/platform/schema.ts
+@@ -218,7 +218,7 @@ export const MIGRATIONS: string[] = [
+     call_id         TEXT PRIMARY KEY,
+     envelope_minor  INTEGER NOT NULL,
+     committed_minor INTEGER NOT NULL DEFAULT 0,
+-    CHECK (committed_minor >= 0 AND committed_minor <= envelope_minor)
++    CHECK (committed_minor >= 0 AND committed_minor <= envelope_minor + 1)
+   );
+   CREATE TABLE adj_case (
+     proposal_id     TEXT PRIMARY KEY,

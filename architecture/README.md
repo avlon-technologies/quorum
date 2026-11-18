@@ -21,10 +21,20 @@ All five specifications now name `continuum-claim-rubric/3`, the one rubric the 
 Assessed, L1 Supported, L2 Verified in scope, L3 Violation-sensitive. The sections below describe the `/2` pilot and
 `continuum conformance report`; they are kept as its record.
 
-Under `/3`, run `continuum conformance check continuum`. Expected: `reviewstore-writers`, `at-most-three-reviewers`,
-`verified-reviewers-only` (3.0.0) and `chair-decides-scored-only` (2.0.0) at **L3**, each deliberate fault detected;
-`orcid-verification-lifecycle` (3.0.0) at **L2**, its scope complete and every write reached by a passing case, with
-no `boundary-shift` fault declared. What changed for `/3`:
+Under `/3`, run `continuum conformance check continuum`. Expected: all six claims at **L3**, each deliberate fault
+detected: `reviewstore-writers`, `at-most-three-reviewers`, `verified-reviewers-only` (3.0.0),
+`chair-decides-scored-only` (2.0.0), `orcid-verification-lifecycle` (3.1.0) and `envelope-not-exceeded` (1.0.0).
+
+- `orcid-verification-lifecycle` 3.1.0 declares the `boundary-shift` class it lacked at 3.0.0 (where it stopped at
+  L2). Its fault, `unconfirmed-id-verifies`, records an iD the registry does not confirm; the existing boundary case
+  `unregistered-id-stays-unverified` detects it. The verifier is unchanged.
+- `envelope-not-exceeded` 1.0.0 claims the ADL rule `EnvelopeNotExceeded` (whole statement, quoted as its clause). Its
+  scope is every write to `adj_budget`: the conditional commit in `commitAward`, reached from the decision route, and
+  the row opened at zero when `CallPublished` is delivered. Cases place committed + amount below, at, one minor unit
+  above and far above the envelope, and send two awards at once. Four faults, one per violation class: the check
+  removed, the bound off by one, the check moved outside the write transaction, and a refused award recorded anyway.
+
+What changed for `/3`:
 
 - `chair-decides-scored-only` claims the ADL rule `ChairOnScoredOnly` (whole statement, quoted as its clause) in place
   of BDL `r-q008`, and adds the integrity-hold cases. The Host reports any ADL business-rule claim as a clause, so the

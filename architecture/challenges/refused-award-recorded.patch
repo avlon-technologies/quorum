@@ -1,0 +1,13 @@
+diff --git a/src/contexts/adjudication/service.ts b/src/contexts/adjudication/service.ts
+index 3a960ed..87f15a2 100644
+--- a/src/contexts/adjudication/service.ts
++++ b/src/contexts/adjudication/service.ts
+@@ -82,7 +82,7 @@ export function recordDecision(
+     }
+     if (c.integrity_hold) throw conflict('integrity_hold', `The award is on hold: ${c.integrity_hold}. Under the current rules the only remaining outcome is a decline; how a hold is released is an open owner decision (ADR-005).`, 'INV-3');
+     const result = commitAward(deps, c.call_id, c.requested_minor); // invoke commit
+-    if (!result.committed) {
++    if (!result.committed && c.status === 'reconsider') {
+       // decision committed -> default: human-task reconsider. The state change is committed with the refusal.
+       deps.db.prepare(`UPDATE adj_case SET status = 'reconsider' WHERE proposal_id = ? AND status = 'awaitingDecision'`).run(proposalId);
+       // publish refused -> reconsider (review B4): the refusal is an audited transition

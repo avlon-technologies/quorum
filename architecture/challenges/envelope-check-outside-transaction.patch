@@ -1,0 +1,83 @@
+diff --git a/src/api/routes.ts b/src/api/routes.ts
+index ccdeea4..982bf83 100644
+--- a/src/api/routes.ts
++++ b/src/api/routes.ts
+@@ -331,7 +331,12 @@ export function registerRoutes(h: Http, deps: Deps, tokens: TokenService, ops: O
+       params: uuidParam,
+       body: body(['outcome', 'rationale'], { outcome: { type: 'string', enum: ['award', 'decline'] }, rationale: str(0, 2000) }),
+     },
+-    (req, ctx) => ctx.tx(() => adjudication.recordDecision(deps, ctx.principal.accountId, req.params.id, req.body)),
++    async (req, ctx) => {
++      // check the envelope first, then write: the check runs before the write transaction opens
++      const fits = req.body.outcome === 'award' ? adjudication.awardFits(deps, req.params.id) : undefined;
++      await new Promise((r) => setTimeout(r, 20));
++      return ctx.tx(() => adjudication.recordDecision(deps, ctx.principal.accountId, req.params.id, req.body, { fits }));
++    },
+   );
+ 
+   // ================================================================ Oversight (read side)
+diff --git a/src/contexts/adjudication/service.ts b/src/contexts/adjudication/service.ts
+index 3a960ed..8e26e59 100644
+--- a/src/contexts/adjudication/service.ts
++++ b/src/contexts/adjudication/service.ts
+@@ -42,14 +42,26 @@ export function budgetOf(deps: Deps, callId: string): Budget | null {
+  * committed + amount <= envelope, atomically, whatever other connection or process is awarding.
+  * The CHECK constraint on adj_budget is the second line of defence.
+  */
+-export function commitAward(deps: Deps, callId: string, amountMinor: number): AwardResult & { remainingMinor: number } {
+-  const r = deps.db
+-    .prepare(`UPDATE adj_budget SET committed_minor = committed_minor + ? WHERE call_id = ? AND committed_minor + ? <= envelope_minor`)
+-    .run(amountMinor, callId, amountMinor);
++export function commitAward(deps: Deps, callId: string, amountMinor: number, fits?: boolean): AwardResult & { remainingMinor: number } {
++  // the caller already checked the envelope: commit without testing it again
++  const r = fits === undefined
++    ? deps.db
++        .prepare(`UPDATE adj_budget SET committed_minor = committed_minor + ? WHERE call_id = ? AND committed_minor + ? <= envelope_minor`)
++        .run(amountMinor, callId, amountMinor)
++    : fits
++      ? deps.db.prepare(`UPDATE adj_budget SET committed_minor = committed_minor + ? WHERE call_id = ?`).run(amountMinor, callId)
++      : { changes: 0 };
+   const b = budgetOf(deps, callId)!;
+   return { committed: r.changes === 1, remaining: toDecimal(b.remainingMinor), remainingMinor: b.remainingMinor };
+ }
+ 
++/** Would awarding this proposal's requested amount stay within its call's envelope, as the ledger stands now? */
++export function awardFits(deps: Deps, proposalId: string): boolean | undefined {
++  const c = deps.db.prepare(`SELECT * FROM adj_case WHERE proposal_id = ?`).get(proposalId) as CaseRow | undefined;
++  const b = c ? budgetOf(deps, c.call_id) : null;
++  return c && b ? b.committedMinor + c.requested_minor <= b.envelopeMinor : undefined;
++}
++
+ /**
+  * The chair's human task (decide, or reconsider after a refused award). INV-8: the route admits only
+  * the panelChair role; here, a decision exists only for a proposal with an open case — which exists
+@@ -60,6 +72,7 @@ export function recordDecision(
+   chairId: string,
+   proposalId: string,
+   input: { outcome: 'award' | 'decline'; rationale: string },
++  opts: { fits?: boolean } = {},
+ ): { decision: DecisionData; budget: Budget } | CommittedRefusal {
+   const c = deps.db.prepare(`SELECT * FROM adj_case WHERE proposal_id = ?`).get(proposalId) as CaseRow | undefined;
+   if (!c) throw conflict('not_scored', 'This proposal is not scored yet. A panel decision can be recorded only once three reviews are in and it is scored.', 'INV-8');
+@@ -81,7 +94,7 @@ export function recordDecision(
+       throw conflict('envelope_exhausted', 'This award was already refused because the envelope cannot fund it, and the envelope never grows. Record a decline.', 'INV-9');
+     }
+     if (c.integrity_hold) throw conflict('integrity_hold', `The award is on hold: ${c.integrity_hold}. Under the current rules the only remaining outcome is a decline; how a hold is released is an open owner decision (ADR-005).`, 'INV-3');
+-    const result = commitAward(deps, c.call_id, c.requested_minor); // invoke commit
++    const result = commitAward(deps, c.call_id, c.requested_minor, opts.fits); // invoke commit
+     if (!result.committed) {
+       // decision committed -> default: human-task reconsider. The state change is committed with the refusal.
+       deps.db.prepare(`UPDATE adj_case SET status = 'reconsider' WHERE proposal_id = ? AND status = 'awaitingDecision'`).run(proposalId);
+diff --git a/src/platform/schema.ts b/src/platform/schema.ts
+index f5cd0d7..170e42c 100644
+--- a/src/platform/schema.ts
++++ b/src/platform/schema.ts
+@@ -218,7 +218,7 @@ export const MIGRATIONS: string[] = [
+     call_id         TEXT PRIMARY KEY,
+     envelope_minor  INTEGER NOT NULL,
+     committed_minor INTEGER NOT NULL DEFAULT 0,
+-    CHECK (committed_minor >= 0 AND committed_minor <= envelope_minor)
++    CHECK (committed_minor >= 0)
+   );
+   CREATE TABLE adj_case (
+     proposal_id     TEXT PRIMARY KEY,

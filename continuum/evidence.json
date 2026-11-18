@@ -3,7 +3,7 @@
   "normative": false,
   "package": "avlon.quorum",
   "anchored": {
-    "commit": "0b5104d1de995a3050c567240c77335a45192aeb",
+    "commit": "aff7f1c25377d42b66cd60c71b1894f3ec85380d",
     "attestation": "sha256:2099b4d94ef9a2f86087941fcabb5472a6ae3357b1e78cbdd38aaf02c107f4f1",
     "commitCovers": true
   },
@@ -11,7 +11,7 @@
     "form": "continuum-evidence-subject/1",
     "algorithm": "sha256",
     "encoding": "path\\0bytes\\n/raw/1",
-    "digest": "sha256:96d309adf2364bfd12876a79ac28c6ad3b74ab2fb4d0b3ec1d23966337ae6069",
+    "digest": "sha256:c82d53d01f89ec5874215f1b55f99164fbae1e20c2d834d19f8c9b0dbbd218c9",
     "surface": {
       "include": [
         "src/**",
@@ -89,6 +89,7 @@
       "tests/invariants/inv-10-agent-proposes-only.test.ts",
       "tests/invariants/inv-11-role-scope.test.ts",
       "tests/invariants/inv-12-verified-reviewers.test.ts",
+      "tests/scenarios/account-credentials.test.ts",
       "tests/scenarios/account-erasure.test.ts",
       "tests/scenarios/adr-005-inv-03-mismatch.test.ts",
       "tests/scenarios/agent-authority.test.ts",
@@ -107,7 +108,7 @@
       "tests/support/crash-child.ts",
       "tests/support/harness.ts"
     ],
-    "fileCount": 81
+    "fileCount": 82
   },
   "elements": {
     "88e48015-97bf-4375-b558-fb8ba04e97fe": {

@@ -10,7 +10,7 @@ import { randomUUID } from 'node:crypto';
 import { createApp, type App } from '../../src/app.ts';
 import { ManualClock, DAY_MS } from '../../src/platform/clock.ts';
 import { AGENT_ACTOR } from '../../src/platform/deps.ts';
-import { TokenService, loadSecret } from '../../src/platform/auth.ts';
+import { TokenService, loadSecret, hashPassword } from '../../src/platform/auth.ts';
 import { StubOrcidClient } from '../../src/integrations/orcid.ts';
 import { StubTriageProvider } from '../../src/integrations/triage-provider.ts';
 import { FileMailTransport } from '../../src/integrations/mail.ts';
@@ -22,6 +22,23 @@ import type { Role } from '../../src/contracts/model.generated.ts';
 
 export { DAY_MS };
 export const PASSWORD = 'correct-horse-battery';
+
+/**
+ * The stored hash every SEEDED account signs in with: PASSWORD, hashed ONCE per process by the production
+ * hashPassword, and reused.
+ *
+ * Why: scrypt is slow on purpose. A world() seeds twelve accounts, and hashing PASSWORD twelve times over was
+ * 60–66% of the time of every acceptance scenario and every claim verifier run (measured 2026-11-18), for twelve
+ * hashes of the same known test password. Nothing a seeded account is used for depends on its hash differing from
+ * another seeded account's.
+ *
+ * What is unchanged: the hash is made by the real hashPassword; every sign-in still goes through POST /api/session
+ * and the real verifyPassword; every Harness has its own database; production code is not touched. That an account
+ * provisioned or registered WITH a password gets its own salted hash is what tests/scenarios/account-credentials.test.ts
+ * is for — it does not use this.
+ */
+let seededPasswordHash: string | undefined;
+const seededHash = (): string => (seededPasswordHash ??= hashPassword(PASSWORD));
 export const START = '2026-03-02T09:00:00.000Z';
 export const ABSTRACT =
   'Northern communities face rapid climate change. This project builds community-operated monitoring of permafrost thaw and wildfire smoke, ' +
@@ -136,7 +153,13 @@ export class Harness {
   // ------------------------------------------------------------------ accounts and HTTP
   account(name: string, roles: Role[], opts: { verified?: boolean; institution?: string } = {}): User {
     const email = `${name.toLowerCase().replace(/[^a-z]/g, '')}-${randomUUID().slice(0, 6)}@test.quorum`;
-    const id = this.tx(() => provisionAccount(this.deps, { email, name, institution: opts.institution ?? 'Test University', password: PASSWORD, roles }));
+    // provisioned by the real service with no password, then given the one hash of PASSWORD (seededHash, above)
+    const hash = seededHash();
+    const id = this.tx(() => {
+      const made = provisionAccount(this.deps, { email, name, institution: opts.institution ?? 'Test University', roles });
+      this.db.prepare(`UPDATE idn_account SET password_hash = ? WHERE id = ?`).run(hash, made);
+      return made;
+    });
     if (opts.verified) {
       const orcid = orcidFor(this.#orcidN++);
       this.tx(() => recordOrcidVerification(this.deps, id, orcid, true));

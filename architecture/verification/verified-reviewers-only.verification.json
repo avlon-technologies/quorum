@@ -188,7 +188,7 @@
         "statement": "a reviewer whose ORCID is not verified comes to hold an assignment"
       }
     ],
-    "rubric": "continuum-claim-rubric/3",
+    "rubric": "continuum-claim-rubric/4",
     "challenges": [
       {
         "id": "orcid-guard-defeated",
